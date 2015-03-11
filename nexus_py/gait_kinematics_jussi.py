@@ -1,21 +1,11 @@
 from __future__ import division, print_function
 
-__filename__ = "Gait Kinematics 1.1"
-__version__ = "1.1"
-__company__ = "Vicon Motion System"
-__date__ = "2014"
-__author__ = "jgay"
-
-# modified from original - J
-
-# This Python Code is an example code created to work in conjunction with Vicon Nexus 2 and processed Lower Body
-# Plug-in Gait Data. The code needs to be run from within Vicon Nexus 2.
-# Data needs to contain at least one complete gait cycle.
-# The newly created pdf file will be saved in in your Session Folder.
-# Version 1.1 Updates
-    # Updated for Nexus 2.1 compatibility
-    # Corrected Foot Progression Output
-    # Added Y-axis Component
+#
+# modified from Vicon original Gait Kinematics 1.1.py:
+# -create onscreen plot instead of pdf
+# -plot kinematics variables used in Lastenlinna
+# jnu@iki.fi
+#
 
 #Code needed for Nexus 2.1
 import sys
@@ -26,12 +16,10 @@ import ViconNexus
 vicon = ViconNexus.ViconNexus()
 import numpy as np
 import matplotlib.pyplot as plt
+# keep in case pdf output is needed
 import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 
-print("Python Script: " + __filename__)
-
-print("Processing Script: " + __filename__)
 
 # Extract information from active trial
 SubjectName = vicon.GetSubjectNames()[0]
@@ -97,7 +85,7 @@ if lenLFS and lenRFS >= 2:
     LGC1LHipX = LHipA[0][0][0][LGC1Start:LGC1End]
     LGC1LKneeX = LKneeA[0][0][0][LGC1Start:LGC1End]
     LGC1LAnkX = LAnkA[0][0][0][LGC1Start:LGC1End]
-    # ankle rotation
+    # ankle rotation (around Z axis?)
     LGC1LAnkZ = LAnkA[0][0][2][LGC1Start:LGC1End]
     #Left Gait Cycle 1 Y
     LGC1LPelvisY = LPelvisA[0][0][1][LGC1Start:LGC1End]
@@ -166,7 +154,6 @@ if lenLFS and lenRFS >= 2:
     # ankle rotation
     Norm_RGC1RAnkZ = np.interp(tn, RGC1t, RGC1LAnkZ)
 
-
     Norm_RGC1RPelvisY = np.interp(tn, RGC1t, RGC1RPelvisY)
     Norm_RGC1RHipY = np.interp(tn, RGC1t, RGC1RHipY)
     Norm_RGC1RKneeY = np.interp(tn, RGC1t, RGC1RKneeY)
@@ -190,6 +177,7 @@ if lenLFS and lenRFS >= 2:
     Norm_RFootProZ = Norm_RGC1RFootProZ
 
     # Set figure style using seaborn
+    # not needed for online plots
     ##sns.set_style("white")
     ##sns.set_context("paper")
 
@@ -313,7 +301,5 @@ if lenLFS and lenRFS >= 2:
     plt.ylim(-30., 30.0)
     plt.axhline(0, color='black')
  
-    
-
     plt.show()
 
