@@ -40,7 +40,8 @@ gr1,comp1,types1=vicon.GetModelOutputDetails('Roosa','LHipMoment')
 Test extraction of kinetics variables.
 Note that kinetics is only available for the side where forceplate contact
 occurs. E.g. analyzing a trial with left foot forceplate contact will only
-give left side kinetics. (???)
+give (sensible) left side kinetics. Thus, we must know which foot had 
+forceplate contact in the trial.
 
 # gives tuple with 2 list elements
 LHipMomT = vicon.GetModelOutput(SubjectName, 'LHipMoment')
@@ -50,6 +51,26 @@ LHipMomentsL,Something = LHipMomT
 LHipMoments = np.array(LHipMomentsL)
 LHipX = LHipMoments[0][0:200]
 """
+
+"""
+Make list of all variables of interest.
+Loop thru list, read every variable.
+Interpolate into gait cycle.
+Write into dict with appropriate name.
+Plot all desired variables from dict.
+"""
+
+LKinematicsVars=['LHipAngles',
+ 'LKneeAngles',
+ 'LAbsAnkleAngle',
+ 'LAnkleAngles',
+ 'LPelvisAngles',
+ 'LFootProgressAngles']
+ 
+
+
+
+
 
 # ...but Vicon example does directly like this
 LHipMomX = np.array([vicon.GetModelOutput(SubjectName, 'LHipMoment')])
