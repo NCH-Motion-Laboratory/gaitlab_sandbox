@@ -3,15 +3,17 @@
 Read EMG data from Vicon Nexus.
 Works with Nexus 2.1.x
 @author: jussi
+
+TODO:
+compute+plot EMG envelope¨(other filtering?)
+combine w/ kinetics
+pdf output, one per trial
+error handling
+
 """
 
 from __future__ import division, print_function
 
-"""
-Test the Vicon object for communicating with Vicon Nexus application.
-Works with Nexus 2.1.x
-@author: jussi
-"""
 
 import sys
 import numpy as np
@@ -32,9 +34,15 @@ SessionPath = vicon.GetTrialName()[0]
 TrialName = vicon.GetTrialName()[1]
 
 # find EMG device and get some info
-# error handling is tricky, since ViconNexus.py does not raise exceptions
 EMGDeviceName = 'Myon'
-EMGDeviceID = vicon.GetDeviceIDFromName(EMGDeviceName)
+DeviceNames = vicon.GetDeviceNames()
+
+if EMGDeviceName in DeviceNames:
+   EMGDeviceID = vicon.GetDeviceIDFromName(EMGDeviceName)
+else:
+   raise Exception('no EMG device found in data')
+
+       
 # DType should be 'other', Drate is sampling rate
 DName,DType,DRate,OutputIDs,_,_ = vicon.GetDeviceDetails(EMGDeviceID)
 # Myon should only have 1 output; if zero, EMG was not found
@@ -45,7 +53,7 @@ _,_,_,_,chNames,chIDs = vicon.GetDeviceOutputDetails(EMGDeviceID, OutputID)
 
 for i in range(len(chNames)):
     chName = chNames[i]    
-    assert(chName.find('Voltage') == 0)
+    assert(chName.find('Voltage') == 0), 'Not a voltage channel?'
     chName = chName[chName.find('.')+1:]  # remove 'Voltage.'
     chNames[i] = chName
     
@@ -53,7 +61,7 @@ for i in range(len(chNames)):
 EMGAll = {}
 for chID in chIDs:
     chData, chReady, chRate = vicon.GetDeviceChannel(EMGDeviceID, OutputID, chID)
-    assert(chRate == DRate)
+    assert(chRate == DRate), 'Channel has unexpected sampling rate'
     # remove 'Voltage.' from beginning of dict key
     chName = chNames[chID-1]
     EMGAll[chName] = chData
@@ -62,12 +70,12 @@ dataLen = len(chData)
 
 # process EMG data, e.g. enveloping
 
-# plot
+# samples to time
 t = np.arange(dataLen)/DRate
 
 # plot
-plt.figure()
-
+plt.figure(figsize=(16, 12))
+plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 assert(16 >= max(chIDs))
 
 for k in chIDs:
