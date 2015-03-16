@@ -6,6 +6,127 @@ Created on Mon Mar 16 15:07:18 2015
 """
 import matplotlib.pyplot as plt
 
+def KineticsPlot(TrialName,tn,KineticsAll):
+    """ Plot all kinetics vars of interest.
+    TrialName trial name
+    tn x-axis for plot (0...100 for normalized plots)
+    KinematicsAll dict containing all kinematics variables
+    """
+    plt.figure(figsize=(14, 12))
+    Rcolor='lawngreen'
+    Lcolor='red'
+    plt.suptitle("Kinetics output\n" + TrialName + " (1st gait cycle)", fontsize=12, fontweight="bold")
+
+    plt.subplot(3, 4, 1)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLHipMomentX'], Lcolor, KineticsAll['NormRHipMomentX'], Rcolor)
+    plt.title('Hip flex/ext moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int flex    Nm/kg    Int ext')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+    
+    plt.subplot(3, 4, 2)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLHipMomentY'], Lcolor, KineticsAll['NormRHipMomentY'], Rcolor)
+    plt.title('Hip ab/add moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int add    Nm/kg    Int abd')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+
+    plt.subplot(3, 4, 3)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLHipMomentZ'], Lcolor, KineticsAll['NormRHipMomentZ'], Rcolor)
+    plt.title('Hip rotation moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int flex    Nm/kg    Int ext')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+
+    plt.subplot(3, 4, 4)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLHipPowerZ'], Lcolor, KineticsAll['NormRHipPowerZ'], Rcolor)
+    plt.title('Hip power')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Abs    W/kg    Gen')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+
+    plt.subplot(3, 4, 5)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLKneeMomentX'], Lcolor, KineticsAll['NormRKneeMomentX'], Rcolor)
+    plt.title('Knee flex/ext moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int flex    Nm/kg    Int ext')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+    
+    plt.subplot(3, 4, 6)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLKneeMomentY'], Lcolor, KineticsAll['NormRKneeMomentY'], Rcolor)
+    plt.title('Knee ab/add moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int var    Nm/kg    Int valg')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+
+    plt.subplot(3, 4, 7)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLKneeMomentZ'], Lcolor, KineticsAll['NormRKneeMomentZ'], Rcolor)
+    plt.title('Knee rotation moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int flex    Nm/kg    Int ext')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+
+    plt.subplot(3, 4, 8)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLKneePowerZ'], Lcolor, KineticsAll['NormRKneePowerZ'], Rcolor)
+    plt.title('Knee power')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Abs    W/kg    Gen')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+    
+    plt.subplot(3, 4, 9)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLAnkleMomentX'], Lcolor, KineticsAll['NormRAnkleMomentX'], Rcolor)
+    plt.title('Ankle dors/plan moment')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Int dors    Nm/kg    Int plan')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+
+    plt.subplot(3, 4, 12)
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    plot1 = plt.plot(tn, KineticsAll['NormLAnklePowerZ'], Lcolor, KineticsAll['NormRAnklePowerZ'], Rcolor)
+    plt.title('Ankle power')
+    plt.xlabel('% of gait cycle')
+    plt.ylabel('Abs    W/kg    Gen')
+#    plt.ylim(-20., 40.0)
+    plt.axhline(0, color='black')
+    # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
+    #          ncol=3, fancybox=True, shadow=True)
+    
 
 
 

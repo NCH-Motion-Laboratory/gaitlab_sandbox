@@ -10,7 +10,7 @@ Works with Nexus 2.1.x
 
 import sys
 import numpy as np
-import vicon_pig_makeplots
+import vicon_pig_makeplots  # custom plotting code
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -111,12 +111,14 @@ for Var in KinematicsVars:
     KinematicsAll['Norm'+Var+'Z'] = np.interp(tn, GC1t, VarGC1[2,:])
 
 # kinetics vars
-# TODO: divide moments variables by 1000
 KineticsAll = {}
 for Var in KineticsVars:
     # not sure what the BoolVals are, discard for now
     NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
     KineticsAll[Var] = np.array(NumVals)
+    # moment variables have to be divided by 1000 - not sure why    
+    if Var.find('Moment') > 0:
+        KineticsAll[Var] /= 1000.
     # pick non-normalized X,Y,Z components into separate vars
     KineticsAll[Var+'X'] = KineticsAll[Var][0,:]
     KineticsAll[Var+'Y'] = KineticsAll[Var][1,:]
@@ -137,9 +139,9 @@ for Var in KineticsVars:
     KineticsAll['Norm'+Var+'Y'] = np.interp(tn, GC1t, VarGC1[1,:])
     KineticsAll['Norm'+Var+'Z'] = np.interp(tn, GC1t, VarGC1[2,:])
 
-# plot
-vicon_pig_makeplots.KinematicsPlot(TrialName,tn,KinematicsAll)
-
+# create the plots
+vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsAll)
+vicon_pig_makeplots.KineticsPlot(TrialName, tn, KineticsAll)
 
 
 
