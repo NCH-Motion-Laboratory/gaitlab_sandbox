@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Read EMG data from Vicon Nexus.
+Read EMG data from Vicon Nexus and plot.
 Works with Nexus 2.1.x
 @author: jussi
 
 TODO:
-compute+plot EMG envelope¨(other filtering?)
+compute+plot EMG envelope¨(RMS, butterworth, ?)
 combine w/ kinetics
 pdf output, one per trial
 error handling
+autodetect disconnected emgs?
 
 """
 
@@ -61,7 +62,7 @@ for i in range(len(chNames)):
 EMGAll = {}
 for chID in chIDs:
     chData, chReady, chRate = vicon.GetDeviceChannel(EMGDeviceID, OutputID, chID)
-    assert(chRate == DRate), 'Channel has unexpected sampling rate'
+    assert(chRate == DRate), 'Channel has an unexpected sampling rate'
     # remove 'Voltage.' from beginning of dict key
     chName = chNames[chID-1]
     EMGAll[chName] = chData
