@@ -126,7 +126,7 @@ def KineticsPlot(TrialName,tn,KineticsAll):
     plt.axhline(0, color='black')
     # plt.legend(('Left', 'Right'), title="Context", fontsize=10, loc='lower right', bbox_to_anchor=(2.3, -5.1),
     #          ncol=3, fancybox=True, shadow=True)
-    
+    plt.draw()    
 
 
 
@@ -240,7 +240,7 @@ def KinematicsPlot(TrialName,tn,KinematicsAll):
     plt.ylim(-30., 30.0)
     plt.axhline(0, color='black')
      
-    plt.show()
+    plt.draw()
     
     
     

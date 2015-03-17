@@ -12,6 +12,7 @@ import sys
 import numpy as np
 import vicon_pig_makeplots  # custom plotting code
 import vicon_pig_read_outputs
+import matplotlib.pyplot as plt
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -68,6 +69,7 @@ tn = np.linspace(0, 100, 101)  # x grid
 vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsAll)
 vicon_pig_makeplots.KineticsPlot(TrialName, tn, KineticsAll)
 
+plt.show()
 
 
 
