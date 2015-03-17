@@ -10,7 +10,7 @@ Works with Nexus 2.1.x
 
 import sys
 import numpy as np
-import vicon_pig_makeplots  # custom plotting code
+import vicon_makeplots  # custom plotting code
 import vicon_getdata
 
 
@@ -60,8 +60,8 @@ KinematicsPiG = vicon_getdata.vicon_pig_outputs(vicon, KinematicsVars)
 KineticsPiG = vicon_getdata.vicon_pig_outputs(vicon, KineticsVars)
 EMG = vicon_getdata.vicon_emg(vicon)
 tn = np.linspace(0, 100, 101)  # x grid
-vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsPiG.Vars)
-vicon_pig_makeplots.EMGPlot(EMG)
+vicon_makeplots.KinematicsPlot(TrialName, tn, KinematicsPiG.Vars)
+vicon_makeplots.EMGPlot(EMG)
 
 
 """
