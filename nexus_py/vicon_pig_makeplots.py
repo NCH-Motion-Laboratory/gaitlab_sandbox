@@ -5,8 +5,25 @@ Created on Mon Mar 16 15:07:18 2015
 @author: Jussi
 """
 import matplotlib.pyplot as plt
+import numpy as np
 
-def KineticsPlot(TrialName,tn,KineticsAll):
+
+def EMGPlot(EMG):
+    """ Hackish method for plotting all EMG channels """
+    plt.figure(figsize=(16, 12))
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    assert(16 >= max(EMG.chIDs))
+    for k in EMG.chIDs:
+        plt.subplot(4, 4, k)
+        chName = EMG.chNames[k-1]
+        tn = np.linspace(0, 100, 101)  # x grid
+        plt.plot(tn, EMG.normDataL[chName], '#DC143C')
+        plt.title(chName, fontsize=10)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Voltage (V)')
+        plt.show()
+
+def KineticsPlot(TrialName, tn, KineticsAll):
     """ Plot all kinetics vars of interest.
     TrialName trial name
     tn x-axis for plot (0...100 for normalized plots)

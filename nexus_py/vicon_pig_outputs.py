@@ -56,12 +56,12 @@ KineticsVars=['LHipMoment',
               'RAnklePower']
               
  # read all kinematics vars into dict and normalize into gait cycle 1
-
-KinematicsPiG = vicon_getdata.vicon_pig(vicon, KinematicsVars)
-KineticsPiG = vicon_getdata.vicon_pig(vicon, KineticsVars)
+KinematicsPiG = vicon_getdata.vicon_pig_outputs(vicon, KinematicsVars)
+KineticsPiG = vicon_getdata.vicon_pig_outputs(vicon, KineticsVars)
 EMG = vicon_getdata.vicon_emg(vicon)
 tn = np.linspace(0, 100, 101)  # x grid
 vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsPiG.Vars)
+vicon_pig_makeplots.EMGPlot(EMG)
 
 
 """

@@ -36,35 +36,27 @@ class vicon_emg:
             chName = chName[chName.find('.')+1:]  # remove 'Voltage.'
             self.chNames[i] = chName
         # read EMG channels into dict
-        self.EMGAll = {}
+        # also normalize data to L/R gait cycles
+        self.data = {}
+        vgc1 = vicon_gaitcycle(vicon)
+        self.normDataL = {}
+        self.normDataR = {}
         for chID in self.chIDs:
             chData, chReady, chRate = vicon.GetDeviceChannel(EMGDeviceID, OutputID, chID)
             assert(chRate == DRate), 'Channel has an unexpected sampling rate'
             # remove 'Voltage.' from beginning of dict key
             chName = self.chNames[chID-1]
-            self.EMGAll[chName] = chData
+            self.data[chName] = chData
+            self.normDataL[chName] = vgc1.normalize(chData,'L')
+            self.normDataR[chName] = vgc1.normalize(chData,'R')
         self.dataLen = len(chData)    
         self.sfRate = DRate        
-        # samples to time
+        # samples to time (s)
         self.t = np.arange(self.dataLen)/self.sfRate
- 
-    def plotall(self):
-        """ Hackish method for plotting all EMG channels """
-        plt.figure(figsize=(16, 12))
-        plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
-        assert(16 >= max(self.chIDs))
-        
-        for k in self.chIDs:
-            plt.subplot(4, 4, k)
-            chName = self.EMGAll.keys()[k-1]
-            plt.plot(self.t, self.EMGAll[chName], '#DC143C')
-            plt.title(chName, fontsize=10)
-            plt.xlabel('Time (s)')
-            plt.ylabel('Voltage (V)')
-            plt.show()
 
 class vicon_gaitcycle:
-    """ Determines 1st L/R gait cycles from data."""
+    """ Determines 1st L/R gait cycles from data. Normalizes vars to 0..100%
+    of gait cycle. """
     
     def __init__(self,vicon):
         SubjectName = vicon.GetSubjectNames()[0]
@@ -103,7 +95,7 @@ class vicon_gaitcycle:
         return yip
 
 
-class vicon_pig:
+class vicon_pig_outputs:
     """ Reads given PiG output variables. Variables are
     also normalized into the gait cycle. """
 
