@@ -11,8 +11,8 @@ Works with Nexus 2.1.x
 import sys
 import numpy as np
 import vicon_pig_makeplots  # custom plotting code
-import vicon_pig_read_outputs
-import matplotlib.pyplot as plt
+import vicon_getdata
+
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -56,16 +56,23 @@ KineticsVars=['LHipMoment',
               'RAnklePower']
               
  # read all kinematics vars into dict and normalize into gait cycle 1
-KinematicsAll = vicon_pig_read_outputs.ReadNormalizedPiGVars(vicon,KinematicsVars)              
-KineticsAll = vicon_pig_read_outputs.ReadNormalizedPiGVars(vicon,KineticsVars)              
 
-  
-# create the plots
+KinematicsPiG = vicon_getdata.vicon_pig(vicon, KinematicsVars)
+KineticsPiG = vicon_getdata.vicon_pig(vicon, KineticsVars)
+EMG = vicon_getdata.vicon_emg(vicon)
+tn = np.linspace(0, 100, 101)  # x grid
+vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsPiG.Vars)
+
+
+"""
 tn = np.linspace(0, 100, 101)  # x grid
 vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsAll)
 vicon_pig_makeplots.KineticsPlot(TrialName, tn, KineticsAll)
+vemg = vicon_emg(vicon)
+vemg.plotall()
 
 plt.show()
+"""
 
 
 
