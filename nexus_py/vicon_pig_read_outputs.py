@@ -50,6 +50,9 @@ def ReadNormalizedPiGVars(vicon, VarList):
         # not sure what the BoolVals are, discard for now
         NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
         VarDict[Var] = np.array(NumVals)
+        # moment variables have to be divided by 1000 - not sure why    
+        if Var.find('Moment') > 0:
+            KineticsAll[Var] /= 1000.
         # pick non-normalized X,Y,Z components into separate vars
         VarDict[Var+'X'] = VarDict[Var][0,:]
         VarDict[Var+'Y'] = VarDict[Var][1,:]

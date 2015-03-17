@@ -59,10 +59,6 @@ KineticsVars=['LHipMoment',
 KinematicsAll = vicon_pig_read_outputs.ReadNormalizedPiGVars(vicon,KinematicsVars)              
 KineticsAll = vicon_pig_read_outputs.ReadNormalizedPiGVars(vicon,KineticsVars)              
 
-# moment variables have to be divided by 1000 - not sure why    
-for Var in KineticsVars:
-    if Var.find('Moment') > 0:
-        KineticsAll[Var] /= 1000.
   
 # create the plots
 tn = np.linspace(0, 100, 101)  # x grid
