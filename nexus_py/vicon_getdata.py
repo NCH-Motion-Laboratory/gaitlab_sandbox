@@ -54,6 +54,7 @@ class vicon_emg:
         self.RGC1End_s = int(round((vgc1.RGC1End - 1) * SamplesPerFrame))
         self.LGC1Len_s = self.LGC1End_s - self.LGC1Start_s
         self.RGC1Len_s = self.RGC1End_s - self.RGC1Start_s
+
         for chID in self.chIDs:
             chData, chReady, chRate = vicon.GetDeviceChannel(EMGDeviceID, OutputID, chID)
             assert(chRate == DRate), 'Channel has an unexpected sampling rate'
@@ -73,12 +74,11 @@ class vicon_emg:
         self.sfRate = DRate        
         # samples to time (s)
         self.t = np.arange(self.dataLen)/self.sfRate
-    
+        
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40] 
         Passband is given in Hz. """
         passbandn = np.array(passband) / self.sfRate / 2
-        print(passbandn)
         b, a = signal.butter(4, passbandn, 'bandpass')
         yfilt = signal.filtfilt(b, a, y)        
         return yfilt
