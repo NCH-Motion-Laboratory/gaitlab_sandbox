@@ -28,7 +28,7 @@ def ReadNormalizedPiGVars(vicon, VarList):
     # 2 strikes is one complete gait cycle, needed for analysis
     lenLFS = len(LFStrike)
     lenRFS = len(RFStrike)
-    if lenLFS and lenRFS < 2:
+    if lenLFS < 2 or lenRFS < 2:
         raise Exception("Could not detect complete L/R gait cycles")
     # extract times for 1st gait cycles, L and R
     LGC1Start=min(LFStrike[0:2])
