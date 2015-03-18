@@ -2,7 +2,7 @@
 """
 Created on Tue Mar 17 14:41:31 2015
 
-Utility functions for reading data from Vicon Nexus.
+Utility classes for reading data from Vicon Nexus.
 
 @author: Jussi
 """
@@ -10,13 +10,15 @@ Utility functions for reading data from Vicon Nexus.
 from __future__ import division, print_function
 
 import numpy as np
-import matplotlib.pyplot as plt
+from scipy import signal
 
 class vicon_emg:
     """ Class for reading and processing EMG data from Nexus. """
 
     def __init__(self, vicon):
         # find EMG device and get some info
+        FrameRate = vicon.GetFrameRate()
+        FrameCount = vicon.GetFrameCount()
         EMGDeviceName = 'Myon'
         DeviceNames = vicon.GetDeviceNames()
         if EMGDeviceName in DeviceNames:
@@ -25,6 +27,8 @@ class vicon_emg:
            raise Exception('no EMG device found in trial')
         # DType should be 'other', Drate is sampling rate
         DName,DType,DRate,OutputIDs,_,_ = vicon.GetDeviceDetails(EMGDeviceID)
+        #
+        SamplesPerFrame = DRate / FrameRate
         # Myon should only have 1 output; if zero, EMG was not found
         assert(len(OutputIDs)==1)
         OutputID = OutputIDs[0]
@@ -36,27 +40,53 @@ class vicon_emg:
             chName = chName[chName.find('.')+1:]  # remove 'Voltage.'
             self.chNames[i] = chName
         # read EMG channels into dict
-        # also normalize data to L/R gait cycles
+        # also cut data to L/R gait cycles
         self.data = {}
+        self.yScaleGC1L = {}        
+        self.yScaleGC1R = {}            
         vgc1 = vicon_gaitcycle(vicon)
-        self.normDataL = {}
-        self.normDataR = {}
+        self.dataGC1L = {}
+        self.dataGC1R = {}
+        # gait cycle beginning and end, samples
+        self.LGC1Start_s = int(round((vgc1.LGC1Start - 1) * SamplesPerFrame))
+        self.LGC1End_s = int(round((vgc1.LGC1End - 1) * SamplesPerFrame))
+        self.RGC1Start_s = int(round((vgc1.RGC1Start - 1) * SamplesPerFrame))
+        self.RGC1End_s = int(round((vgc1.RGC1End - 1) * SamplesPerFrame))
+        self.LGC1Len_s = self.LGC1End_s - self.LGC1Start_s
+        self.RGC1Len_s = self.RGC1End_s - self.RGC1Start_s
         for chID in self.chIDs:
             chData, chReady, chRate = vicon.GetDeviceChannel(EMGDeviceID, OutputID, chID)
             assert(chRate == DRate), 'Channel has an unexpected sampling rate'
             # remove 'Voltage.' from beginning of dict key
             chName = self.chNames[chID-1]
-            self.data[chName] = chData
-            self.normDataL[chName] = vgc1.normalize(chData,'L')
-            self.normDataR[chName] = vgc1.normalize(chData,'R')
-        self.dataLen = len(chData)    
+            self.data[chName] = np.array(chData)
+            # convert gait cycle times (in frames) to sample indices
+            # cut to L/R gait cycles
+            self.dataGC1L[chName] = np.array(chData[self.LGC1Start_s:self.LGC1End_s])
+            self.dataGC1R[chName] = np.array(chData[self.RGC1Start_s:self.RGC1End_s])
+            # compute scales of EMG signal, to be used as y scaling of plots
+            self.yScaleGC1L[chName] = 3*np.median(np.abs(self.dataGC1L[chName]))
+            self.yScaleGC1R[chName] = 3*np.median(np.abs(self.dataGC1R[chName]))
+          
+        self.dataLen = len(chData)
+        assert(self.dataLen == FrameCount * SamplesPerFrame)
         self.sfRate = DRate        
         # samples to time (s)
         self.t = np.arange(self.dataLen)/self.sfRate
+    
+    def filter(self, y, passband):
+        """ Bandpass filter given data y to passband, e.g. [1, 40] 
+        Passband is given in Hz. """
+        passbandn = np.array(passband) / self.sfRate / 2
+        print(passbandn)
+        b, a = signal.butter(4, passbandn, 'bandpass')
+        yfilt = signal.filtfilt(b, a, y)        
+        return yfilt
+        
 
 class vicon_gaitcycle:
-    """ Determines 1st L/R gait cycles from data. Normalizes vars to 0..100%
-    of gait cycle. """
+    """ Determines 1st L/R gait cycles from data. Can also normalize
+    vars to 0..100% of gait cycle. """
     
     def __init__(self,vicon):
         SubjectName = vicon.GetSubjectNames()[0]
@@ -78,8 +108,13 @@ class vicon_gaitcycle:
         self.RGC1Len=self.RGC1End-self.RGC1Start
         self.tn = np.linspace(0, 100, 101)
         
-    def normalize(self,y,side):
-        """ Normalize any variable y to left or right gait cycle. """
+    def cut(self, y):
+        """ Cut a varible to left or right gait cycle, without interpolation. """
+        
+    def normalize(self, y, side):
+        """ Interpolate any variable y to left or right gait cycle.
+        New x axis will be 0..100, and data is taken from the specified 
+        gait cycle (side = L or R). """
         LGC1t = np.linspace(0, 100, self.LGC1Len)
         RGC1t = np.linspace(0, 100, self.RGC1Len)
         if side.upper() == 'R':  # norm to right side
@@ -96,9 +131,9 @@ class vicon_gaitcycle:
 
 
 class vicon_pig_outputs:
-    """ Reads given PiG output variables. Variables are
-    also normalized into the gait cycle. """
-
+    """ Reads given plug-in gait output variables. Variable names starting
+    with 'R' and'L' are normalized into left and right gait cycles,
+    respectively."""
     def __init__(self, vicon, VarList):
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 

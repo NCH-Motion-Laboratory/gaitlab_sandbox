@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 
 """
-Read and plot PiG output variables while Nexus is running, and trial has
+Read and plot data (plugingait, emg) while Nexus is running, and trial has
 been processed.
 Works with Nexus 2.1.x
 
@@ -62,21 +62,6 @@ EMG = vicon_getdata.vicon_emg(vicon)
 tn = np.linspace(0, 100, 101)  # x grid
 vicon_makeplots.KinematicsPlot(TrialName, tn, KinematicsPiG.Vars)
 vicon_makeplots.EMGPlot(EMG)
-
-
-"""
-tn = np.linspace(0, 100, 101)  # x grid
-vicon_pig_makeplots.KinematicsPlot(TrialName, tn, KinematicsAll)
-vicon_pig_makeplots.KineticsPlot(TrialName, tn, KineticsAll)
-vemg = vicon_emg(vicon)
-vemg.plotall()
-
-plt.show()
-"""
-
-
-
-
 
 
 

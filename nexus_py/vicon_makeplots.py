@@ -16,18 +16,21 @@ def EMGPlot(EMG):
     for k in EMG.chIDs:
         plt.subplot(4, 4, k)
         chName = EMG.chNames[k-1]
-        tn = np.linspace(0, 100, 101)  # x grid
-        plt.plot(tn, EMG.normDataL[chName], '#DC143C')
+        # make grid from 0..100 with as many elements as EMG has samples
+        tn = np.linspace(0, 100, EMG.LGC1Len_s)
+        # plot in mV
+        plt.plot(tn, 1e3*EMG.filter(EMG.dataGC1L[chName],[10,300]), '#DC143C')
+        plt.ylim(-1e3*EMG.yScaleGC1L[chName], 1e3*EMG.yScaleGC1L[chName])
         plt.title(chName, fontsize=10)
-        plt.xlabel('Time (s)')
-        plt.ylabel('Voltage (V)')
+        plt.xlabel('% of gait cycle')
+        plt.ylabel('Voltage (mV)')
         plt.show()
 
 def KineticsPlot(TrialName, tn, KineticsAll):
     """ Plot all kinetics vars of interest.
     TrialName trial name
     tn x-axis for plot (0...100 for normalized plots)
-    KinematicsAll dict containing all kinematics variables
+    KineticsAll dict containing all kinetics variables
     """
     plt.figure(figsize=(14, 12))
     Rcolor='lawngreen'
