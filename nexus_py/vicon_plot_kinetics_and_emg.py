@@ -14,8 +14,13 @@ lrec                lham                ltib
                     lgas
 hip power           knee power          ankle power
 
-
-TODO: need to pick side, how?
+TODO:
+adjust subplot sizes (gridspec)
+EMG filtering (edge effects)
+EMG labeling
+add normal data
+verify (Polygon)
+pdf output
 """
 
 import matplotlib.pyplot as plt
@@ -65,7 +70,7 @@ emgchlabels = emgchsplot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
 # append 'Norm' + side to get the full variable name
 kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
-kinematicstitles = ['Hip flexion','Knee flexion','Angle dorsi/plantar']
+kinematicstitles = ['Hip flexion','Knee flexion','Ankle dorsi/plantar']
 # y labels
 kinematicslabels = ['Ext     ($^\circ$)      Flex',
                     'Ext     ($^\circ$)      Flex',
@@ -117,7 +122,7 @@ tn_emg = np.linspace(0, 100, gclen_emg)
 tn = np.linspace(0, 100, 101)
 
 plt.figure(figsize=(14,12))
-plt.suptitle(trialname + ", 1st gait cycle," + side,
+plt.suptitle(trialname + ", 1st gait cycle, " + side,
              fontsize=12, fontweight="bold")
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 
@@ -129,6 +134,7 @@ for k in range(len(kinematicsvarsplot)):
     plt.ylabel(kinematicslabels[k])
     plt.ylim(kinematicsymin[k], kinematicsymax[k])
     plt.axhline(0, color='black')  # zero line
+    plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
 
 for k in range(len(kineticsvarsplot)):
     plt.subplot(subplotsv, subplotsh, kineticspos[k])
@@ -138,6 +144,7 @@ for k in range(len(kineticsvarsplot)):
     plt.ylabel(kineticslabels[k])
     #plt.ylim(kineticsymin[k], kineticsymax[k])
     plt.axhline(0, color='black')  # zero line
+    plt.locator_params(axis = 'y', nbins = 6)
 
 for k in range(len(emgchsplot)):
     chnamepart = emgchsplot[k]
@@ -153,7 +160,8 @@ for k in range(len(emgchsplot)):
     plt.title('EMG:'+chname, fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel('Voltage (mV)')
-   
+    plt.locator_params(axis = 'y', nbins = 4)
+    
 plt.show()
 
 

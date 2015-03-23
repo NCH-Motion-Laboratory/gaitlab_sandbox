@@ -137,9 +137,10 @@ class vicon_gaitcycle:
         return yip
         
     def detect_side(self, vicon):
-        """ Try to detect whether the trial has L or R forceplate strike
-        (or both). Simple heuristic is to look at the forceplate data about
-        150 ms after foot strike. """
+        """ Try to detect whether the trial has L or R forceplate strike.
+        Simple heuristic is to look at the force data about
+        150 ms after each foot strike, when the other foot should have
+        lifted off. """
         delay_ms = 150
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
