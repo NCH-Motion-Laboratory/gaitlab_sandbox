@@ -17,77 +17,78 @@ class vicon_emg:
     """ Class for reading and processing EMG data from Nexus. """
 
     def __init__(self, vicon):
+        # default plotting scale in medians (channel-specific)
+        yscale_medians = 9
         # find EMG device and get some info
-        FrameRate = vicon.GetFrameRate()
-        FrameCount = vicon.GetFrameCount()
-        EMGDeviceName = 'Myon'
-        DeviceNames = vicon.GetDeviceNames()
-        if EMGDeviceName in DeviceNames:
-            EMGDeviceID = vicon.GetDeviceIDFromName(EMGDeviceName)
+        framerate = vicon.GetFrameRate()
+        framecount = vicon.GetFrameCount()
+        emgdevname = 'Myon'
+        devnames = vicon.GetDeviceNames()
+        if emgdevname in devnames:
+            emg_id = vicon.GetDeviceIDFromName(emgdevname)
         else:
            raise Exception('no EMG device found in trial')
-        # DType should be 'other', Drate is sampling rate
-        DName,DType,DRate,OutputIDs,_,_ = vicon.GetDeviceDetails(EMGDeviceID)
-        #
-        SamplesPerFrame = DRate / FrameRate
+        # DType should be 'other', drate is sampling rate
+        dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
+        samplesperframe = drate / framerate
         # Myon should only have 1 output; if zero, EMG was not found
-        assert(len(OutputIDs)==1)
-        OutputID = OutputIDs[0]
+        assert(len(outputids)==1)
+        outputid = outputids[0]
         # list of channel names and IDs
-        _,_,_,_,self.chNames,self.chIDs = vicon.GetDeviceOutputDetails(EMGDeviceID, OutputID)
-        for i in range(len(self.chNames)):
-            chName = self.chNames[i]    
-            assert(chName.find('Voltage') == 0), 'Not a voltage channel?'
-            chName = chName[chName.find('.')+1:]  # remove 'Voltage.'
-            self.chNames[i] = chName
+        _,_,_,_,self.chnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
+        for i in range(len(self.chnames)):
+            chname = self.chnames[i]    
+            assert(chname.find('Voltage') == 0), 'Not a voltage channel?'
+            chname = chname[chname.find('.')+1:]  # remove 'Voltage.'
+            self.chnames[i] = chname
         # read EMG channels into dict
         # also cut data to L/R gait cycles
         self.data = {}
-        self.yScaleGC1L = {}        
-        self.yScaleGC1R = {}            
+        self.yscalegc1l = {}        
+        self.yscalegc1r = {}            
         vgc1 = vicon_gaitcycle(vicon)
-        self.dataGC1L = {}
-        self.dataGC1R = {}
+        self.datagc1l = {}
+        self.datagc1r = {}
         # gait cycle beginning and end, samples
-        self.LGC1Start_s = int(round((vgc1.LGC1Start - 1) * SamplesPerFrame))
-        self.LGC1End_s = int(round((vgc1.LGC1End - 1) * SamplesPerFrame))
-        self.RGC1Start_s = int(round((vgc1.RGC1Start - 1) * SamplesPerFrame))
-        self.RGC1End_s = int(round((vgc1.RGC1End - 1) * SamplesPerFrame))
-        self.LGC1Len_s = self.LGC1End_s - self.LGC1Start_s
-        self.RGC1Len_s = self.RGC1End_s - self.RGC1Start_s
+        self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
+        self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
+        self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
+        self.rgc1end_s = int(round((vgc1.rgc1end - 1) * samplesperframe))
+        self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
+        self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
 
-        for chID in self.chIDs:
-            chData, chReady, chRate = vicon.GetDeviceChannel(EMGDeviceID, OutputID, chID)
-            assert(chRate == DRate), 'Channel has an unexpected sampling rate'
+        for chid in self.chids:
+            chdata, chready, chrate = vicon.GetDeviceChannel(emg_id, outputid, chid)
+            assert(chrate == drate), 'Channel has an unexpected sampling rate'
             # remove 'Voltage.' from beginning of dict key
-            chName = self.chNames[chID-1]
-            self.data[chName] = np.array(chData)
+            chname = self.chnames[chid-1]
+            self.data[chname] = np.array(chdata)
             # convert gait cycle times (in frames) to sample indices
             # cut to L/R gait cycles. no interpolation
-            self.dataGC1L[chName] = np.array(chData[self.LGC1Start_s:self.LGC1End_s])
-            self.dataGC1R[chName] = np.array(chData[self.RGC1Start_s:self.RGC1End_s])
+            self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])
+            self.datagc1r[chname] = np.array(chdata[self.rgc1start_s:self.rgc1end_s])
             # compute scales of EMG signal, to be used as y scaling of plots
-            self.yScaleGC1L[chName] = 3*np.median(np.abs(self.dataGC1L[chName]))
-            self.yScaleGC1R[chName] = 3*np.median(np.abs(self.dataGC1R[chName]))
+            self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
+            self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
           
-        self.dataLen = len(chData)
-        assert(self.dataLen == FrameCount * SamplesPerFrame)
-        self.sfRate = DRate        
+        self.datalen = len(chdata)
+        assert(self.datalen == framecount * samplesperframe)
+        self.sfrate = drate        
         # samples to time (s)
-        self.t = np.arange(self.dataLen)/self.sfRate
+        self.t = np.arange(self.datalen)/self.sfrate
         
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40] 
         Passband is given in Hz. """
-        passbandn = np.array(passband) / self.sfRate / 2
+        passbandn = np.array(passband) / self.sfrate / 2
         b, a = signal.butter(4, passbandn, 'bandpass')
         yfilt = signal.filtfilt(b, a, y)        
-        return yfilt
+        return y #DEBUG
 
     def findchs(self, str):
         """ Return list of channels whose names contain the given 
         string str. """
-        return [chn for chn in self.chNames if chn.find(str) > -1]
+        return [chn for chn in self.chnames if chn.find(str) > -1]
         
 
 class vicon_gaitcycle:
@@ -95,23 +96,23 @@ class vicon_gaitcycle:
     vars to 0..100% of gait cycle. """
     
     def __init__(self,vicon):
-        SubjectName = vicon.GetSubjectNames()[0]
+        subjectname = vicon.GetSubjectNames()[0]
         # figure out gait cycle
         # frames where foot strikes occur (1-frame discrepancies with Nexus?)
-        LFStrike = vicon.GetEvents(SubjectName, "Left", "Foot Strike")[0]
-        RFStrike = vicon.GetEvents(SubjectName, "Right", "Foot Strike")[0]
+        self.lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
+        self.rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
         # 2 strikes is one complete gait cycle, needed for analysis
-        lenLFS = len(LFStrike)
-        lenRFS = len(RFStrike)
+        lenLFS = len(self.lfstrikes)
+        lenRFS = len(self.rfstrikes)
         if lenLFS and lenRFS < 2:
             raise Exception("Could not detect complete L/R gait cycles")
         # extract times for 1st gait cycles, L and R
-        self.LGC1Start=min(LFStrike[0:2])
-        self.LGC1End=max(LFStrike[0:2])
-        self.LGC1Len=self.LGC1End-self.LGC1Start
-        self.RGC1Start=min(RFStrike[0:2])
-        self.RGC1End=max(RFStrike[0:2])
-        self.RGC1Len=self.RGC1End-self.RGC1Start
+        self.lgc1start = min(self.lfstrikes[0:2])
+        self.lgc1end = max(self.lfstrikes[0:2])
+        self.lgc1len = self.lgc1end-self.lgc1start
+        self.rgc1start = min(self.rfstrikes[0:2])
+        self.rgc1end = max(self.rfstrikes[0:2])
+        self.rgc1len = self.rgc1end-self.rgc1start
         self.tn = np.linspace(0, 100, 101)
         
     def cut(self, y):
@@ -121,19 +122,63 @@ class vicon_gaitcycle:
         """ Interpolate any variable y to left or right gait cycle.
         New x axis will be 0..100, and data is taken from the specified 
         gait cycle (side = L or R). """
-        LGC1t = np.linspace(0, 100, self.LGC1Len)
-        RGC1t = np.linspace(0, 100, self.RGC1Len)
+        lgc1t = np.linspace(0, 100, self.lgc1len)
+        rgc1t = np.linspace(0, 100, self.rgc1len)
         if side.upper() == 'R':  # norm to right side
-            GC1t = RGC1t
-            tStart = self.RGC1Start
-            tEnd = self.RGC1End
+            gc1t = rgc1t
+            tstart = self.rgc1start
+            tend = self.rgc1end
         else:  # to left side
-            GC1t = LGC1t
-            tStart = self.LGC1Start
-            tEnd = self.LGC1End
+            gc1t = lgc1t
+            tstart = self.lgc1start
+            tend = self.lgc1end
         # interpolate variable to gait cycle
-        yip = np.interp(self.tn, GC1t, y[tStart:tEnd])
+        yip = np.interp(self.tn, gc1t, y[tstart:tend])
         return yip
+        
+    def detect_side(self, vicon):
+        """ Try to detect whether the trial has L or R forceplate strike
+        (or both). Simple heuristic is to look at the forceplate data about
+        150 ms after foot strike. """
+        delay_ms = 150
+        framerate = vicon.GetFrameRate()
+        framecount = vicon.GetFrameCount()
+        fpdevicename = 'Forceplate'
+        devicenames = vicon.GetDeviceNames()
+        if fpdevicename in devicenames:
+            fpid = vicon.GetDeviceIDFromName(fpdevicename)
+        else:
+           raise Exception('No forceplate device found in trial!')
+        # DType should be 'ForcePlate', drate is sampling rate
+        dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
+        samplesperframe = drate / framerate  # fp samples per Vicon frame
+        assert(len(outputids)==3)
+        # outputs should be force, moment, cop. select force
+        outputid = outputids[0]
+        # get list of channel names and IDs
+        _,_,_,_,chnames,chids = vicon.GetDeviceOutputDetails(fpid, outputid)
+        # read x,y,z forces
+        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fx')
+        forcex, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fy')
+        forcey, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fz')
+        forcez, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        forceall = np.array([forcex,forcey,forcez])
+        forcetot = np.sqrt(sum(forceall**2,1))
+        # get forces during foot strike events        
+        lfsind = np.array(self.lfstrikes) * samplesperframe
+        rfsind = np.array(self.rfstrikes) * samplesperframe
+        delay = int(delay_ms/1000. * drate)
+        lfsforces = forcetot[lfsind.astype(int) + delay]
+        rfsforces = forcetot[rfsind.astype(int) + delay]
+        print('Total force', delay_ms, 'ms after foot strikes:')
+        print('Left: ', lfsforces)
+        print('Right: ', rfsforces)
+        if max(lfsforces) > max(rfsforces):
+            return 'L'
+        else:
+            return 'R'
 
 
 class vicon_pig_outputs:

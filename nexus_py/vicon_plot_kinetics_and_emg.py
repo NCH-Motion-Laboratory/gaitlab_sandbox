@@ -41,10 +41,13 @@ pigvars = vicon.GetModelOutputNames(subjectname)
 # trace colors
 rcolor='lawngreen'
 lcolor='red'
-# define side (L/R). This should be done automatically, or user-specified
-# (maybe cmd line argument?)
-# autodetection: look for forceplate output at time of gait events?
-side = 'R'
+
+# try to detect which foot hit the forceplate
+vgc = vicon_getdata.vicon_gaitcycle(vicon)
+side = vgc.detect_side(vicon)
+# or specify manually:
+#side = 'R'
+
 # plot layout
 subplotsh = 3
 subplotsv = 7
@@ -94,34 +97,34 @@ kinematicspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinematics')
 kineticspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinetics')
 emg = vicon_getdata.vicon_emg(vicon)
 
-# start plotting
 if side == 'L':
     tracecolor = lcolor
 else:
     tracecolor = rcolor
 # EMG variables
 if side == 'L':
-    gclen_emg = emg.LGC1Len_s
-    emgdata = emg.dataGC1L
-    yscale = emg.yScaleGC1L
+    gclen_emg = emg.lgc1len_s
+    emgdata = emg.datagc1l
+    yscale = emg.yscalegc1l
 else:
-    gclen_emg = emg.RGC1Len_s
-    emgdata = emg.dataGC1R
-    yscale = emg.yScaleGC1R
+    gclen_emg = emg.rgc1len_s
+    emgdata = emg.datagc1r
+    yscale = emg.yscalegc1r
 
-# make grid from 0..100 with as many elements as EMG has samples
+# x grid from 0..100 with as many elements as EMG has samples
 tn_emg = np.linspace(0, 100, gclen_emg)
-# for kinematics / kinetics
+# for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
 
 plt.figure(figsize=(14,12))
-plt.suptitle("Kinematics-EMG plot\n" + trialname + " (1st gait cycle)", fontsize=12, fontweight="bold")
+plt.suptitle(trialname + ", 1st gait cycle," + side,
+             fontsize=12, fontweight="bold")
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 
 for k in range(len(kinematicsvarsplot)):
     plt.subplot(subplotsv, subplotsh, kinematicspos[k])
     plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
-    plt.title(kinematicstitles[k])
+    plt.title(kinematicstitles[k], fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel(kinematicslabels[k])
     plt.ylim(kinematicsymin[k], kinematicsymax[k])
@@ -130,7 +133,7 @@ for k in range(len(kinematicsvarsplot)):
 for k in range(len(kineticsvarsplot)):
     plt.subplot(subplotsv, subplotsh, kineticspos[k])
     plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
-    plt.title(kineticstitles[k])
+    plt.title(kineticstitles[k], fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel(kineticslabels[k])
     #plt.ylim(kineticsymin[k], kineticsymax[k])
@@ -147,7 +150,7 @@ for k in range(len(emgchsplot)):
     plt.subplot(subplotsv, subplotsh, subplotpos)
     plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), '#DC143C')
     plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
-    plt.title(chname, fontsize=10)
+    plt.title('EMG:'+chname, fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel('Voltage (mV)')
    
