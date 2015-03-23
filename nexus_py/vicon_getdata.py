@@ -3,6 +3,7 @@
 Created on Tue Mar 17 14:41:31 2015
 
 Utility classes for reading data from Vicon Nexus.
+TODO: fix naming conventions (vars lower_case, class names CamelCase)
 
 @author: Jussi
 """
@@ -62,7 +63,7 @@ class vicon_emg:
             chName = self.chNames[chID-1]
             self.data[chName] = np.array(chData)
             # convert gait cycle times (in frames) to sample indices
-            # cut to L/R gait cycles
+            # cut to L/R gait cycles. no interpolation
             self.dataGC1L[chName] = np.array(chData[self.LGC1Start_s:self.LGC1End_s])
             self.dataGC1R[chName] = np.array(chData[self.RGC1Start_s:self.RGC1End_s])
             # compute scales of EMG signal, to be used as y scaling of plots
@@ -82,6 +83,11 @@ class vicon_emg:
         b, a = signal.butter(4, passbandn, 'bandpass')
         yfilt = signal.filtfilt(b, a, y)        
         return yfilt
+
+    def findchs(self, str):
+        """ Return list of channels whose names contain the given 
+        string str. """
+        return [chn for chn in self.chNames if chn.find(str) > -1]
         
 
 class vicon_gaitcycle:
@@ -131,16 +137,43 @@ class vicon_gaitcycle:
 
 
 class vicon_pig_outputs:
-    """ Reads given plug-in gait output variables. Variable names starting
-    with 'R' and'L' are normalized into left and right gait cycles,
-    respectively."""
-    def __init__(self, vicon, VarList):
+    """ Reads given plug-in gait output variables (in varlist). Variable 
+    names starting with 'R' and'L' are normalized into left and right 
+    gait cycles, respectively. Can also use special keywords 'PiGLBKinetics'
+    and 'PiGLBKinematics' for varlist, to get predefined variables. """
+    def __init__(self, vicon, varlist):
+        if varlist == 'PiGLBKinetics':
+            varlist = ['LHipMoment',
+              'LKneeMoment',
+              'LAnkleMoment',
+              'LHipPower',
+              'LKneePower',
+              'LAnklePower',
+              'RHipMoment',
+              'RKneeMoment',
+              'RAnkleMoment',
+              'RHipPower',
+              'RKneePower',
+              'RAnklePower']
+        if varlist == 'PiGLBKinematics':
+            varlist = ['LHipAngles',
+                     'LKneeAngles',
+                     'LAbsAnkleAngle',
+                     'LAnkleAngles',
+                     'LPelvisAngles',
+                     'LFootProgressAngles',
+                     'RHipAngles',
+                     'RKneeAngles',
+                     'RAbsAnkleAngle',
+                     'RAnkleAngles',
+                     'RPelvisAngles',
+                     'RFootProgressAngles']
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
         vgc1 = vicon_gaitcycle(vicon)
          # read all kinematics vars into dict and normalize into gait cycle 1
         self.Vars = {}
-        for Var in VarList:
+        for Var in varlist:
             # not sure what the BoolVals are, discard for now
             NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
             self.Vars[Var] = np.array(NumVals)
