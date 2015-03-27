@@ -21,7 +21,6 @@ EMG filtering (edge effects)
 EMG labeling
 add normal data for kinematics/kinetics (normal.gcd)
 verify (Polygon)
-pdf output
 """
 
 
@@ -44,6 +43,7 @@ subjectname = vicon.GetSubjectNames()[0]
 sessionpath = vicon.GetTrialName()[0]
 trialname = vicon.GetTrialName()[1]
 pigvars = vicon.GetModelOutputNames(subjectname)
+pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
 
 # some parameters
 # trace colors
@@ -65,7 +65,8 @@ emgchsplot = ['LHam','LRec','LGas','LGlut','LVas','LSol','LRec','LHam','LTib',
               'LGas']
 if side == 'R':
     emgchsplot = ['R'+str[1:] for str in emgchsplot]
-emgchpos = [4,5,6,7,8,9,13,14,15,17]
+# positions on subplot grid
+emgchpos = [(2,0),(2,1),(2,2),(3,0),(3,1),(3,2),(6,0),(6,1),(6,2),(7,1)]
 # can define more elaborate labels later, if needed
 emgchlabels = emgchsplot
 # EMG normal bars: expected ranges of normal EMG activation
@@ -78,6 +79,7 @@ emgbar_inds = {'Gas': [[16,50]],
                'Sol': [[10,54]],
                'Tib': [[0,12],[56,100]],
                'Vas': [[0,24],[96,100]]}
+emg_ylabel = 'mV'
      
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
@@ -89,7 +91,7 @@ kinematicslabels = ['Ext     ($^\circ$)      Flex',
                     'Ext     ($^\circ$)      Flex',
                     'Pla     ($^\circ$)      Dor']
 # subplot positions
-kinematicspos = [1,2,3]
+kinematicspos = [(0,0),(0,1),(0,2)]
 # y scaling
 kinematicsymin = [-20,-15,-30]
 kinematicsymax = [50,75,30]
@@ -107,7 +109,7 @@ kineticslabels = ['Int flex    Nm/kg    Int ext','Int flex    Nm/kg    Int ext',
                   'Int dors    Nm/kg    Int plan','Abs    W/kg    Gen',
                   'Abs    W/kg    Gen','Abs    W/kg    Gen']
 # subplot positions
-kineticspos = [10,11,12,19,20,21]                  
+kineticspos = [(4,0),(4,1),(4,2),(8,0),(8,1),(8,2)]
 xlabel = ''
                     
  # read data
@@ -136,16 +138,17 @@ tn = np.linspace(0, 100, 101)
 # grid for EMG normal bar data: 0,2,4...100
 tn_emgbar = np.array(range(0, 101, 2))
 
-pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
+
 with PdfPages(pdf_name) as pdf:
     
     plt.figure(figsize=(14,12))
-    plt.suptitle(trialname + ", 1st gait cycle, " + side,
-                 fontsize=12, fontweight="bold")
-    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    # title will not work with tight_layout - leave out for now
+    #plt.suptitle(trialname + ", 1st gait cycle, " + side, fontsize=12, fontweight="bold")
+    #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    
     
     for k in range(len(kinematicsvarsplot)):
-        plt.subplot(subplotsv, subplotsh, kinematicspos[k])
+        plt.subplot2grid((10,3), kinematicspos[k], rowspan=2)
         plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
         plt.title(kinematicstitles[k], fontsize=10)
         plt.xlabel(xlabel)
@@ -155,7 +158,7 @@ with PdfPages(pdf_name) as pdf:
         plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
     
     for k in range(len(kineticsvarsplot)):
-        plt.subplot(subplotsv, subplotsh, kineticspos[k])
+        plt.subplot2grid((10,3), kineticspos[k], rowspan=2)
         plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
         plt.title(kineticstitles[k], fontsize=10)
         plt.xlabel(xlabel)
@@ -171,8 +174,7 @@ with PdfPages(pdf_name) as pdf:
         assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
         chname = chs[0]  # full name, e.g. 'LHam7'
         # plot in mV
-        subplotpos = emgchpos[k]
-        plt.subplot(subplotsv, subplotsh, subplotpos)
+        plt.subplot2grid((10,3), emgchpos[k])
         plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
         # plot EMG normal bars    
         emgbar_ind = emgbar_inds[chnamepart[1:]]
@@ -183,9 +185,10 @@ with PdfPages(pdf_name) as pdf:
         plt.xlim(0,100)
         plt.title('EMG:'+chname, fontsize=10)
         plt.xlabel(xlabel)
-        plt.ylabel('Voltage (mV)')
+        plt.ylabel(emg_ylabel)
         plt.locator_params(axis = 'y', nbins = 4)
-        
+
+    plt.tight_layout(h_pad=.5)        
     plt.show()
     pdf.savefig()
     
