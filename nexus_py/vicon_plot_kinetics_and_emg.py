@@ -16,7 +16,6 @@ hip power           knee power          ankle power
 
 
 TODO:
-adjust subplot sizes (gridspec): emg too small?
 EMG filtering (edge effects)
 EMG labeling
 add normal data for kinematics/kinetics (normal.gcd)
@@ -30,6 +29,7 @@ import vicon_getdata
 import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
+from read_pig_normaldata import pig_normaldata
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -46,10 +46,17 @@ trialname = vicon.GetTrialName()[1]
 pigvars = vicon.GetModelOutputNames(subjectname)
 pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
 
-# some parameters
+
+# plotting parameters
 # trace colors
 rcolor='lawngreen'
 lcolor='red'
+# label font size
+fsize_labels=10
+# for kinematics / kinetics normal data
+normals_alpha = .3
+normals_color = 'gray'
+
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.vicon_gaitcycle(vicon)
@@ -57,11 +64,7 @@ side = vgc.detect_side(vicon)
 # or specify manually:
 #side = 'R'
 
-# plot layout
-subplotsh = 3
-subplotsv = 7
-# label font size
-fsize_labels=10
+
 
 # EMG channels to plot, and corresponding subplot positions
 emgchsplot = ['LHam','LRec','LGas','LGlut','LVas','LSol','LRec','LHam','LTib',
@@ -86,6 +89,8 @@ emg_ylabel = 'mV'
      
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
+# corresponding normal variables as specified in normal.gcd
+kinematicsnormals = ['HipFlexExt','KneeFlexExt','DorsiPlanFlex']
 # append 'Norm' + side to get the full variable name
 kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
 kinematicstitles = ['Hip flexion','Knee flexion','Ankle dorsi/plantar']
@@ -102,6 +107,9 @@ kinematicsymax = [50,75,30]
 # kinetics channels to plot
 kineticsvarsplot_ = ['HipMomentX','KneeMomentX','AnkleMomentX','HipPowerZ',
                      'KneePowerZ','AnklePowerZ']
+# corresponding normal variables as specified in normal.gcd
+kineticsnormals = ['HipFlexExtMoment','KneeFlexExtMoment','DorsiPlanFlexMoment',
+                    'HipPower','KneePower','AnklePower']
 # append 'Norm' + side to get the full variable name
 kineticsvarsplot = ['Norm'+side+str for str in kineticsvarsplot_]
 kineticstitles = ['Hip flex/ext moment','Knee flex/ext moment',
@@ -138,8 +146,8 @@ else:
 tn_emg = np.linspace(0, 100, gclen_emg)
 # for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
-# grid for EMG normal bar data: 0,2,4...100
-tn_emgbar = np.array(range(0, 101, 2))
+# grid for normal data: 0,2,4...100.
+tn_2 = np.array(range(0, 101, 2))
 
 with PdfPages(pdf_name) as pdf:
     
@@ -152,6 +160,10 @@ with PdfPages(pdf_name) as pdf:
     for k in range(len(kinematicsvarsplot)):
         plt.subplot(gs[kinematicspos[k]])
         plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
+        # get normal data and std
+        nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
+        nstd = np.array(pig_normaldata[kinematicsnormals[k]])[:,1]
+        plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
         plt.title(kinematicstitles[k], fontsize=fsize_labels)
         plt.xlabel(xlabel,fontsize=fsize_labels)
         plt.ylabel(kinematicslabels[k], fontsize=fsize_labels)
@@ -162,6 +174,9 @@ with PdfPages(pdf_name) as pdf:
     for k in range(len(kineticsvarsplot)):
         plt.subplot(gs[kineticspos[k]])
         plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
+        nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
+        nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
+        plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
         plt.title(kineticstitles[k], fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(kineticslabels[k], fontsize=fsize_labels)
