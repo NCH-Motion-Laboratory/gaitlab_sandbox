@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Make combined kinetics-EMG plot (idea from Leuven)
+Make combined kinetics-EMG report (idea from Leuven)
 Uses single trial of data from Vicon Nexus.
-Save as pdf.
+Save report as pdf.
 @author: Jussi
 
 plot layout:
@@ -14,14 +14,17 @@ lrec                lham                ltib
                     lgas
 hip power           knee power          ankle power
 
+
 TODO:
 adjust subplot sizes (gridspec)
+EMG normal data bars (see PGemgbar.gcd)
 EMG filtering (edge effects)
 EMG labeling
-add normal data
+add normal data for kinematics/kinetics (normal.gcd)
 verify (Polygon)
 pdf output
 """
+
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -65,7 +68,17 @@ if side == 'R':
 emgchpos = [4,5,6,7,8,9,13,14,15,17]
 # can define more elaborate labels later, if needed
 emgchlabels = emgchsplot
-
+# EMG normal bars: expected ranges of normal EMG activation
+# see emg_normal_bars.py
+emgbar_inds = {'Gas': [[16,50]],
+               'Glut': [[0,42],[96,100]],
+               'Ham': [[0,2],[92,100]],
+               'Per': [[4,54]],
+               'Rec': [[0,14],[56,100]],
+               'Sol': [[10,54]],
+               'Tib': [[0,12],[56,100]],
+               'Vas': [[0,24],[96,100]]}
+     
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
 # append 'Norm' + side to get the full variable name
@@ -120,6 +133,9 @@ else:
 tn_emg = np.linspace(0, 100, gclen_emg)
 # for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
+# grid for EMG normal bar data: 0,2,4...100
+tn_emgbar = np.array(range(0, 101, 2))
+
 
 plt.figure(figsize=(14,12))
 plt.suptitle(trialname + ", 1st gait cycle, " + side,
@@ -148,15 +164,22 @@ for k in range(len(kineticsvarsplot)):
 
 for k in range(len(emgchsplot)):
     chnamepart = emgchsplot[k]
+    #chbar = emgbars[chnamepart[1:]]  # need a function to convert bar to ranges
     chlabel = emgchlabels[k]
     chs = emg.findchs(chnamepart)
-    assert(len(chs) == 1)
+    assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
     chname = chs[0]  # full name, e.g. 'LHam7'
     # plot in mV
     subplotpos = emgchpos[k]
     plt.subplot(subplotsv, subplotsh, subplotpos)
-    plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), '#DC143C')
+    plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
+    # plot EMG normal bars    
+    emgbar_ind = emgbar_inds[chnamepart[1:]]
+    for k in range(len(emgbar_ind)):
+        inds = emgbar_ind[k]
+        plt.axvspan(inds[0], inds[1], alpha=0.3, color='red')    
     plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
+    plt.xlim(0,100)
     plt.title('EMG:'+chname, fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel('Voltage (mV)')
