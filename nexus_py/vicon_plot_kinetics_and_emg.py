@@ -17,7 +17,6 @@ hip power           knee power          ankle power
 
 TODO:
 adjust subplot sizes (gridspec)
-EMG normal data bars (see PGemgbar.gcd)
 EMG filtering (edge effects)
 EMG labeling
 add normal data for kinematics/kinetics (normal.gcd)
@@ -30,6 +29,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
 import sys
+from matplotlib.backends.backend_pdf import PdfPages
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -136,58 +136,59 @@ tn = np.linspace(0, 100, 101)
 # grid for EMG normal bar data: 0,2,4...100
 tn_emgbar = np.array(range(0, 101, 2))
 
-
-plt.figure(figsize=(14,12))
-plt.suptitle(trialname + ", 1st gait cycle, " + side,
-             fontsize=12, fontweight="bold")
-plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
-
-for k in range(len(kinematicsvarsplot)):
-    plt.subplot(subplotsv, subplotsh, kinematicspos[k])
-    plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
-    plt.title(kinematicstitles[k], fontsize=10)
-    plt.xlabel(xlabel)
-    plt.ylabel(kinematicslabels[k])
-    plt.ylim(kinematicsymin[k], kinematicsymax[k])
-    plt.axhline(0, color='black')  # zero line
-    plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
-
-for k in range(len(kineticsvarsplot)):
-    plt.subplot(subplotsv, subplotsh, kineticspos[k])
-    plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
-    plt.title(kineticstitles[k], fontsize=10)
-    plt.xlabel(xlabel)
-    plt.ylabel(kineticslabels[k])
-    #plt.ylim(kineticsymin[k], kineticsymax[k])
-    plt.axhline(0, color='black')  # zero line
-    plt.locator_params(axis = 'y', nbins = 6)
-
-for k in range(len(emgchsplot)):
-    chnamepart = emgchsplot[k]
-    #chbar = emgbars[chnamepart[1:]]  # need a function to convert bar to ranges
-    chlabel = emgchlabels[k]
-    chs = emg.findchs(chnamepart)
-    assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
-    chname = chs[0]  # full name, e.g. 'LHam7'
-    # plot in mV
-    subplotpos = emgchpos[k]
-    plt.subplot(subplotsv, subplotsh, subplotpos)
-    plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
-    # plot EMG normal bars    
-    emgbar_ind = emgbar_inds[chnamepart[1:]]
-    for k in range(len(emgbar_ind)):
-        inds = emgbar_ind[k]
-        plt.axvspan(inds[0], inds[1], alpha=0.3, color='red')    
-    plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
-    plt.xlim(0,100)
-    plt.title('EMG:'+chname, fontsize=10)
-    plt.xlabel(xlabel)
-    plt.ylabel('Voltage (mV)')
-    plt.locator_params(axis = 'y', nbins = 4)
+pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
+with PdfPages(pdf_name) as pdf:
     
-plt.show()
-
-
+    plt.figure(figsize=(14,12))
+    plt.suptitle(trialname + ", 1st gait cycle, " + side,
+                 fontsize=12, fontweight="bold")
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+    
+    for k in range(len(kinematicsvarsplot)):
+        plt.subplot(subplotsv, subplotsh, kinematicspos[k])
+        plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
+        plt.title(kinematicstitles[k], fontsize=10)
+        plt.xlabel(xlabel)
+        plt.ylabel(kinematicslabels[k])
+        plt.ylim(kinematicsymin[k], kinematicsymax[k])
+        plt.axhline(0, color='black')  # zero line
+        plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
+    
+    for k in range(len(kineticsvarsplot)):
+        plt.subplot(subplotsv, subplotsh, kineticspos[k])
+        plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
+        plt.title(kineticstitles[k], fontsize=10)
+        plt.xlabel(xlabel)
+        plt.ylabel(kineticslabels[k])
+        #plt.ylim(kineticsymin[k], kineticsymax[k])
+        plt.axhline(0, color='black')  # zero line
+        plt.locator_params(axis = 'y', nbins = 6)
+    
+    for k in range(len(emgchsplot)):
+        chnamepart = emgchsplot[k]
+        chlabel = emgchlabels[k]
+        chs = emg.findchs(chnamepart)
+        assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
+        chname = chs[0]  # full name, e.g. 'LHam7'
+        # plot in mV
+        subplotpos = emgchpos[k]
+        plt.subplot(subplotsv, subplotsh, subplotpos)
+        plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
+        # plot EMG normal bars    
+        emgbar_ind = emgbar_inds[chnamepart[1:]]
+        for k in range(len(emgbar_ind)):
+            inds = emgbar_ind[k]
+            plt.axvspan(inds[0], inds[1], alpha=0.3, color='red')    
+        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
+        plt.xlim(0,100)
+        plt.title('EMG:'+chname, fontsize=10)
+        plt.xlabel(xlabel)
+        plt.ylabel('Voltage (mV)')
+        plt.locator_params(axis = 'y', nbins = 4)
+        
+    plt.show()
+    pdf.savefig()
+    
 
 
 
