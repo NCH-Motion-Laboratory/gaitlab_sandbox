@@ -18,7 +18,6 @@ hip power           knee power          ankle power
 TODO:
 EMG filtering (edge effects)
 EMG labeling
-add normal data for kinematics/kinetics (normal.gcd)
 verify (Polygon)
 """
 
@@ -44,19 +43,6 @@ subjectname = vicon.GetSubjectNames()[0]
 sessionpath = vicon.GetTrialName()[0]
 trialname = vicon.GetTrialName()[1]
 pigvars = vicon.GetModelOutputNames(subjectname)
-pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
-
-
-# plotting parameters
-# trace colors
-rcolor='lawngreen'
-lcolor='red'
-# label font size
-fsize_labels=10
-# for kinematics / kinetics normal data
-normals_alpha = .3
-normals_color = 'gray'
-
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.vicon_gaitcycle(vicon)
@@ -64,6 +50,20 @@ side = vgc.detect_side(vicon)
 # or specify manually:
 #side = 'R'
 
+# plotting parameters
+# trace colors
+rcolor='lawngreen'
+lcolor='red'
+# label font size
+fsize_labels=10
+# for plotting kinematics / kinetics normal data
+normals_alpha = .3
+normals_color = 'gray'
+# main title
+maintitle = 'Kinematics-EMG plot for trial '+trialname+' ('+side+')'
+emg_ylabel = 'mV'
+# output filename
+pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
 
 
 # EMG channels to plot, and corresponding subplot positions
@@ -85,7 +85,7 @@ emgbar_inds = {'Gas': [[16,50]],
                'Sol': [[10,54]],
                'Tib': [[0,12],[56,100]],
                'Vas': [[0,24],[96,100]]}
-emg_ylabel = 'mV'
+
      
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
@@ -146,15 +146,14 @@ else:
 tn_emg = np.linspace(0, 100, gclen_emg)
 # for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
-# grid for normal data: 0,2,4...100.
+# for normal data: 0,2,4...100.
 tn_2 = np.array(range(0, 101, 2))
 
 with PdfPages(pdf_name) as pdf:
     
     fig = plt.figure(figsize=(14,12))
     gs = gridspec.GridSpec(7, 3, height_ratios = [3,2,2,3,2,2,3])
-    # title will not work with tight_layout - leave out for now
-    plt.suptitle('Kinematics-EMG\n'+trialname + ", 1st gait cycle, " + side, fontsize=12, fontweight="bold")
+    plt.suptitle(maintitle, fontsize=12, fontweight="bold")
     #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
     
     for k in range(len(kinematicsvarsplot)):
@@ -205,6 +204,7 @@ with PdfPages(pdf_name) as pdf:
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
 
+    # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
     plt.show()
     pdf.savefig()
