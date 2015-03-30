@@ -18,6 +18,7 @@ hip power           knee power          ankle power
 TODO:
 EMG filtering (edge effects)
 EMG labeling
+move remaining plot definitions to parameters
 verify (Polygon)
 """
 
@@ -51,7 +52,14 @@ side = vgc.detect_side(vicon)
 #side = 'R'
 
 # plotting parameters
-# trace colors
+# figure size
+totalfigsize = (14,12)
+# grid size
+gridv = 7
+gridh = 3
+# relative heights of different plots
+plotheightratios = [3,2,2,3,2,2,3]
+# trace colors, right and left
 rcolor='lawngreen'
 lcolor='red'
 # label font size
@@ -59,6 +67,9 @@ fsize_labels=10
 # for plotting kinematics / kinetics normal data
 normals_alpha = .3
 normals_color = 'gray'
+# emg normals
+emg_normals_alpha = .3
+emg_normals_color = 'red'
 # main title
 maintitle = 'Kinematics-EMG plot for trial '+trialname+' ('+side+')'
 emg_ylabel = 'mV'
@@ -151,8 +162,8 @@ tn_2 = np.array(range(0, 101, 2))
 
 with PdfPages(pdf_name) as pdf:
     
-    fig = plt.figure(figsize=(14,12))
-    gs = gridspec.GridSpec(7, 3, height_ratios = [3,2,2,3,2,2,3])
+    fig = plt.figure(figsize=totalfigsize)
+    gs = gridspec.GridSpec(gridv, gridh, height_ratios = plotheightratios)
     plt.suptitle(maintitle, fontsize=12, fontweight="bold")
     #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
     
@@ -196,7 +207,7 @@ with PdfPages(pdf_name) as pdf:
         emgbar_ind = emgbar_inds[chnamepart[1:]]
         for k in range(len(emgbar_ind)):
             inds = emgbar_ind[k]
-            plt.axvspan(inds[0], inds[1], alpha=0.3, color='red')    
+            plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
         plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
         plt.xlim(0,100)
         plt.title('EMG:'+chname, fontsize=10)
@@ -207,6 +218,7 @@ with PdfPages(pdf_name) as pdf:
     # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
     plt.show()
+    print("Writing "+pdf_name)
     pdf.savefig()
     
 
