@@ -142,67 +142,63 @@ tn_emg = np.linspace(0, 100, gclen_emg)
 tn = np.linspace(0, 100, 101)
 # for normal data: 0,2,4...100.
 tn_2 = np.array(range(0, 101, 2))
+    
+fig = plt.figure(figsize=totalfigsize)
+gs = gridspec.GridSpec(gridv, gridh, height_ratios = plotheightratios)
+plt.suptitle(maintitle, fontsize=12, fontweight="bold")
+#plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 
-with PdfPages(pdf_name) as pdf:
-    
-    fig = plt.figure(figsize=totalfigsize)
-    gs = gridspec.GridSpec(gridv, gridh, height_ratios = plotheightratios)
-    plt.suptitle(maintitle, fontsize=12, fontweight="bold")
-    #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
-    
-    for k in range(len(kinematicsvarsplot)):
-        plt.subplot(gs[kinematicspos[k]])
-        plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
-        # get normal data and std
-        nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
-        nstd = np.array(pig_normaldata[kinematicsnormals[k]])[:,1]
-        plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
-        plt.title(kinematicstitles[k], fontsize=fsize_labels)
-        plt.xlabel(xlabel,fontsize=fsize_labels)
-        plt.ylabel(kinematicslabels[k], fontsize=fsize_labels)
-        plt.ylim(kinematicsymin[k], kinematicsymax[k])
-        plt.axhline(0, color='black')  # zero line
-        plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
-    
-    for k in range(len(kineticsvarsplot)):
-        plt.subplot(gs[kineticspos[k]])
-        plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
-        nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
-        nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
-        plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
-        plt.title(kineticstitles[k], fontsize=10)
-        plt.xlabel(xlabel, fontsize=fsize_labels)
-        plt.ylabel(kineticslabels[k], fontsize=fsize_labels)
-        #plt.ylim(kineticsymin[k], kineticsymax[k])
-        plt.axhline(0, color='black')  # zero line
-        plt.locator_params(axis = 'y', nbins = 6)
-    
-    for k in range(len(emgchsplot)):
-        chnamepart = emgchsplot[k]
-        chlabel = emgchlabels[k]
-        chs = emg.findchs(chnamepart)
-        assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
-        chname = chs[0]  # full name, e.g. 'LHam7'
-        # plot in mV
-        plt.subplot(gs[emgchpos[k]])
-        plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
-        # plot EMG normal bars    
-        emgbar_ind = emgbar_inds[chnamepart[1:]]
-        for k in range(len(emgbar_ind)):
-            inds = emgbar_ind[k]
-            plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
-        plt.xlim(0,100)
-        plt.title('EMG:'+chname, fontsize=10)
-        plt.xlabel(xlabel, fontsize=fsize_labels)
-        plt.ylabel(emg_ylabel, fontsize=fsize_labels)
-        plt.locator_params(axis = 'y', nbins = 4)
+for k in range(len(kinematicsvarsplot)):
+    plt.subplot(gs[kinematicspos[k]])
+    plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
+    # get normal data and std
+    nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
+    nstd = np.array(pig_normaldata[kinematicsnormals[k]])[:,1]
+    plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
+    plt.title(kinematicstitles[k], fontsize=fsize_labels)
+    plt.xlabel(xlabel,fontsize=fsize_labels)
+    plt.ylabel(kinematicslabels[k], fontsize=fsize_labels)
+    plt.ylim(kinematicsymin[k], kinematicsymax[k])
+    plt.axhline(0, color='black')  # zero line
+    plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
 
-    # fix plot spacing, restrict to below title
-    gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
-    plt.show()
-    print("Writing "+pdf_name)
-    pdf.savefig()
+for k in range(len(kineticsvarsplot)):
+    plt.subplot(gs[kineticspos[k]])
+    plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
+    nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
+    nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
+    plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
+    plt.title(kineticstitles[k], fontsize=10)
+    plt.xlabel(xlabel, fontsize=fsize_labels)
+    plt.ylabel(kineticslabels[k], fontsize=fsize_labels)
+    #plt.ylim(kineticsymin[k], kineticsymax[k])
+    plt.axhline(0, color='black')  # zero line
+    plt.locator_params(axis = 'y', nbins = 6)
+
+for k in range(len(emgchsplot)):
+    chnamepart = emgchsplot[k]
+    chlabel = emgchlabels[k]
+    chs = emg.findchs(chnamepart)
+    assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
+    chname = chs[0]  # full name, e.g. 'LHam7'
+    # plot in mV
+    plt.subplot(gs[emgchpos[k]])
+    plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
+    # plot EMG normal bars    
+    emgbar_ind = emgbar_inds[chnamepart[1:]]
+    for k in range(len(emgbar_ind)):
+        inds = emgbar_ind[k]
+        plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
+    plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
+    plt.xlim(0,100)
+    plt.title('EMG:'+chname, fontsize=10)
+    plt.xlabel(xlabel, fontsize=fsize_labels)
+    plt.ylabel(emg_ylabel, fontsize=fsize_labels)
+    plt.locator_params(axis = 'y', nbins = 4)
+
+# fix plot spacing, restrict to below title
+gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
+plt.show()
     
 
 
