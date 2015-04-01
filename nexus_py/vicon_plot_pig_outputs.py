@@ -2,6 +2,10 @@
 """
 Check Plug-in Gait outputs from Nexus.
 Creates online plots of kinematics and kinetics.
+
+TODO:
+optionally plot EMG?
+
 @author: Jussi
 """
 
@@ -10,7 +14,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
 import sys
-from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 from read_pig_normaldata import pig_normaldata
 
