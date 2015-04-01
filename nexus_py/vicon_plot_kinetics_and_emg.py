@@ -77,12 +77,14 @@ emg_ylabel = 'mV'
 pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
 
 
-# EMG channels to plot, and corresponding subplot positions
-emgchsplot = ['LHam','LRec','LGas','LGlut','LVas','LSol','LRec','LHam','LTib',
-              'LGas']
+# EMG channels to plot
+emgchsplot = ['Ham','Rec','Gas','Glut','Vas','Sol','Rec','Ham','Tib',
+              'Gas']
 if side == 'R':
-    emgchsplot = ['R'+str[1:] for str in emgchsplot]
-# positions on subplot grid
+    emgchsplot = ['R'+str for str in emgchsplot]
+else:
+    emgchsplot = ['L'+str for str in emgchsplot]
+# corresponding EMG channel positions on subplot grid
 emgchpos = [3,4,5,6,7,8,12,13,14,16]
 # can define more elaborate labels later, if needed
 emgchlabels = emgchsplot
