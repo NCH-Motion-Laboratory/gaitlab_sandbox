@@ -11,7 +11,9 @@ if line starts with !, read variable name immediately after !
 numeric data will follow
 """
 
-fn = 'C:/Users/HUS20664877/Desktop/projects/llinna/nexus_py/normal.gcd'
+# probably need to specify absolute path if plotting from Nexus, like so
+#fn = 'C:/Users/HUS20664877/Desktop/projects/llinna/nexus_py/normal.gcd'
+fn = 'normal.gcd'
 
 f = open(fn, 'r')
 lines = f.readlines()
