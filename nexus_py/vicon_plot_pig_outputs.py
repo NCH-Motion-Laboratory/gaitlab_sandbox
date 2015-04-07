@@ -90,6 +90,7 @@ kinematicslabels = ['Pst     ($^\circ$)      Ant',
                     'Ext     ($^\circ$)      Int']
                    
 # corresponding normal variables as specified in normal.gcd
+# TOOD: check
 kinematicsnormals = ['PelvicTilt',
                      'PelvicObliquity',
                      'PelvicRotation',
@@ -99,11 +100,9 @@ kinematicsnormals = ['PelvicTilt',
                      'KneeFlexExt',
                      'KneeValgVar',
                      'KneeRotation',
-                     
-
-
-# append 'Norm' + side to get the full variable name
-kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
+                     'DorsiPlanFlex',
+                     'FootProgression',
+                     'FootRotation']
 # subplot positions
 kinematicspos = [0,1,2,3,4,5,6,7,8]
 # plot y scaling: min and max values for each var
