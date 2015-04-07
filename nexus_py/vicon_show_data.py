@@ -12,7 +12,7 @@ import sys
 import numpy as np
 import vicon_makeplots  # custom plotting code
 import vicon_getdata
-
+import matplotlib.pyplot as plt
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -27,6 +27,10 @@ SubjectName = vicon.GetSubjectNames()[0]
 SessionPath = vicon.GetTrialName()[0]
 TrialName = vicon.GetTrialName()[1]
 PIGvars=vicon.GetModelOutputNames(SubjectName)
+
+# try to detect which foot hit the forceplate
+vgc = vicon_getdata.vicon_gaitcycle(vicon)
+side = vgc.detect_side(vicon)
 
 # define kinematics vars of interest to read
 KinematicsVars=['LHipAngles',
@@ -58,11 +62,11 @@ KineticsVars=['LHipMoment',
  # read all kinematics vars into dict and normalize into gait cycle 1
 KinematicsPiG = vicon_getdata.vicon_pig_outputs(vicon, KinematicsVars)
 KineticsPiG = vicon_getdata.vicon_pig_outputs(vicon, KineticsVars)
-EMG = vicon_getdata.vicon_emg(vicon)
+
 tn = np.linspace(0, 100, 101)  # x grid
 vicon_makeplots.KinematicsPlot(TrialName, tn, KinematicsPiG.Vars)
-vicon_makeplots.EMGPlot(EMG)
-
+vicon_makeplots.KineticsPlot(TrialName, tn, KineticsPiG.Vars)
+plt.show()
 
 
 
