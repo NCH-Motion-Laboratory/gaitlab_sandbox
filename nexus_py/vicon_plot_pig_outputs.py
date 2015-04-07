@@ -2,13 +2,10 @@
 """
 Check Plug-in Gait outputs from Nexus.
 Creates online plots of kinematics and kinetics.
-
-TODO:
-optionally plot EMG?
+Work in progress, old version in vicon_pig_outputs.py
 
 @author: Jussi
 """
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -40,11 +37,6 @@ side = vgc.detect_side(vicon)
 # plotting parameters
 # figure size
 totalfigsize = (14,12)
-# grid size
-gridv = 7
-gridh = 3
-# relative heights of different plots
-plotheightratios = [3,2,2,3,2,2,3]
 # trace colors, right and left
 rcolor='lawngreen'
 lcolor='red'
@@ -53,55 +45,73 @@ fsize_labels=10
 # for plotting kinematics / kinetics normal data
 normals_alpha = .3
 normals_color = 'gray'
-# emg normals
-emg_normals_alpha = .3
-emg_normals_color = 'red'
-# main title
-maintitle = 'Kinematics-EMG plot for trial '+trialname+' ('+side+')'
-emg_ylabel = 'mV'
-# output filename
-pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
-
-
-# EMG channels to plot, and corresponding subplot positions
-emgchsplot = ['LHam','LRec','LGas','LGlut','LVas','LSol','LRec','LHam','LTib',
-              'LGas']
-if side == 'R':
-    emgchsplot = ['R'+str[1:] for str in emgchsplot]
-# positions on subplot grid
-emgchpos = [3,4,5,6,7,8,12,13,14,16]
-# can define more elaborate labels later, if needed
-emgchlabels = emgchsplot
-# EMG normal bars: expected ranges of normal EMG activation
-# see emg_normal_bars.py
-emgbar_inds = {'Gas': [[16,50]],
-               'Glut': [[0,42],[96,100]],
-               'Ham': [[0,2],[92,100]],
-               'Per': [[4,54]],
-               'Rec': [[0,14],[56,100]],
-               'Sol': [[10,54]],
-               'Tib': [[0,12],[56,100]],
-               'Vas': [[0,24],[96,100]]}
 
      
-# kinematics vars to plot
-kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
-# corresponding normal variables as specified in normal.gcd
-kinematicsnormals = ['HipFlexExt','KneeFlexExt','DorsiPlanFlex']
+# kinematics vars to plot (without 'Norm' + side)
+kinematicsvarsplot_ = ['PelvisAnglesX',
+                       'PelvisAnglesY',
+                       'PelvisAnglesZ',
+                       'HipAnglesX',
+                       'HipAnglesY',
+                       'HipAnglesZ',
+                       'KneeAnglesX',
+                       'KneeAnglesY',
+                       'KneeAnglesZ',
+                       'AnkleAnglesX',
+                       'FootProgressAnglesZ',
+                       'AnkleAnglesZ']
 # append 'Norm' + side to get the full variable name
 kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
-kinematicstitles = ['Hip flexion','Knee flexion','Ankle dorsi/plantar']
+# variable descriptions
+kinematicstitles = ['Pelvic tilt',
+                    'Pelvic obliquity',
+                    'Pelvic rotation',
+                    'Hip flexion',
+                    'Hip adduction',
+                    'Hip rotation',
+                    'Knee flexion',
+                    'Knee adduction',
+                    'Knee rotation',
+                    'Ankle dorsi/plant',
+                    'Foot progress angles',
+                    'Ankle rotation']
 # y labels
-kinematicslabels = ['Ext     ($^\circ$)      Flex',
+kinematicslabels = ['Pst     ($^\circ$)      Ant',
+                    'Dwn     ($^\circ$)      Up',
+                    'Bak     ($^\circ$)      For',
                     'Ext     ($^\circ$)      Flex',
-                    'Pla     ($^\circ$)      Dor']
+                    'Abd     ($^\circ$)      Add',
+                    'Ext     ($^\circ$)      Int',
+                    'Ext     ($^\circ$)      Flex',
+                    'Val     ($^\circ$)      Var',
+                    'Ext     ($^\circ$)      Int',
+                    'Pla     ($^\circ$)      Dor',
+                    'Ext     ($^\circ$)      Int',
+                    'Ext     ($^\circ$)      Int']
+                   
+# corresponding normal variables as specified in normal.gcd
+kinematicsnormals = ['PelvicTilt',
+                     'PelvicObliquity',
+                     'PelvicRotation',
+                     'HipFlexExt',
+                     'HipAbAdduct',
+                     'HipRotation',
+                     'KneeFlexExt',
+                     'KneeValgVar',
+                     'KneeRotation',
+                     
+
+
+# append 'Norm' + side to get the full variable name
+kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
 # subplot positions
-kinematicspos = [0,1,2]
-# y scaling
+kinematicspos = [0,1,2,3,4,5,6,7,8]
+# plot y scaling: min and max values for each var
 kinematicsymin = [-20,-15,-30]
 kinematicsymax = [50,75,30]
 
-# kinetics channels to plot
+
+# kinetics vars to plot
 kineticsvarsplot_ = ['HipMomentX','KneeMomentX','AnkleMomentX','HipPowerZ',
                      'KneePowerZ','AnklePowerZ']
 # corresponding normal variables as specified in normal.gcd
@@ -119,38 +129,27 @@ kineticslabels = ['Int flex    Nm/kg    Int ext','Int flex    Nm/kg    Int ext',
 # subplot positions
 kineticspos = [9,10,11,18,19,20]
 xlabel = ''
+
                     
  # read data
 kinematicspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinematics')
 kineticspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinetics')
-emg = vicon_getdata.vicon_emg(vicon)
 
 if side == 'L':
     tracecolor = lcolor
 else:
     tracecolor = rcolor
-# EMG variables
-if side == 'L':
-    gclen_emg = emg.lgc1len_s
-    emgdata = emg.datagc1l
-    yscale = emg.yscalegc1l
-else:
-    gclen_emg = emg.rgc1len_s
-    emgdata = emg.datagc1r
-    yscale = emg.yscalegc1r
 
-# x grid from 0..100 with as many elements as EMG has samples
-tn_emg = np.linspace(0, 100, gclen_emg)
 # for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
 # for normal data: 0,2,4...100.
 tn_2 = np.array(range(0, 101, 2))
     
 fig = plt.figure(figsize=totalfigsize)
-gs = gridspec.GridSpec(gridv, gridh, height_ratios = plotheightratios)
 plt.suptitle(maintitle, fontsize=12, fontweight="bold")
 #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 
+plt.figure(figsize=totalfigsize)
 for k in range(len(kinematicsvarsplot)):
     plt.subplot(gs[kinematicspos[k]])
     plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
@@ -165,6 +164,7 @@ for k in range(len(kinematicsvarsplot)):
     plt.axhline(0, color='black')  # zero line
     plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
 
+plt.figure(figsize=totalfigsize)
 for k in range(len(kineticsvarsplot)):
     plt.subplot(gs[kineticspos[k]])
     plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
@@ -178,29 +178,6 @@ for k in range(len(kineticsvarsplot)):
     plt.axhline(0, color='black')  # zero line
     plt.locator_params(axis = 'y', nbins = 6)
 
-for k in range(len(emgchsplot)):
-    chnamepart = emgchsplot[k]
-    chlabel = emgchlabels[k]
-    chs = emg.findchs(chnamepart)
-    assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
-    chname = chs[0]  # full name, e.g. 'LHam7'
-    # plot in mV
-    plt.subplot(gs[emgchpos[k]])
-    plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
-    # plot EMG normal bars    
-    emgbar_ind = emgbar_inds[chnamepart[1:]]
-    for k in range(len(emgbar_ind)):
-        inds = emgbar_ind[k]
-        plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-    plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
-    plt.xlim(0,100)
-    plt.title('EMG:'+chname, fontsize=10)
-    plt.xlabel(xlabel, fontsize=fsize_labels)
-    plt.ylabel(emg_ylabel, fontsize=fsize_labels)
-    plt.locator_params(axis = 'y', nbins = 4)
-
-# fix plot spacing, restrict to below title
-gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
 plt.show()
     
 
