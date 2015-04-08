@@ -10,8 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
 import sys
-import matplotlib.gridspec as gridspec
-from read_pig_normaldata import pig_normaldata
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -27,8 +25,11 @@ sessionpath = vicon.GetTrialName()[0]
 trialname = vicon.GetTrialName()[1]
 pigvars = vicon.GetModelOutputNames(subjectname)
 
+# PiG normal data
+gcdpath = 'normal.gcd'
+
 # try to detect which foot hit the forceplate
-vgc = vicon_getdata.vicon_gaitcycle(vicon)
+vgc = vicon_getdata.gaitcycle(vicon)
 side = vgc.detect_side(vicon)
 # or specify manually:
 #side = 'R'
@@ -157,9 +158,11 @@ kineticslabels = ['Int flex    Nm/kg    Int ext',
 # subplot positions
 kineticspos = [1,2,3,4,5,6,7,8,9,12]
 
- # read data
-kinematicspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinematics')
-kineticspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinetics')
+ # PiG outputs
+kinematicspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinematics')
+kineticspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinetics')
+# PiG normal data
+pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
 
 # default trace color
 if side == 'L':
