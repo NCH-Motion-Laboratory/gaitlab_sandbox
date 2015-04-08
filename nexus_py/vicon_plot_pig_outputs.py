@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
 import sys
+import os
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -27,6 +28,9 @@ pigvars = vicon.GetModelOutputNames(subjectname)
 
 # PiG normal data
 gcdpath = 'normal.gcd'
+# if we're running from Nexus, try another place
+if not os.path.isfile(gcdpath):
+    gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.gaitcycle(vicon)
