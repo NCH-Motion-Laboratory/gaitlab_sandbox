@@ -29,12 +29,18 @@ import vicon_getdata
 import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
-from read_pig_normaldata import pig_normaldata
+import os
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 # needed at least when running outside Nexus
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
+# PiG normal data
+gcdpath = 'normal.gcd'
+# if we're running from Nexus, try another place
+if not os.path.isfile(gcdpath):
+    gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
+
 
 import ViconNexus
 # Python objects communicate directly with the Nexus application.
@@ -46,7 +52,7 @@ trialname = vicon.GetTrialName()[1]
 pigvars = vicon.GetModelOutputNames(subjectname)
 
 # try to detect which foot hit the forceplate
-vgc = vicon_getdata.vicon_gaitcycle(vicon)
+vgc = vicon_getdata.gaitcycle(vicon)
 side = vgc.detect_side(vicon)
 # or specify manually:
 #side = 'R'
@@ -137,8 +143,9 @@ kineticspos = [9,10,11,18,19,20]
 xlabel = ''
                     
  # read data
-kinematicspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinematics')
-kineticspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinetics')
+kinematicspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinematics')
+kineticspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinetics')
+pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
 emg = vicon_getdata.vicon_emg(vicon)
 
 if side == 'L':
@@ -219,9 +226,9 @@ with PdfPages(pdf_name) as pdf:
 
     # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
-    plt.show()
     print("Writing "+pdf_name)
     pdf.savefig()
+    plt.show()
     
 
 

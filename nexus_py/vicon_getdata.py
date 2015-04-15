@@ -46,7 +46,7 @@ class vicon_emg:
         self.data = {}
         self.yscalegc1l = {}        
         self.yscalegc1r = {}            
-        vgc1 = vicon_gaitcycle(vicon)
+        vgc1 = gaitcycle(vicon)
         self.datagc1l = {}
         self.datagc1r = {}
         # gait cycle beginning and end, samples
@@ -91,7 +91,7 @@ class vicon_emg:
         return [chn for chn in self.chnames if chn.find(str) > -1]
         
 
-class vicon_gaitcycle:
+class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
     vars to 0..100% of gait cycle. """
     
@@ -181,12 +181,12 @@ class vicon_gaitcycle:
         else:
             return 'R'
 
-
-class vicon_pig_outputs:
+class pig_outputs:
     """ Reads given plug-in gait output variables (in varlist). Variable 
     names starting with 'R' and'L' are normalized into left and right 
     gait cycles, respectively. Can also use special keywords 'PiGLBKinetics'
     and 'PiGLBKinematics' for varlist, to get predefined variables. """
+    
     def __init__(self, vicon, varlist):
         if varlist == 'PiGLBKinetics':
             varlist = ['LHipMoment',
@@ -216,7 +216,7 @@ class vicon_pig_outputs:
                      'RFootProgressAngles']
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
-        vgc1 = vicon_gaitcycle(vicon)
+        vgc1 = gaitcycle(vicon)
          # read all kinematics vars into dict and normalize into gait cycle 1
         self.Vars = {}
         for Var in varlist:
@@ -236,6 +236,20 @@ class vicon_pig_outputs:
             self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
             self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
             
-    
+def pig_normaldata(gcdfile):
+    """ Returns PiG normal data. Requires gcd file, specify path below."""
+    f = open(gcdfile, 'r')
+    lines = f.readlines()
+    f.close()
+  
+    pig_normaldata = {}
+    for li in lines:
+        if li[0] == '!':  # it's a variable name
+            thisvar = li[1:li.find(' ')]  # set dict key
+            pig_normaldata[thisvar] = list()
+        elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
+            pig_normaldata[thisvar].append([float(x) for x in li.split()])
+    return pig_normaldata
+        
     
     

@@ -10,8 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
 import sys
-import matplotlib.gridspec as gridspec
-from read_pig_normaldata import pig_normaldata
+import os
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -27,8 +26,14 @@ sessionpath = vicon.GetTrialName()[0]
 trialname = vicon.GetTrialName()[1]
 pigvars = vicon.GetModelOutputNames(subjectname)
 
+# PiG normal data
+gcdpath = 'normal.gcd'
+# if we're running from Nexus, try another place
+if not os.path.isfile(gcdpath):
+    gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
+
 # try to detect which foot hit the forceplate
-vgc = vicon_getdata.vicon_gaitcycle(vicon)
+vgc = vicon_getdata.gaitcycle(vicon)
 side = vgc.detect_side(vicon)
 # or specify manually:
 #side = 'R'
@@ -45,9 +50,11 @@ fsize_labels=10
 normals_alpha = .3
 normals_color = 'gray'
 xlabel='% of gait cycle'
+kinematicstitle = 'Kinematics for '+trialname 
+kineticstitle = 'Kinetics for '+trialname+' ('+side+')'     
      
 # kinematics vars to plot (without 'Norm' + side)
-kinematicsvarsplot_ = ['PelvisAnglesX',
+kinematicsvarsplot = ['PelvisAnglesX',
                        'PelvisAnglesY',
                        'PelvisAnglesZ',
                        'HipAnglesX',
@@ -59,8 +66,6 @@ kinematicsvarsplot_ = ['PelvisAnglesX',
                        'AnkleAnglesX',
                        'FootProgressAnglesZ',
                        'AnkleAnglesZ']
-# append 'Norm' + side to get the full variable name                       
-kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
 # variable descriptions
 kinematicstitles = ['Pelvic tilt',
                     'Pelvic obliquity',
@@ -157,9 +162,11 @@ kineticslabels = ['Int flex    Nm/kg    Int ext',
 # subplot positions
 kineticspos = [1,2,3,4,5,6,7,8,9,12]
 
- # read data
-kinematicspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinematics')
-kineticspig = vicon_getdata.vicon_pig_outputs(vicon, 'PiGLBKinetics')
+ # PiG outputs
+kinematicspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinematics')
+kineticspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinetics')
+# PiG normal data
+pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
 
 # default trace color
 if side == 'L':
@@ -172,16 +179,14 @@ tn = np.linspace(0, 100, 101)
 # for normal data: 0,2,4...100.
 tn_2 = np.array(range(0, 101, 2))
     
-
-#plt.suptitle(maintitle, fontsize=12, fontweight="bold")
-#plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
-
 # kinematics plot, both L and R
 plt.figure(figsize=totalfigsize)
+plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+plt.suptitle(kinematicstitle, fontsize=12, fontweight="bold")
 for k in range(len(kinematicsvarsplot)):
     plt.subplot(4, 3, kinematicspos[k])
-    varL='Norm'+L+kinematicsvarsplot[k]
-    varR='Norm'+R+kinematicsvarsplot[k]
+    varL='Norm'+'L'+kinematicsvarsplot[k]
+    varR='Norm'+'R'+kinematicsvarsplot[k]
     plt.plot(tn, kinematicspig.Vars[varL], lcolor, kinematicspig.Vars[varR], rcolor)
     # get normal data and std
     nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
@@ -196,8 +201,10 @@ for k in range(len(kinematicsvarsplot)):
 
 # kinetics plot
 plt.figure(figsize=totalfigsize)
+plt.suptitle(kineticstitle, fontsize=12, fontweight="bold")
+plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 for k in range(len(kineticsvarsplot)):
-    plt.subplot(4, 3, kineticspos[k]])
+    plt.subplot(4, 3, kineticspos[k])
     plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
     nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
     nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
