@@ -77,7 +77,7 @@ normals_color = 'gray'
 emg_normals_alpha = .3
 emg_normals_color = 'red'
 # main title
-maintitle = 'Kinematics-EMG plot for trial '+trialname+' ('+side+')'
+maintitle = 'Kinetics-EMG plot for trial '+trialname+' ('+side+')'
 emg_ylabel = 'mV'
 # output filename
 pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
