@@ -12,8 +12,8 @@ Process GMAE .mdb files to create neatly formatted text output.
 Python 2.7 only
 Requires mdbtools package (Ubuntu mdbtools)
 
-example bash loop to process all .mdb files in a directory:
-for file in *mdb; do ./gmae_process_csv.py "$file" >"${file%%.*}".txt; done
+example bash loop to process all .mdb files in a directory (and fix cr/lf for windows:)
+for file in *mdb; do ./gmae_process_csv.py "$file" |unix2dos >"${file%%.*}".txt; done
 """
 
 
