@@ -30,6 +30,13 @@ import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
+import ctypes
+
+# present an error message, and exit
+def error_exit(message):
+    # graphical error dialog - Windows specific
+    ctypes.windll.user32.MessageBoxA(0, message, "Kinetics-EMG error", 1)
+    sys.exit()
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -40,7 +47,8 @@ gcdpath = 'normal.gcd'
 # if we're running from Nexus, try another place
 if not os.path.isfile(gcdpath):
     gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
-
+if not os.path.isfile(gcdpath):
+    error_exit('Cannot find PiG normal data file (normal.gcd)')
 
 import ViconNexus
 # Python objects communicate directly with the Nexus application.
@@ -49,6 +57,9 @@ vicon = ViconNexus.ViconNexus()
 subjectname = vicon.GetSubjectNames()[0]
 sessionpath = vicon.GetTrialName()[0]
 trialname = vicon.GetTrialName()[1]
+if trialname == '':
+    error_exit('No trial loaded')
+
 pigvars = vicon.GetModelOutputNames(subjectname)
 
 # try to detect which foot hit the forceplate
