@@ -5,24 +5,28 @@ from __future__ import print_function
 Created on Wed Dec 10 13:11:57 2014
 
 @author: jussi
-"""
 
-"""
+
 GMAE conversion project:
-Process .csv files created by AccessDump.py, to create neatly 
-formatted output.
+Process GMAE .mdb files to create neatly formatted text output.
+Python 2.7 only
+Requires mdbtools package (Ubuntu mdbtools)
 
-bash loop to get pdf output from all files:
-for file in *mdb; do ./gmae_process_csv.py "$file" |enscript -p -|ps2pdf - "$file".pdf; done
+example bash loop to process all .mdb files in a directory:
 for file in *mdb; do ./gmae_process_csv.py "$file" >"${file%%.*}".txt; done
-
-
-AccessDump.py takes a .mdb file (one per patient) and writes various .csv.
 """
 
 
 import csv
 import sys, subprocess, os
+
+# test whether s is a valid number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 if len(sys.argv) != 2 :
     sys.exit('Need exactly 1 argument (name of MDB file)')
@@ -54,11 +58,12 @@ print()
 # Therapist(s)        
 with open('Therapists.csv') as csvfile:
     csvreader=csv.DictReader(csvfile)
-    print('Therapist(s):',end=' ')
+    print('Therapist(s):')
     for row in csvreader:
         print(row['TherapistID'])
 print()
 
+print('Patient information:')
 # name, DOB, Type of CP, etc.
 with open('BaseInfo.csv') as csvfile:
     csvreader=csv.DictReader(csvfile)
@@ -71,7 +76,7 @@ with open('BaseInfo.csv') as csvfile:
                               +row['LastName'].capitalize(),
                               row['DOB'],row['TypeCP'],row['Distribution'],
                                 row['Gender']))
-print('\nAssessments by date:\n')
+print('\nAssessments by date:')
 """
 Assessment scores. First column contains the item numbers. Following
 columns have the corresponding assessment for each date.
@@ -85,8 +90,19 @@ with open('AssessmentInfo.csv') as csvfile:
     nrows = len(asslist)
     for k in range(nitems):
         for l in range(nrows):
-            print('{0:25}'.format(asslist[l][k]),end='')
-        print()
+            thisitem=asslist[l][k]
+            # is it in scientific notation?
+            if is_number(thisitem) and thisitem.find('e') > 0:
+                thisn = float(thisitem)
+                # convert to two decimal places
+                thisitem = "{:.2f}".format(thisn)
+            # print first column with smaller field width                
+            if l == 0:
+                print('{0:10}'.format(thisitem),end='')
+            else:
+                print('{0:25}'.format(thisitem),end='')
+        # use some dashes as a row separator
+        print('\n'+'_'*(10+(nrows-1)*25)+'\n')
 
 # delete intermediate csv files        
 for table in tables:
@@ -95,13 +111,3 @@ for table in tables:
         os.remove(filename)
         
         
-"""        
-# Assessment descriptions: ItemInfo.csv
-with open('ItemInfo.csv') as csvfile:
-    csvreader=csv.reader(csvfile)
-    for row in csvreader:
-        print(', '.join(row))
-"""
-        
-
-
