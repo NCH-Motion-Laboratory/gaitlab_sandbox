@@ -14,7 +14,6 @@ lrec                lham                ltib
                     lgas
 hip power           knee power          ankle power
 
-
 TODO:
 EMG filtering (edge effects)
 EMG labeling
@@ -26,17 +25,12 @@ verify (Polygon)
 import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
+from vicon_getdata import error_exit
 import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
-import ctypes
 
-# present an error message, and exit
-def error_exit(message):
-    # graphical error dialog - Windows specific
-    ctypes.windll.user32.MessageBoxA(0, message, "Kinetics-EMG error", 1)
-    sys.exit()
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -48,7 +42,7 @@ gcdpath = 'normal.gcd'
 if not os.path.isfile(gcdpath):
     gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
 if not os.path.isfile(gcdpath):
-    error_exit('Cannot find PiG normal data file (normal.gcd)')
+    error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
 import ViconNexus
 # Python objects communicate directly with the Nexus application.

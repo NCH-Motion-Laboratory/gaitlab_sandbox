@@ -11,7 +11,17 @@ TODO: fix naming conventions (vars lower_case, class names CamelCase)
 from __future__ import division, print_function
 
 import numpy as np
+import ctypes
 from scipy import signal
+import sys
+
+
+def error_exit(message):
+    """ Custom error handler """
+    # graphical error dialog - Windows specific
+    ctypes.windll.user32.MessageBoxA(0, message, "Kinetics-EMG error", 1)
+    sys.exit()
+
 
 class vicon_emg:
     """ Class for reading and processing EMG data from Nexus. """
@@ -27,7 +37,7 @@ class vicon_emg:
         if emgdevname in devnames:
             emg_id = vicon.GetDeviceIDFromName(emgdevname)
         else:
-           raise Exception('no EMG device found in trial')
+           error_exit('no EMG device found in trial')
         # DType should be 'other', drate is sampling rate
         dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
         samplesperframe = drate / framerate
@@ -105,7 +115,7 @@ class gaitcycle:
         lenLFS = len(self.lfstrikes)
         lenRFS = len(self.rfstrikes)
         if lenLFS and lenRFS < 2:
-            raise Exception("Could not detect complete L/R gait cycles")
+            error_exit("Could not detect complete L/R gait cycles")
         # extract times for 1st gait cycles, L and R
         self.lgc1start = min(self.lfstrikes[0:2])
         self.lgc1end = max(self.lfstrikes[0:2])
@@ -149,7 +159,7 @@ class gaitcycle:
         if fpdevicename in devicenames:
             fpid = vicon.GetDeviceIDFromName(fpdevicename)
         else:
-           raise Exception('No forceplate device found in trial!')
+           error_exit('No forceplate device found in trial!')
         # DType should be 'ForcePlate', drate is sampling rate
         dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
         samplesperframe = drate / framerate  # fp samples per Vicon frame
