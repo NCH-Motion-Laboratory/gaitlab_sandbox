@@ -5,7 +5,8 @@ Uses single trial of data from Vicon Nexus.
 Save report as pdf.
 @author: Jussi
 
-plot layout:
+Current plot layout:
+
 hip flex/ext        knee flex/ext       ankle dorsi/plant
 lham                lrec                ltib
 lglut               lvas                lper
@@ -15,22 +16,16 @@ lrec                lham                lgas
                     lgas
 hip power           knee power          ankle power
 
+Can replace EMG electrodes by command line arguments.
+e.g. RVas=GlutL will read RVas data from GlutL electrode.
+
+
 TODO:
 
-channel renaming: cmd line arguments (e.g. vasR=glutL).
- implementation:
--use data translation dict at plotting stage, like so:
--plot emgdata[emgtr[chname]]
--(only) if dict has key for a channel, replace it
--vasR=glutL:  take vasR data from glutL electrode
-
-
-
-
 EMG filtering (edge effects)
-EMG labeling
 move remaining plot definitions to parameters
 verify (Polygon)
+
 """
 
 import matplotlib.pyplot as plt
@@ -43,10 +38,10 @@ import matplotlib.gridspec as gridspec
 import os
 import ViconNexus
 
-# parse command line args
+# parse command line args (EMG electrode replacements)
+emgrepl = {}
 argc = len(sys.argv)
 if argc > 1:
-    emgrepl = {}
     for k in range(argc)[1:]:
         arg = sys.argv[k]
         eqpos = arg.find('=')
@@ -67,6 +62,8 @@ gcdpath = 'normal.gcd'
 # if we're running from Nexus, try another place
 if not os.path.isfile(gcdpath):
     gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
+if not os.path.isfile(gcdpath):
+    gcdpath = 'C:/Users/HUS20664877/Desktop/projects/llinna/nexus_py/normal.gcd'
 if not os.path.isfile(gcdpath):
     error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
@@ -144,12 +141,12 @@ emgbar_inds = {'Gas': [[16,50]],
                'Vas': [[0,24],[96,100]]}
 
 # sanity check for EMG replacement dict
-# allowed EMG channel names
-emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'Tib']
-emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
-for key in emgrepl.keys():
-    if not key in emg_legal:
-        error_exit('Cannot replace electrode '+key)
+if emgrepl:
+    emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'Tib']
+    emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
+    for key in emgrepl.keys():
+        if not key in emg_legal:
+            error_exit('Cannot replace electrode '+key)
      
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']

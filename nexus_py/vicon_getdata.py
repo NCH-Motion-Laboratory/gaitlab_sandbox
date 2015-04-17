@@ -19,7 +19,7 @@ import sys
 def error_exit(message):
     """ Custom error handler """
     # graphical error dialog - Windows specific
-    ctypes.windll.user32.MessageBoxA(0, message, "Kinetics-EMG error", 0)
+    ctypes.windll.user32.MessageBoxA(0, message, "Error in Nexus Python script", 0)
     sys.exit()
 
 
