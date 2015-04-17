@@ -195,9 +195,9 @@ class gaitcycle:
 class pig_outputs:
     """ Reads given plug-in gait output variables (in varlist). Variable 
     names starting with 'R' and'L' are normalized into left and right 
-    gait cycles, respectively. Can also use special keywords 'PiGLBKinetics'
-    and 'PiGLBKinematics' for varlist, to get predefined variables. """
-    
+    gait cycles, respectively. Can also use special keyword 'PiGLB'
+    to get the usual set of Plug-in Gait lower body variables."""
+        
     def __init__(self, vicon, varlist):
         if varlist == 'PiGLB':
             varlist = ['LHipMoment',

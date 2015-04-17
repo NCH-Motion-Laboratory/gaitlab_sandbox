@@ -16,13 +16,22 @@ lrec                lham                lgas
 hip power           knee power          ankle power
 
 TODO:
-update layout (new above)
+
+channel renaming: cmd line arguments (e.g. vasR=glutL).
+ implementation:
+-use data translation dict at plotting stage, like so:
+-plot emgdata[emgtr[chname]]
+-(only) if dict has key for a channel, replace it
+-vasR=glutL:  take vasR data from glutL electrode
+
+
+
+
 EMG filtering (edge effects)
 EMG labeling
 move remaining plot definitions to parameters
 verify (Polygon)
 """
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,7 +41,22 @@ import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
+import ViconNexus
 
+# parse command line args
+argc = len(sys.argv)
+if argc > 1:
+    emgrepl = {}
+    for k in range(argc)[1:]:
+        arg = sys.argv[k]
+        eqpos = arg.find('=')
+        if eqpos < 2:
+            error_exit('Invalid argument: arguments must be of form EMG1=EMG2,'+
+            'which means that data of electrode EMG1 will be taken from electrode EMG2.')
+        else:
+            key = arg[:eqpos]
+            val = arg[eqpos+1:]
+            emgrepl[key] = val
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -46,7 +70,6 @@ if not os.path.isfile(gcdpath):
 if not os.path.isfile(gcdpath):
     error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
-import ViconNexus
 # Python objects communicate directly with the Nexus application.
 # Before using the vicon object, Nexus needs to be started and a subject loaded.
 vicon = ViconNexus.ViconNexus()
@@ -97,7 +120,6 @@ emg_labels_dict = {'Ham': 'Medial hamstrings',
                    'Sol': 'Soleus',
                    'Tib': 'Tibialis',
                    'Per': 'Peroneus'}
-
 # EMG channels to plot
 emgchsplot = ['Ham','Rec','Tib','Glut','Vas','Per',
               'Rec','Ham','Gas','Glut','Sol','Gas']
@@ -121,6 +143,13 @@ emgbar_inds = {'Gas': [[16,50]],
                'Tib': [[0,12],[56,100]],
                'Vas': [[0,24],[96,100]]}
 
+# sanity check for EMG replacement dict
+# allowed EMG channel names
+emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'Tib']
+emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
+for key in emgrepl.keys():
+    if not key in emg_legal:
+        error_exit('Cannot replace electrode '+key)
      
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
@@ -221,9 +250,22 @@ with PdfPages(pdf_name) as pdf:
     for k in range(len(emgchsplot)):
         chnamepart = emgchsplot[k]
         chlabel = emgchlabels[k]
+        # check replacement dict to see if data should actually be read
+        # from some other channel 
+        if emgrepl.has_key(chnamepart):
+            replstr = ' (read from '+emgrepl[chnamepart]+')'
+            chnamepart = emgrepl[chnamepart]            
+        else:
+            replstr = ''
+        # translate to full channel name, e.g. 'LHam' -> 'LHam7'
         chs = emg.findchs(chnamepart)
-        assert(len(chs) == 1), 'Cannot find channel '+chnamepart+' in data'
-        chname = chs[0]  # full name, e.g. 'LHam7'
+        if len(chs) == 0:
+            plt.close()
+            error_exit('EMG channel matching name '+chnamepart+' not found in data')
+        if len(chs) > 1:
+            plt.close()
+            error_exit('Found multiple EMG channels matching requested name: '+chnamepart)
+        chname = chs[0]
         # plot in mV
         plt.subplot(gs[emgchpos[k]])
         plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
@@ -234,7 +276,7 @@ with PdfPages(pdf_name) as pdf:
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
         plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
         plt.xlim(0,100)
-        plt.title(chlabel+' '+side, fontsize=10)
+        plt.title(chlabel+' '+side+replstr, fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
