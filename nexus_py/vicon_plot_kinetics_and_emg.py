@@ -68,10 +68,10 @@ side = vgc.detect_side(vicon)
 # figure size
 totalfigsize = (14,12)
 # grid size
-gridv = 7
+gridv = 8
 gridh = 3
 # relative heights of different plots
-plotheightratios = [3,2,2,3,2,2,3]
+plotheightratios = [3,2,2,3,2,2,2,3]
 # trace colors, right and left
 rcolor='lawngreen'
 lcolor='red'
@@ -84,23 +84,32 @@ normals_color = 'gray'
 emg_normals_alpha = .3
 emg_normals_color = 'red'
 # main title
-maintitle = 'Kinetics-EMG plot for trial '+trialname+' ('+side+')'
+maintitle = 'Kinetics-EMG plot for '+trialname+' ('+side+')'
 emg_ylabel = 'mV'
 # output filename
 pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
-
+# EMG channel naming dictionary
+emg_labels_dict = {'Ham': 'Medial hamstrings',
+                   'Rec': 'Rectus femoris',
+                   'Gas': 'Gastrognemius',
+                   'Glut': 'Gluteus',
+                   'Vas': 'Vastus',
+                   'Sol': 'Soleus',
+                   'Tib': 'Tibialis',
+                   'Per': 'Peroneus'}
 
 # EMG channels to plot
-emgchsplot = ['Ham','Rec','Gas','Glut','Vas','Sol','Rec','Ham','Tib',
-              'Gas']
+emgchsplot = ['Ham','Rec','Tib','Glut','Vas','Per',
+              'Rec','Ham','Gas','Glut','Sol','Gas']
+# generate labels              
+emgchlabels = [emg_labels_dict[x] for x in emgchsplot]
 if side == 'R':
     emgchsplot = ['R'+str for str in emgchsplot]
 else:
     emgchsplot = ['L'+str for str in emgchsplot]
 # corresponding EMG channel positions on subplot grid
-emgchpos = [3,4,5,6,7,8,12,13,14,16]
-# can define more elaborate labels later, if needed
-emgchlabels = emgchsplot
+emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
+               
 # EMG normal bars: expected ranges of normal EMG activation
 # see emg_normal_bars.py
 emgbar_inds = {'Gas': [[16,50]],
@@ -146,7 +155,7 @@ kineticslabels = ['Int flex    Nm/kg    Int ext','Int flex    Nm/kg    Int ext',
                   'Int dors    Nm/kg    Int plan','Abs    W/kg    Gen',
                   'Abs    W/kg    Gen','Abs    W/kg    Gen']
 # subplot positions
-kineticspos = [9,10,11,18,19,20]
+kineticspos = [9,10,11,21,22,23]
 xlabel = ''
                     
  # read data
@@ -225,7 +234,7 @@ with PdfPages(pdf_name) as pdf:
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
         plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
         plt.xlim(0,100)
-        plt.title('EMG:'+chname, fontsize=10)
+        plt.title(chlabel+' '+side, fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
