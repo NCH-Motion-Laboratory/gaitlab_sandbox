@@ -19,7 +19,7 @@ import sys
 def error_exit(message):
     """ Custom error handler """
     # graphical error dialog - Windows specific
-    ctypes.windll.user32.MessageBoxA(0, message, "Kinetics-EMG error", 1)
+    ctypes.windll.user32.MessageBoxA(0, message, "Kinetics-EMG error", 0)
     sys.exit()
 
 
@@ -114,8 +114,9 @@ class gaitcycle:
         # 2 strikes is one complete gait cycle, needed for analysis
         lenLFS = len(self.lfstrikes)
         lenRFS = len(self.rfstrikes)
-        if lenLFS and lenRFS < 2:
-            error_exit("Could not detect complete L/R gait cycles")
+        if lenLFS < 2 or lenRFS < 2:
+            error_exit("Insufficient number of foot strike events detected. "+
+                        "Check that the trial has been processed.")
         # extract times for 1st gait cycles, L and R
         self.lgc1start = min(self.lfstrikes[0:2])
         self.lgc1end = max(self.lfstrikes[0:2])
@@ -232,6 +233,9 @@ class pig_outputs:
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
             NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
+            if not NumVals:
+                error_exit('Unable to get Plug-in Gait output variable. '+
+                            'Check that the trial has been processed.')
             self.Vars[Var] = np.array(NumVals)
             # moment variables have to be divided by 1000 - not sure why    
             if Var.find('Moment') > 0:

@@ -9,6 +9,7 @@ Creates online plots of kinematics and kinetics.
 import matplotlib.pyplot as plt
 import numpy as np
 import vicon_getdata
+from vicon_getdata import error_exit
 import sys
 import os
 
@@ -24,6 +25,8 @@ vicon = ViconNexus.ViconNexus()
 subjectname = vicon.GetSubjectNames()[0]
 sessionpath = vicon.GetTrialName()[0]
 trialname = vicon.GetTrialName()[1]
+if trialname == '':
+    error_exit('No trial loaded')
 pigvars = vicon.GetModelOutputNames(subjectname)
 
 # PiG normal data
@@ -31,6 +34,10 @@ gcdpath = 'normal.gcd'
 # if we're running from Nexus, try another place
 if not os.path.isfile(gcdpath):
     gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
+if not os.path.isfile(gcdpath):
+    gcdpath = 'C:/Users/HUS20664877/Desktop/projects/llinna/nexus_py/normal.gcd'
+if not os.path.isfile(gcdpath):
+    error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.gaitcycle(vicon)
