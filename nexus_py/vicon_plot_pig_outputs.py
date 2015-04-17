@@ -170,8 +170,8 @@ kineticslabels = ['Int flex    Nm/kg    Int ext',
 kineticspos = [1,2,3,4,5,6,7,8,9,12]
 
  # PiG outputs
-kinematicspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinematics')
-kineticspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinetics')
+pig = vicon_getdata.pig_outputs(vicon, 'PiGLB')
+
 # PiG normal data
 pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
 
@@ -194,7 +194,7 @@ for k in range(len(kinematicsvarsplot)):
     plt.subplot(4, 3, kinematicspos[k])
     varL='Norm'+'L'+kinematicsvarsplot[k]
     varR='Norm'+'R'+kinematicsvarsplot[k]
-    plt.plot(tn, kinematicspig.Vars[varL], lcolor, kinematicspig.Vars[varR], rcolor)
+    plt.plot(tn, pig.Vars[varL], lcolor, pig.Vars[varR], rcolor)
     # get normal data and std
     nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
     nstd = np.array(pig_normaldata[kinematicsnormals[k]])[:,1]
@@ -212,7 +212,7 @@ plt.suptitle(kineticstitle, fontsize=12, fontweight="bold")
 plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
 for k in range(len(kineticsvarsplot)):
     plt.subplot(4, 3, kineticspos[k])
-    plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
+    plt.plot(tn, pig.Vars[kineticsvarsplot[k]], tracecolor)
     nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
     nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)

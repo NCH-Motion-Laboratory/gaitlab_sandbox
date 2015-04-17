@@ -199,7 +199,7 @@ class pig_outputs:
     and 'PiGLBKinematics' for varlist, to get predefined variables. """
     
     def __init__(self, vicon, varlist):
-        if varlist == 'PiGLBKinetics':
+        if varlist == 'PiGLB':
             varlist = ['LHipMoment',
               'LKneeMoment',
               'LAnkleMoment',
@@ -211,20 +211,19 @@ class pig_outputs:
               'RAnkleMoment',
               'RHipPower',
               'RKneePower',
-              'RAnklePower']
-        if varlist == 'PiGLBKinematics':
-            varlist = ['LHipAngles',
-                     'LKneeAngles',
-                     'LAbsAnkleAngle',
-                     'LAnkleAngles',
-                     'LPelvisAngles',
-                     'LFootProgressAngles',
-                     'RHipAngles',
-                     'RKneeAngles',
-                     'RAbsAnkleAngle',
-                     'RAnkleAngles',
-                     'RPelvisAngles',
-                     'RFootProgressAngles']
+              'RAnklePower',
+              'LHipAngles',
+              'LKneeAngles',
+              'LAbsAnkleAngle',
+              'LAnkleAngles',
+              'LPelvisAngles',
+              'LFootProgressAngles',
+              'RHipAngles',
+              'RKneeAngles',
+              'RAbsAnkleAngle',
+              'RAnkleAngles',
+              'RPelvisAngles',
+              'RFootProgressAngles']
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
         vgc1 = gaitcycle(vicon)

@@ -7,14 +7,16 @@ Save report as pdf.
 
 plot layout:
 hip flex/ext        knee flex/ext       ankle dorsi/plant
-lham                lrec                lgas
-lglut               lvas                lsol
+lham                lrec                ltib
+lglut               lvas                lper
 hip flex/ext mom    knee flex/ext       ankle dors/plan
-lrec                lham                ltib
+lrec                lham                lgas
+                    lglut               lsol     
                     lgas
 hip power           knee power          ankle power
 
 TODO:
+update layout (new above)
 EMG filtering (edge effects)
 EMG labeling
 move remaining plot definitions to parameters
@@ -148,8 +150,7 @@ kineticspos = [9,10,11,18,19,20]
 xlabel = ''
                     
  # read data
-kinematicspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinematics')
-kineticspig = vicon_getdata.pig_outputs(vicon, 'PiGLBKinetics')
+pig = vicon_getdata.pig_outputs(vicon, 'PiGLB')
 pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
 emg = vicon_getdata.vicon_emg(vicon)
 
@@ -183,7 +184,7 @@ with PdfPages(pdf_name) as pdf:
     
     for k in range(len(kinematicsvarsplot)):
         plt.subplot(gs[kinematicspos[k]])
-        plt.plot(tn, kinematicspig.Vars[kinematicsvarsplot[k]], tracecolor)
+        plt.plot(tn, pig.Vars[kinematicsvarsplot[k]], tracecolor)
         # get normal data and std
         nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
         nstd = np.array(pig_normaldata[kinematicsnormals[k]])[:,1]
@@ -197,7 +198,7 @@ with PdfPages(pdf_name) as pdf:
     
     for k in range(len(kineticsvarsplot)):
         plt.subplot(gs[kineticspos[k]])
-        plt.plot(tn, kineticspig.Vars[kineticsvarsplot[k]], tracecolor)
+        plt.plot(tn, pig.Vars[kineticsvarsplot[k]], tracecolor)
         nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
         nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
         plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
