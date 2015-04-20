@@ -22,7 +22,6 @@ def error_exit(message):
     ctypes.windll.user32.MessageBoxA(0, message, "Error in Nexus Python script", 0)
     sys.exit()
 
-
 class vicon_emg:
     """ Class for reading and processing EMG data from Nexus. """
 
@@ -78,6 +77,9 @@ class vicon_emg:
             self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])
             self.datagc1r[chname] = np.array(chdata[self.rgc1start_s:self.rgc1end_s])
             # compute scales of EMG signal, to be used as y scaling of plots
+            print(chname, min(self.datagc1l[chname]),
+                  max(self.datagc1l[chname]),
+                    np.median(np.abs(self.datagc1l[chname])))
             self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
             self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
           
@@ -109,7 +111,7 @@ class vicon_emg:
                'Per': [[4,54]],
                'Rec': [[0,14],[56,100]],
                'Sol': [[10,54]],
-               'Tib': [[0,12],[56,100]],
+               'TibA': [[0,12],[56,100]],
                'Vas': [[0,24],[96,100]]}
              
     def labels(self):
@@ -120,9 +122,14 @@ class vicon_emg:
                    'Glut': 'Gluteus',
                    'Vas': 'Vastus',
                    'Sol': 'Soleus',
-                   'Tib': 'Tibialis',
+                   'TibA': 'Tibialis anterior',
                    'Per': 'Peroneus'}
 
+    def legal(self):
+        """ Legal electrode names. """
+        emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'TibA']
+        emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
+        return emg_legal
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize

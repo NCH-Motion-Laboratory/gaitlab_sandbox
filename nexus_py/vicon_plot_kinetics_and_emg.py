@@ -8,7 +8,7 @@ Save report as pdf.
 Current plot layout:
 
 hip flex/ext        knee flex/ext       ankle dorsi/plant
-lham                lrec                ltib
+lham                lrec                ltiba
 lglut               lvas                lper
 hip flex/ext mom    knee flex/ext       ankle dors/plan
 lrec                lham                lgas
@@ -111,7 +111,7 @@ pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
 # EMG channel naming dictionary
 emg_labels_dict = emg.labels()
 # EMG channels to plot
-emgchsplot = ['Ham','Rec','Tib','Glut','Vas','Per',
+emgchsplot = ['Ham','Rec','TibA','Glut','Vas','Per',
               'Rec','Ham','Gas','Glut','Sol','Gas']
 # generate labels              
 emgchlabels = [emg_labels_dict[x] for x in emgchsplot]
@@ -123,12 +123,11 @@ else:
 emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
 # EMG normal bars: expected ranges of normal EMG activation
 # see emg_normal_bars.py
-emgbar_inds = emg.normaldata()
+emg_normaldata = emg.normaldata()
+emg_legal = emg.legal()
 
 # sanity check for EMG replacement dict
 if emgrepl:
-    emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'Tib']
-    emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
     for key in emgrepl.keys():
         if not key in emg_legal:
             error_exit('Cannot replace electrode '+key)
@@ -251,7 +250,7 @@ with PdfPages(pdf_name) as pdf:
         plt.subplot(gs[emgchpos[k]])
         plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
         # plot EMG normal bars    
-        emgbar_ind = emgbar_inds[chnamepart[1:]]
+        emgbar_ind = emg_normaldata[chnamepart[1:]]
         for k in range(len(emgbar_ind)):
             inds = emgbar_ind[k]
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
