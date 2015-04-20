@@ -19,7 +19,6 @@ hip power           knee power          ankle power
 Can replace EMG electrodes by command line arguments.
 e.g. RVas=GlutL will read RVas data from GlutL electrode.
 
-
 TODO:
 
 EMG filtering (edge effects)
@@ -36,22 +35,18 @@ import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
-import ViconNexus
 
 # parse command line args (EMG electrode replacements)
 emgrepl = {}
-argc = len(sys.argv)
-if argc > 1:
-    for k in range(argc)[1:]:
-        arg = sys.argv[k]
-        eqpos = arg.find('=')
-        if eqpos < 2:
-            error_exit('Invalid argument: arguments must be of form EMG1=EMG2,'+
-            'which means that data of electrode EMG1 will be taken from electrode EMG2.')
-        else:
-            key = arg[:eqpos]
-            val = arg[eqpos+1:]
-            emgrepl[key] = val
+for arg in sys.argv[1:]:
+    eqpos = arg.find('=')
+    if eqpos < 2:
+        error_exit('Invalid argument: arguments must be of form EMG1=EMG2,'+
+        'which means that data of electrode EMG1 will be taken from electrode EMG2.')
+    else:
+        key = arg[:eqpos]
+        val = arg[eqpos+1:]
+        emgrepl[key] = val
 
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -67,6 +62,7 @@ if not os.path.isfile(gcdpath):
 if not os.path.isfile(gcdpath):
     error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
+import ViconNexus
 # Python objects communicate directly with the Nexus application.
 # Before using the vicon object, Nexus needs to be started and a subject loaded.
 vicon = ViconNexus.ViconNexus()
