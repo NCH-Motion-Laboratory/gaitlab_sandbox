@@ -17,10 +17,11 @@ lrec                lham                lgas
 hip power           knee power          ankle power
 
 Can replace EMG electrodes by command line arguments.
-e.g. RVas=GlutL will read RVas data from GlutL electrode.
+e.g. RVas=GlutL will read RVas data from the GlutL electrode.
 
 TODO:
 
+add param. for specifying side manually
 EMG filtering (edge effects)
 move remaining plot definitions to parameters
 verify (Polygon)
@@ -86,6 +87,8 @@ totalfigsize = (14,12)
 # grid size
 gridv = 8
 gridh = 3
+# main title
+maintitle = 'Kinetics-EMG plot for '+trialname+' ('+side+')'
 # relative heights of different plots
 plotheightratios = [3,2,2,3,2,2,2,3]
 # trace colors, right and left
@@ -96,23 +99,17 @@ fsize_labels=10
 # for plotting kinematics / kinetics normal data
 normals_alpha = .3
 normals_color = 'gray'
+
+# read emg
+emg = vicon_getdata.vicon_emg(vicon)
 # emg normals
 emg_normals_alpha = .3
 emg_normals_color = 'red'
-# main title
-maintitle = 'Kinetics-EMG plot for '+trialname+' ('+side+')'
 emg_ylabel = 'mV'
 # output filename
 pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
 # EMG channel naming dictionary
-emg_labels_dict = {'Ham': 'Medial hamstrings',
-                   'Rec': 'Rectus femoris',
-                   'Gas': 'Gastrognemius',
-                   'Glut': 'Gluteus',
-                   'Vas': 'Vastus',
-                   'Sol': 'Soleus',
-                   'Tib': 'Tibialis',
-                   'Per': 'Peroneus'}
+emg_labels_dict = emg.labels()
 # EMG channels to plot
 emgchsplot = ['Ham','Rec','Tib','Glut','Vas','Per',
               'Rec','Ham','Gas','Glut','Sol','Gas']
@@ -124,17 +121,9 @@ else:
     emgchsplot = ['L'+str for str in emgchsplot]
 # corresponding EMG channel positions on subplot grid
 emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
-               
 # EMG normal bars: expected ranges of normal EMG activation
 # see emg_normal_bars.py
-emgbar_inds = {'Gas': [[16,50]],
-               'Glut': [[0,42],[96,100]],
-               'Ham': [[0,2],[92,100]],
-               'Per': [[4,54]],
-               'Rec': [[0,14],[56,100]],
-               'Sol': [[10,54]],
-               'Tib': [[0,12],[56,100]],
-               'Vas': [[0,24],[96,100]]}
+emgbar_inds = emg.normaldata()
 
 # sanity check for EMG replacement dict
 if emgrepl:
@@ -183,7 +172,6 @@ xlabel = ''
  # read data
 pig = vicon_getdata.pig_outputs(vicon, 'PiGLB')
 pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
-emg = vicon_getdata.vicon_emg(vicon)
 
 if side == 'L':
     tracecolor = lcolor

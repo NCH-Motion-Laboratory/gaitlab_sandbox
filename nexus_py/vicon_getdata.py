@@ -100,6 +100,29 @@ class vicon_emg:
         string str. """
         return [chn for chn in self.chnames if chn.find(str) > -1]
         
+    def normaldata(self):
+        """ EMG normal data, i.e. expected range of activation during
+        normalized trial. """        
+        return {'Gas': [[16,50]],
+               'Glut': [[0,42],[96,100]],
+               'Ham': [[0,2],[92,100]],
+               'Per': [[4,54]],
+               'Rec': [[0,14],[56,100]],
+               'Sol': [[10,54]],
+               'Tib': [[0,12],[56,100]],
+               'Vas': [[0,24],[96,100]]}
+             
+    def labels(self):
+        """ Return dict that gives the default EMG channel labels. """
+        return {'Ham': 'Medial hamstrings',
+                   'Rec': 'Rectus femoris',
+                   'Gas': 'Gastrognemius',
+                   'Glut': 'Gluteus',
+                   'Vas': 'Vastus',
+                   'Sol': 'Soleus',
+                   'Tib': 'Tibialis',
+                   'Per': 'Peroneus'}
+
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
@@ -151,7 +174,7 @@ class gaitcycle:
         """ Try to detect whether the trial has L or R forceplate strike.
         Simple heuristic is to look at the force data
         150 ms after each foot strike, when the other foot should have
-        lifted off. """
+        lifted off. Might not work with very slow walkers. """
         delay_ms = 150
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
