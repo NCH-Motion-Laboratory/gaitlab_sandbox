@@ -245,7 +245,7 @@ with PdfPages(pdf_name) as pdf:
         chlabel = emgchlabels[k]
         # check replacement dict to see if data should actually be read
         # from some other channel 
-        if emgrepl.has_key(chnamepart):
+        if chnamepart in emgrepl:
             replstr = ' (read from '+emgrepl[chnamepart]+')'
             chnamepart = emgrepl[chnamepart]            
         else:
