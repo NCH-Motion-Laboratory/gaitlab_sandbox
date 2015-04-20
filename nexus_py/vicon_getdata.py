@@ -80,8 +80,12 @@ class vicon_emg:
             print(chname, min(self.datagc1l[chname]),
                   max(self.datagc1l[chname]),
                     np.median(np.abs(self.datagc1l[chname])))
+            # median scaling - beware of DC!
             self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
             self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
+            # fixed scale
+            self.yscalegc1l[chname] = .5e-3
+            self.yscalegc1l[chname] = .5e-3
           
         self.datalen = len(chdata)
         assert(self.datalen == framecount * samplesperframe)

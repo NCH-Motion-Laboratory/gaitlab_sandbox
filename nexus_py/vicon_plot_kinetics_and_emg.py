@@ -21,6 +21,7 @@ e.g. RVas=GlutL will read RVas data from the GlutL electrode.
 
 TODO:
 
+fix EMG scaling in getdata (median/DC)?
 add param. for specifying side manually
 EMG filtering (edge effects)
 move remaining plot definitions to parameters
