@@ -16,14 +16,11 @@ lrec                lham                lgas
                     lgas
 hip power           knee power          ankle power
 
-Can replace EMG electrodes by command line arguments.
-e.g. RVas=GlutL will read RVas data from the GlutL electrode.
 
 TODO:
 
+check filtering (order?)
 fix EMG scaling in getdata (median/DC)?
-add param. for specifying side manually
-EMG filtering (edge effects)
 move remaining plot definitions to parameters
 verify (Polygon)
 
@@ -43,14 +40,13 @@ pathprefix = 'c:/users/'+getpass.getuser()
 desktop = pathprefix + '/Desktop'
 configfile = desktop + '/kinetics_emg_config.txt'
 
-# parse command line args (EMG electrode replacements)
-if sys.argv[1:]:
+# parse args
+if sys.argv[1:]:  # from command line
     arglist = sys.argv[1:]
-elif os.path.isfile(configfile):
+if os.path.isfile(configfile):  # from config file
     f = open(configfile, 'r')
-    arglist = f.read().splitlines()
+    arglist += f.read().splitlines()
     f.close()
-
 arglist = [x.strip() for x in arglist]  # rm whitespace
 arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
 
@@ -64,9 +60,9 @@ for arg in arglist:
     else:
         key = arg[:eqpos]
         val = arg[eqpos+1:]
-        if key == 'side':
+        if key.lower() == 'side':
             side = val.upper()
-        elif key == 'emg_passband':
+        elif key.lower() == 'emg_passband':
             emg_passband = [float(x) for x in val.split(',')]
         else:
             emgrepl[key] = val
