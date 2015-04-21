@@ -37,30 +37,49 @@ import sys
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
+import getpass
+
+pathprefix = 'c:/users/'+getpass.getuser()
+desktop = pathprefix + '/Desktop'
+configfile = desktop + '/kinetics_emg_config.txt'
 
 # parse command line args (EMG electrode replacements)
+if sys.argv[1:]:
+    arglist = sys.argv[1:]
+elif os.path.isfile(configfile):
+    f = open(configfile, 'r')
+    arglist = f.read().splitlines()
+    f.close()
+
+arglist = [x.strip() for x in arglist]  # rm whitespace
+arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
+
+emg_passband = None
+side = None
 emgrepl = {}
-for arg in sys.argv[1:]:
+for arg in arglist:
     eqpos = arg.find('=')
     if eqpos < 2:
-        error_exit('Invalid argument: arguments must be of form EMG1=EMG2,'+
-        'which means that data of electrode EMG1 will be taken from electrode EMG2.')
+        error_exit('Invalid argument!')
     else:
         key = arg[:eqpos]
         val = arg[eqpos+1:]
-        emgrepl[key] = val
-
+        if key == 'side':
+            side = val.upper()
+        elif key == 'emg_passband':
+            emg_passband = [float(x) for x in val.split(',')]
+        else:
+            emgrepl[key] = val
+        
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 # needed at least when running outside Nexus
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 # PiG normal data
 gcdpath = 'normal.gcd'
-# if we're running from Nexus, try another place
+# check user's desktop also
 if not os.path.isfile(gcdpath):
-    gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
-if not os.path.isfile(gcdpath):
-    gcdpath = 'C:/Users/HUS20664877/Desktop/projects/llinna/nexus_py/normal.gcd'
+    gcdpath = desktop + '/projects/llinna/nexus_py/normal.gcd'
 if not os.path.isfile(gcdpath):
     error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
@@ -78,7 +97,8 @@ pigvars = vicon.GetModelOutputNames(subjectname)
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.gaitcycle(vicon)
-side = vgc.detect_side(vicon)
+if not side:
+    side = vgc.detect_side(vicon)
 # or specify manually:
 #side = 'R'
 
@@ -104,7 +124,8 @@ normals_color = 'gray'
 # read emg
 emg = vicon_getdata.vicon_emg(vicon)
 # passband for the filter
-emg_passband = [10, 300]
+if not emg_passband:
+    emg_passband = [10, 300]
 # emg normals
 emg_normals_alpha = .3
 emg_normals_color = 'red'
