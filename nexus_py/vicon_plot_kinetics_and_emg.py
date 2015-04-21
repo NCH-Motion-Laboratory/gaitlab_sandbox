@@ -103,6 +103,8 @@ normals_color = 'gray'
 
 # read emg
 emg = vicon_getdata.vicon_emg(vicon)
+# passband for the filter
+emg_passband = [10, 300]
 # emg normals
 emg_normals_alpha = .3
 emg_normals_color = 'red'
@@ -249,7 +251,7 @@ with PdfPages(pdf_name) as pdf:
         chname = chs[0]
         # plot in mV
         plt.subplot(gs[emgchpos[k]])
-        plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], [10,300]), 'black')
+        plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
         # plot EMG normal bars    
         emgbar_ind = emg_normaldata[chnamepart[1:]]
         for k in range(len(emgbar_ind)):

@@ -27,7 +27,7 @@ class vicon_emg:
 
     def __init__(self, vicon):
         # default plotting scale in medians (channel-specific)
-        yscale_medians = 9
+        yscale_medians = 1
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -79,7 +79,8 @@ class vicon_emg:
             # compute scales of EMG signal, to be used as y scaling of plots
             print(chname, min(self.datagc1l[chname]),
                   max(self.datagc1l[chname]),
-                    np.median(np.abs(self.datagc1l[chname])))
+                    np.median(np.abs(self.datagc1l[chname])),
+                    yscale_medians * np.median(np.abs(self.datagc1l[chname])))
             # median scaling - beware of DC!
             self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
             self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
@@ -94,12 +95,15 @@ class vicon_emg:
         self.t = np.arange(self.datalen)/self.sfrate
         
     def filter(self, y, passband):
-        """ Bandpass filter given data y to passband, e.g. [1, 40] 
+        """ Bandpass filter given data y to passband, e.g. [1, 40].
         Passband is given in Hz. """
-        passbandn = np.array(passband) / self.sfrate / 2
-        b, a = signal.butter(4, passbandn, 'bandpass')
-        yfilt = signal.filtfilt(b, a, y)        
-        return y #DEBUG
+        if passband == None:
+            return y
+        else:
+            passbandn = np.array(passband) / self.sfrate / 2
+            b, a = signal.butter(4, passbandn, 'bandpass')
+            yfilt = signal.filtfilt(b, a, y)        
+            return yfilt
 
     def findchs(self, str):
         """ Return list of channels whose names contain the given 
