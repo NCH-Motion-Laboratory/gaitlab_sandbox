@@ -251,9 +251,20 @@ with PdfPages(pdf_name) as pdf:
     
     for k in range(len(emgchsplot)):
         chnamepart = emgchsplot[k]
+        side_this = chnamepart[0]
+        if side_this == 'L':
+            gclen_emg = emg.lgc1len_s
+            emgdata = emg.datagc1l
+            yscale = emg.yscalegc1l
+        else:
+            gclen_emg = emg.rgc1len_s
+            emgdata = emg.datagc1r
+            yscale = emg.yscalegc1r
+        # x grid from 0..100 with as many elements as EMG has samples
+        tn_emg = np.linspace(0, 100, gclen_emg)
         chlabel = emgchlabels[k]
         # check replacement dict to see if data should actually be read
-        # from some other channel 
+        # from some other channel
         if chnamepart in emgrepl:
             replstr = ' (read from '+emgrepl[chnamepart]+')'
             chnamepart = emgrepl[chnamepart]            
@@ -282,6 +293,7 @@ with PdfPages(pdf_name) as pdf:
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
+
 
     # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        

@@ -122,6 +122,7 @@ fsize_labels=10
 # for plotting kinematics / kinetics normal data
 normals_alpha = .3
 normals_color = 'gray'
+xlabel = ''
 
 # read emg
 emg = vicon_getdata.vicon_emg(vicon)
@@ -156,8 +157,6 @@ if emgrepl:
         if not key in emg_legal:
             error_exit('Cannot replace electrode '+key)
      
-# EMG variables
-
 # for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
 # for normal data: 0,2,4...100.
@@ -171,8 +170,8 @@ with PdfPages(pdf_name) as pdf:
     #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
     for k in range(len(emgchsplot)):
         chnamepart = emgchsplot[k]
-        side = chnamepart[0]
-        if side == 'L':
+        side_this = chnamepart[0]
+        if side_this == 'L':
             gclen_emg = emg.lgc1len_s
             emgdata = emg.datagc1l
             yscale = emg.yscalegc1l
