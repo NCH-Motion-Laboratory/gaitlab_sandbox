@@ -96,7 +96,7 @@ class vicon_emg:
         
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40].
-        Passband is given in Hz. """
+        Passband is given in Hz. None for no filtering. """
         if passband == None:
             return y
         else:
@@ -138,13 +138,13 @@ class vicon_emg:
         if chname not in emglabels:
             return chname
         return emglabels[chname]
-        
 
     def legal(self):
         """ Legal electrode names. """
         emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'TibA']
         emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
         return emg_legal
+        
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize

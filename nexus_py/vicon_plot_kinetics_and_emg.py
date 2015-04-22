@@ -289,7 +289,7 @@ with PdfPages(pdf_name) as pdf:
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
         plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
         plt.xlim(0,100)
-        plt.title(chlabel+' '+side+replstr, fontsize=10)
+        plt.title(chlabel+' '+side_this+replstr, fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
