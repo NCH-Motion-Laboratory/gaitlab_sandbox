@@ -28,6 +28,8 @@ class vicon_emg:
     def __init__(self, vicon):
         # default plotting scale in medians (channel-specific)
         yscale_medians = 1
+        # whether to auto-find disconnected EMG channels
+        find_disconnected = True
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -66,16 +68,27 @@ class vicon_emg:
         self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
         self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
 
+        self.disconnected = {}
         for chid in self.chids:
             chdata, chready, chrate = vicon.GetDeviceChannel(emg_id, outputid, chid)
             assert(chrate == drate), 'Channel has an unexpected sampling rate'
             # remove 'Voltage.' from beginning of dict key
             chname = self.chnames[chid-1]
             self.data[chname] = np.array(chdata)
+            # zero out invalid EMG signals
+            if find_disconnected and not self.is_valid_emg(self.data[chname]):
+                #self.data[chname] = np.zeros(self.data[chname].shape) # zero the channel
+                self.disconnected[chname] = True
+            else:
+                self.disconnected[chname] = False
             # convert gait cycle times (in frames) to sample indices
             # cut to L/R gait cycles. no interpolation
-            self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])
-            self.datagc1r[chname] = np.array(chdata[self.rgc1start_s:self.rgc1end_s])
+            #self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])
+            #self.datagc1r[chname] = np.array(chdata[self.rgc1start_s:self.rgc1end_s])
+            
+            self.datagc1l[chname] = self.data[chname][self.lgc1start_s:self.lgc1end_s]
+            self.datagc1r[chname] = self.data[chname][self.rgc1start_s:self.rgc1end_s]
+            
             """ print(chname, min(self.datagc1l[chname]),
                   max(self.datagc1l[chname]),
                     np.median(np.abs(self.datagc1l[chname])),
@@ -92,6 +105,10 @@ class vicon_emg:
         self.sfrate = drate        
         # samples to time (s)
         self.t = np.arange(self.datalen)/self.sfrate
+        
+    def is_valid_emg(self, y):
+        """ Check whether channel contains valid EMG signal. """
+        return np.var(y) < 1e-8
         
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40].

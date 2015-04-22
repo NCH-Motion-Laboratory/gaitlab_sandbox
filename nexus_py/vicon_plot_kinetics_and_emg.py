@@ -284,7 +284,8 @@ with PdfPages(pdf_name) as pdf:
         chname = chs[0]
         # plot in mV
         plt.subplot(gs[emgchpos[k]])
-        plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
+        if not emg.disconnected[chname]:
+            plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
         # plot EMG normal bars    
         emgbar_ind = emg_normaldata[chnamepart[1:]]
         for k in range(len(emgbar_ind)):
