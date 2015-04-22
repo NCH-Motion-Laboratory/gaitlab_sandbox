@@ -47,12 +47,15 @@ desktop = pathprefix + '/Desktop'
 configfile = desktop + '/kinetics_emg_config.txt'
 
 # parse args
+def strip_ws(str):
+    return str.replace(' ','')
+    
 if os.path.isfile(configfile):  # from config file
     f = open(configfile, 'r')
     arglist = f.read().splitlines()
     f.close()
 arglist += sys.argv[1:]  # add cmd line arguments    
-arglist = [x.strip() for x in arglist]  # rm whitespace
+arglist = [strip_ws(x) for x in arglist]  # rm whitespace
 arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
 
 emgrepl = {}
@@ -293,7 +296,6 @@ with PdfPages(pdf_name) as pdf:
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
-
 
     # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        

@@ -33,12 +33,15 @@ desktop = pathprefix + '/Desktop'
 configfile = desktop + '/kinetics_emg_config.txt'
 
 # parse args
+def strip_ws(str):
+    return str.replace(' ','')
+    
 if os.path.isfile(configfile):  # from config file
     f = open(configfile, 'r')
     arglist = f.read().splitlines()
     f.close()
 arglist += sys.argv[1:]  # add cmd line arguments    
-arglist = [x.strip() for x in arglist]  # rm whitespace
+arglist = [strip_ws(x) for x in arglist]  # rm whitespace
 arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
 
 emgrepl = {}
