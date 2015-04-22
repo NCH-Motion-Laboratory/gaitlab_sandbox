@@ -86,7 +86,7 @@ class vicon_emg:
             self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
             # fixed scale
             self.yscalegc1l[chname] = .5e-3
-            self.yscalegc1l[chname] = .5e-3
+            self.yscalegc1r[chname] = .5e-3
           
         self.datalen = len(chdata)
         assert(self.datalen == framecount * samplesperframe)
@@ -122,9 +122,10 @@ class vicon_emg:
                'TibA': [[0,12],[56,100]],
                'Vas': [[0,24],[96,100]]}
              
-    def labels(self):
-        """ Return dict that gives the default EMG channel labels. """
-        return {'Ham': 'Medial hamstrings',
+    def label(self, chname):
+        """ Return verbose channel label, if it has been defined.
+        Otherwise return chname. """
+        emglabels = {'Ham': 'Medial hamstrings',
                    'Rec': 'Rectus femoris',
                    'Gas': 'Gastrognemius',
                    'Glut': 'Gluteus',
@@ -132,6 +133,12 @@ class vicon_emg:
                    'Sol': 'Soleus',
                    'TibA': 'Tibialis anterior',
                    'Per': 'Peroneus'}
+        if chname[0] in ['L','R']:
+            chname = chname[1:]
+        if chname not in emglabels:
+            return chname
+        return emglabels[chname]
+        
 
     def legal(self):
         """ Legal electrode names. """

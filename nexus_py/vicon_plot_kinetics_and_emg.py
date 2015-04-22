@@ -36,22 +36,25 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 
+
+# default parameters, if none specified on cmd line or config file
+emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
+side = None   # will autodetect unless specified
+
+# paths
 pathprefix = 'c:/users/'+getpass.getuser()
 desktop = pathprefix + '/Desktop'
 configfile = desktop + '/kinetics_emg_config.txt'
 
 # parse args
-if sys.argv[1:]:  # from command line
-    arglist = sys.argv[1:]
 if os.path.isfile(configfile):  # from config file
     f = open(configfile, 'r')
-    arglist += f.read().splitlines()
+    arglist = f.read().splitlines()
     f.close()
+arglist += sys.argv[1:]  # add cmd line arguments    
 arglist = [x.strip() for x in arglist]  # rm whitespace
 arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
 
-emg_passband = None
-side = None
 emgrepl = {}
 for arg in arglist:
     eqpos = arg.find('=')
@@ -63,7 +66,10 @@ for arg in arglist:
         if key.lower() == 'side':
             side = val.upper()
         elif key.lower() == 'emg_passband':
-            emg_passband = [float(x) for x in val.split(',')]
+            try:
+                emg_passband = [float(x) for x in val.split(',')]   
+            except ValueError:
+                error_exit('Invalid EMG passband. Specify as [f1,f2]')
         else:
             emgrepl[key] = val
         
@@ -119,26 +125,22 @@ normals_color = 'gray'
 
 # read emg
 emg = vicon_getdata.vicon_emg(vicon)
-# passband for the filter
-if not emg_passband:
-    emg_passband = [10, 300]
 # emg normals
 emg_normals_alpha = .3
 emg_normals_color = 'red'
 emg_ylabel = 'mV'
 # output filename
 pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
-# EMG channel naming dictionary
-emg_labels_dict = emg.labels()
 # EMG channels to plot
 emgchsplot = ['Ham','Rec','TibA','Glut','Vas','Per',
               'Rec','Ham','Gas','Glut','Sol','Gas']
-# generate labels              
-emgchlabels = [emg_labels_dict[x] for x in emgchsplot]
+# pick actual channel (L or R) according to foot strike
 if side == 'R':
     emgchsplot = ['R'+str for str in emgchsplot]
 else:
     emgchsplot = ['L'+str for str in emgchsplot]
+# generate labels              
+emgchlabels = [emg.label(x) for x in emgchsplot]
 # corresponding EMG channel positions on subplot grid
 emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
 # EMG normal bars: expected ranges of normal EMG activation
