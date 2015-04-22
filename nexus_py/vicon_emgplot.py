@@ -1,29 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Make combined kinetics-EMG report (idea from Leuven)
-Uses single trial of data from Vicon Nexus.
-Save report as pdf.
+Make EMG report and save as pdf. Can be run from Vicon Nexus.
+
 @author: Jussi
-
-Current plot layout:
-
-hip flex/ext        knee flex/ext       ankle dorsi/plant
-lham                lrec                ltiba
-lglut               lvas                lper
-hip flex/ext mom    knee flex/ext       ankle dors/plan
-lrec                lham                lgas
-                    lglut               lsol     
-                    lgas
-hip power           knee power          ankle power
 
 
 TODO:
 
 check filtering (order?)
 fix EMG scaling in getdata (median/DC)?
-move remaining plot definitions to parameters
-verify (Polygon)
-
+verify
 """
 
 import matplotlib.pyplot as plt
@@ -69,7 +55,7 @@ for arg in arglist:
             try:
                 emg_passband = [float(x) for x in val.split(',')]   
             except ValueError:
-                error_exit('Invalid EMG passband. Specify as [f1,f2]')
+                error_exit('Invalid EMG passband. Specify as emg_passband=f1,f2')
         else:
             emgrepl[key] = val
         

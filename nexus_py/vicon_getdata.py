@@ -76,11 +76,10 @@ class vicon_emg:
             # cut to L/R gait cycles. no interpolation
             self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])
             self.datagc1r[chname] = np.array(chdata[self.rgc1start_s:self.rgc1end_s])
-            # compute scales of EMG signal, to be used as y scaling of plots
-            print(chname, min(self.datagc1l[chname]),
+            """ print(chname, min(self.datagc1l[chname]),
                   max(self.datagc1l[chname]),
                     np.median(np.abs(self.datagc1l[chname])),
-                    yscale_medians * np.median(np.abs(self.datagc1l[chname])))
+                    yscale_medians * np.median(np.abs(self.datagc1l[chname])))"""
             # median scaling - beware of DC!
             self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
             self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
@@ -137,7 +136,8 @@ class vicon_emg:
             chname = chname[1:]
         if chname not in emglabels:
             return chname
-        return emglabels[chname]
+        else:
+            return emglabels[chname]
 
     def legal(self):
         """ Legal electrode names. """
