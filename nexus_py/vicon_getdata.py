@@ -108,7 +108,9 @@ class vicon_emg:
         
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
-        return np.var(y) < 1e-8
+        # simple variance check
+        emg_max_variance = 1e-8
+        return np.var(y) < emg_max_variance
         
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40].

@@ -40,6 +40,7 @@ import getpass
 # default parameters, if none specified on cmd line or config file
 emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
 side = None   # will autodetect unless specified
+annotate_disconnected = True  # annotate disconnected EMG
 
 # paths
 pathprefix = 'c:/users/'+getpass.getuser()
@@ -283,9 +284,11 @@ with PdfPages(pdf_name) as pdf:
             error_exit('Found multiple EMG channels matching requested name: '+chnamepart)
         chname = chs[0]
         # plot in mV
-        plt.subplot(gs[emgchpos[k]])
+        ax=plt.subplot(gs[emgchpos[k]])
         if not emg.disconnected[chname]:
             plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
+        elif annotate_disconnected:
+            ax.annotate('disconnected', xy=(50,0), ha="center", va="center")    
         # plot EMG normal bars    
         emgbar_ind = emg_normaldata[chnamepart[1:]]
         for k in range(len(emgbar_ind)):
