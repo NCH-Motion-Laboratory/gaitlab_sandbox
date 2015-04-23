@@ -74,7 +74,7 @@ for arg in arglist:
             try:
                 emg_passband = [float(x) for x in val.split(',')]   
             except ValueError:
-                error_exit('Invalid EMG passband. Specify as [f1,f2]')
+                error_exit('Invalid EMG passband. Specify as emg_passband=f1,f2')
         else:
             emgrepl[key] = val
         

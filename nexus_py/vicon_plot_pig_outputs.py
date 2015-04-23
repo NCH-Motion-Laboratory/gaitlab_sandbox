@@ -76,9 +76,6 @@ if not trialname_:
 sessionpath = trialname_[0]
 trialname = trialname_[1]
 
-
-
-
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.gaitcycle(vicon)
 side = vgc.detect_side(vicon)
