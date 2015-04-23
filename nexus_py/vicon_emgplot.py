@@ -37,6 +37,7 @@ configfile = desktop + '/kinetics_emg_config.txt'
 def strip_ws(str):
     return str.replace(' ','')
     
+arglist = []
 if os.path.isfile(configfile):  # from config file
     f = open(configfile, 'r')
     arglist = f.read().splitlines()
@@ -59,7 +60,7 @@ for arg in arglist:
             try:
                 emg_passband = [float(x) for x in val.split(',')]   
             except ValueError:
-                error_exit('Invalid EMG passband. Specify as emg_passband=f1,f2')
+                error_exit('Invalid EMG passband. Specify as [f1,f2]')
         else:
             emgrepl[key] = val
         
@@ -79,13 +80,16 @@ import ViconNexus
 # Python objects communicate directly with the Nexus application.
 # Before using the vicon object, Nexus needs to be started and a subject loaded.
 vicon = ViconNexus.ViconNexus()
-subjectname = vicon.GetSubjectNames()[0]
-sessionpath = vicon.GetTrialName()[0]
-trialname = vicon.GetTrialName()[1]
-if trialname == '':
+subjectnames = vicon.GetSubjectNames()
+if not subjectnames:
+    error_exit('No subject')
+subjectname = subjectnames[0]
+trialname_ = vicon.GetTrialName()
+if not trialname_:
     error_exit('No trial loaded')
+sessionpath = trialname_[0]
+trialname = trialname_[1]
 
-pigvars = vicon.GetModelOutputNames(subjectname)
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.gaitcycle(vicon)
