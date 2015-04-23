@@ -53,7 +53,7 @@ class vicon_emg:
         for i in range(len(self.chnames)):
             chname = self.chnames[i]    
             # if chname starts with 'Voltage', remove it
-            if chname.find('Voltage') > 0:
+            if chname.find('Voltage') > -1:
                 chname = chname[chname.find('.')+1:]
             self.chnames[i] = chname
         # read EMG channels into dict
@@ -73,6 +73,9 @@ class vicon_emg:
         self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
 
         self.disconnected = {}
+        for chname in self.chnames:
+            self.disconnected[chname] = False
+        
         for chid in self.chids:
             chdata, chready, chrate = vicon.GetDeviceChannel(emg_id, outputid, chid)
             assert(chrate == drate), 'Channel has an unexpected sampling rate'
@@ -83,8 +86,6 @@ class vicon_emg:
             if find_disconnected and not self.is_valid_emg(self.data[chname]):
                 #self.data[chname] = np.zeros(self.data[chname].shape) # zero the channel
                 self.disconnected[chname] = True
-            else:
-                self.disconnected[chname] = False
             # convert gait cycle times (in frames) to sample indices
             # cut to L/R gait cycles. no interpolation
             #self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])

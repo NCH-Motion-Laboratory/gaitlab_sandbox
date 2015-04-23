@@ -20,10 +20,9 @@ hip power           knee power          ankle power
 TODO:
 
 fix normal data plotting for replaced electrodes
+autodet. of disconnected electrodes
 check filtering (order?)
-fix EMG scaling in getdata (median/DC)?
-move remaining plot definitions to parameters
-verify (Polygon)
+verify
 
 """
 
@@ -104,7 +103,6 @@ if not trialname_:
     error_exit('No trial loaded')
 sessionpath = trialname_[0]
 trialname = trialname_[1]
-
 
 pigvars = vicon.GetModelOutputNames(subjectname)
 
@@ -276,9 +274,12 @@ with PdfPages(pdf_name) as pdf:
         chlabel = emgchlabels[k]
         # check replacement dict to see if data should actually be read
         # from some other channel
+        chnormal = chnamepart  # read normal data for specified chan, even if replaced later
         if chnamepart in emgrepl:
             replstr = ' (read from '+emgrepl[chnamepart]+')'
-            chnamepart = emgrepl[chnamepart]            
+            chnamepart_orig = chnamepart
+            # replace channel
+            chnamepart = emgrepl[chnamepart]
         else:
             replstr = ''
         # translate to full channel name, e.g. 'LHam' -> 'LHam7'
@@ -290,14 +291,17 @@ with PdfPages(pdf_name) as pdf:
             plt.close()
             error_exit('Found multiple EMG channels matching requested name: '+chnamepart)
         chname = chs[0]
+        # disconnect channel used as the replacement electrode
+        if replstr:
+            emg.disconnected[chname] = True
         # plot in mV
         ax=plt.subplot(gs[emgchpos[k]])
         if not emg.disconnected[chname]:
             plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
         elif annotate_disconnected:
             ax.annotate('disconnected', xy=(50,0), ha="center", va="center")    
-        # plot EMG normal bars    
-        emgbar_ind = emg_normaldata[chnamepart[1:]]
+        # plot EMG normal bars
+        emgbar_ind = emg_normaldata[chnormal[1:]]  # normal data for original channel
         for k in range(len(emgbar_ind)):
             inds = emgbar_ind[k]
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
