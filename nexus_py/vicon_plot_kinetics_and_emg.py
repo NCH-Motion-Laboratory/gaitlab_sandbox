@@ -19,6 +19,7 @@ hip power           knee power          ankle power
 
 TODO:
 
+fix normal data plotting for replaced electrodes
 check filtering (order?)
 fix EMG scaling in getdata (median/DC)?
 move remaining plot definitions to parameters
