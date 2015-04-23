@@ -49,8 +49,9 @@ class vicon_emg:
         _,_,_,_,self.chnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
         for i in range(len(self.chnames)):
             chname = self.chnames[i]    
-            assert(chname.find('Voltage') == 0), 'Not a voltage channel?'
-            chname = chname[chname.find('.')+1:]  # remove 'Voltage.'
+            # if chname starts with 'Voltage', remove it
+            if chname.find('Voltage') > 0:
+                chname = chname[chname.find('.')+1:]
             self.chnames[i] = chname
         # read EMG channels into dict
         # also cut data to L/R gait cycles
@@ -109,7 +110,7 @@ class vicon_emg:
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
         # simple variance check
-        emg_max_variance = 1e-8
+        emg_max_variance = 1e-7
         return np.var(y) < emg_max_variance
         
     def filter(self, y, passband):
