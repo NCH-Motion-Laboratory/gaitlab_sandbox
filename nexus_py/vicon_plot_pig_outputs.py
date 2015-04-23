@@ -12,32 +12,72 @@ import vicon_getdata
 from vicon_getdata import error_exit
 import sys
 import os
+import getpass
 
+# paths
+pathprefix = 'c:/users/'+getpass.getuser()
+desktop = pathprefix + '/Desktop'
+configfile = desktop + '/kinetics_emg_config.txt'
+
+# parse args
+def strip_ws(str):
+    return str.replace(' ','')
+    
+arglist = []
+if os.path.isfile(configfile):  # from config file
+    f = open(configfile, 'r')
+    arglist = f.read().splitlines()
+    f.close()
+arglist += sys.argv[1:]  # add cmd line arguments    
+arglist = [strip_ws(x) for x in arglist]  # rm whitespace
+arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
+
+emgrepl = {}
+for arg in arglist:
+    eqpos = arg.find('=')
+    if eqpos < 2:
+        error_exit('Invalid argument!')
+    else:
+        key = arg[:eqpos]
+        val = arg[eqpos+1:]
+        if key.lower() == 'side':
+            side = val.upper()
+        elif key.lower() == 'emg_passband':
+            try:
+                emg_passband = [float(x) for x in val.split(',')]   
+            except ValueError:
+                error_exit('Invalid EMG passband. Specify as [f1,f2]')
+        else:
+            emgrepl[key] = val
+        
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 # needed at least when running outside Nexus
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
+# PiG normal data
+gcdpath = 'normal.gcd'
+# check user's desktop also
+if not os.path.isfile(gcdpath):
+    gcdpath = desktop + '/projects/llinna/nexus_py/normal.gcd'
+if not os.path.isfile(gcdpath):
+    error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
 
 import ViconNexus
 # Python objects communicate directly with the Nexus application.
 # Before using the vicon object, Nexus needs to be started and a subject loaded.
 vicon = ViconNexus.ViconNexus()
-subjectname = vicon.GetSubjectNames()[0]
-sessionpath = vicon.GetTrialName()[0]
-trialname = vicon.GetTrialName()[1]
-if trialname == '':
+subjectnames = vicon.GetSubjectNames()
+if not subjectnames:
+    error_exit('No subject')
+subjectname = subjectnames[0]
+trialname_ = vicon.GetTrialName()
+if not trialname_:
     error_exit('No trial loaded')
-pigvars = vicon.GetModelOutputNames(subjectname)
+sessionpath = trialname_[0]
+trialname = trialname_[1]
 
-# PiG normal data
-gcdpath = 'normal.gcd'
-# if we're running from Nexus, try another place
-if not os.path.isfile(gcdpath):
-    gcdpath = 'C:/Users/Vicon123/Desktop/nexus_python/llinna/nexus_py/normal.gcd'
-if not os.path.isfile(gcdpath):
-    gcdpath = 'C:/Users/HUS20664877/Desktop/projects/llinna/nexus_py/normal.gcd'
-if not os.path.isfile(gcdpath):
-    error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
+
+
 
 # try to detect which foot hit the forceplate
 vgc = vicon_getdata.gaitcycle(vicon)
