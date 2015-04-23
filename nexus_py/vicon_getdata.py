@@ -3,7 +3,10 @@
 Created on Tue Mar 17 14:41:31 2015
 
 Utility classes for reading data from Vicon Nexus.
-TODO: fix naming conventions (vars lower_case, class names CamelCase)
+
+TODO: 
+remove EMG DC level
+
 
 @author: Jussi
 """
