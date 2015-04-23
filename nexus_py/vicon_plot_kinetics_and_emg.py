@@ -17,9 +17,12 @@ lrec                lham                lgas
 hip power           knee power          ankle power
 
 
+
 TODO:
 
-fix normal data plotting for replaced electrodes
+mark reused channels properly (when making the replacement dict),
+also in vicon_emgplot
+
 autodet. of disconnected electrodes
 check filtering (order?)
 verify
