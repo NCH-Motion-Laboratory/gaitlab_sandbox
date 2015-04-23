@@ -51,6 +51,7 @@ configfile = desktop + '/kinetics_emg_config.txt'
 def strip_ws(str):
     return str.replace(' ','')
     
+arglist = []
 if os.path.isfile(configfile):  # from config file
     f = open(configfile, 'r')
     arglist = f.read().splitlines()
