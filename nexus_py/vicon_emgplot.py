@@ -27,6 +27,7 @@ import getpass
 emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
 side = None   # will autodetect unless specified
 annotate_disconnected = True  # annotate disconnected EMG
+annotate_reused = True
 
 # paths
 pathprefix = 'c:/users/'+getpass.getuser()
@@ -162,6 +163,7 @@ with PdfPages(pdf_name) as pdf:
     gs = gridspec.GridSpec(gridv, gridh, height_ratios = plotheightratios)
     plt.suptitle(maintitle, fontsize=12, fontweight="bold")
     #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
+
     for k in range(len(emgchsplot)):
         chnamepart = emgchsplot[k]
         side_this = chnamepart[0]
@@ -176,45 +178,49 @@ with PdfPages(pdf_name) as pdf:
         # x grid from 0..100 with as many elements as EMG has samples
         tn_emg = np.linspace(0, 100, gclen_emg)
         chlabel = emgchlabels[k]
-        # check replacement dict to see if data should actually be read
-        # from some other channel 
+        chname = emg.findch(chnamepart)
+        # read data from other physical electrode?
         if chnamepart in emgrepl:
             replstr = ' (read from '+emgrepl[chnamepart]+')'
-            chnamepart = emgrepl[chnamepart]            
+            chdata = emgrepl[chnamepart]
         else:
             replstr = ''
+            chdata = chnamepart
         # translate to full channel name, e.g. 'LHam' -> 'LHam7'
-        chs = emg.findchs(chnamepart)
-        if len(chs) == 0:
-            plt.close()
-            error_exit('EMG channel matching name '+chnamepart+' not found in data')
-        if len(chs) > 1:
-            plt.close()
-            error_exit('Found multiple EMG channels matching requested name: '+chnamepart)
-        chname = chs[0]
+        chdata = emg.findch(chdata)
         # plot in mV
         ax=plt.subplot(gs[emgchpos[k]])
-        if not emg.disconnected[chname]:
-            plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black', alpha=.7)
-        elif annotate_disconnected:
-            ax.annotate('disconnected', xy=(50,0), ha="center", va="center")
-        # plot EMG normal bars    
-        emgbar_ind = emg_normaldata[chnamepart[1:]]
+        # physical channel must not be disconnected and logical not reused
+        if not emg.disconnected[chdata] and not emg.reused[chname]:
+            plt.plot(tn_emg, 1e3*emg.filter(emgdata[chdata], emg_passband), 'black')
+        elif annotate_disconnected and emg.disconnected[chdata]:
+            ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+        elif annotate_reused and emg.reused[chname]:
+            ax.annotate('reused', xy=(50,0), ha="center", va="center")   
+        # mark channel used as the replacement, so it won't be plotted again
+        if replstr:
+            print('Replaced', chname, chdata)
+            emg.reused[chdata] = True
+        # plot EMG normal bars
+        emgbar_ind = emg_normaldata[chnamepart[1:]]  # normal data for original channel
         for k in range(len(emgbar_ind)):
             inds = emgbar_ind[k]
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
+        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])  # scale from logical channel
         plt.xlim(0,100)
         plt.title(chlabel+' '+side_this+replstr, fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)
+
     # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
     print("Writing "+pdf_name)
     pdf.savefig()
     plt.show()
     
+
+
 
 
 

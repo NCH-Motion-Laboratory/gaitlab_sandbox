@@ -41,6 +41,7 @@ import getpass
 emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
 side = None   # will autodetect unless specified
 annotate_disconnected = True  # annotate disconnected EMG
+annotate_reused = True
 
 # paths
 pathprefix = 'c:/users/'+getpass.getuser()
@@ -272,40 +273,36 @@ with PdfPages(pdf_name) as pdf:
         # x grid from 0..100 with as many elements as EMG has samples
         tn_emg = np.linspace(0, 100, gclen_emg)
         chlabel = emgchlabels[k]
-        # check replacement dict to see if data should actually be read
-        # from some other channel
-        chnormal = chnamepart  # read normal data for specified chan, even if replaced later
+        chname = emg.findch(chnamepart)
+        print(chname, chnamepart)
+        # read data from other physical electrode?
         if chnamepart in emgrepl:
             replstr = ' (read from '+emgrepl[chnamepart]+')'
-            chnamepart_orig = chnamepart
-            # replace channel
-            chnamepart = emgrepl[chnamepart]
+            chdata = emgrepl[chnamepart]
         else:
             replstr = ''
+            chdata = chnamepart
         # translate to full channel name, e.g. 'LHam' -> 'LHam7'
-        chs = emg.findchs(chnamepart)
-        if len(chs) == 0:
-            plt.close()
-            error_exit('EMG channel matching name '+chnamepart+' not found in data')
-        if len(chs) > 1:
-            plt.close()
-            error_exit('Found multiple EMG channels matching requested name: '+chnamepart)
-        chname = chs[0]
-        # disconnect channel used as the replacement electrode
-        if replstr:
-            emg.disconnected[chname] = True
+        chdata = emg.findch(chdata)
         # plot in mV
         ax=plt.subplot(gs[emgchpos[k]])
-        if not emg.disconnected[chname]:
-            plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
-        elif annotate_disconnected:
-            ax.annotate('disconnected', xy=(50,0), ha="center", va="center")    
+        # physical channel must not be disconnected and logical not reused
+        if not emg.disconnected[chdata] and not emg.reused[chname]:
+            plt.plot(tn_emg, 1e3*emg.filter(emgdata[chdata], emg_passband), 'black')
+        elif annotate_disconnected and emg.disconnected[chdata]:
+            ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+        elif annotate_reused and emg.reused[chname]:
+            ax.annotate('reused', xy=(50,0), ha="center", va="center")   
+        # mark channel used as the replacement, so it won't be plotted again
+        if replstr:
+            print('Replaced', chname, chdata)
+            emg.reused[chdata] = True
         # plot EMG normal bars
-        emgbar_ind = emg_normaldata[chnormal[1:]]  # normal data for original channel
+        emgbar_ind = emg_normaldata[chnamepart[1:]]  # normal data for original channel
         for k in range(len(emgbar_ind)):
             inds = emgbar_ind[k]
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
+        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])  # scale from logical channel
         plt.xlim(0,100)
         plt.title(chlabel+' '+side_this+replstr, fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)

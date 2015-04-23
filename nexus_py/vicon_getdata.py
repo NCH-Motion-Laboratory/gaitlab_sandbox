@@ -72,9 +72,12 @@ class vicon_emg:
         self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
         self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
 
+        # init dicts
+        self.reused = {}
         self.disconnected = {}
         for chname in self.chnames:
             self.disconnected[chname] = False
+            self.reused[chname] = False
         
         for chid in self.chids:
             chdata, chready, chrate = vicon.GetDeviceChannel(emg_id, outputid, chid)
@@ -129,10 +132,18 @@ class vicon_emg:
             return yfilt
 
     def findchs(self, str):
-        """ Return list of channels whose names contain the given 
+        """ Return list of channels whose name contains the given 
         string str. """
         return [chn for chn in self.chnames if chn.find(str) > -1]
-        
+
+    def findch(self, str):
+        """ Return name of (unique) channel containing the given 
+        string str. """
+        chlist = [chn for chn in self.chnames if chn.find(str) > -1]
+        if len(chlist) != 1:
+            error_exit('Cannot find unique channel matching '+str)
+        return chlist[0]
+
     def normaldata(self):
         """ EMG normal data, i.e. expected range of activation during
         normalized trial. """        
