@@ -63,79 +63,83 @@ def error_exit(message):
 
 class vicon_emg:
     """ Class for reading and processing EMG data from Nexus.
-    vicon is a ViconNexus.ViconNexus() object.
-    emg_replace contains the replacement dictionary for EMG electrodes:
-    e.g. key LGas=LSol means that LGas daas will be read from the LSol
-    electrode."""
+    vicon is a ViconNexus.ViconNexus() object."""
     
-    """ Defines electrode mapping for the Myon EMG system """
-    def mapping_myon(self, mapping_changes):
-        self.emg_normals = {'RGas': [[16,50]],
-               'RGlut': [[0,42],[96,100]],
-               'RHam': [[0,2],[92,100]],
-               'RPer': [[4,54]],
-               'RRec': [[0,14],[56,100]],
-               'RSol': [[10,54]],
-               'RTibA': [[0,12],[56,100]],
-               'RVas': [[0,24],[96,100]],
-               'LGas': [[16,50]],
-               'LGlut': [[0,42],[96,100]],
-               'LHam': [[0,2],[92,100]],
-               'LPer': [[4,54]],
-               'LRec': [[0,14],[56,100]],
-               'LSol': [[10,54]],
-               'LTibA': [[0,12],[56,100]],
-               'LVas': [[0,24],[96,100]]}
-        self.logical_chs = self.emg_normals.keys()
-        self.emglabels = {'RHam': 'Medial hamstrings',
-                   'RRec': 'Rectus femoris',
-                   'RGas': 'Gastrognemius',
-                   'RGlut': 'Gluteus',
-                   'RVas': 'Vastus',
-                   'RSol': 'Soleus',
-                   'RTibA': 'Tibialis anterior',
-                   'RPer': 'Peroneus',
-                   'LHam': 'Medial hamstrings',
-                   'LRec': 'Rectus femoris',
-                   'LGas': 'Gastrognemius',
-                   'LGlut': 'Gluteus',
-                   'LVas': 'Vastus',
-                   'LSol': 'Soleus',
-                   'LTibA': 'Tibialis anterior',
-                   'LPer': 'Peroneus'}
-        
-        
-        
-        
-        
-        
-        
-        
-
-    def __init__(self, vicon, emg_replace):
+    def define_emg_mapping(self, emg_system='Myon', mapping_changes=None):
+        """ Defines electrode mapping. mapping_changes contains the replacement
+        dict for EMG electrodes: e.g. key 'LGas'='LSol' means that LGas data will be 
+        read from the LSol electrode. emg_system may be used to support systems
+        other than Myon in the future. """
+        if emg_system == 'Myon':
+            self.ch_normals = {'RGas': [[16,50]],
+                   'RGlut': [[0,42],[96,100]],
+                   'RHam': [[0,2],[92,100]],
+                   'RPer': [[4,54]],
+                   'RRec': [[0,14],[56,100]],
+                   'RSol': [[10,54]],
+                   'RTibA': [[0,12],[56,100]],
+                   'RVas': [[0,24],[96,100]],
+                   'LGas': [[16,50]],
+                   'LGlut': [[0,42],[96,100]],
+                   'LHam': [[0,2],[92,100]],
+                   'LPer': [[4,54]],
+                   'LRec': [[0,14],[56,100]],
+                   'LSol': [[10,54]],
+                   'LTibA': [[0,12],[56,100]],
+                   'LVas': [[0,24],[96,100]]}
+            self.ch_names = self.ch_normals.keys()
+            self.ch_labels = {'RHam': 'Medial hamstrings',
+                       'RRec': 'Rectus femoris',
+                       'RGas': 'Gastrognemius',
+                       'RGlut': 'Gluteus',
+                       'RVas': 'Vastus',
+                       'RSol': 'Soleus',
+                       'RTibA': 'Tibialis anterior',
+                       'RPer': 'Peroneus',
+                       'LHam': 'Medial hamstrings',
+                       'LRec': 'Rectus femoris',
+                       'LGas': 'Gastrognemius',
+                       'LGlut': 'Gluteus',
+                       'LVas': 'Vastus',
+                       'LSol': 'Soleus',
+                       'LTibA': 'Tibialis anterior',
+                       'LPer': 'Peroneus'}
+            self.ch_mapping = {'LGas': 'LGas4',
+             'LGlut': 'LGlut8',
+             'LHam': 'LHam7',
+             'LPer': 'LPer2',
+             'LRec': 'LRec5',
+             'LSol': 'LSol3',
+             'LTibA': 'LTibA1',
+             'LVas': 'LVas6',
+             'RGas': 'RGas12',
+             'RGlut': 'RGlut16',
+             'RHam': 'RHam15',
+             'RPer': 'RPer10',
+             'RRec': 'RRec13',
+             'RSol': 'RSol11',
+             'RTibA': 'RTibA9',
+             'RVas': 'RVas14'}
+        else:
+            error_exit('Unsupported EMG system: '+emg_system)
+        # user specified changes to electrode mapping
+        if mapping_changes:
+            for logch in mapping_changes:
+                physch = mapping_changes[logch]
+                # mark channel as remapped
+                for ch in self.ch_mapping.keys():
+                    if self.ch_mapping[ch] == physch:
+                        self.ch_mapping[ch] = 'EMG_REUSED'
+                self.ch_mapping[logch] = mapping_changes[logch]
+                
+    def __init__(self, vicon, emg_system='Myon', mapping_changes=None):
         # default plotting scale in medians (channel-specific)
         yscale_medians = 1
         # whether to auto-find disconnected EMG channels
         find_disconnected = True
+        
         # normal data and logical chs
-        self.emg_normals = {'RGas': [[16,50]],
-               'RGlut': [[0,42],[96,100]],
-               'RHam': [[0,2],[92,100]],
-               'RPer': [[4,54]],
-               'RRec': [[0,14],[56,100]],
-               'RSol': [[10,54]],
-               'RTibA': [[0,12],[56,100]],
-               'RVas': [[0,24],[96,100]],
-               'LGas': [[16,50]],
-               'LGlut': [[0,42],[96,100]],
-               'LHam': [[0,2],[92,100]],
-               'LPer': [[4,54]],
-               'LRec': [[0,14],[56,100]],
-               'LSol': [[10,54]],
-               'LTibA': [[0,12],[56,100]],
-               'LVas': [[0,24],[96,100]]}
-        self.logichs = self.emg_normals.keys()
-               
+        self.define_emg_mapping(emg_system, mapping_changes)
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -162,11 +166,9 @@ class vicon_emg:
         # read EMG channels into dict
         # also cut data to L/R gait cycles
         self.data = {}
-        self.yscalegc1l = {}        
-        self.yscalegc1r = {}            
         vgc1 = gaitcycle(vicon)
-        self.datagc1l = {}
-        self.datagc1r = {}
+        self.data_gc1l = {}
+        self.data_gc1r = {}
         # gait cycle beginning and end, samples
         self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
         self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
@@ -192,44 +194,32 @@ class vicon_emg:
             if find_disconnected and not self.is_valid_emg(self.data[chname]):
                 self.data[chname] = "EMG_DISCONNECTED"
             # cut to L/R gait cycles. no interpolation
-            self.datagc1l[chname] = self.data[chname][self.lgc1start_s:self.lgc1end_s]
-            self.datagc1r[chname] = self.data[chname][self.rgc1start_s:self.rgc1end_s]
+            self.data_gc1l[chname] = self.data[chname][self.lgc1start_s:self.lgc1end_s]
+            self.data_gc1r[chname] = self.data[chname][self.rgc1start_s:self.rgc1end_s]
             # median scaling - beware of DC!
             #self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
             #self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
             # fixed scale
 
-        self.logical_emg = {}
-        self.logical_ok = {}
-        """ map logical channels into a dict.
-        if default phys. electrode is disconnected, and replacement
-        not set, mark logical channel as 'disconnected'
-        if default phys. electrode is used for another channel, and replacement
-        not set, mark the logical channel as 'reused' """
-        for logich in self.logichs:
-            self.logical_ok[logich] = True
-            if emg_replace[logich]:
-                # data of logical channel is read from another electrode
-                physch = emg_replace[logich]
-            else:
-                physch = self.findch(logich)
-            # default physical channel is used as replacement for another channel
-            if physch in emg_replace.values():
-                self.logical_emg[logich] = "EMG_REUSED"
-                self.logical_ok[logich] = False
-            else:
-                self.logical_emg[logich] = self.data[physch]
-            if self.logical_emg[logich] == "EMG_DISCONNECTED":
-                self.logical_ok[logich] = False
-            # cut to L/R gait cycles. no interpolation
-            if self.logical_ok[logich]:
-                self.logical_emg_gc1l[logich] = self.logical_emg[logich][self.lgc1start_s:self.lgc1end_s]
-                self.logical_emg_gc1r[logich] = self.logical_emg[logich][self.rgc1start_s:self.rgc1end_s]
+        # assign data to logical channels
+        self.logical_data = {}
+        self.logical_data_gc1l = {}
+        self.logical_data_gc1r = {}
+        self.yscale_gc1l = {}
+        self.yscale_gc1r = {}
+        
+        for logch in self.ch_mapping:
+            if self.ch_mapping[logch] != 'EMG_REUSED':
+                physch = self.ch_mapping[logch]
+                if physch not in self.data:
+                    error_exit('Cannot read requested physical channel: '+physch)
+                self.logical_data[logch] = self.data[physch]
+                self.logical_data_gc1l[logch] = self.logical_data[logch][self.lgc1start_s:self.lgc1end_s]
+                self.logical_data_gc1r[logch] = self.logical_data[logch][self.rgc1start_s:self.rgc1end_s]
             # fixed scales
-            self.yscale_gc1l[logich] = .5e-3
-            self.yscale_gc1r[logich] = .5e-3
+            self.yscale_gc1l[logch] = .5e-3
+            self.yscale_gc1r[logch] = .5e-3
 
-          
         self.datalen = len(chdata)
         assert(self.datalen == framecount * samplesperframe)
         self.sfrate = drate        
@@ -266,41 +256,7 @@ class vicon_emg:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
 
-    def normaldata(self, logich):
-        """ EMG normal data, i.e. expected range of activation during
-        normalized trial. """
-        if logich[0].upper() in ['L','R']:
-            logich = logich[1:]
-        return self.emg_normals[logich]
 
-        emg_normals = {'Gas': [[16,50]],
-               'Glut': [[0,42],[96,100]],
-               'Ham': [[0,2],[92,100]],
-               'Per': [[4,54]],
-               'Rec': [[0,14],[56,100]],
-               'Sol': [[10,54]],
-               'TibA': [[0,12],[56,100]],
-               'Vas': [[0,24],[96,100]]}
-             
-    def label(self, logich):
-        """ Return verbose channel label for a logical channel. 
-        e.g 'VasL' -> 'Vastus (L)' """
-        emglabels = {'Ham': 'Medial hamstrings',
-                   'Rec': 'Rectus femoris',
-                   'Gas': 'Gastrognemius',
-                   'Glut': 'Gluteus',
-                   'Vas': 'Vastus',
-                   'Sol': 'Soleus',
-                   'TibA': 'Tibialis anterior',
-                   'Per': 'Peroneus'}
-        # return unknown names as they are
-        side = logich[0].upper()
-        if side == 'L':
-            sidestr = ' (L)'
-        elif side == 'R':
-            sidestr = ' (R)'
-        logich = logich[1:]
-        return emglabels[logich] + sidestr
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
