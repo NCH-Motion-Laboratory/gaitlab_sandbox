@@ -137,7 +137,9 @@ normals_alpha = .3
 normals_color = 'gray'
 
 # read emg
-emg = vicon_getdata.vicon_emg(vicon)
+repl = {'RPer': 'RTibA9'}
+repl = {}
+emg = vicon_getdata.vicon_emg(vicon, mapping_changes=repl)
 # emg normals
 emg_normals_alpha = .3
 emg_normals_color = 'red'
@@ -152,21 +154,10 @@ if side == 'R':
     emgchsplot = ['R'+str for str in emgchsplot]
 else:
     emgchsplot = ['L'+str for str in emgchsplot]
-# generate labels              
-emgchlabels = [emg.label(x) for x in emgchsplot]
-# corresponding EMG channel positions on subplot grid
+# generate labels               grid
 emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
-# EMG normal bars: expected ranges of normal EMG activation
-# see emg_normal_bars.py
-emg_normaldata = emg.normaldata()
-emg_legal = emg.legal()
 
-# sanity check for EMG replacement dict
-if emgrepl:
-    for key in emgrepl.keys():
-        if not key in emg_legal:
-            error_exit('Cannot replace electrode '+key)
-     
+    
 # kinematics vars to plot
 kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
 # corresponding normal variables as specified in normal.gcd
@@ -213,16 +204,14 @@ else:
     tracecolor = rcolor
 # EMG variables
 if side == 'L':
-    gclen_emg = emg.lgc1len_s
-    emgdata = emg.datagc1l
-    yscale = emg.yscalegc1l
+    tn_emg = emg.tn_emg_l
+    emgdata = emg.logical_data_gc1l
+    emg_yscale = emg.yscale_gc1l
 else:
-    gclen_emg = emg.rgc1len_s
-    emgdata = emg.datagc1r
-    yscale = emg.yscalegc1r
+    tn_emg = emg.tn_emg_r
+    emgdata = emg.logical_data_gc1r
+    emg_yscale = emg.yscale_gc1r
 
-# x grid from 0..100 with as many elements as EMG has samples
-tn_emg = np.linspace(0, 100, gclen_emg)
 # for kinematics / kinetics: 0,1...100
 tn = np.linspace(0, 100, 101)
 # for normal data: 0,2,4...100.
@@ -263,51 +252,24 @@ with PdfPages(pdf_name) as pdf:
         plt.locator_params(axis = 'y', nbins = 6)
     
     for k in range(len(emgchsplot)):
-        chnamepart = emgchsplot[k]
-        side_this = chnamepart[0]
-        if side_this == 'L':
-            gclen_emg = emg.lgc1len_s
-            emgdata = emg.datagc1l
-            yscale = emg.yscalegc1l
-        else:
-            gclen_emg = emg.rgc1len_s
-            emgdata = emg.datagc1r
-            yscale = emg.yscalegc1r
-        # x grid from 0..100 with as many elements as EMG has samples
-        tn_emg = np.linspace(0, 100, gclen_emg)
-        chlabel = emgchlabels[k]
-        chname = emg.findch(chnamepart)
-        print(chname, chnamepart)
-        # read data from other physical electrode?
-        if chnamepart in emgrepl:
-            replstr = ' (read from '+emgrepl[chnamepart]+')'
-            chdata = emgrepl[chnamepart]
-        else:
-            replstr = ''
-            chdata = chnamepart
-        # translate to full channel name, e.g. 'LHam' -> 'LHam7'
-        chdata = emg.findch(chdata)
-        # plot in mV
+        thisch = emgchsplot[k]
         ax=plt.subplot(gs[emgchpos[k]])
-        # physical channel must not be disconnected and logical not reused
-        if not emg.disconnected[chdata] and not emg.reused[chname]:
-            plt.plot(tn_emg, 1e3*emg.filter(emgdata[chdata], emg_passband), 'black')
-        elif annotate_disconnected and emg.disconnected[chdata]:
+        if emgdata[thisch] == 'EMG_DISCONNECTED':
             ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
-        elif annotate_reused and emg.reused[chname]:
-            ax.annotate('reused', xy=(50,0), ha="center", va="center")   
-        # mark channel used as the replacement, so it won't be plotted again
-        if replstr:
-            print('Replaced', chname, chdata)
-            emg.reused[chdata] = True
+        elif emgdata[thisch] == 'EMG_REUSED':
+                ax.annotate('reused', xy=(50,0), ha="center", va="center")
+        else:
+            #plt.plot(tn_emg, 1e3*emgdata[thisch], 'black')
+            plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
+        chlabel = emg.ch_labels[thisch]
         # plot EMG normal bars
-        emgbar_ind = emg_normaldata[chnamepart[1:]]  # normal data for original channel
+        emgbar_ind = emg.ch_normals[thisch]
         for k in range(len(emgbar_ind)):
             inds = emgbar_ind[k]
             plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-        plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])  # scale from logical channel
+        plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
         plt.xlim(0,100)
-        plt.title(chlabel+' '+side_this+replstr, fontsize=10)
+        plt.title(chlabel, fontsize=10)
         plt.xlabel(xlabel, fontsize=fsize_labels)
         plt.ylabel(emg_ylabel, fontsize=fsize_labels)
         plt.locator_params(axis = 'y', nbins = 4)

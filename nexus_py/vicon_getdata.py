@@ -88,22 +88,22 @@ class vicon_emg:
                    'LTibA': [[0,12],[56,100]],
                    'LVas': [[0,24],[96,100]]}
             self.ch_names = self.ch_normals.keys()
-            self.ch_labels = {'RHam': 'Medial hamstrings',
-                       'RRec': 'Rectus femoris',
-                       'RGas': 'Gastrognemius',
-                       'RGlut': 'Gluteus',
-                       'RVas': 'Vastus',
-                       'RSol': 'Soleus',
-                       'RTibA': 'Tibialis anterior',
-                       'RPer': 'Peroneus',
-                       'LHam': 'Medial hamstrings',
-                       'LRec': 'Rectus femoris',
-                       'LGas': 'Gastrognemius',
-                       'LGlut': 'Gluteus',
-                       'LVas': 'Vastus',
-                       'LSol': 'Soleus',
-                       'LTibA': 'Tibialis anterior',
-                       'LPer': 'Peroneus'}
+            self.ch_labels = {'RHam': 'Medial hamstrings (R)',
+                       'RRec': 'Rectus femoris (R)',
+                       'RGas': 'Gastrognemius (R)',
+                       'RGlut': 'Gluteus (R)',
+                       'RVas': 'Vastus (R)',
+                       'RSol': 'Soleus (R)',
+                       'RTibA': 'Tibialis anterior (R)',
+                       'RPer': 'Peroneus (R)',
+                       'LHam': 'Medial hamstrings (R)',
+                       'LRec': 'Rectus femoris (R)',
+                       'LGas': 'Gastrognemius (R)',
+                       'LGlut': 'Gluteus (R)',
+                       'LVas': 'Vastus (R)',
+                       'LSol': 'Soleus (R)',
+                       'LTibA': 'Tibialis anterior (R)',
+                       'LPer': 'Peroneus (R)'}
             self.ch_mapping = {'LGas': 'LGas4',
              'LGlut': 'LGlut8',
              'LHam': 'LHam7',
@@ -131,6 +131,7 @@ class vicon_emg:
                     if self.ch_mapping[ch] == physch:
                         self.ch_mapping[ch] = 'EMG_REUSED'
                 self.ch_mapping[logch] = mapping_changes[logch]
+                self.ch_labels[logch] += ' (read from ' + physch +')'
                 
     def __init__(self, vicon, emg_system='Myon', mapping_changes=None):
         # default plotting scale in medians (channel-specific)
@@ -156,13 +157,13 @@ class vicon_emg:
         assert(len(outputids)==1)
         outputid = outputids[0]
         # list of channel names and IDs
-        _,_,_,_,self.chnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
-        for i in range(len(self.chnames)):
-            chname = self.chnames[i]    
-            # if chname starts with 'Voltage', remove it
-            if chname.find('Voltage') > -1:
-                chname = chname[chname.find('.')+1:]
-            self.chnames[i] = chname
+        _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
+        for i in range(len(self.elnames)):
+            elname = self.elnames[i]    
+            # if elname starts with 'Voltage', remove it
+            if elname.find('Voltage') > -1:
+                elname = elname[elname.find('.')+1:]
+            self.elnames[i] = elname
         # read EMG channels into dict
         # also cut data to L/R gait cycles
         self.data = {}
@@ -180,25 +181,28 @@ class vicon_emg:
         # init dicts
         self.reused = {}
         self.disconnected = {}
-        for chname in self.chnames:
-            self.disconnected[chname] = False
-            self.reused[chname] = False
+        for elname in self.elnames:
+            self.disconnected[elname] = False
+            self.reused[elname] = False
         
-        # read all physical channels
-        for chid in self.chids:
-            chdata, chready, chrate = vicon.GetDeviceChannel(emg_id, outputid, chid)
-            assert(chrate == drate), 'Channel has an unexpected sampling rate'
-            chname = self.chnames[chid-1]
-            self.data[chname] = np.array(chdata)
+        # read all physical channels (electrodes)
+        for elid in self.chids:
+            eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
+            assert(elrate == drate), 'Channel has an unexpected sampling rate'
+            elname = self.elnames[elid-1]
+            self.data[elname] = np.array(eldata)
             # zero out invalid EMG signals
-            if find_disconnected and not self.is_valid_emg(self.data[chname]):
-                self.data[chname] = "EMG_DISCONNECTED"
-            # cut to L/R gait cycles. no interpolation
-            self.data_gc1l[chname] = self.data[chname][self.lgc1start_s:self.lgc1end_s]
-            self.data_gc1r[chname] = self.data[chname][self.rgc1start_s:self.rgc1end_s]
+            if find_disconnected and not self.is_valid_emg(self.data[elname]):
+                self.data[elname] = "EMG_DISCONNECTED"
+                self.data_gc1l[elname] = "EMG_DISCONNECTED"
+                self.data_gc1r[elname] = "EMG_DISCONNECTED"
+            else:
+                # cut to L/R gait cycles. no interpolation
+                self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
+                self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
             # median scaling - beware of DC!
-            #self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
-            #self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
+            #self.yscalegc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
+            #self.yscalegc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
             # fixed scale
 
         # assign data to logical channels
@@ -214,17 +218,29 @@ class vicon_emg:
                 if physch not in self.data:
                     error_exit('Cannot read requested physical channel: '+physch)
                 self.logical_data[logch] = self.data[physch]
-                self.logical_data_gc1l[logch] = self.logical_data[logch][self.lgc1start_s:self.lgc1end_s]
-                self.logical_data_gc1r[logch] = self.logical_data[logch][self.rgc1start_s:self.rgc1end_s]
-            # fixed scales
+                # EMG data during gait cycles
+                if self.data[physch] != 'EMG_DISCONNECTED':
+                    self.logical_data_gc1l[logch] = self.logical_data[logch][self.lgc1start_s:self.lgc1end_s]
+                    self.logical_data_gc1r[logch] = self.logical_data[logch][self.rgc1start_s:self.rgc1end_s]
+                else:
+                    self.logical_data_gc1l[logch] = 'EMG_DISCONNECTED'
+                    self.logical_data_gc1r[logch] = 'EMG_DISCONNECTED'                    
+            else:
+                self.logical_data[logch] = 'EMG_REUSED'
+                self.logical_data_gc1l[logch] = 'EMG_REUSED'
+                self.logical_data_gc1r[logch] = 'EMG_REUSED'
+            # set fixed scales
             self.yscale_gc1l[logch] = .5e-3
             self.yscale_gc1r[logch] = .5e-3
 
-        self.datalen = len(chdata)
+        self.datalen = len(eldata)
         assert(self.datalen == framecount * samplesperframe)
         self.sfrate = drate        
         # samples to time (s)
         self.t = np.arange(self.datalen)/self.sfrate
+        # normalized grids (from 0..100) of EMG length; useful for plotting
+        self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
+        self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
         
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
@@ -246,12 +262,12 @@ class vicon_emg:
     def findchs(self, str):
         """ Return list of channels whose name contains the given 
         string str. """
-        return [chn for chn in self.chnames if chn.find(str) > -1]
+        return [chn for chn in self.elnames if chn.find(str) > -1]
 
     def findch(self, str):
         """ Return name of (unique) channel containing the given 
         string str. """
-        chlist = [chn for chn in self.chnames if chn.find(str) > -1]
+        chlist = [chn for chn in self.elnames if chn.find(str) > -1]
         if len(chlist) != 1:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
