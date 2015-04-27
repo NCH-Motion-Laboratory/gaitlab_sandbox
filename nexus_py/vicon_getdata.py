@@ -73,18 +73,25 @@ class vicon_emg:
         yscale_medians = 1
         # whether to auto-find disconnected EMG channels
         find_disconnected = True
-        # expected logical EMG channel names, e.g. RPer
-        self.logichs = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'TibA']
-        self.logichs = ['R'+str for str in self.logichs]+['L'+str for str in self.logichs]
-        # normal data
-        self.emg_normals = {'Gas': [[16,50]],
-               'Glut': [[0,42],[96,100]],
-               'Ham': [[0,2],[92,100]],
-               'Per': [[4,54]],
-               'Rec': [[0,14],[56,100]],
-               'Sol': [[10,54]],
-               'TibA': [[0,12],[56,100]],
-               'Vas': [[0,24],[96,100]]}
+        # normal data and logical chs
+        self.emg_normals = {'RGas': [[16,50]],
+               'RGlut': [[0,42],[96,100]],
+               'RHam': [[0,2],[92,100]],
+               'RPer': [[4,54]],
+               'RRec': [[0,14],[56,100]],
+               'RSol': [[10,54]],
+               'RTibA': [[0,12],[56,100]],
+               'RVas': [[0,24],[96,100]],
+               'LGas': [[16,50]],
+               'LGlut': [[0,42],[96,100]],
+               'LHam': [[0,2],[92,100]],
+               'LPer': [[4,54]],
+               'LRec': [[0,14],[56,100]],
+               'LSol': [[10,54]],
+               'LTibA': [[0,12],[56,100]],
+               'LVas': [[0,24],[96,100]]}
+        self.logichs = self.emg_normals.keys()
+               
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -147,10 +154,8 @@ class vicon_emg:
             #self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
             #self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
             # fixed scale
-            self.yscalegc1l[chname] = .5e-3
-            self.yscalegc1r[chname] = .5e-3
 
-        self.logical = {}
+        self.logical_emg = {}
         self.logical_ok = {}
         """ map logical channels into a dict.
         if default phys. electrode is disconnected, and replacement
@@ -166,17 +171,20 @@ class vicon_emg:
                 physch = self.findch(logich)
             # default physical channel is used as replacement for another channel
             if physch in emg_replace.values():
-                self.logical[logich] = "EMG_REUSED"
+                self.logical_emg[logich] = "EMG_REUSED"
                 self.logical_ok[logich] = False
             else:
-                self.logical[logich] = self.data[physch]
-            if self.logical[logich] == "EMG_DISCONNECTED":
+                self.logical_emg[logich] = self.data[physch]
+            if self.logical_emg[logich] == "EMG_DISCONNECTED":
                 self.logical_ok[logich] = False
-
             # cut to L/R gait cycles. no interpolation
-            if self.logical_ok[logich]
-                self.logical_gc1l[logich] = self.logical[logich][self.lgc1start_s:self.lgc1end_s]
-                self.logical_gc1r[logich] = self.logical[logich][self.rgc1start_s:self.rgc1end_s]
+            if self.logical_ok[logich]:
+                self.logical_emg_gc1l[logich] = self.logical_emg[logich][self.lgc1start_s:self.lgc1end_s]
+                self.logical_emg_gc1r[logich] = self.logical_emg[logich][self.rgc1start_s:self.rgc1end_s]
+            # fixed scales
+            self.yscale_gc1l[logich] = .5e-3
+            self.yscale_gc1r[logich] = .5e-3
+
           
         self.datalen = len(chdata)
         assert(self.datalen == framecount * samplesperframe)
