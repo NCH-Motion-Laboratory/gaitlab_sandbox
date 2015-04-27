@@ -5,7 +5,43 @@ Created on Tue Mar 17 14:41:31 2015
 Utility classes for reading data from Vicon Nexus.
 
 TODO: 
-remove EMG DC level
+
+refactor:
+emg class needs to handle replacing electrodes  (mark as reused)
+physical vs. logical channels:
+physical e.g. 'LGas4'
+logical e.g. 'LGas'
+
+physical chs can be "disconnected" (mark as None)
+
+logical chs can be "disconnected" 
+
+"reused" (corresponding physical ch is dis)
+
+
+Physical:
+LGas4
+LSol3
+LPer2
+LTib5
+
+LGas,
+LSol,
+LPer,
+LTib
+
+Logical:
+LPer <- LGas4
+LGas <- LTib
+
+
+
+
+
+
+
+
+
 
 
 @author: Jussi
@@ -26,13 +62,29 @@ def error_exit(message):
     sys.exit()
 
 class vicon_emg:
-    """ Class for reading and processing EMG data from Nexus. """
+    """ Class for reading and processing EMG data from Nexus.
+    vicon is a ViconNexus.ViconNexus() object.
+    emg_replace contains the replacement dictionary for EMG electrodes:
+    e.g. key LGas=LSol means that LGas daas will be read from the LSol
+    electrode."""
 
-    def __init__(self, vicon):
+    def __init__(self, vicon, emg_replace):
         # default plotting scale in medians (channel-specific)
         yscale_medians = 1
         # whether to auto-find disconnected EMG channels
         find_disconnected = True
+        # expected logical EMG channel names, e.g. RPer
+        self.logichs = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'TibA']
+        self.logichs = ['R'+str for str in self.logichs]+['L'+str for str in self.logichs]
+        # normal data
+        self.emg_normals = {'Gas': [[16,50]],
+               'Glut': [[0,42],[96,100]],
+               'Ham': [[0,2],[92,100]],
+               'Per': [[4,54]],
+               'Rec': [[0,14],[56,100]],
+               'Sol': [[10,54]],
+               'TibA': [[0,12],[56,100]],
+               'Vas': [[0,24],[96,100]]}
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -79,34 +131,52 @@ class vicon_emg:
             self.disconnected[chname] = False
             self.reused[chname] = False
         
+        # read all physical channels
         for chid in self.chids:
             chdata, chready, chrate = vicon.GetDeviceChannel(emg_id, outputid, chid)
             assert(chrate == drate), 'Channel has an unexpected sampling rate'
-            # remove 'Voltage.' from beginning of dict key
             chname = self.chnames[chid-1]
             self.data[chname] = np.array(chdata)
             # zero out invalid EMG signals
             if find_disconnected and not self.is_valid_emg(self.data[chname]):
-                #self.data[chname] = np.zeros(self.data[chname].shape) # zero the channel
-                self.disconnected[chname] = True
-            # convert gait cycle times (in frames) to sample indices
+                self.data[chname] = "EMG_DISCONNECTED"
             # cut to L/R gait cycles. no interpolation
-            #self.datagc1l[chname] = np.array(chdata[self.lgc1start_s:self.lgc1end_s])
-            #self.datagc1r[chname] = np.array(chdata[self.rgc1start_s:self.rgc1end_s])
-            
             self.datagc1l[chname] = self.data[chname][self.lgc1start_s:self.lgc1end_s]
             self.datagc1r[chname] = self.data[chname][self.rgc1start_s:self.rgc1end_s]
-            
-            """ print(chname, min(self.datagc1l[chname]),
-                  max(self.datagc1l[chname]),
-                    np.median(np.abs(self.datagc1l[chname])),
-                    yscale_medians * np.median(np.abs(self.datagc1l[chname])))"""
             # median scaling - beware of DC!
-            self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
-            self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
+            #self.yscalegc1l[chname] = yscale_medians * np.median(np.abs(self.datagc1l[chname]))
+            #self.yscalegc1r[chname] = yscale_medians * np.median(np.abs(self.datagc1r[chname]))
             # fixed scale
             self.yscalegc1l[chname] = .5e-3
             self.yscalegc1r[chname] = .5e-3
+
+        self.logical = {}
+        self.logical_ok = {}
+        """ map logical channels into a dict.
+        if default phys. electrode is disconnected, and replacement
+        not set, mark logical channel as 'disconnected'
+        if default phys. electrode is used for another channel, and replacement
+        not set, mark the logical channel as 'reused' """
+        for logich in self.logichs:
+            self.logical_ok[logich] = True
+            if emg_replace[logich]:
+                # data of logical channel is read from another electrode
+                physch = emg_replace[logich]
+            else:
+                physch = self.findch(logich)
+            # default physical channel is used as replacement for another channel
+            if physch in emg_replace.values():
+                self.logical[logich] = "EMG_REUSED"
+                self.logical_ok[logich] = False
+            else:
+                self.logical[logich] = self.data[physch]
+            if self.logical[logich] == "EMG_DISCONNECTED":
+                self.logical_ok[logich] = False
+
+            # cut to L/R gait cycles. no interpolation
+            if self.logical_ok[logich]
+                self.logical_gc1l[logich] = self.logical[logich][self.lgc1start_s:self.lgc1end_s]
+                self.logical_gc1r[logich] = self.logical[logich][self.rgc1start_s:self.rgc1end_s]
           
         self.datalen = len(chdata)
         assert(self.datalen == framecount * samplesperframe)
@@ -144,10 +214,14 @@ class vicon_emg:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
 
-    def normaldata(self):
+    def normaldata(self, logich):
         """ EMG normal data, i.e. expected range of activation during
-        normalized trial. """        
-        return {'Gas': [[16,50]],
+        normalized trial. """
+        if logich[0].upper() in ['L','R']:
+            logich = logich[1:]
+        return self.emg_normals[logich]
+
+        emg_normals = {'Gas': [[16,50]],
                'Glut': [[0,42],[96,100]],
                'Ham': [[0,2],[92,100]],
                'Per': [[4,54]],
@@ -156,9 +230,9 @@ class vicon_emg:
                'TibA': [[0,12],[56,100]],
                'Vas': [[0,24],[96,100]]}
              
-    def label(self, chname):
-        """ Return verbose channel label, if it has been defined.
-        Otherwise return chname. """
+    def label(self, logich):
+        """ Return verbose channel label for a logical channel. 
+        e.g 'VasL' -> 'Vastus (L)' """
         emglabels = {'Ham': 'Medial hamstrings',
                    'Rec': 'Rectus femoris',
                    'Gas': 'Gastrognemius',
@@ -167,19 +241,14 @@ class vicon_emg:
                    'Sol': 'Soleus',
                    'TibA': 'Tibialis anterior',
                    'Per': 'Peroneus'}
-        if chname[0] in ['L','R']:
-            chname = chname[1:]
-        if chname not in emglabels:
-            return chname
-        else:
-            return emglabels[chname]
-
-    def legal(self):
-        """ Legal electrode names. """
-        emg_legal = ['Per', 'Ham', 'Vas', 'Rec', 'Glut', 'Gas', 'Sol', 'TibA']
-        emg_legal = ['R'+str for str in emg_legal]+['L'+str for str in emg_legal]
-        return emg_legal
-        
+        # return unknown names as they are
+        side = logich[0].upper()
+        if side == 'L':
+            sidestr = ' (L)'
+        elif side == 'R':
+            sidestr = ' (R)'
+        logich = logich[1:]
+        return emglabels[logich] + sidestr
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
