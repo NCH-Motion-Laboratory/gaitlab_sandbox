@@ -1,27 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr 23 11:31:09 2015
 
-@author: jussi
+Generic Nexus plotter
 
-generic plotter 
+params:
+plot layout
+channels to plot
+main title leading string
+create pdf or not
+pdf name leading string
 
-passed params (corresponds to difference between plotting scripts:)
--layout
--data to plot
-    -PiG variable names e.g. NormLHipPowerX
-    -automatically plot PiG normal data
-    -EMG variables e.g. LSol
--plot main title
--create pdf or not (pdf name)
+TODO:
+PiG object needs to know about variable names, etc.
 
-example call:
-vicon_plot.makeplot(layout=(1,2),
-                    vars=['LSol','NormLHipPowerX'],
-                    maintitle='Test plot',
-                    pdfname='Test_page')
+
+
 """
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,19 +26,15 @@ from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
 import getpass
-# these needed for Nexus 2.1
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
-# needed at least when running outside Nexus
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
-import ViconNexus
 
 
-def makeplot(layout, vars, maintitle, pdfname):
+def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftitlestr):
 
     # default parameters, if none specified on cmd line or config file
     emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
     side = None   # will autodetect unless specified
     annotate_disconnected = True  # annotate disconnected EMG
+    annotate_reused = True  # annotate reallocated EMG
     
     # paths
     pathprefix = 'c:/users/'+getpass.getuser()
@@ -64,7 +54,7 @@ def makeplot(layout, vars, maintitle, pdfname):
     arglist = [strip_ws(x) for x in arglist]  # rm whitespace
     arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
     
-    emgrepl = {}
+    emg_mapping = {}
     for arg in arglist:
         eqpos = arg.find('=')
         if eqpos < 2:
@@ -80,8 +70,13 @@ def makeplot(layout, vars, maintitle, pdfname):
                 except ValueError:
                     error_exit('Invalid EMG passband. Specify as emg_passband=f1,f2')
             else:
-                emgrepl[key] = val
+                # assume it's EMG channel remapping
+                emg_mapping[key] = val
             
+    # these needed for Nexus 2.1
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
+    # needed at least when running outside Nexus
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
     # PiG normal data
     gcdpath = 'normal.gcd'
     # check user's desktop also
@@ -90,6 +85,7 @@ def makeplot(layout, vars, maintitle, pdfname):
     if not os.path.isfile(gcdpath):
         error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
     
+    import ViconNexus
     # Python objects communicate directly with the Nexus application.
     # Before using the vicon object, Nexus needs to be started and a subject loaded.
     vicon = ViconNexus.ViconNexus()
@@ -102,7 +98,6 @@ def makeplot(layout, vars, maintitle, pdfname):
         error_exit('No trial loaded')
     sessionpath = trialname_[0]
     trialname = trialname_[1]
-    
     
     pigvars = vicon.GetModelOutputNames(subjectname)
     
@@ -117,12 +112,10 @@ def makeplot(layout, vars, maintitle, pdfname):
     # figure size
     totalfigsize = (14,12)
     # grid size
-    gridv = 8
-    gridh = 3
+    gridv = layout[0]
+    gridh = layout[1]
     # main title
-    maintitle = 'Kinetics-EMG plot for '+trialname+' ('+side+')'
-    # relative heights of different plots
-    plotheightratios = [3,2,2,3,2,2,2,3]
+    maintitle = maintitlestr + trialname + ' ('+side+')'
     # trace colors, right and left
     rcolor='lawngreen'
     lcolor='red'
@@ -133,7 +126,7 @@ def makeplot(layout, vars, maintitle, pdfname):
     normals_color = 'gray'
     
     # read emg
-    emg = vicon_getdata.vicon_emg(vicon)
+    emg = vicon_getdata.vicon_emg(vicon, mapping_changes=emg_mapping)
     # emg normals
     emg_normals_alpha = .3
     emg_normals_color = 'red'
@@ -148,21 +141,10 @@ def makeplot(layout, vars, maintitle, pdfname):
         emgchsplot = ['R'+str for str in emgchsplot]
     else:
         emgchsplot = ['L'+str for str in emgchsplot]
-    # generate labels              
-    emgchlabels = [emg.label(x) for x in emgchsplot]
-    # corresponding EMG channel positions on subplot grid
+    # generate labels               grid
     emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
-    # EMG normal bars: expected ranges of normal EMG activation
-    # see emg_normal_bars.py
-    emg_normaldata = emg.normaldata()
-    emg_legal = emg.legal()
     
-    # sanity check for EMG replacement dict
-    if emgrepl:
-        for key in emgrepl.keys():
-            if not key in emg_legal:
-                error_exit('Cannot replace electrode '+key)
-         
+        
     # kinematics vars to plot
     kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
     # corresponding normal variables as specified in normal.gcd
@@ -209,16 +191,14 @@ def makeplot(layout, vars, maintitle, pdfname):
         tracecolor = rcolor
     # EMG variables
     if side == 'L':
-        gclen_emg = emg.lgc1len_s
-        emgdata = emg.datagc1l
-        yscale = emg.yscalegc1l
+        tn_emg = emg.tn_emg_l
+        emgdata = emg.logical_data_gc1l
+        emg_yscale = emg.yscale_gc1l
     else:
-        gclen_emg = emg.rgc1len_s
-        emgdata = emg.datagc1r
-        yscale = emg.yscalegc1r
+        tn_emg = emg.tn_emg_r
+        emgdata = emg.logical_data_gc1r
+        emg_yscale = emg.yscale_gc1r
     
-    # x grid from 0..100 with as many elements as EMG has samples
-    tn_emg = np.linspace(0, 100, gclen_emg)
     # for kinematics / kinetics: 0,1...100
     tn = np.linspace(0, 100, 101)
     # for normal data: 0,2,4...100.
@@ -259,49 +239,24 @@ def makeplot(layout, vars, maintitle, pdfname):
             plt.locator_params(axis = 'y', nbins = 6)
         
         for k in range(len(emgchsplot)):
-            chnamepart = emgchsplot[k]
-            side_this = chnamepart[0]
-            if side_this == 'L':
-                gclen_emg = emg.lgc1len_s
-                emgdata = emg.datagc1l
-                yscale = emg.yscalegc1l
-            else:
-                gclen_emg = emg.rgc1len_s
-                emgdata = emg.datagc1r
-                yscale = emg.yscalegc1r
-            # x grid from 0..100 with as many elements as EMG has samples
-            tn_emg = np.linspace(0, 100, gclen_emg)
-            chlabel = emgchlabels[k]
-            # check replacement dict to see if data should actually be read
-            # from some other channel
-            if chnamepart in emgrepl:
-                replstr = ' (read from '+emgrepl[chnamepart]+')'
-                chnamepart = emgrepl[chnamepart]            
-            else:
-                replstr = ''
-            # translate to full channel name, e.g. 'LHam' -> 'LHam7'
-            chs = emg.findchs(chnamepart)
-            if len(chs) == 0:
-                plt.close()
-                error_exit('EMG channel matching name '+chnamepart+' not found in data')
-            if len(chs) > 1:
-                plt.close()
-                error_exit('Found multiple EMG channels matching requested name: '+chnamepart)
-            chname = chs[0]
-            # plot in mV
+            thisch = emgchsplot[k]
             ax=plt.subplot(gs[emgchpos[k]])
-            if not emg.disconnected[chname]:
-                plt.plot(tn_emg, 1e3*emg.filter(emgdata[chname], emg_passband), 'black')
-            elif annotate_disconnected:
-                ax.annotate('disconnected', xy=(50,0), ha="center", va="center")    
-            # plot EMG normal bars    
-            emgbar_ind = emg_normaldata[chnamepart[1:]]
+            if emgdata[thisch] == 'EMG_DISCONNECTED':
+                ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+            elif emgdata[thisch] == 'EMG_REUSED':
+                    ax.annotate('reused', xy=(50,0), ha="center", va="center")
+            else:
+                #plt.plot(tn_emg, 1e3*emgdata[thisch], 'black')
+                plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
+            chlabel = emg.ch_labels[thisch]
+            # plot EMG normal bars
+            emgbar_ind = emg.ch_normals[thisch]
             for k in range(len(emgbar_ind)):
                 inds = emgbar_ind[k]
                 plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-            plt.ylim(-1e3*yscale[chname], 1e3*yscale[chname])
+            plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
             plt.xlim(0,100)
-            plt.title(chlabel+' '+side_this+replstr, fontsize=10)
+            plt.title(chlabel, fontsize=10)
             plt.xlabel(xlabel, fontsize=fsize_labels)
             plt.ylabel(emg_ylabel, fontsize=fsize_labels)
             plt.locator_params(axis = 'y', nbins = 4)
@@ -312,9 +267,8 @@ def makeplot(layout, vars, maintitle, pdfname):
         pdf.savefig()
         plt.show()
         
-
-
-
     
     
-
+    
+    
+    

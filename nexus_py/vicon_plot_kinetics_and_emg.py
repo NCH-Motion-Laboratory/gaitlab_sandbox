@@ -44,7 +44,7 @@ import getpass
 emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
 side = None   # will autodetect unless specified
 annotate_disconnected = True  # annotate disconnected EMG
-annotate_reused = True
+annotate_reused = True  # annotate reallocated EMG
 
 # paths
 pathprefix = 'c:/users/'+getpass.getuser()
@@ -64,7 +64,7 @@ arglist += sys.argv[1:]  # add cmd line arguments
 arglist = [strip_ws(x) for x in arglist]  # rm whitespace
 arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
 
-emgrepl = {}
+emg_mapping = {}
 for arg in arglist:
     eqpos = arg.find('=')
     if eqpos < 2:
@@ -80,7 +80,8 @@ for arg in arglist:
             except ValueError:
                 error_exit('Invalid EMG passband. Specify as emg_passband=f1,f2')
         else:
-            emgrepl[key] = val
+            # assume it's EMG channel remapping
+            emg_mapping[key] = val
         
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -137,9 +138,7 @@ normals_alpha = .3
 normals_color = 'gray'
 
 # read emg
-repl = {'RPer': 'RTibA9'}
-repl = {}
-emg = vicon_getdata.vicon_emg(vicon, mapping_changes=repl)
+emg = vicon_getdata.vicon_emg(vicon, mapping_changes=emg_mapping)
 # emg normals
 emg_normals_alpha = .3
 emg_normals_color = 'red'

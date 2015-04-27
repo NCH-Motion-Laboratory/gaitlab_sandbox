@@ -6,44 +6,6 @@ Utility classes for reading data from Vicon Nexus.
 
 TODO: 
 
-refactor:
-emg class needs to handle replacing electrodes  (mark as reused)
-physical vs. logical channels:
-physical e.g. 'LGas4'
-logical e.g. 'LGas'
-
-physical chs can be "disconnected" (mark as None)
-
-logical chs can be "disconnected" 
-
-"reused" (corresponding physical ch is dis)
-
-
-Physical:
-LGas4
-LSol3
-LPer2
-LTib5
-
-LGas,
-LSol,
-LPer,
-LTib
-
-Logical:
-LPer <- LGas4
-LGas <- LTib
-
-
-
-
-
-
-
-
-
-
-
 @author: Jussi
 """
 
@@ -67,8 +29,8 @@ class vicon_emg:
     
     def define_emg_mapping(self, emg_system='Myon', mapping_changes=None):
         """ Defines electrode mapping. mapping_changes contains the replacement
-        dict for EMG electrodes: e.g. key 'LGas'='LSol' means that LGas data will be 
-        read from the LSol electrode. emg_system may be used to support systems
+        dict for EMG electrodes: e.g. key 'LGas'='LSol4' means that LGas data will be 
+        read from the LSol4 electrode. emg_system may be used to support systems
         other than Myon in the future. """
         if emg_system == 'Myon':
             self.ch_normals = {'RGas': [[16,50]],
@@ -104,6 +66,7 @@ class vicon_emg:
                        'LSol': 'Soleus (R)',
                        'LTibA': 'Tibialis anterior (R)',
                        'LPer': 'Peroneus (R)'}
+            # default mapping of logical channels to physical ones
             self.ch_mapping = {'LGas': 'LGas4',
              'LGlut': 'LGlut8',
              'LHam': 'LHam7',
@@ -371,7 +334,7 @@ class pig_outputs:
     gait cycles, respectively. Can also use special keyword 'PiGLB'
     to get the usual set of Plug-in Gait lower body variables."""
         
-    def __init__(self, vicon, varlist):
+    def __init__(self, vicon, varlist, gcdfile):
         if varlist == 'PiGLB':
             varlist = ['LHipMoment',
               'LKneeMoment',
@@ -400,7 +363,8 @@ class pig_outputs:
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
         vgc1 = gaitcycle(vicon)
-         # read all kinematics vars into dict and normalize into gait cycle 1
+        # read all kinematics vars into dict and normalize into gait cycle 1
+        # will create a huge number of variables, named e.g. 'NormRHipMomentX' etc.
         self.Vars = {}
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
@@ -421,21 +385,73 @@ class pig_outputs:
             self.Vars['Norm'+Var+'X'] = vgc1.normalize(self.Vars[Var+'X'], side)
             self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
             self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
+        # descriptions of known PiG variables
+        self.pigdict = {}
+        self.pigdict_{'AnkleAnglesX': 'Ankle dorsi/plant',
+                         'AnkleAnglesZ': 'Ankle rotation',
+                         'AnkleMomentX': 'Ankle dors/plan moment',
+                         'AnklePowerZ': 'Ankle power',
+                         'FootProgressAnglesZ': 'Foot progress angles',
+                         'HipAnglesX': 'Hip flexion',
+                         'HipAnglesY': 'Hip adduction',
+                         'HipAnglesZ': 'Hip rotation',
+                         'HipMomentX': 'Hip flex/ext moment',
+                         'HipMomentY': 'Hip ab/add moment',
+                         'HipMomentZ': 'Hip rotation moment',
+                         'HipPowerZ': 'Hip power',
+                         'KneeAnglesX': 'Knee flexion',
+                         'KneeAnglesY': 'Knee adduction',
+                         'KneeAnglesZ': 'Knee rotation',
+                         'KneeMomentX': 'Knee flex/ext moment',
+                         'KneeMomentY': 'Knee ab/add moment',
+                         'KneeMomentZ': 'Knee rotation moment',
+                         'KneePowerZ': 'Knee power',
+                         'PelvisAnglesX': 'Pelvic tilt',
+                         'PelvisAnglesY': 'Pelvic obliquity',
+                         'PelvisAnglesZ': 'Pelvic rotation'}
+        # create titles for R/L separately
+        for var in pigdict_:
+            self.pigdict['R'+var] = self.pigdict_[var]+' (R)'
+            self.pigdict['L'+var] = self.pigdict_[var]+' (L)'
+
+        # read PiG normal data from given gcd file
+        if gcdfile:
+            f = open(gcdfile, 'r')
+            lines = f.readlines()
+            f.close()
+            pig_normaldata = {}
+            for li in lines:
+                if li[0] == '!':  # it's a variable name
+                    thisvar = li[1:li.find(' ')]  # set dict key
+                    pig_normaldata[thisvar] = list()
+                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
+                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
+            self.pig_normaldata = pig_normaldata
             
-def pig_normaldata(gcdfile):
-    """ Returns PiG normal data. Requires gcd file, specify path below."""
-    f = open(gcdfile, 'r')
-    lines = f.readlines()
-    f.close()
-  
-    pig_normaldata = {}
-    for li in lines:
-        if li[0] == '!':  # it's a variable name
-            thisvar = li[1:li.find(' ')]  # set dict key
-            pig_normaldata[thisvar] = list()
-        elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
-            pig_normaldata[thisvar].append([float(x) for x in li.split()])
-    return pig_normaldata
-        
+kinematicsnormals = ['PelvicTilt',
+                     'PelvicObliquity',
+                     'PelvicRotation',
+                     'HipFlexExt',
+                     'HipAbAdduct',
+                     'HipRotation',
+                     'KneeFlexExt',
+                     'KneeValgVar',
+                     'KneeRotation',
+                     'DorsiPlanFlex',
+                     'FootProgression',
+                     'FootRotation']
+
+kineticsnormals = ['HipFlexExtMoment',
+                   'HipAbAdductMoment',
+                   'HipRotationMoment',
+                   'HipPower',
+                   'KneeFlexExtMoment',
+                   'KneeValgVarMoment',
+                   'KneeRotationMoment',
+                   'KneePower',
+                   'DorsiPlanFlexMoment',
+                   'AnklePower']
+            
+            
     
-    
+            
