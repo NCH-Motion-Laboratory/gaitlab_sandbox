@@ -67,6 +67,50 @@ class vicon_emg:
     emg_replace contains the replacement dictionary for EMG electrodes:
     e.g. key LGas=LSol means that LGas daas will be read from the LSol
     electrode."""
+    
+    """ Defines electrode mapping for the Myon EMG system """
+    def mapping_myon(self, mapping_changes):
+        self.emg_normals = {'RGas': [[16,50]],
+               'RGlut': [[0,42],[96,100]],
+               'RHam': [[0,2],[92,100]],
+               'RPer': [[4,54]],
+               'RRec': [[0,14],[56,100]],
+               'RSol': [[10,54]],
+               'RTibA': [[0,12],[56,100]],
+               'RVas': [[0,24],[96,100]],
+               'LGas': [[16,50]],
+               'LGlut': [[0,42],[96,100]],
+               'LHam': [[0,2],[92,100]],
+               'LPer': [[4,54]],
+               'LRec': [[0,14],[56,100]],
+               'LSol': [[10,54]],
+               'LTibA': [[0,12],[56,100]],
+               'LVas': [[0,24],[96,100]]}
+        self.logical_chs = self.emg_normals.keys()
+        self.emglabels = {'RHam': 'Medial hamstrings',
+                   'RRec': 'Rectus femoris',
+                   'RGas': 'Gastrognemius',
+                   'RGlut': 'Gluteus',
+                   'RVas': 'Vastus',
+                   'RSol': 'Soleus',
+                   'RTibA': 'Tibialis anterior',
+                   'RPer': 'Peroneus',
+                   'LHam': 'Medial hamstrings',
+                   'LRec': 'Rectus femoris',
+                   'LGas': 'Gastrognemius',
+                   'LGlut': 'Gluteus',
+                   'LVas': 'Vastus',
+                   'LSol': 'Soleus',
+                   'LTibA': 'Tibialis anterior',
+                   'LPer': 'Peroneus'}
+        
+        
+        
+        
+        
+        
+        
+        
 
     def __init__(self, vicon, emg_replace):
         # default plotting scale in medians (channel-specific)
