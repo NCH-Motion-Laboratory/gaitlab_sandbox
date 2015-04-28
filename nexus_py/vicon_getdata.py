@@ -489,14 +489,13 @@ class pig_outputs:
                     pig_normaldata[thisvar].append([float(x) for x in li.split()])
             self.pig_normaldata = pig_normaldata
 
-
     def pig_varnames(self):
         """ Return list of known PiG variables. """
         return self.pigdict.keys()
         
     def is_pig_variable(self, var):
         vars = self.strip_varname(var)        
-        varlist = self.pig_varnames
+        varlist = self.pig_varnames()
         return vars in varlist
         
     def is_kinetic_var(self, var):
@@ -505,6 +504,7 @@ class pig_outputs:
 
     def strip_varname(self, var):
         """ Remove Norm and/or L/R from beginning of variable name. """
+        vars = var        
         if var[:3] == 'Norm':
             vars = var[4:]
         if var[0] in ['L','R']:
@@ -514,6 +514,7 @@ class pig_outputs:
     def description(self, var):
         """ Returns a more elaborate description for a PiG variable,
         if known. """
+        vars = var
         if var[:3] == 'Norm':
             vars = var[4:]
         if vars[0] == 'L':

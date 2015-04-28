@@ -11,8 +11,11 @@ create pdf or not
 pdf name leading string
 
 rules:
+precede EMG channel name with X to autodetect side and plot corresponding variable
+e.g. 'XHam'
 channel type is autodetected by looking into corresponding dict
 variables always normalized
+always plot PiG normal data
 kinetics always plotted for one side only
 kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
@@ -33,14 +36,13 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 
-def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr):
+def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr,
+                onesided_kinematics=False, annotate_disconnected=True, annotate_reused=True):
     """ Call to create a plot of Nexus variables. """
 
     # default parameters, if none specified on cmd line or config file
     emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
     side = None   # will autodetect unless specified
-    annotate_disconnected = True  # annotate disconnected EMG
-    annotate_reused = True  # annotate reallocated EMG
     
     # paths
     pathprefix = 'c:/users/'+getpass.getuser()
@@ -119,8 +121,8 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     # main title
     maintitle = maintitlestr + trialname + ' ('+side+')'
     # trace colors, right and left
-    rcolor='lawngreen'
-    lcolor='red'
+    tracecolor_r = 'lawngreen'
+    tracecolor_l = 'red'
     # label font size
     fsize_labels=10
     # for plotting kinematics / kinetics normal data
@@ -144,6 +146,8 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     pig_plot_vars = []
     pig_plot_pos = []
     for i, var in enumerate(plotvars):
+        if var[0] == 'X':
+            var[0] = side
         if emg.is_logical_channel(var):
             read_emg = True
             emg_plot_chs.append(var)
@@ -158,7 +162,7 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     if read_emg:
         emg.read(vicon)
     if read_pig:
-        pig.read(vicon, 'PiGLB')
+        pig.read(vicon, 'PiGLB', gcdpath)
     
     # output filename
     if makepdf:
@@ -167,18 +171,19 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     xlabel = ''
     
     if side == 'L':
-        tracecolor = lcolor
+        tracecolor = tracecolor_l
     else:
-        tracecolor = rcolor
+        tracecolor = tracecolor_r
     # EMG variables
-    if side == 'L':
-        tn_emg = emg.tn_emg_l
-        emgdata = emg.logical_data_gc1l
-        emg_yscale = emg.yscale_gc1l
-    else:
-        tn_emg = emg.tn_emg_r
-        emgdata = emg.logical_data_gc1r
-        emg_yscale = emg.yscale_gc1r
+    if emg_plot_chs:
+        if side == 'L':
+            tn_emg = emg.tn_emg_l
+            emgdata = emg.logical_data_gc1l
+            emg_yscale = emg.yscale_gc1l
+        else:
+            tn_emg = emg.tn_emg_r
+            emgdata = emg.logical_data_gc1r
+            emg_yscale = emg.yscale_gc1r
     
     # for kinematics / kinetics: 0,1...100
     tn = np.linspace(0, 100, 101)
@@ -192,41 +197,51 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
         
-        for k, var in enumerate(pig_plot_vars):
-            plt.subplot(gs[pig_plot_pos[k]])
-            plt.plot(tn, pig.Vars[var], tracecolor)
-            nor = np.array(pig.normaldata(var))[:,0]
-            nstd = np.array(pig.normaldata(var))[:,1]
-            title = pig.description(var)
-            ylabel = pig.ylabel()
-            plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
-            plt.title(title, fontsize=fsize_labels)
-            plt.xlabel(xlabel,fontsize=fsize_labels)
-            plt.ylabel(ylabel, fontsize=fsize_labels)
-            #plt.ylim(kinematicsymin[k], kinematicsymax[k])
-            plt.axhline(0, color='black')  # zero line
-            plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
+        if pig_plot_vars:
+            for k, var in enumerate(pig_plot_vars):
+                plt.subplot(gs[pig_plot_pos[k]])
+                varname_full = 'Norm'+side+var
+                # whether to plot two-sided kinematics                
+                if not pig.is_kinetic_var(var) and not onesided_kinematics:
+                    varname_r = 'Norm' + 'R' + var
+                    varname_l = 'Norm' + 'L' + var
+                    plt.plot(tn, pig.Vars[varname_r], tracecolor_r)
+                    plt.plot(tn, pig.Vars[varname_l], tracecolor_l)
+                else:
+                    plt.plot(tn, pig.Vars[varname_full], tracecolor)
+                nor = np.array(pig.normaldata(var))[:,0]
+                nstd = np.array(pig.normaldata(var))[:,1]
+                title = pig.description(var)
+                ylabel = pig.ylabel(varname_full)
+                plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
+                plt.title(title, fontsize=fsize_labels)
+                plt.xlabel(xlabel,fontsize=fsize_labels)
+                plt.ylabel(ylabel, fontsize=fsize_labels)
+                #plt.ylim(kinematicsymin[k], kinematicsymax[k])
+                plt.axhline(0, color='black')  # zero line
+                plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
         
-        for k, thisch in enumerate(emg_plot_chs):
-            ax=plt.subplot(gs[emg_plot_pos[k]])
-            if emgdata[thisch] == 'EMG_DISCONNECTED':
-                ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
-            elif emgdata[thisch] == 'EMG_REUSED':
-                    ax.annotate('reused', xy=(50,0), ha="center", va="center")
-            else:
-                plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
-            chlabel = emg.ch_labels[thisch]
-            # plot EMG normal bars
-            emgbar_ind = emg.ch_normals[thisch]
-            for k in range(len(emgbar_ind)):
-                inds = emgbar_ind[k]
-                plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-            plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
-            plt.xlim(0,100)
-            plt.title(chlabel, fontsize=10)
-            plt.xlabel(xlabel, fontsize=fsize_labels)
-            plt.ylabel(emg_ylabel, fontsize=fsize_labels)
-            plt.locator_params(axis = 'y', nbins = 4)
+        if emg_plot_chs:
+            for k, thisch in enumerate(emg_plot_chs):
+                ax=plt.subplot(gs[emg_plot_pos[k]])
+                if emgdata[thisch] == 'EMG_DISCONNECTED':
+                    ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+                elif emgdata[thisch] == 'EMG_REUSED':
+                        ax.annotate('reused', xy=(50,0), ha="center", va="center")
+                else:
+                    plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
+                chlabel = emg.ch_labels[thisch]
+                # plot EMG normal bars
+                emgbar_ind = emg.ch_normals[thisch]
+                for k in range(len(emgbar_ind)):
+                    inds = emgbar_ind[k]
+                    plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
+                plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
+                plt.xlim(0,100)
+                plt.title(chlabel, fontsize=10)
+                plt.xlabel(xlabel, fontsize=fsize_labels)
+                plt.ylabel(emg_ylabel, fontsize=fsize_labels)
+                plt.locator_params(axis = 'y', nbins = 4)
     
         # fix plot spacing, restrict to below title
         gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
