@@ -8,6 +8,7 @@ EMG plot from Nexus.
 """
 
 from nexus_plot import nexus_plot
+import matplotlib.pyplot as plt
 
 layout = [8,2]
 plotvars = ['RGlut','LGlut',
@@ -25,3 +26,4 @@ pdftitlestr = 'EMG_'
 nexus_plot(layout, plotvars, maintitlestr=maintitlestr, 
            makepdf=makepdf, pdftitlestr=pdftitlestr)
     
+plt.show()

@@ -247,7 +247,9 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
     
     # fix plot spacing, restrict to below title
     gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])  
-    plt.show()
+
+    #call plt.show() externally after all figures are complete - it blocks
+    #plt.show()
 
     # create pdf
     if makepdf:

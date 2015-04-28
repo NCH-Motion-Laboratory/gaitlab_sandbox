@@ -8,6 +8,7 @@ Plot PiG outputs (online) from Nexus.
 """
 
 from nexus_plot import nexus_plot
+import matplotlib.pyplot as plt
 
 layout = [4,3]
 plotvars = ['PelvisAnglesX',
@@ -39,5 +40,5 @@ plotvars = ['HipMomentX',
              'AnklePowerZ']                      
 maintitlestr = 'Kinetics plot for '
 nexus_plot(layout, plotvars, maintitlestr=maintitlestr)
-    
-    
+
+plt.show()
