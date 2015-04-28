@@ -17,6 +17,10 @@ kinetics always plotted for one side only
 kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
+TODO:
+default plotting scales into PiG object
+
+
 """
 
 import matplotlib.pyplot as plt
@@ -29,8 +33,8 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 
-
-def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftitlestr):
+def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr):
+    """ Call to create a plot of Nexus variables. """
 
     # default parameters, if none specified on cmd line or config file
     emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
@@ -100,9 +104,7 @@ def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftit
         error_exit('No trial loaded')
     sessionpath = trialname_[0]
     trialname = trialname_[1]
-    
-    pigvars = vicon.GetModelOutputNames(subjectname)
-    
+  
     # try to detect which foot hit the forceplate
     vgc = vicon_getdata.gaitcycle(vicon)
     if not side:
@@ -124,73 +126,45 @@ def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftit
     # for plotting kinematics / kinetics normal data
     normals_alpha = .3
     normals_color = 'gray'
-    
-    # read emg
-    emg = vicon_getdata.vicon_emg(vicon, mapping_changes=emg_mapping)
     # emg normals
     emg_normals_alpha = .3
     emg_normals_color = 'red'
     emg_ylabel = 'mV'
+
     
+    pig = vicon_getdata.pig_outputs()
+    emg = vicon_getdata.vicon_emg(mapping_changes=emg_mapping)
+
+    read_emg = False
+    read_pig = False
+    
+    # check the variables to see what should be read
+    emg_plot_chs = []
+    emg_plot_pos = []
+    pig_plot_vars = []
+    pig_plot_pos = []
+    for i, var in enumerate(plotvars):
+        if emg.is_logical_channel(var):
+            read_emg = True
+            emg_plot_chs.append(var)
+            emg_plot_pos.append(i)
+        elif pig.is_pig_variable(var):
+            read_pig = True
+            pig_plot_vars.append(var)
+            pig_plot_pos.append(i)
+        else:
+            error_exit('Unknown variable: ' + var)
+
+    if read_emg:
+        emg.read(vicon)
+    if read_pig:
+        pig.read(vicon, 'PiGLB')
     
     # output filename
-    pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
-    # EMG channels to plot
-    emgchsplot = ['Ham','Rec','TibA','Glut','Vas','Per',
-                  'Rec','Ham','Gas','Glut','Sol','Gas']
-    # pick actual channel (L or R) according to foot strike
-    if side == 'R':
-        emgchsplot = ['R'+str for str in emgchsplot]
-    else:
-        emgchsplot = ['L'+str for str in emgchsplot]
-    # generate labels               grid
-    emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
-    
-       
-    # kinematics vars to plot
-    kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
-    kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
-    
-    
-    
-    
-    # corresponding normal variables as specified in normal.gcd
-    kinematicsnormals = ['HipFlexExt','KneeFlexExt','DorsiPlanFlex']
-    # append 'Norm' + side to get the full variable name
-    kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
-    kinematicstitles = ['Hip flexion','Knee flexion','Ankle dorsi/plantar']
-    # y labels
-    kinematicslabels = ['Ext     ($^\circ$)      Flex',
-                        'Ext     ($^\circ$)      Flex',
-                        'Pla     ($^\circ$)      Dor']
-    # subplot positions
-    kinematicspos = [0,1,2]
-    # y scaling
-    kinematicsymin = [-20,-15,-30]
-    kinematicsymax = [50,75,30]
-    
-    # kinetics channels to plot
-    kineticsvarsplot_ = ['HipMomentX','KneeMomentX','AnkleMomentX','HipPowerZ',
-                         'KneePowerZ','AnklePowerZ']
-    # corresponding normal variables as specified in normal.gcd
-    kineticsnormals = ['HipFlexExtMoment','KneeFlexExtMoment','DorsiPlanFlexMoment',
-                        'HipPower','KneePower','AnklePower']
-    # append 'Norm' + side to get the full variable name
-    kineticsvarsplot = ['Norm'+side+str for str in kineticsvarsplot_]
-    kineticstitles = ['Hip flex/ext moment','Knee flex/ext moment',
-                      'Ankle dors/plan moment','Hip power','Knee power',
-                      'Ankle power']
-    # y labels
-    kineticslabels = ['Int flex    Nm/kg    Int ext','Int flex    Nm/kg    Int ext',
-                      'Int dors    Nm/kg    Int plan','Abs    W/kg    Gen',
-                      'Abs    W/kg    Gen','Abs    W/kg    Gen']
-    # subplot positions
-    kineticspos = [9,10,11,21,22,23]
+    if makepdf:
+        pdf_name = pdftitlestr + trialname + '.pdf'
+     
     xlabel = ''
-                        
-     # read data
-    pig = vicon_getdata.pig_outputs(vicon, 'PiGLB')
-    pig_normaldata = vicon_getdata.pig_normaldata(gcdpath)
     
     if side == 'L':
         tracecolor = lcolor
@@ -218,42 +192,28 @@ def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftit
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
         
-        for k in range(len(kinematicsvarsplot)):
-            plt.subplot(gs[kinematicspos[k]])
-            plt.plot(tn, pig.Vars[kinematicsvarsplot[k]], tracecolor)
-            # get normal data and std
-            nor = np.array(pig_normaldata[kinematicsnormals[k]])[:,0]
-            nstd = np.array(pig_normaldata[kinematicsnormals[k]])[:,1]
+        for k, var in enumerate(pig_plot_vars):
+            plt.subplot(gs[pig_plot_pos[k]])
+            plt.plot(tn, pig.Vars[var], tracecolor)
+            nor = np.array(pig.normaldata(var))[:,0]
+            nstd = np.array(pig.normaldata(var))[:,1]
+            title = pig.description(var)
+            ylabel = pig.ylabel()
             plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
-            plt.title(kinematicstitles[k], fontsize=fsize_labels)
+            plt.title(title, fontsize=fsize_labels)
             plt.xlabel(xlabel,fontsize=fsize_labels)
-            plt.ylabel(kinematicslabels[k], fontsize=fsize_labels)
-            plt.ylim(kinematicsymin[k], kinematicsymax[k])
+            plt.ylabel(ylabel, fontsize=fsize_labels)
+            #plt.ylim(kinematicsymin[k], kinematicsymax[k])
             plt.axhline(0, color='black')  # zero line
             plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
         
-        for k in range(len(kineticsvarsplot)):
-            plt.subplot(gs[kineticspos[k]])
-            plt.plot(tn, pig.Vars[kineticsvarsplot[k]], tracecolor)
-            nor = np.array(pig_normaldata[kineticsnormals[k]])[:,0]
-            nstd = np.array(pig_normaldata[kineticsnormals[k]])[:,1]
-            plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
-            plt.title(kineticstitles[k], fontsize=10)
-            plt.xlabel(xlabel, fontsize=fsize_labels)
-            plt.ylabel(kineticslabels[k], fontsize=fsize_labels)
-            #plt.ylim(kineticsymin[k], kineticsymax[k])
-            plt.axhline(0, color='black')  # zero line
-            plt.locator_params(axis = 'y', nbins = 6)
-        
-        for k in range(len(emgchsplot)):
-            thisch = emgchsplot[k]
-            ax=plt.subplot(gs[emgchpos[k]])
+        for k, thisch in enumerate(emg_plot_chs):
+            ax=plt.subplot(gs[emg_plot_pos[k]])
             if emgdata[thisch] == 'EMG_DISCONNECTED':
                 ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
             elif emgdata[thisch] == 'EMG_REUSED':
                     ax.annotate('reused', xy=(50,0), ha="center", va="center")
             else:
-                #plt.plot(tn_emg, 1e3*emgdata[thisch], 'black')
                 plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
             chlabel = emg.ch_labels[thisch]
             # plot EMG normal bars

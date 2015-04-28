@@ -5,6 +5,7 @@ Created on Tue Mar 17 14:41:31 2015
 Utility classes for reading data from Vicon Nexus.
 
 TODO: 
+should be able to create PiG object without reading any actual data
 
 @author: Jussi
 """
@@ -23,15 +24,10 @@ def error_exit(message):
     ctypes.windll.user32.MessageBoxA(0, message, "Error in Nexus Python script", 0)
     sys.exit()
     
-def is_emg_channel(var):
-    """ Tell whether a variable is a recognized EMG channel. Can be used without
-    creating the vicon_emg object. """
-    
-    
-
 class vicon_emg:
     """ Class for reading and processing EMG data from Nexus.
-    vicon is a ViconNexus.ViconNexus() object."""
+    vicon is a ViconNexus.ViconNexus() object. EMG object can be created
+    without reading any actual data (e.g. to check electrode names). """
     
     def define_emg_mapping(self, emg_system='Myon', mapping_changes=None):
         """ Defines electrode mapping. mapping_changes contains the replacement
@@ -64,14 +60,14 @@ class vicon_emg:
                        'RSol': 'Soleus (R)',
                        'RTibA': 'Tibialis anterior (R)',
                        'RPer': 'Peroneus (R)',
-                       'LHam': 'Medial hamstrings (R)',
-                       'LRec': 'Rectus femoris (R)',
-                       'LGas': 'Gastrognemius (R)',
-                       'LGlut': 'Gluteus (R)',
-                       'LVas': 'Vastus (R)',
-                       'LSol': 'Soleus (R)',
-                       'LTibA': 'Tibialis anterior (R)',
-                       'LPer': 'Peroneus (R)'}
+                       'LHam': 'Medial hamstrings (L)',
+                       'LRec': 'Rectus femoris (L)',
+                       'LGas': 'Gastrognemius (L)',
+                       'LGlut': 'Gluteus (L)',
+                       'LVas': 'Vastus (L)',
+                       'LSol': 'Soleus (L)',
+                       'LTibA': 'Tibialis anterior (L)',
+                       'LPer': 'Peroneus (L)'}
             # default mapping of logical channels to physical ones
             self.ch_mapping = {'LGas': 'LGas4',
              'LGlut': 'LGlut8',
@@ -105,15 +101,19 @@ class vicon_emg:
     def emg_channelnames(self):
         """ Return names of known (logical) EMG channels. """
         return self.ch_names
+        
+    def is_logical_channel(self, chname):
+        return chname in self.ch_names
 
-    def __init__(self, vicon, emg_system='Myon', mapping_changes=None):
+    def __init__(self, emg_system='Myon', mapping_changes=None):
         # default plotting scale in medians (channel-specific)
         yscale_medians = 1
         # whether to auto-find disconnected EMG channels
-        find_disconnected = True
-        
+        self.find_disconnected = True
         # normal data and logical chs
         self.define_emg_mapping(emg_system, mapping_changes)
+
+    def read(self, vicon):
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -165,7 +165,7 @@ class vicon_emg:
             elname = self.elnames[elid-1]
             self.data[elname] = np.array(eldata)
             # zero out invalid EMG signals
-            if find_disconnected and not self.is_valid_emg(self.data[elname]):
+            if self.find_disconnected and not self.is_valid_emg(self.data[elname]):
                 self.data[elname] = "EMG_DISCONNECTED"
                 self.data_gc1l[elname] = "EMG_DISCONNECTED"
                 self.data_gc1r[elname] = "EMG_DISCONNECTED"
@@ -344,7 +344,82 @@ class pig_outputs:
     gait cycles, respectively. Can also use special keyword 'PiGLB'
     to get the usual set of Plug-in Gait lower body variables."""
         
-    def __init__(self, vicon, varlist, gcdfile):
+    def __init__(self):
+        """ Sets up some relevant variables, but does not read data """
+        # descriptions of known PiG variables (without side info)
+        self.pigdict = {'AnkleAnglesX': 'Ankle dorsi/plant',
+                         'AnkleAnglesZ': 'Ankle rotation',
+                         'AnkleMomentX': 'Ankle dors/plan moment',
+                         'AnklePowerZ': 'Ankle power',
+                         'FootProgressAnglesZ': 'Foot progress angles',
+                         'HipAnglesX': 'Hip flexion',
+                         'HipAnglesY': 'Hip adduction',
+                         'HipAnglesZ': 'Hip rotation',
+                         'HipMomentX': 'Hip flex/ext moment',
+                         'HipMomentY': 'Hip ab/add moment',
+                         'HipMomentZ': 'Hip rotation moment',
+                         'HipPowerZ': 'Hip power',
+                         'KneeAnglesX': 'Knee flexion',
+                         'KneeAnglesY': 'Knee adduction',
+                         'KneeAnglesZ': 'Knee rotation',
+                         'KneeMomentX': 'Knee flex/ext moment',
+                         'KneeMomentY': 'Knee ab/add moment',
+                         'KneeMomentZ': 'Knee rotation moment',
+                         'KneePowerZ': 'Knee power',
+                         'PelvisAnglesX': 'Pelvic tilt',
+                         'PelvisAnglesY': 'Pelvic obliquity',
+                         'PelvisAnglesZ': 'Pelvic rotation'}
+
+        # default mapping from PiG variable names to normal data variables (in normal.gcd)
+        self.normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
+                    'AnkleAnglesZ': 'FootRotation',
+                     'AnkleMomentX': 'DorsiPlanFlexMoment',
+                     'AnklePowerZ': 'AnklePower',
+                     'FootProgressAnglesZ': 'FootProgression',
+                     'HipAnglesX': 'HipFlexExt',
+                     'HipAnglesY': 'HipAbAdduct',
+                     'HipAnglesZ': 'HipRotation',
+                     'HipMomentX': 'HipFlexExtMoment',
+                     'HipMomentY': 'HipAbAdductMoment',
+                     'HipMomentZ': 'HipRotationMoment',
+                     'HipPowerZ': 'HipPower',
+                     'KneeAnglesX': 'KneeFlexExt',
+                     'KneeAnglesY': 'KneeValgVar',
+                     'KneeAnglesZ': 'KneeRotation',
+                     'KneeMomentX': 'KneeFlexExtMoment',
+                     'KneeMomentY': 'KneeValgVarMoment',
+                     'KneeMomentZ': 'KneeRotationMoment',
+                     'KneePowerZ': 'KneePower',
+                     'PelvisAnglesX': 'PelvicTilt',
+                     'PelvisAnglesY': 'PelvicObliquity',
+                     'PelvisAnglesZ': 'PelvicRotation'}
+
+         # y labels for plotting
+        self.ylabeldict = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
+                             'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
+                             'AnklePowerZ': 'Abs    W/kg    Gen',
+                             'FootProgressAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'HipAnglesX': 'Ext     ($^\\circ$)      Flex',
+                             'HipAnglesY': 'Abd     ($^\\circ$)      Add',
+                             'HipAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'HipMomentX': 'Int flex    Nm/kg    Int ext',
+                             'HipMomentY': 'Int add    Nm/kg    Int abd',
+                             'HipMomentZ': 'Int flex    Nm/kg    Int ext',
+                             'HipPowerZ': 'Abs    W/kg    Gen',
+                             'KneeAnglesX': 'Ext     ($^\\circ$)      Flex',
+                             'KneeAnglesY': 'Val     ($^\\circ$)      Var',
+                             'KneeAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'KneeMomentX': 'Int flex    Nm/kg    Int ext',
+                             'KneeMomentY': 'Int var    Nm/kg    Int valg',
+                             'KneeMomentZ': 'Int flex    Nm/kg    Int ext',
+                             'KneePowerZ': 'Abs    W/kg    Gen',
+                             'PelvisAnglesX': 'Pst     ($^\\circ$)      Ant',
+                             'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
+                             'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
+
+    def read(self, vicon, varlist, gcdfile):
+        """ Read the PiG output from Nexus. """
         # the vars to be read contain X,Y,Z components per each variable,
         # these will be separated into different variables
         if varlist == 'PiGLB':
@@ -414,91 +489,19 @@ class pig_outputs:
                     pig_normaldata[thisvar].append([float(x) for x in li.split()])
             self.pig_normaldata = pig_normaldata
 
-        # descriptions of known PiG variables (without side info)
-        self.pigdict = {}
-        self.pigdict = {'AnkleAnglesX': 'Ankle dorsi/plant',
-                         'AnkleAnglesZ': 'Ankle rotation',
-                         'AnkleMomentX': 'Ankle dors/plan moment',
-                         'AnklePowerZ': 'Ankle power',
-                         'FootProgressAnglesZ': 'Foot progress angles',
-                         'HipAnglesX': 'Hip flexion',
-                         'HipAnglesY': 'Hip adduction',
-                         'HipAnglesZ': 'Hip rotation',
-                         'HipMomentX': 'Hip flex/ext moment',
-                         'HipMomentY': 'Hip ab/add moment',
-                         'HipMomentZ': 'Hip rotation moment',
-                         'HipPowerZ': 'Hip power',
-                         'KneeAnglesX': 'Knee flexion',
-                         'KneeAnglesY': 'Knee adduction',
-                         'KneeAnglesZ': 'Knee rotation',
-                         'KneeMomentX': 'Knee flex/ext moment',
-                         'KneeMomentY': 'Knee ab/add moment',
-                         'KneeMomentZ': 'Knee rotation moment',
-                         'KneePowerZ': 'Knee power',
-                         'PelvisAnglesX': 'Pelvic tilt',
-                         'PelvisAnglesY': 'Pelvic obliquity',
-                         'PelvisAnglesZ': 'Pelvic rotation'}
-
-                         
-            
-        # default mapping from PiG variable names to normal data variables (in normal.gcd)
-        self.normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
-                    'AnkleAnglesZ': 'FootRotation',
-                     'AnkleMomentX': 'DorsiPlanFlexMoment',
-                     'AnklePowerZ': 'AnklePower',
-                     'FootProgressAnglesZ': 'FootProgression',
-                     'HipAnglesX': 'HipFlexExt',
-                     'HipAnglesY': 'HipAbAdduct',
-                     'HipAnglesZ': 'HipRotation',
-                     'HipMomentX': 'HipFlexExtMoment',
-                     'HipMomentY': 'HipAbAdductMoment',
-                     'HipMomentZ': 'HipRotationMoment',
-                     'HipPowerZ': 'HipPower',
-                     'KneeAnglesX': 'KneeFlexExt',
-                     'KneeAnglesY': 'KneeValgVar',
-                     'KneeAnglesZ': 'KneeRotation',
-                     'KneeMomentX': 'KneeFlexExtMoment',
-                     'KneeMomentY': 'KneeValgVarMoment',
-                     'KneeMomentZ': 'KneeRotationMoment',
-                     'KneePowerZ': 'KneePower',
-                     'PelvisAnglesX': 'PelvicTilt',
-                     'PelvisAnglesY': 'PelvicObliquity',
-                     'PelvisAnglesZ': 'PelvicRotation'}
-
-         # y labels for plotting
-        self.ylabeldict = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
-                             'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
-                             'AnklePowerZ': 'Abs    W/kg    Gen',
-                             'FootProgressAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'HipAnglesX': 'Ext     ($^\\circ$)      Flex',
-                             'HipAnglesY': 'Abd     ($^\\circ$)      Add',
-                             'HipAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'HipMomentX': 'Int flex    Nm/kg    Int ext',
-                             'HipMomentY': 'Int add    Nm/kg    Int abd',
-                             'HipMomentZ': 'Int flex    Nm/kg    Int ext',
-                             'HipPowerZ': 'Abs    W/kg    Gen',
-                             'KneeAnglesX': 'Ext     ($^\\circ$)      Flex',
-                             'KneeAnglesY': 'Val     ($^\\circ$)      Var',
-                             'KneeAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'KneeMomentX': 'Int flex    Nm/kg    Int ext',
-                             'KneeMomentY': 'Int var    Nm/kg    Int valg',
-                             'KneeMomentZ': 'Int flex    Nm/kg    Int ext',
-                             'KneePowerZ': 'Abs    W/kg    Gen',
-                             'PelvisAnglesX': 'Pst     ($^\\circ$)      Ant',
-                             'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
-                             'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
 
     def pig_varnames(self):
         """ Return list of known PiG variables. """
         return self.pigdict.keys()
         
+    def is_pig_variable(self, var):
+        vars = self.strip_varname(var)        
+        varlist = self.pig_varnames
+        return vars in varlist
+        
     def is_kinetic_var(self, var):
         """ Tell whether a variable represents kinetics. """
-        if var.find('Power') > -1 or var.find('Moment') > -1:
-            return True
-        else:
-            return False
+        return var.find('Power') > -1 or var.find('Moment') > -1
 
     def strip_varname(self, var):
         """ Remove Norm and/or L/R from beginning of variable name. """
