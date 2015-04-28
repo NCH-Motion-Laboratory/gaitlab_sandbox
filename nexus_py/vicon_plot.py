@@ -21,7 +21,7 @@ kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
-default plotting scales into PiG object
+documentation
 
 
 """
@@ -36,7 +36,7 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 
-def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr,
+def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr=None,
                 onesided_kinematics=False, annotate_disconnected=True, annotate_reused=True):
     """ Call to create a plot of Nexus variables. """
 
@@ -146,18 +146,21 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     pig_plot_vars = []
     pig_plot_pos = []
     for i, var in enumerate(plotvars):
-        if var[0] == 'X':
-            var[0] = side
-        if emg.is_logical_channel(var):
-            read_emg = True
-            emg_plot_chs.append(var)
-            emg_plot_pos.append(i)
-        elif pig.is_pig_variable(var):
-            read_pig = True
-            pig_plot_vars.append(var)
-            pig_plot_pos.append(i)
+        if var == None:
+            pass
         else:
-            error_exit('Unknown variable: ' + var)
+            if var[0] == 'X':
+                var = side + var[1:]
+            if emg.is_logical_channel(var):
+                read_emg = True
+                emg_plot_chs.append(var)
+                emg_plot_pos.append(i)
+            elif pig.is_pig_variable(var):
+                read_pig = True
+                pig_plot_vars.append(var)
+                pig_plot_pos.append(i)
+            else:
+                error_exit('Unknown variable: ' + var)
 
     if read_emg:
         emg.read(vicon)
@@ -189,65 +192,68 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     tn = np.linspace(0, 100, 101)
     # for normal data: 0,2,4...100.
     tn_2 = np.array(range(0, 101, 2))
+        
+    fig = plt.figure(figsize=totalfigsize)
+    gs = gridspec.GridSpec(gridv, gridh, height_ratios=plotheightratios)
+    plt.suptitle(maintitle, fontsize=12, fontweight="bold")
+    #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
     
-    with PdfPages(pdf_name) as pdf:
-        
-        fig = plt.figure(figsize=totalfigsize)
-        gs = gridspec.GridSpec(gridv, gridh, height_ratios = plotheightratios)
-        plt.suptitle(maintitle, fontsize=12, fontweight="bold")
-        #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
-        
-        if pig_plot_vars:
-            for k, var in enumerate(pig_plot_vars):
-                plt.subplot(gs[pig_plot_pos[k]])
-                varname_full = 'Norm'+side+var
-                # whether to plot two-sided kinematics                
-                if not pig.is_kinetic_var(var) and not onesided_kinematics:
-                    varname_r = 'Norm' + 'R' + var
-                    varname_l = 'Norm' + 'L' + var
-                    plt.plot(tn, pig.Vars[varname_r], tracecolor_r)
-                    plt.plot(tn, pig.Vars[varname_l], tracecolor_l)
-                else:
-                    plt.plot(tn, pig.Vars[varname_full], tracecolor)
-                nor = np.array(pig.normaldata(var))[:,0]
-                nstd = np.array(pig.normaldata(var))[:,1]
-                title = pig.description(var)
-                ylabel = pig.ylabel(varname_full)
-                plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
-                plt.title(title, fontsize=fsize_labels)
-                plt.xlabel(xlabel,fontsize=fsize_labels)
-                plt.ylabel(ylabel, fontsize=fsize_labels)
-                #plt.ylim(kinematicsymin[k], kinematicsymax[k])
-                plt.axhline(0, color='black')  # zero line
-                plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
-        
-        if emg_plot_chs:
-            for k, thisch in enumerate(emg_plot_chs):
-                ax=plt.subplot(gs[emg_plot_pos[k]])
-                if emgdata[thisch] == 'EMG_DISCONNECTED':
-                    ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
-                elif emgdata[thisch] == 'EMG_REUSED':
-                        ax.annotate('reused', xy=(50,0), ha="center", va="center")
-                else:
-                    plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
-                chlabel = emg.ch_labels[thisch]
-                # plot EMG normal bars
-                emgbar_ind = emg.ch_normals[thisch]
-                for k in range(len(emgbar_ind)):
-                    inds = emgbar_ind[k]
-                    plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
-                plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
-                plt.xlim(0,100)
-                plt.title(chlabel, fontsize=10)
-                plt.xlabel(xlabel, fontsize=fsize_labels)
-                plt.ylabel(emg_ylabel, fontsize=fsize_labels)
-                plt.locator_params(axis = 'y', nbins = 4)
+    if pig_plot_vars:
+        for k, var in enumerate(pig_plot_vars):
+            plt.subplot(gs[pig_plot_pos[k]])
+            varname_full = 'Norm'+side+var
+            # whether to plot two-sided kinematics                
+            if not pig.is_kinetic_var(var) and not onesided_kinematics:
+                varname_r = 'Norm' + 'R' + var
+                varname_l = 'Norm' + 'L' + var
+                plt.plot(tn, pig.Vars[varname_r], tracecolor_r)
+                plt.plot(tn, pig.Vars[varname_l], tracecolor_l)
+            else:
+                plt.plot(tn, pig.Vars[varname_full], tracecolor)
+            nor = np.array(pig.normaldata(var))[:,0]
+            nstd = np.array(pig.normaldata(var))[:,1]
+            title = pig.description(var)
+            ylabel = pig.ylabel(varname_full)
+            plt.fill_between(tn_2, nor-nstd, nor+nstd, color=normals_color, alpha=normals_alpha)
+            plt.title(title, fontsize=fsize_labels)
+            plt.xlabel(xlabel,fontsize=fsize_labels)
+            plt.ylabel(ylabel, fontsize=fsize_labels)
+            #plt.ylim(kinematicsymin[k], kinematicsymax[k])
+            plt.axhline(0, color='black')  # zero line
+            plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
     
-        # fix plot spacing, restrict to below title
-        gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])        
-        print("Writing "+pdf_name)
-        pdf.savefig()
-        plt.show()
+    if emg_plot_chs:
+        for k, thisch in enumerate(emg_plot_chs):
+            ax=plt.subplot(gs[emg_plot_pos[k]])
+            if emgdata[thisch] == 'EMG_DISCONNECTED':
+                ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+            elif emgdata[thisch] == 'EMG_REUSED':
+                    ax.annotate('reused', xy=(50,0), ha="center", va="center")
+            else:
+                plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
+            chlabel = emg.ch_labels[thisch]
+            # plot EMG normal bars
+            emgbar_ind = emg.ch_normals[thisch]
+            for k in range(len(emgbar_ind)):
+                inds = emgbar_ind[k]
+                plt.axvspan(inds[0], inds[1], alpha=emg_normals_alpha, color=emg_normals_color)    
+            plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
+            plt.xlim(0,100)
+            plt.title(chlabel, fontsize=10)
+            plt.xlabel(xlabel, fontsize=fsize_labels)
+            plt.ylabel(emg_ylabel, fontsize=fsize_labels)
+            plt.locator_params(axis = 'y', nbins = 4)
+    
+    # fix plot spacing, restrict to below title
+    gs.tight_layout(fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])  
+    plt.show()
+
+    # create pdf
+    if makepdf:
+        with PdfPages(pdf_name) as pdf:
+            print("Writing "+pdf_name)
+            pdf.savefig(fig)
+        
         
     
     

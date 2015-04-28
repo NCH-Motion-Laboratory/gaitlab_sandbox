@@ -4,9 +4,6 @@ Created on Tue Mar 17 14:41:31 2015
 
 Utility classes for reading data from Vicon Nexus.
 
-TODO: 
-should be able to create PiG object without reading any actual data
-
 @author: Jussi
 """
 
@@ -87,6 +84,7 @@ class vicon_emg:
              'RVas': 'RVas14'}
         else:
             error_exit('Unsupported EMG system: '+emg_system)
+            
         # user specified changes to electrode mapping
         if mapping_changes:
             for logch in mapping_changes:
@@ -504,11 +502,11 @@ class pig_outputs:
 
     def strip_varname(self, var):
         """ Remove Norm and/or L/R from beginning of variable name. """
-        vars = var        
-        if var[:3] == 'Norm':
+        vars = var
+        if vars[:4] == 'Norm':
             vars = var[4:]
-        if var[0] in ['L','R']:
-            vars = var[1:]
+        if vars[0] in ['L','R']:
+            vars = vars[1:]
         return vars
 
     def description(self, var):
