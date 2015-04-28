@@ -225,7 +225,7 @@ class nexus_emg:
         if passband == None:
             return y
         else:
-            passbandn = np.array(passband) / self.sfrate / 2
+            passbandn = np.array(passband) / self.sfrate
             b, a = signal.butter(4, passbandn, 'bandpass')
             yfilt = signal.filtfilt(b, a, y)        
             return yfilt

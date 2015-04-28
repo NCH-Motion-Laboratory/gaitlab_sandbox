@@ -11,6 +11,7 @@ from nexus_plot import nexus_plot
 import matplotlib.pyplot as plt
 
 layout = [8,3]
+
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             'XHam', 'XRec', 'XTibA',
             'XGlut','XVas','XPer',
@@ -19,6 +20,7 @@ plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             None,'XGlut','XSol',
             None,'XGas',None,
             'HipPowerZ','KneePowerZ','AnklePowerZ']
+            
 plotheightratios = [3,2,2,3,2,2,2,3]
 maintitlestr = 'Kinetics-EMG plot for '
 makepdf = True
