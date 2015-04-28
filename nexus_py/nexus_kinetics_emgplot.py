@@ -23,6 +23,6 @@ maintitlestr = 'Kinetics-EMG plot for '
 makepdf = True
 pdftitlestr = 'Kinetics_EMG_'
 
-nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr,
-           onesided_kinematics=True)
+nexus_plot(layout, plotvars, plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
+           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
     

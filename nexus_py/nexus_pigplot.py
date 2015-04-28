@@ -22,11 +22,8 @@ plotvars = ['PelvisAnglesX',
            'AnkleAnglesX',
            'FootProgressAnglesZ',
            'AnkleAnglesZ']
-plotheightratios = [2]*4
 maintitlestr = 'Kinematics plot for '
-makepdf = False
-
-nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf)
+nexus_plot(layout, plotvars, maintitlestr=maintitlestr)
     
    
 layout = [4,3]
@@ -40,11 +37,7 @@ plotvars = ['HipMomentX',
              'KneePowerZ',
              'AnkleMomentX',None,None,
              'AnklePowerZ']                      
-           
-plotheightratios = [2]*4
 maintitlestr = 'Kinetics plot for '
-makepdf = False
-
-nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf)
+nexus_plot(layout, plotvars, maintitlestr=maintitlestr)
     
     

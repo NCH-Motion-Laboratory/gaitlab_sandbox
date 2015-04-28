@@ -36,7 +36,7 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 
-def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr=None,
+def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for ', makepdf=False, pdftitlestr=None,
                 onesided_kinematics=False, annotate_disconnected=True, annotate_reused=True):
     """ Call to create a plot of Nexus variables. """
 
@@ -118,6 +118,8 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     # grid dimensions, vertical and horizontal
     gridv = layout[0]
     gridh = layout[1]
+    if not plotheightratios:
+        plotheightratios = [1] * gridv
     # main title
     maintitle = maintitlestr + trialname + ' ('+side+')'
     # trace colors, right and left
@@ -132,7 +134,6 @@ def nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftit
     emg_normals_alpha = .3
     emg_normals_color = 'red'
     emg_ylabel = 'mV'
-
     
     pig = nexus_getdata.pig_outputs()
     emg = nexus_getdata.nexus_emg(mapping_changes=emg_mapping)

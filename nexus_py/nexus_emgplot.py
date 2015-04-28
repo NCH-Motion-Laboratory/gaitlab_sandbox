@@ -18,10 +18,10 @@ plotvars = ['RGlut','LGlut',
               'RPer','LPer',
               'RGas','LGas',
               'RSol','LSol']
-plotheightratios = [2] * 8
 maintitlestr = 'EMG plot for '
 makepdf = True
 pdftitlestr = 'EMG_'
 
-nexus_plot(layout, plotvars, plotheightratios, maintitlestr, makepdf, pdftitlestr)
+nexus_plot(layout, plotvars, maintitlestr=maintitlestr, 
+           makepdf=makepdf, pdftitlestr=pdftitlestr)
     
