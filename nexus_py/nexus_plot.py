@@ -21,6 +21,7 @@ kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
+normalize EMG to gait cycle according to side
 documentation
 add default y ranges for kine(ma)tics variables?
 
@@ -151,7 +152,7 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
             pass
         else:
             if var[0] == 'X':
-                var = side + var[1:]
+                var = side + var[1:]  # autodetect side
             if emg.is_logical_channel(var):
                 read_emg = True
                 emg_plot_chs.append(var)
@@ -170,7 +171,7 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
     
     # output filename
     if makepdf:
-        pdf_name = pdftitlestr + trialname + '.pdf'
+        pdf_name = sessionpath + pdftitlestr + trialname + '.pdf'
      
     xlabel = ''
     
@@ -178,16 +179,6 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
         tracecolor = tracecolor_l
     else:
         tracecolor = tracecolor_r
-    # EMG variables
-    if emg_plot_chs:
-        if side == 'L':
-            tn_emg = emg.tn_emg_l
-            emgdata = emg.logical_data_gc1l
-            emg_yscale = emg.yscale_gc1l
-        else:
-            tn_emg = emg.tn_emg_r
-            emgdata = emg.logical_data_gc1r
-            emg_yscale = emg.yscale_gc1r
     
     # for kinematics / kinetics: 0,1...100
     tn = np.linspace(0, 100, 101)
@@ -225,6 +216,18 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
     
     if emg_plot_chs:
         for k, thisch in enumerate(emg_plot_chs):
+            side_this = thisch[0]
+            # choose EMG data normalized according to side
+            if side_this == 'L':
+                tn_emg = emg.tn_emg_l
+                emgdata = emg.logical_data_gc1l
+                emg_yscale = emg.yscale_gc1l
+            elif side_this == 'R':
+                tn_emg = emg.tn_emg_r
+                emgdata = emg.logical_data_gc1r
+                emg_yscale = emg.yscale_gc1r
+            else:
+                error_exit('Unexpected EMG channel name: ', thisch)
             ax=plt.subplot(gs[emg_plot_pos[k]])
             if emgdata[thisch] == 'EMG_DISCONNECTED':
                 ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
