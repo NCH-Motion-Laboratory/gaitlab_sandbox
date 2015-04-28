@@ -39,7 +39,7 @@ import os
 import getpass
 
 def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for ', makepdf=False, pdftitlestr=None,
-                onesided_kinematics=False, annotate_disconnected=True, annotate_reused=True):
+                onesided_kinematics=False, annotate_disconnected=True, annotate_reused=True, overlay_fig=None):
     """ Call to create a plot of Nexus variables. """
 
     # default parameters, if none specified on cmd line or config file
@@ -185,8 +185,12 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
     tn = np.linspace(0, 100, 101)
     # for normal data: 0,2,4...100.
     tn_2 = np.array(range(0, 101, 2))
+    
+    if not overlay:
+        fig = plt.figure(figsize=totalfigsize)  # make new figure
+    else:
+        fig = plt.figure(overlay_fig.number)
         
-    fig = plt.figure(figsize=totalfigsize)
     gs = gridspec.GridSpec(gridv, gridh, height_ratios=plotheightratios)
     plt.suptitle(maintitle, fontsize=12, fontweight="bold")
     #plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.5)
@@ -261,7 +265,8 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
             print("Writing "+pdf_name)
             pdf.savefig(fig)
         
-        
+    return fig
+    
     
     
     
