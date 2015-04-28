@@ -22,7 +22,7 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
 documentation
-
+add default y ranges for kine(ma)tics variables?
 
 """
 
