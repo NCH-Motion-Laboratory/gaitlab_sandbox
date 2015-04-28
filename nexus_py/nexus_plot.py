@@ -134,6 +134,7 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
     normals_color = 'gray'
     # emg normals
     emg_normals_alpha = .3
+    emg_color = 'black'
     emg_normals_color = 'red'
     emg_ylabel = 'mV'
     
@@ -186,7 +187,7 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
     # for normal data: 0,2,4...100.
     tn_2 = np.array(range(0, 101, 2))
     
-    if not overlay:
+    if not overlay_fig:
         fig = plt.figure(figsize=totalfigsize)  # make new figure
     else:
         fig = plt.figure(overlay_fig.number)
@@ -239,7 +240,9 @@ def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for '
             elif emgdata[thisch] == 'EMG_REUSED':
                     ax.annotate('reused', xy=(50,0), ha="center", va="center")
             else:
-                plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), 'black')
+                if overlay_fig:  #DEBUG
+                    emg_color = 'red'
+                plt.plot(tn_emg, 1e3*emg.filter(emgdata[thisch], emg_passband), emg_color)
             chlabel = emg.ch_labels[thisch]
             # plot EMG normal bars
             emgbar_ind = emg.ch_normals[thisch]
