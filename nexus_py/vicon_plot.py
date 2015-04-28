@@ -10,10 +10,12 @@ main title leading string
 create pdf or not
 pdf name leading string
 
-TODO:
-PiG object needs to know about variable names, etc.
-
-
+rules:
+channel type is autodetected by looking into corresponding dict
+variables always normalized
+kinetics always plotted for one side only
+kinematics always plotted for both sides (can add option later)
+vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 """
 
@@ -105,13 +107,11 @@ def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftit
     vgc = vicon_getdata.gaitcycle(vicon)
     if not side:
         side = vgc.detect_side(vicon)
-    # or specify manually:
-    #side = 'R'
     
     # plotting parameters
     # figure size
     totalfigsize = (14,12)
-    # grid size
+    # grid dimensions, vertical and horizontal
     gridv = layout[0]
     gridh = layout[1]
     # main title
@@ -131,6 +131,8 @@ def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftit
     emg_normals_alpha = .3
     emg_normals_color = 'red'
     emg_ylabel = 'mV'
+    
+    
     # output filename
     pdf_name = sessionpath + 'kinematics_emg_' + trialname + '.pdf'
     # EMG channels to plot
@@ -144,9 +146,14 @@ def nexus_plot(layout, plotheightratios, channels, maintitlestr, makepdf, pdftit
     # generate labels               grid
     emgchpos = [3,4,5,6,7,8,12,13,14,16,17,19]
     
-        
+       
     # kinematics vars to plot
     kinematicsvarsplot_ = ['HipAnglesX','KneeAnglesX','AnkleAnglesX']
+    kinematicsvarsplot = ['Norm'+side+str for str in kinematicsvarsplot_]
+    
+    
+    
+    
     # corresponding normal variables as specified in normal.gcd
     kinematicsnormals = ['HipFlexExt','KneeFlexExt','DorsiPlanFlex']
     # append 'Norm' + side to get the full variable name

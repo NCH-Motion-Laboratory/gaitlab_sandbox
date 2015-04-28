@@ -22,6 +22,12 @@ def error_exit(message):
     # graphical error dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Error in Nexus Python script", 0)
     sys.exit()
+    
+def is_emg_channel(var):
+    """ Tell whether a variable is a recognized EMG channel. Can be used without
+    creating the vicon_emg object. """
+    
+    
 
 class vicon_emg:
     """ Class for reading and processing EMG data from Nexus.
@@ -96,6 +102,10 @@ class vicon_emg:
                 self.ch_mapping[logch] = mapping_changes[logch]
                 self.ch_labels[logch] += ' (read from ' + physch +')'
                 
+    def emg_channelnames(self):
+        """ Return names of known (logical) EMG channels. """
+        return self.ch_names
+
     def __init__(self, vicon, emg_system='Myon', mapping_changes=None):
         # default plotting scale in medians (channel-specific)
         yscale_medians = 1
@@ -335,7 +345,8 @@ class pig_outputs:
     to get the usual set of Plug-in Gait lower body variables."""
         
     def __init__(self, vicon, varlist, gcdfile):
-
+        # the vars to be read contain X,Y,Z components per each variable,
+        # these will be separated into different variables
         if varlist == 'PiGLB':
             varlist = ['LHipMoment',
               'LKneeMoment',
@@ -388,7 +399,21 @@ class pig_outputs:
             self.Vars['Norm'+Var+'X'] = vgc1.normalize(self.Vars[Var+'X'], side)
             self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
             self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
-        
+
+        # read PiG normal data from given gcd file
+        if gcdfile:
+            f = open(gcdfile, 'r')
+            lines = f.readlines()
+            f.close()
+            pig_normaldata = {}
+            for li in lines:
+                if li[0] == '!':  # it's a variable name
+                    thisvar = li[1:li.find(' ')]  # set dict key
+                    pig_normaldata[thisvar] = list()
+                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
+                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
+            self.pig_normaldata = pig_normaldata
+
         # descriptions of known PiG variables (without side info)
         self.pigdict = {}
         self.pigdict = {'AnkleAnglesX': 'Ankle dorsi/plant',
@@ -414,19 +439,7 @@ class pig_outputs:
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}
 
-        # read PiG normal data from given gcd file
-        if gcdfile:
-            f = open(gcdfile, 'r')
-            lines = f.readlines()
-            f.close()
-            pig_normaldata = {}
-            for li in lines:
-                if li[0] == '!':  # it's a variable name
-                    thisvar = li[1:li.find(' ')]  # set dict key
-                    pig_normaldata[thisvar] = list()
-                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
-                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
-            self.pig_normaldata = pig_normaldata
+                         
             
         # default mapping from PiG variable names to normal data variables (in normal.gcd)
         self.normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
@@ -476,6 +489,16 @@ class pig_outputs:
                              'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
                              'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
 
+    def pig_varnames(self):
+        """ Return list of known PiG variables. """
+        return self.pigdict.keys()
+        
+    def is_kinetic_var(self, var):
+        """ Tell whether a variable represents kinetics. """
+        if var.find('Power') > -1 or var.find('Moment') > -1:
+            return True
+        else:
+            return False
 
     def strip_varname(self, var):
         """ Remove Norm and/or L/R from beginning of variable name. """
