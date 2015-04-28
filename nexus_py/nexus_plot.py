@@ -21,7 +21,8 @@ kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
-normalize EMG to gait cycle according to side
+
+improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
 

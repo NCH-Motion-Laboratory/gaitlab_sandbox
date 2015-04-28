@@ -216,7 +216,7 @@ class nexus_emg:
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
         # simple variance check
-        emg_max_variance = 1e-7
+        emg_max_variance = 5e-7
         return np.var(y) < emg_max_variance
         
     def filter(self, y, passband):
