@@ -20,8 +20,11 @@ kinetics always plotted for one side only
 kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
+
 TODO:
 
+change plotter to take 'trial' argument, can be used to plot several trials!
+(loop on vicon.OpenTrial() )
 improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -38,9 +41,10 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 
-def nexus_plot(layout, plotvars, plotheightratios=None, maintitlestr='Plot for ', makepdf=False, pdftitlestr=None,
+def nexus_plot(layout, plotvars, plotheightratios=None, trial=None, maintitlestr='Plot for ', makepdf=False, pdftitlestr=None,
                 onesided_kinematics=False, annotate_disconnected=True, annotate_reused=True, overlay_fig=None,
                 overlay_gridspec=None):
+    
     """ Call to create a plot of Nexus variables. """
 
     # default parameters, if none specified on cmd line or config file

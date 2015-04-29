@@ -243,8 +243,6 @@ class nexus_emg:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
 
-
-
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
     vars to 0..100% of gait cycle. """
