@@ -23,7 +23,7 @@ maintitlestr = 'EMG plot for '
 makepdf = True
 pdftitlestr = 'EMG_'
 
-fig1=nexus_plot(layout, plotvars, maintitlestr=maintitlestr, 
+(fig1, gs1) =nexus_plot(layout, plotvars, maintitlestr=maintitlestr, 
            makepdf=makepdf, pdftitlestr=pdftitlestr)
 plotvars = ['RSol','LSol',
               'RSol','LSol',
@@ -34,7 +34,7 @@ plotvars = ['RSol','LSol',
               'RGas','LGas',
               'RSol','LSol']
 nexus_plot(layout, plotvars, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, overlay_fig=fig1)           
+           makepdf=makepdf, pdftitlestr=pdftitlestr, overlay_fig=fig1, overlay_gridspec=gs1)           
            
            
     
