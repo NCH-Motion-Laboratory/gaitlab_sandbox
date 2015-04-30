@@ -7,7 +7,7 @@ EMG plot from Nexus.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plot
+from nexus_plot import nexus_plotter
 import matplotlib.pyplot as plt
 
 layout = [8,2]
@@ -23,7 +23,9 @@ maintitlestr = 'EMG plot for '
 makepdf = True
 pdftitlestr = 'EMG_'
 
-nexus_plot(layout, plotvars, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr)
-    
+nplotter = nexus_plotter(layout, plotvars)
+nplotter.open_trial()
+nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
+           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+
 plt.show()

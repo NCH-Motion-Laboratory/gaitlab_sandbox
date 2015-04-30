@@ -96,9 +96,9 @@ class nexus_plotter():
         # locate PiG normal data
         self.gcdpath = 'normal.gcd'
         # check user's desktop also
-        if not os.path.isfile(self.gdcpath):
-            self.gdcpath = desktop + '/projects/llinna/nexus_py/normal.gcd'
-        if not os.path.isfile(self.gdcpath):
+        if not os.path.isfile(self.gcdpath):
+            self.gcdpath = desktop + '/projects/llinna/nexus_py/normal.gcd'
+        if not os.path.isfile(self.gcdpath):
             error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
         
         # set default plotting parameters
@@ -121,6 +121,7 @@ class nexus_plotter():
         self.emg_ylabel = 'mV'
         # x label
         self.xlabel = ''
+        self.fig = None
                                                       
     def open_trial(self, trialpath=None):
         """ Read specified trial, or the one already opened in Nexus. """
@@ -153,10 +154,10 @@ class nexus_plotter():
         self.emg = nexus_getdata.nexus_emg(mapping_changes=self.emg_mapping)
         read_emg = False
         read_pig = False
-        emg_plot_chs = []
-        emg_plot_pos = []
+        self.emg_plot_chs = []
+        self.emg_plot_pos = []
         self.pig_plot_vars = []
-        pig_plot_pos = []
+        self.pig_plot_pos = []
         for i, var in enumerate(self.plotvars):
             if var == None:
                 pass
@@ -165,12 +166,12 @@ class nexus_plotter():
                     var = self.side + var[1:]  # autodetect side
                 if self.emg.is_logical_channel(var):
                     read_emg = True
-                    emg_plot_chs.append(var)
-                    emg_plot_pos.append(i)
+                    self.emg_plot_chs.append(var)
+                    self.emg_plot_pos.append(i)
                 elif self.pig.is_pig_variable(var):
                     read_pig = True
                     self.pig_plot_vars.append(var)
-                    pig_plot_pos.append(i)
+                    self.pig_plot_pos.append(i)
                 else:
                     error_exit('Unknown variable: ' + var)
         if read_emg:

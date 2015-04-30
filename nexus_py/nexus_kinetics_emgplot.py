@@ -10,7 +10,6 @@ Kinematics-EMG plot from Nexus.
 from nexus_plot import nexus_plotter
 import matplotlib.pyplot as plt
 
-
 layout = [8,3]
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             'XHam', 'XRec', 'XTibA',
@@ -20,7 +19,11 @@ plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             None,'XGlut','XSol',
             None,'XGas',None,
             'HipPowerZ','KneePowerZ','AnklePowerZ']
-phr = 
+
+plotheightratios = [3,2,2,3,2,2,2,3]
+maintitlestr = 'Kinetics-EMG plot for '
+makepdf = True
+pdftitlestr = 'Kinetics_EMG_'
 
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
