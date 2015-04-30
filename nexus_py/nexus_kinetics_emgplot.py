@@ -32,7 +32,7 @@ nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr
 
 nplotter.open_trial()
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True, overlay=True)
+           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
 
 
 plt.show()
