@@ -131,7 +131,7 @@ class nexus_plotter():
         vicon = ViconNexus.ViconNexus()
 
         if trialpath:
-            vicon.OpenTrial(trialpath, 30)            
+            vicon.OpenTrial(trialpath, 10)            
             # TODO: check errors
         
         subjectnames = vicon.GetSubjectNames()  
@@ -181,10 +181,18 @@ class nexus_plotter():
             self.pig.read(vicon, 'PiGLB', self.gcdpath)
 
 
-    def plot_trial(self, plotheightratios=None, maintitlestr='Plot for ',
-                 makepdf=False, pdftitlestr='Nexus_plot_', onesided_kinematics=False):
+    def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
+                 makepdf=False, pdftitlestr='Nexus_plot_', onesided_kinematics=False,
+                 linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_trial first). If a plot is already 
-        active, the new trial will be overlaid on the previous one."""        
+        active, the new trial will be overlaid on the previous one.
+
+        Parameters:
+        maintitle plot title; leave unspecified for automatic title (can also then
+        supply maintitleprefix)
+        
+        
+        """        
 
         if not self.trialname:
             raise Exception('No trial loaded')
@@ -202,7 +210,9 @@ class nexus_plotter():
         if not plotheightratios:
             self.plotheightratios = [1] * self.gridv
 
-        maintitle = maintitlestr + self.trialname + ' ('+self.side+')'
+        # automatic title
+        if not maintitle:
+            maintitle = maintitleprefix + self.trialname + ' ('+self.side+')'
         
         # x variable for kinematics / kinetics: 0,1...100
         tn = np.linspace(0, 100, 101)
@@ -214,7 +224,7 @@ class nexus_plotter():
         else:
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
-
+        print(maintitle)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
         if self.pig_plot_vars:
@@ -225,10 +235,10 @@ class nexus_plotter():
                 if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
                     varname_r = 'Norm' + 'R' + var
                     varname_l = 'Norm' + 'L' + var
-                    plt.plot(tn, self.pig.Vars[varname_r], self.tracecolor_r)
-                    plt.plot(tn, self.pig.Vars[varname_l], self.tracecolor_l)
+                    plt.plot(tn, self.pig.Vars[varname_r], self.tracecolor_r, linestyle=linestyle)
+                    plt.plot(tn, self.pig.Vars[varname_l], self.tracecolor_l, linestyle=linestyle)
                 else:
-                    plt.plot(tn, self.pig.Vars[varname_full], tracecolor)
+                    plt.plot(tn, self.pig.Vars[varname_full], tracecolor, linestyle=linestyle)
                 nor = np.array(self.pig.normaldata(var))[:,0]
                 nstd = np.array(self.pig.normaldata(var))[:,1]
                 title = self.pig.description(var)
@@ -261,7 +271,7 @@ class nexus_plotter():
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:
-                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), 'black')
+                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor)
                 chlabel = self.emg.ch_labels[thisch]
                 # plot EMG normal bars
                 emgbar_ind = self.emg.ch_normals[thisch]

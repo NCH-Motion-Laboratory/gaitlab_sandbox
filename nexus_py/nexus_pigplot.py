@@ -24,11 +24,11 @@ plotvars = ['PelvisAnglesX',
            'AnkleAnglesX',
            'FootProgressAnglesZ',
            'AnkleAnglesZ']
-maintitlestr = 'Kinematics plot for '
+maintitleprefix = 'Kinematics plot for '
 
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
-nplotter.plot_trial(maintitlestr=maintitlestr)
+nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
 plotvars = ['HipMomentX',
             'HipMomentY',
@@ -44,7 +44,7 @@ maintitlestr = 'Kinetics plot for '
 
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
-nplotter.plot_trial(maintitlestr=maintitlestr)
+nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
 plt.show()
     

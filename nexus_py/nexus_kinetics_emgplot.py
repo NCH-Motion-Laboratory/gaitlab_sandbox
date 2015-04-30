@@ -28,9 +28,11 @@ pdftitlestr = 'Kinetics_EMG_'
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+           makepdf=False, pdftitlestr=pdftitlestr, onesided_kinematics=True)
 
-nplotter.open_trial()
+nplotter.tracecolor_l = 'blue'
+
+nplotter.open_trial('C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\D0001AV\\2015_4_23_seur_AV\\2015_4_23_seur_AV19')
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
            makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
 

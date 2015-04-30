@@ -19,13 +19,13 @@ plotvars = ['RGlut','LGlut',
               'RPer','LPer',
               'RGas','LGas',
               'RSol','LSol']
-maintitlestr = 'EMG plot for '
+maintitleprefix = 'EMG plot for '
 makepdf = True
 pdftitlestr = 'EMG_'
 
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
-nplotter.plot_trial(maintitlestr=maintitlestr, makepdf=makepdf, 
+nplotter.plot_trial(maintitleprefix=maintitleprefix, makepdf=makepdf, 
                     pdftitlestr=pdftitlestr, onesided_kinematics=True)
 
 plt.show()
