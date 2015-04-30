@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 
 
 layout = [4,3]
+makepdf = False
+plotheightratios = [4]*3
+
 plotvars = ['PelvisAnglesX',
            'PelvisAnglesY',
            'PelvisAnglesZ',
@@ -26,17 +29,13 @@ plotvars = ['PelvisAnglesX',
            'FootProgressAnglesZ',
            'AnkleAnglesZ']
 maintitlestr = 'Kinematics plot for '
-nexus_plot(layout, plotvars, maintitlestr=maintitlestr)
 
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
-nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr)
 
-plt.show()
-    
-   
-layout = [4,3]
+
+
 plotvars = ['HipMomentX',
             'HipMomentY',
              'HipMomentZ',
@@ -48,6 +47,11 @@ plotvars = ['HipMomentX',
              'AnkleMomentX',None,None,
              'AnklePowerZ']                      
 maintitlestr = 'Kinetics plot for '
-nexus_plot(layout, plotvars, maintitlestr=maintitlestr)
+
+nplotter1 = nexus_plotter(layout, plotvars)
+nplotter1.open_trial()
+nplotter1.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr)
 
 plt.show()
+    
+   
