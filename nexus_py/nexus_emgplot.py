@@ -25,7 +25,7 @@ pdftitlestr = 'EMG_'
 
 nplotter = nexus_plotter(layout, plotvars)
 nplotter.open_trial()
-nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+nplotter.plot_trial(maintitlestr=maintitlestr, makepdf=makepdf, 
+                    pdftitlestr=pdftitlestr, onesided_kinematics=True)
 
 plt.show()

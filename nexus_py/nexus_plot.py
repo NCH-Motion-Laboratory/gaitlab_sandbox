@@ -181,13 +181,17 @@ class nexus_plotter():
 
 
     def plot_trial(self, plotheightratios=None, maintitlestr='Plot for ',
-                 makepdf=False, pdftitlestr='Nexus_plot_', onesided_kinematics=False):
+                 makepdf=False, pdftitlestr='Nexus_plot_', onesided_kinematics=False,
+                 overlay=False):
         """ Plot active trial (must call open_trial first). If a plot is already 
-        active, the new trial will be overlaid on the previous one."""        
+        active and overlay=True, the new trial will be overlaid on the previous one."""        
 
         if not self.trialname:
             raise Exception('No trial loaded')
-        
+
+        if overlay and not self.fig:
+            error_exit('Cannot overlay, no existing plot')
+
         # output filename
         if makepdf:
             pdf_name = self.sessionpath + pdftitlestr + self.trialname + '.pdf'
@@ -208,12 +212,11 @@ class nexus_plotter():
         # for normal data: 0,2,4...100.
         tn_2 = np.array(range(0, 101, 2))
         
-        # if figure already exists, use it for overlay, otherwise create a new one
-        if not self.fig:
+        if self.fig and overlay:
+            plt.figure(self.fig.number) 
+        else:
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
-        else:
-            plt.figure(self.fig.number)
 
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         

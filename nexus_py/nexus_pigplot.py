@@ -7,8 +7,10 @@ Plot PiG outputs (online) from Nexus.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plot
+from nexus_plot import nexus_plotter
 import matplotlib.pyplot as plt
+
+
 
 layout = [4,3]
 plotvars = ['PelvisAnglesX',
@@ -25,6 +27,13 @@ plotvars = ['PelvisAnglesX',
            'AnkleAnglesZ']
 maintitlestr = 'Kinematics plot for '
 nexus_plot(layout, plotvars, maintitlestr=maintitlestr)
+
+nplotter = nexus_plotter(layout, plotvars)
+nplotter.open_trial()
+nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
+           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+
+plt.show()
     
    
 layout = [4,3]
