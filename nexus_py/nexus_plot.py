@@ -118,6 +118,7 @@ class nexus_plotter():
         self.normals_color = 'gray'
         # emg normals
         self.emg_normals_alpha = .3
+        self.emg_alpha = .6
         self.emg_normals_color = 'red'
         self.emg_ylabel = 'mV'
         # x label
@@ -271,7 +272,7 @@ class nexus_plotter():
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:
-                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor)
+                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha)
                 chlabel = self.emg.ch_labels[thisch]
                 # plot EMG normal bars
                 emgbar_ind = self.emg.ch_normals[thisch]
