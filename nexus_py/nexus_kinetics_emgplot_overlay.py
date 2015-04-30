@@ -11,6 +11,7 @@ from nexus_plot import nexus_plotter
 import matplotlib.pyplot as plt
 
 layout = [8,3]
+# can get rid of 'X' syntax by checking nplotter.side after OpenTrial
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             'XHam', 'XRec', 'XTibA',
             'XGlut','XVas','XPer',
