@@ -117,9 +117,9 @@ class nexus_plotter():
         self.normals_alpha = .3
         self.normals_color = 'gray'
         # emg normals
-        self.emg_normals_alpha = .3
+        self.emg_normals_alpha = .8
         self.emg_alpha = .6
-        self.emg_normals_color = 'red'
+        self.emg_normals_color = 'pink'
         self.emg_ylabel = 'mV'
         # x label
         self.xlabel = ''
