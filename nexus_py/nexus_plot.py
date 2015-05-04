@@ -83,9 +83,8 @@ class nexus_plotter():
             else:
                 key = arg[:eqpos]
                 val = arg[eqpos+1:]
-                if key.lower() == 'side':
-                    self.side = val.upper()
-                elif key.lower() == 'emg_passband':
+                # can add key/val pairs here (elif)
+                if key.lower() == 'emg_passband':
                     try:
                         self.emg_passband = [float(x) for x in val.split(',')]   
                     except ValueError:
@@ -125,7 +124,7 @@ class nexus_plotter():
         self.xlabel = ''
         self.fig = None
                                                       
-    def open_trial(self, trialpath=None):
+    def open_trial(self, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. """
 
         # connect to Nexus
@@ -147,9 +146,12 @@ class nexus_plotter():
         self.subjectname = subjectnames[0]
         
         # try to detect side (L/R)
-        vgc = nexus_getdata.gaitcycle(vicon)
-        if not self.side:
+        # TODO: should be re-set for each loaded trial
+        if not side:
+            vgc = nexus_getdata.gaitcycle(vicon)
             self.side = vgc.detect_side(vicon)
+        else:
+            self.side = side
     
         # will read EMG/PiG data only if necessary
         self.pig = nexus_getdata.pig_outputs()
@@ -187,12 +189,9 @@ class nexus_plotter():
                  linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
-
         Parameters:
         maintitle plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
-        
-        
         """        
 
         if not self.trialname:
