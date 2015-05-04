@@ -29,6 +29,7 @@ add default y ranges for kine(ma)tics variables?
 
 """
 
+from Tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
 import nexus_getdata
@@ -129,19 +130,19 @@ class nexus_plotter():
 
     def get_eclipse_description(self, trialname):
         """ Get the Eclipse database description for the specified trial. Specify
-        trialname with full path and no extension. """
-
+        trialname with full path. """
+        # remove c3d extension if present
+        trialname = os.path.splitext(trialname)[0]
         if not os.path.isfile(trialname+'.c3d'):
             raise Exception('Cannot find c3d file for trial')
         enfname = trialname + '.Trial.enf'
         description = None
-        if os.path.isfile(enfname):  # from config file
+        if os.path.isfile(enfname):
             f = open(enfname, 'r')
             eclipselines = f.read().splitlines()
             f.close()
         else:
             return None
-        print(eclipselines)
         for line in eclipselines:
             eqpos = line.find('=')
             if eqpos > 0:
@@ -151,7 +152,9 @@ class nexus_plotter():
                     description = val
         return description
 
-        
+    def trialname(self):
+        """ Strip path and extension from trialname. """
+       
     def trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
         Will also show the Eclipse description for each processed trial, if 
@@ -159,11 +162,27 @@ class nexus_plotter():
         trialpath = self.get_nexus_path()
         if trialpath == '':
             error_exit('No trial open in Nexus')
+        # list of all processed trials
+        proctrials = glob.glob(trialpath+'*.c3d')
+        lp = len(proctrials)
         # present trial selector
-
-        # for now, return all c3d files
-        return glob.glob(trialpath+'*.c3d')
-
+        master = Tk()
+        Label(master, text="Choose trials for overlay plot:").grid(row=0, sticky=W)
+        vars=[]
+        for i,trialpath in enumerate(proctrials):
+            vars.append(IntVar())
+            # remove path and extension from full trial name
+            trial =  os.path.basename(os.path.splitext(trialpath)[0])
+            desc = self.get_eclipse_description(trialpath)
+            Checkbutton(master, text=trial+"    "+desc, variable=vars[i]).grid(row=i+1, sticky=W)
+        Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, sticky=W, pady=4)
+        Button(master, text='Create plot', command=master.destroy).grid(row=lp+2, sticky=W, pady=4)
+        mainloop()
+        chosen = []
+        for i,trial in enumerate(proctrials):
+            if vars[i].get():
+                chosen.append(trial)
+        return chosen
 
     def get_nexus_path(self):
         if not self.vicon:

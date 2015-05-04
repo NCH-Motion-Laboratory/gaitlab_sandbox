@@ -27,10 +27,10 @@ print('Nexus path: ', nplotter.get_nexus_path())
 nplotter.open_trial(trialpath+trial1)
 side = nplotter.side
 trials = nplotter.trialselector()
-print(trials[0])
-trialdesc = nplotter.get_eclipse_description(trialpath+trial1)
-print('ENF description:' + trialdesc)
-print(nplotter.get_nexus_path())
+print(trials)
+#trialdesc = nplotter.get_eclipse_description(trialpath+trial1)
+#print('ENF description:' + trialdesc)
+#print(nplotter.get_nexus_path())
 
 sys.exit()
 
