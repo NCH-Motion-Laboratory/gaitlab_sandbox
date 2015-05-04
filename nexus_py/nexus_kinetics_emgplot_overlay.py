@@ -9,6 +9,7 @@ Kinematics-EMG plot from Nexus.
 
 from nexus_plot import nexus_plotter
 import matplotlib.pyplot as plt
+import sys
 
 layout = [8,3]
 plotheightratios = [3,2,2,3,2,2,2,3]
@@ -20,8 +21,19 @@ trial1='2015_4_23_seur_AV14'
 trial2='2015_4_23_seur_AV19'
 trial3='2015_4_23_seur_AV24'
 
+print('Nexus path: ', nplotter.get_nexus_path())
+
+
 nplotter.open_trial(trialpath+trial1)
 side = nplotter.side
+trials = nplotter.trialselector()
+print(trials[0])
+trialdesc = nplotter.get_eclipse_description(trialpath+trial1)
+print('ENF description:' + trialdesc)
+print(nplotter.get_nexus_path())
+
+sys.exit()
+
 # choose EMG variables according to side
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             side+'Ham', side+'Rec', side+'TibA',

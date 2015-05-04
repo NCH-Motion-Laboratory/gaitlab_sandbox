@@ -43,6 +43,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
 import getpass
+import glob
 
 
 def strip_ws(str):
@@ -123,22 +124,71 @@ class nexus_plotter():
         # x label
         self.xlabel = ''
         self.fig = None
+
+        self.vicon = None
+
+    def get_eclipse_description(self, trialname):
+        """ Get the Eclipse database description for the specified trial. Specify
+        trialname with full path and no extension. """
+
+        if not os.path.isfile(trialname+'.c3d'):
+            raise Exception('Cannot find c3d file for trial')
+        enfname = trialname + '.Trial.enf'
+        description = None
+        if os.path.isfile(enfname):  # from config file
+            f = open(enfname, 'r')
+            eclipselines = f.read().splitlines()
+            f.close()
+        else:
+            return None
+        print(eclipselines)
+        for line in eclipselines:
+            eqpos = line.find('=')
+            if eqpos > 0:
+                key = line[:eqpos]
+                val = line[eqpos+1:]
+                if key == 'DESCRIPTION':
+                    description = val
+        return description
+
+        
+    def trialselector(self):
+        """ Let the user choose from processed trials in the trial directory. 
+        Will also show the Eclipse description for each processed trial, if 
+        available. """
+        trialpath = self.get_nexus_path()
+        if trialpath == '':
+            error_exit('No trial open in Nexus')
+        # present trial selector
+
+        # for now, return all c3d files
+        return glob.glob(trialpath+'*.c3d')
+
+
+    def get_nexus_path(self):
+        if not self.vicon:
+            self.vicon = ViconNexus.ViconNexus()
+        trialname_ = self.vicon.GetTrialName()
+        if not trialname_:
+            return None
+        else:
+            return(trialname_[0])
                                                       
     def open_trial(self, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. """
 
-        # connect to Nexus
-        vicon = ViconNexus.ViconNexus()
+        if not self.vicon:
+            self.vicon = ViconNexus.ViconNexus()
 
         if trialpath:
-            vicon.OpenTrial(trialpath, 10)            
+            self.vicon.OpenTrial(trialpath, 10)            
             # TODO: check errors
         
-        subjectnames = vicon.GetSubjectNames()  
+        subjectnames = self.vicon.GetSubjectNames()  
         if not subjectnames:
             error_exit('No subject')
         
-        trialname_ = vicon.GetTrialName()
+        trialname_ = self.vicon.GetTrialName()
         if not trialname_:
             error_exit('No trial loaded')
         self.sessionpath = trialname_[0]
@@ -147,8 +197,8 @@ class nexus_plotter():
         
         # try to detect side (L/R) if not forced
         if not side:
-            vgc = nexus_getdata.gaitcycle(vicon)
-            self.side = vgc.detect_side(vicon)
+            vgc = nexus_getdata.gaitcycle(self.vicon)
+            self.side = vgc.detect_side(self.vicon)
         else:
             self.side = side
     
@@ -176,9 +226,9 @@ class nexus_plotter():
                 else:
                     error_exit('Unknown variable: ' + var)
         if read_emg:
-            self.emg.read(vicon)
+            self.emg.read(self.vicon)
         if read_pig:
-            self.pig.read(vicon, 'PiGLB', self.gcdpath)
+            self.pig.read(self.vicon, 'PiGLB', self.gcdpath)
 
 
     def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
