@@ -145,8 +145,7 @@ class nexus_plotter():
         self.trialname = trialname_[1]
         self.subjectname = subjectnames[0]
         
-        # try to detect side (L/R)
-        # TODO: should be re-set for each loaded trial
+        # try to detect side (L/R) if not forced
         if not side:
             vgc = nexus_getdata.gaitcycle(vicon)
             self.side = vgc.detect_side(vicon)
@@ -166,8 +165,6 @@ class nexus_plotter():
             if var == None:
                 pass
             else:
-                if var[0] == 'X':
-                    var = self.side + var[1:]  # autodetect side
                 if self.emg.is_logical_channel(var):
                     read_emg = True
                     self.emg_plot_chs.append(var)

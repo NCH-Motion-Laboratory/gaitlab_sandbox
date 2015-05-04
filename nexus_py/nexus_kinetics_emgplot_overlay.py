@@ -11,16 +11,6 @@ from nexus_plot import nexus_plotter
 import matplotlib.pyplot as plt
 
 layout = [8,3]
-# can get rid of 'X' syntax by checking nplotter.side after OpenTrial
-plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            'XHam', 'XRec', 'XTibA',
-            'XGlut','XVas','XPer',
-            'HipMomentX','KneeMomentX','AnkleMomentX',
-            'XRec','XHam','XGas',
-            None,'XGlut','XSol',
-            None,'XGas',None,
-            'HipPowerZ','KneePowerZ','AnklePowerZ']
-
 plotheightratios = [3,2,2,3,2,2,2,3]
 pdftitlestr = 'Kinetics_EMG_'
 
@@ -31,15 +21,47 @@ trial2='2015_4_23_seur_AV19'
 trial3='2015_4_23_seur_AV24'
 
 nplotter.open_trial(trialpath+trial1)
+side = nplotter.side
+# choose EMG variables according to side
+plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
+            side+'Ham', side+'Rec', side+'TibA',
+            side+'Glut',side+'Vas',side+'Per',
+            'HipMomentX','KneeMomentX','AnkleMomentX',
+            side+'Rec',side+'Ham',side+'Gas',
+            None,side+'Glut',side+'Sol',
+            None,side+'Gas',None,
+            'HipPowerZ','KneePowerZ','AnklePowerZ']
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='', 
            makepdf=False, onesided_kinematics=True)
 
+
 nplotter.open_trial(trialpath+trial2)
+side = nplotter.side
+# choose EMG variables according to side
+plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
+            side+'Ham', side+'Rec', side+'TibA',
+            side+'Glut',side+'Vas',side+'Per',
+            'HipMomentX','KneeMomentX','AnkleMomentX',
+            side+'Rec',side+'Ham',side+'Gas',
+            None,side+'Glut',side+'Sol',
+            None,side+'Gas',None,
+            'HipPowerZ','KneePowerZ','AnklePowerZ']
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitle=trial1+' / '+trial2,
            makepdf=False, onesided_kinematics=True,
            linestyle='--', emg_tracecolor='blue')
 
 nplotter.open_trial(trialpath+trial3)
+side = nplotter.side
+# choose EMG variables according to side
+plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
+            side+'Ham', side+'Rec', side+'TibA',
+            side+'Glut',side+'Vas',side+'Per',
+            'HipMomentX','KneeMomentX','AnkleMomentX',
+            side+'Rec',side+'Ham',side+'Gas',
+            None,side+'Glut',side+'Sol',
+            None,side+'Gas',None,
+            'HipPowerZ','KneePowerZ','AnklePowerZ']
+
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitle=trial1+' / '+trial2+' / '+trial3,
            makepdf=True, onesided_kinematics=True,
            linestyle='-.', emg_tracecolor='gray')
