@@ -54,14 +54,13 @@ def strip_ws(str):
 class nexus_plotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
-    def __init__(self, layout, plotvars):
-        """ Sets plot layout and variables to be read. """
+    def __init__(self, layout):
+        """ Sets plot layout and other stuff. """
         
         # default parameters, if none specified on cmd line or config file
         self.emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
         self.side = None   # will autodetect unless specified
         self.trialname = None
-        self.plotvars = plotvars        
         
         # paths
         pathprefix = 'c:/users/' + getpass.getuser()
@@ -151,9 +150,6 @@ class nexus_plotter():
                 if key == 'DESCRIPTION':
                     description = val
         return description
-
-    def trialname(self):
-        """ Strip path and extension from trialname. """
        
     def trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
@@ -161,7 +157,7 @@ class nexus_plotter():
         available. """
         trialpath = self.get_nexus_path()
         if trialpath == '':
-            error_exit('No trial open in Nexus')
+            error_exit('Cannot get Nexus path. Please open one trial to set the path.')
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
@@ -192,9 +188,17 @@ class nexus_plotter():
             return None
         else:
             return(trialname_[0])
+            
+    def detect_side(self):
+        """ Detect the side of the loaded gait cycle. """
+        vgc = nexus_getdata.gaitcycle(self.vicon)
+        return vgc.detect_side(self.vicon)
+        
                                                       
-    def open_trial(self, trialpath=None, side=None):
+    def open_trial(self, plotvars=None, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. """
+        
+        self.plotvars = plotvars
 
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
@@ -216,11 +220,10 @@ class nexus_plotter():
         
         # try to detect side (L/R) if not forced
         if not side:
-            vgc = nexus_getdata.gaitcycle(self.vicon)
-            self.side = vgc.detect_side(self.vicon)
+            self.side = self.detect_side()
         else:
-            self.side = side
-    
+            self.side = side    
+        
         # will read EMG/PiG data only if necessary
         self.pig = nexus_getdata.pig_outputs()
         self.emg = nexus_getdata.nexus_emg(mapping_changes=self.emg_mapping)
