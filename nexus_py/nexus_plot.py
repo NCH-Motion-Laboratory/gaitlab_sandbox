@@ -11,8 +11,6 @@ create pdf or not
 pdf name leading string
 
 rules:
-precede EMG channel name with X to autodetect side and plot corresponding variable
-e.g. 'XHam'
 channel type is autodetected by looking into corresponding dict
 variables always normalized
 always plot PiG normal data
@@ -22,6 +20,7 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
 
+EMG can be disconnected in some trials and not in others; annotation?
 currently one figure per instance (can be overlay)
 improve detection of disconnected EMG
 documentation
@@ -195,22 +194,20 @@ class nexus_plotter():
         return vgc.detect_side(self.vicon)
         
                                                       
-    def open_trial(self, plotvars=None, trialpath=None, side=None):
+    def open_trial(self, nexusvars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. """
         
-        self.plotvars = plotvars
-
+        self.nexusvars = nexusvars
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
-
+        # remove filename extension if present
+        trialpath = os.path.splitext(trialpath)[0]
         if trialpath:
             self.vicon.OpenTrial(trialpath, 10)            
             # TODO: check errors
-        
         subjectnames = self.vicon.GetSubjectNames()  
         if not subjectnames:
             error_exit('No subject')
-        
         trialname_ = self.vicon.GetTrialName()
         if not trialname_:
             error_exit('No trial loaded')
@@ -233,7 +230,7 @@ class nexus_plotter():
         self.emg_plot_pos = []
         self.pig_plot_vars = []
         self.pig_plot_pos = []
-        for i, var in enumerate(self.plotvars):
+        for i, var in enumerate(self.nexusvars):
             if var == None:
                 pass
             else:
@@ -252,6 +249,10 @@ class nexus_plotter():
         if read_pig:
             self.pig.read(self.vicon, 'PiGLB', self.gcdpath)
 
+    def set_fig_title(self, title):
+        if self.fig:
+            plt.figure(self.fig.number) 
+            plt.suptitle(title, fontsize=12, fontweight="bold")
 
     def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
                  makepdf=False, pdftitlestr='Nexus_plot_', onesided_kinematics=False,
@@ -293,7 +294,6 @@ class nexus_plotter():
         else:
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
-        print(maintitle)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
         if self.pig_plot_vars:

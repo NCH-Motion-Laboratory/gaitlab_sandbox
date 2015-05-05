@@ -20,6 +20,8 @@ MAX_TRIALS = 5
 nplotter = nexus_plotter(layout)
 trials = nplotter.trialselector()
 
+print(trials)
+
 if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
 
@@ -34,9 +36,10 @@ for trial in trials:
                 None,side+'Glut',side+'Sol',
                 None,side+'Gas',None,
                 'HipPowerZ','KneePowerZ','AnklePowerZ']
-    nplotter.open_trial(trialpath=trial, plotvars=plotvars)
+    print('Opening: ', trial)
+    nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
     nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='', 
                makepdf=False, onesided_kinematics=True)
 
-
+nplotter.set_fig_title('\n'.join(trials))
 plt.show()
