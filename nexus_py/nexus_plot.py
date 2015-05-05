@@ -20,6 +20,7 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
 
+trial selector return values for cancel?
 EMG can be disconnected in some trials and not in others; annotation?
 currently one figure per instance (can be overlay)
 improve detection of disconnected EMG
@@ -160,10 +161,15 @@ class nexus_plotter():
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
-        # present trial selector
+        # ugly callback: sets list to a "signal" value and destroys the window
+        def creator_callback(window, list):
+            list.append(1)
+            window.destroy()
+        # trial selector
         master = Tk()
         Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
-        vars=[]
+        vars = []
+        chosen = []
         for i,trialpath in enumerate(proctrials):
             vars.append(IntVar())
             # remove path and extension from full trial name
@@ -171,13 +177,17 @@ class nexus_plotter():
             desc = self.get_eclipse_description(trialpath)
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
-        Button(master, text='Create plot', command=master.destroy).grid(row=lp+2, column=1, pady=4)
+        Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
+        print("chosen: ", chosen)        
         mainloop()
-        chosen = []
-        for i,trial in enumerate(proctrials):
-            if vars[i].get():
-                chosen.append(trial)
-        return chosen
+        if not chosen:
+            return None
+        else:
+            chosen = []
+            for i,trial in enumerate(proctrials):
+                if vars[i].get():
+                    chosen.append(trial)
+            return chosen
 
     def get_nexus_path(self):
         if not self.vicon:

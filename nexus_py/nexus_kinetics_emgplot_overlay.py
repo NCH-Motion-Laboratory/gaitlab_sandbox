@@ -20,10 +20,12 @@ MAX_TRIALS = 5
 nplotter = nexus_plotter(layout)
 trials = nplotter.trialselector()
 
-print(trials)
-
+if trials == None:
+    sys.exit()
+    
 if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
+
 
 for trial in trials:
     side = nplotter.detect_side()
