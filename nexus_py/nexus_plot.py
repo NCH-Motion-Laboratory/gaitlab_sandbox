@@ -162,16 +162,16 @@ class nexus_plotter():
         lp = len(proctrials)
         # present trial selector
         master = Tk()
-        Label(master, text="Choose trials for overlay plot:").grid(row=0, sticky=W)
+        Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
         vars=[]
         for i,trialpath in enumerate(proctrials):
             vars.append(IntVar())
             # remove path and extension from full trial name
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
             desc = self.get_eclipse_description(trialpath)
-            Checkbutton(master, text=trial+"    "+desc, variable=vars[i]).grid(row=i+1, sticky=W)
-        Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, sticky=W, pady=4)
-        Button(master, text='Create plot', command=master.destroy).grid(row=lp+2, sticky=W, pady=4)
+            Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
+        Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
+        Button(master, text='Create plot', command=master.destroy).grid(row=lp+2, column=1, pady=4)
         mainloop()
         chosen = []
         for i,trial in enumerate(proctrials):
