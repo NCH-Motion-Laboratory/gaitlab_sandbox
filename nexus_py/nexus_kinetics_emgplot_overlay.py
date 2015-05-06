@@ -26,7 +26,6 @@ if trials == None:
 if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
 
-
 for trial in trials:
     side = nplotter.detect_side()
     # choose EMG variables according to side

@@ -18,11 +18,11 @@ kinetics always plotted for one side only
 kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
+
 TODO:
 
-trial selector return values for cancel?
 EMG can be disconnected in some trials and not in others; annotation?
-currently one figure per instance (can be overlay)
+make legend for plot, indicating trial
 improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -157,7 +157,7 @@ class nexus_plotter():
         available. """
         trialpath = self.get_nexus_path()
         if trialpath == '':
-            error_exit('Cannot get Nexus path. Please open one trial to set the path.')
+            error_exit('Cannot get Nexus path. Please make sure Nexus is running, and open one trial to set the path.')
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
@@ -180,7 +180,7 @@ class nexus_plotter():
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
         print("chosen: ", chosen)        
         mainloop()
-        if not chosen:
+        if not chosen:  # Cancel was pressed
             return None
         else:
             chosen = []
