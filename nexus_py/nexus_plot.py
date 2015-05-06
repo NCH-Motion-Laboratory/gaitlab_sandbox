@@ -157,7 +157,7 @@ class nexus_plotter():
         available. """
         trialpath = self.get_nexus_path()
         if trialpath == '':
-            error_exit('Cannot get Nexus path. Please make sure Nexus is running, and open one trial to set the path.')
+            error_exit('Cannot get Nexus path. Please make sure Nexus is running, and open a trial to set the path.')
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
@@ -276,7 +276,6 @@ class nexus_plotter():
         maintitle plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         """        
-
         if not self.trialname:
             raise Exception('No trial loaded')
        
@@ -384,7 +383,7 @@ class nexus_plotter():
                 pdf.savefig(self.fig)
                 messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
-            error_exit('No figure to save!')
+            raise Exception('No figure to save!')
     
     def show(self):
         """ Shows the figure. """
