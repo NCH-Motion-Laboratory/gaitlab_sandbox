@@ -21,6 +21,7 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
 
+foot strike markers for each trials onto x axis
 EMG can be disconnected in some trials and not in others; annotation?
 make legend for plot, indicating trial
 improve detection of disconnected EMG
@@ -33,7 +34,7 @@ from Tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
 import nexus_getdata
-from nexus_getdata import error_exit
+from nexus_getdata import error_exit, messagebox
 import sys
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -372,13 +373,22 @@ class nexus_plotter():
     
         # create pdf
         if makepdf:
+            self.create_pdf(pdf_name)
+
+    def create_pdf(self, pdf_name):
+        """ Make a pdf out of the created figure. """
+        if self.fig:
             with PdfPages(pdf_name) as pdf:
                 print("Writing "+pdf_name)
                 pdf.savefig(self.fig)
-        
-        
+                messagebox('Successfully wrote '+pdf_name)
+        else:
+            error_exit('No figure to save!')
     
-    
+    def show(self):
+        """ Shows the figure. """
+        if self.fig:
+            plt.show(self.fig)
     
     
     

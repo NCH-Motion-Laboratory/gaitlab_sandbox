@@ -43,4 +43,6 @@ for trial in trials:
                makepdf=False, onesided_kinematics=True)
 
 nplotter.set_fig_title('\n'.join(trials))
-plt.show()
+nplotter.show()
+nplotter.create_pdf('test.pdf')
+

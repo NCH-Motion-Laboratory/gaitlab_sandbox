@@ -20,6 +20,11 @@ def error_exit(message):
     # graphical error dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Error in Nexus Python script", 0)
     sys.exit()
+
+def messagebox(message):
+    """ Custom error handler """
+    # graphical error dialog - Windows specific
+    ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
     
 class nexus_emg:
     """ Class for reading and processing EMG data from Nexus.
