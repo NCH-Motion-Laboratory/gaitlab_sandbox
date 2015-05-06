@@ -232,33 +232,34 @@ class nexus_plotter():
         else:
             self.side = side    
         
-        # will read EMG/PiG data only if necessary
-        self.pig = nexus_getdata.pig_outputs()
-        self.emg = nexus_getdata.nexus_emg(mapping_changes=self.emg_mapping)
-        read_emg = False
-        read_pig = False
-        self.emg_plot_chs = []
-        self.emg_plot_pos = []
-        self.pig_plot_vars = []
-        self.pig_plot_pos = []
-        for i, var in enumerate(self.nexusvars):
-            if var == None:
-                pass
-            else:
-                if self.emg.is_logical_channel(var):
-                    read_emg = True
-                    self.emg_plot_chs.append(var)
-                    self.emg_plot_pos.append(i)
-                elif self.pig.is_pig_variable(var):
-                    read_pig = True
-                    self.pig_plot_vars.append(var)
-                    self.pig_plot_pos.append(i)
+        if nexusvars:
+            # will read EMG/PiG data only if necessary
+            self.pig = nexus_getdata.pig_outputs()
+            self.emg = nexus_getdata.nexus_emg(mapping_changes=self.emg_mapping)
+            read_emg = False
+            read_pig = False
+            self.emg_plot_chs = []
+            self.emg_plot_pos = []
+            self.pig_plot_vars = []
+            self.pig_plot_pos = []
+            for i, var in enumerate(self.nexusvars):
+                if var == None:
+                    pass
                 else:
-                    error_exit('Unknown variable: ' + var)
-        if read_emg:
-            self.emg.read(self.vicon)
-        if read_pig:
-            self.pig.read(self.vicon, 'PiGLB', self.gcdpath)
+                    if self.emg.is_logical_channel(var):
+                        read_emg = True
+                        self.emg_plot_chs.append(var)
+                        self.emg_plot_pos.append(i)
+                    elif self.pig.is_pig_variable(var):
+                        read_pig = True
+                        self.pig_plot_vars.append(var)
+                        self.pig_plot_pos.append(i)
+                    else:
+                        error_exit('Unknown variable: ' + var)
+            if read_emg:
+                self.emg.read(self.vicon)
+            if read_pig:
+                self.pig.read(self.vicon, 'PiGLB', self.gcdpath)
 
     def set_fig_title(self, title):
         if self.fig:
@@ -266,8 +267,7 @@ class nexus_plotter():
             plt.suptitle(title, fontsize=12, fontweight="bold")
 
     def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
-                 makepdf=False, pdftitlestr='Nexus_plot_', onesided_kinematics=False,
-                 linestyle='-', emg_tracecolor='black'):
+                 onesided_kinematics=False, linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
@@ -277,11 +277,7 @@ class nexus_plotter():
 
         if not self.trialname:
             raise Exception('No trial loaded')
-
-        # output filename
-        if makepdf:
-            pdf_name = self.sessionpath + pdftitlestr + self.trialname + '.pdf'
-         
+       
         if self.side == 'L':
             tracecolor = self.tracecolor_l
         else:
@@ -368,17 +364,17 @@ class nexus_plotter():
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])  
     
-        #call plt.show() externally after all figures are complete - it blocks
-        #plt.show()
-    
-        # create pdf
-        if makepdf:
-            self.create_pdf(pdf_name)
-
-    def create_pdf(self, pdf_name):
-        """ Make a pdf out of the created figure. """
+    def create_pdf(self, pdf_name=None, pdf_prefix=None):
+        """ Make a pdf out of the created figure into the Nexus session directory. 
+        If pdf_name is not specified, automatically name according to current trial. """
         if self.fig:
             with PdfPages(pdf_name) as pdf:
+                if pdf_name:
+                    pdf_name = self.sessionpath + pdf_name
+                else:
+                    if not pdf_prefix:
+                        pdf_prefix = 'Nexus_plot_'
+                    pdf_name = self.sessionpath + pdf_prefix + self.trialname
                 print("Writing "+pdf_name)
                 pdf.savefig(self.fig)
                 messagebox('Successfully wrote '+pdf_name)
