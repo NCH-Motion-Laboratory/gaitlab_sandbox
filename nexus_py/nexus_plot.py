@@ -15,7 +15,6 @@ channel type is autodetected by looking into corresponding dict
 variables always normalized
 always plot PiG normal data
 kinetics always plotted for one side only
-kinematics always plotted for both sides (can add option later)
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 
@@ -27,8 +26,8 @@ make legend for plot, indicating trial
 improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
-
 """
+
 
 from Tkinter import *
 import matplotlib.pyplot as plt
@@ -94,7 +93,6 @@ class nexus_plotter():
                 else:
                     # assume it's EMG channel remapping
                     self.emg_mapping[key] = val
-                
         # locate PiG normal data
         self.gcdpath = 'normal.gcd'
         # check user's desktop also
@@ -102,9 +100,10 @@ class nexus_plotter():
             self.gcdpath = desktop + '/projects/llinna/nexus_py/normal.gcd'
         if not os.path.isfile(self.gcdpath):
             error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
-        
         # set default plotting parameters
         # figure size
+        # a4 size
+        #self.totalfigsize = (8.48*1.2,12*1.2)
         self.totalfigsize = (14,12)
         # grid dimensions, vertical and horizontal
         self.gridv = layout[0]
@@ -206,14 +205,15 @@ class nexus_plotter():
         
                                                       
     def open_trial(self, nexusvars, trialpath=None, side=None):
-        """ Read specified trial, or the one already opened in Nexus. """
-        
+        """ Read specified trial, or the one already opened in Nexus. The
+        variables specified in nexusvars will be read. To open the trial without
+        reading variables, set nexusvars=None (useful for e.g. detecting side) """
         self.nexusvars = nexusvars
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
-        # remove filename extension if present
-        trialpath = os.path.splitext(trialpath)[0]
         if trialpath:
+            # remove filename extension if present
+            trialpath = os.path.splitext(trialpath)[0]
             self.vicon.OpenTrial(trialpath, 10)            
             # TODO: check errors
         subjectnames = self.vicon.GetSubjectNames()  
@@ -261,13 +261,15 @@ class nexus_plotter():
             if read_pig:
                 self.pig.read(self.vicon, 'PiGLB', self.gcdpath)
 
+
     def set_fig_title(self, title):
         if self.fig:
             plt.figure(self.fig.number) 
             plt.suptitle(title, fontsize=12, fontweight="bold")
 
+
     def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
-                 onesided_kinematics=False, linestyle='-', emg_tracecolor='black'):
+                 onesided_kinematics=False, pig_linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
@@ -307,14 +309,14 @@ class nexus_plotter():
             for k, var in enumerate(self.pig_plot_vars):
                 plt.subplot(self.gs[self.pig_plot_pos[k]])
                 varname_full = 'Norm'+self.side+var
-                # whether to plot two-sided kinematics                
+                # plot two-sided kinematics if applicable
                 if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
                     varname_r = 'Norm' + 'R' + var
                     varname_l = 'Norm' + 'L' + var
-                    plt.plot(tn, self.pig.Vars[varname_r], self.tracecolor_r, linestyle=linestyle)
-                    plt.plot(tn, self.pig.Vars[varname_l], self.tracecolor_l, linestyle=linestyle)
+                    plt.plot(tn, self.pig.Vars[varname_r], self.tracecolor_r, linestyle=pig_linestyle, label=self.trialname)
+                    plt.plot(tn, self.pig.Vars[varname_l], self.tracecolor_l, linestyle=pig_linestyle, label=self.trialname)
                 else:
-                    plt.plot(tn, self.pig.Vars[varname_full], tracecolor, linestyle=linestyle)
+                    plt.plot(tn, self.pig.Vars[varname_full], tracecolor, linestyle=pig_linestyle, label=self.trialname)
                 nor = np.array(self.pig.normaldata(var))[:,0]
                 nstd = np.array(self.pig.normaldata(var))[:,1]
                 title = self.pig.description(var)
@@ -347,7 +349,7 @@ class nexus_plotter():
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:
-                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha)
+                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
                 chlabel = self.emg.ch_labels[thisch]
                 # plot EMG normal bars
                 emgbar_ind = self.emg.ch_normals[thisch]
@@ -360,24 +362,27 @@ class nexus_plotter():
                 plt.xlabel(self.xlabel, fontsize=self.fsize_labels)
                 plt.ylabel(self.emg_ylabel, fontsize=self.fsize_labels)
                 plt.locator_params(axis = 'y', nbins = 4)
-        
         # fix plot spacing, restrict to below title
-        self.gs.tight_layout(self.fig, h_pad=.5, w_pad=.5, rect=[0,0,1,.95])  
+        self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
+        
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
         If pdf_name is not specified, automatically name according to current trial. """
         if self.fig:
+            # resize figure to a4 size
+            # self.fig.set_size_inches([8.27,11.69])
+            if pdf_name:
+                pdf_name = self.sessionpath + pdf_name
+            else:
+                # automatic naming by trialname
+                if not pdf_prefix:
+                    pdf_prefix = 'Nexus_plot_'
+                pdf_name = self.sessionpath + pdf_prefix + self.trialname
             with PdfPages(pdf_name) as pdf:
-                if pdf_name:
-                    pdf_name = self.sessionpath + pdf_name
-                else:
-                    if not pdf_prefix:
-                        pdf_prefix = 'Nexus_plot_'
-                    pdf_name = self.sessionpath + pdf_prefix + self.trialname
                 print("Writing "+pdf_name)
                 pdf.savefig(self.fig)
-                messagebox('Successfully wrote '+pdf_name)
+                messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
             error_exit('No figure to save!')
     
@@ -385,6 +390,7 @@ class nexus_plotter():
         """ Shows the figure. """
         if self.fig:
             plt.show(self.fig)
+            
     
-    
-    
+   
+   

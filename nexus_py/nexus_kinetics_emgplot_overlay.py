@@ -14,6 +14,8 @@ from nexus_getdata import error_exit
 layout = [8,3]
 plotheightratios = [3,2,2,3,2,2,2,3]
 pdftitlestr = 'Kinetics_EMG_'
+pigstyles = ['-','--','-.']
+emgcolors = ['black','blue','gray']
 MAX_TRIALS = 5
 
 nplotter = nexus_plotter(layout)
@@ -25,7 +27,7 @@ if trials == None:
 if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
 
-for trial in trials:
+for i,trial in enumerate(trials):
     # need to open trial before detecting side
     nplotter.open_trial(trialpath=trial, nexusvars=None)
     side = nplotter.detect_side()
@@ -41,9 +43,10 @@ for trial in trials:
     print('Opening: ', trial)
     nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
     nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='',
-                        onesided_kinematics=True)
+                        onesided_kinematics=True, pig_linestyle=pigstyles[i],
+                        emg_tracecolor=emgcolors[i])
 
 nplotter.set_fig_title('\n'.join(trials))
 nplotter.show()
-nplotter.create_pdf(pdf_name='test.pdf')
+#nplotter.create_pdf(pdf_name='test.pdf')
 
