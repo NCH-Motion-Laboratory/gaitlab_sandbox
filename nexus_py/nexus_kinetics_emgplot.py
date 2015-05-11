@@ -8,33 +8,29 @@ Kinematics-EMG plot from Nexus.
 """
 
 from nexus_plot import nexus_plotter
-import matplotlib.pyplot as plt
 
 layout = [8,3]
+plotheightratios = [3,2,2,3,2,2,2,3]
+pdf_prefix = 'Kinetics_EMG_'
+
+nplotter = nexus_plotter(layout)
+
+# need to open trial before detecting side
+nplotter.open_trial(nexusvars=None)
+side = nplotter.detect_side()
+# choose EMG variables according to side
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            'XHam', 'XRec', 'XTibA',
-            'XGlut','XVas','XPer',
+            side+'Ham', side+'Rec', side+'TibA',
+            side+'Glut',side+'Vas',side+'Per',
             'HipMomentX','KneeMomentX','AnkleMomentX',
-            'XRec','XHam','XGas',
-            None,'XGlut','XSol',
-            None,'XGas',None,
+            side+'Rec',side+'Ham',side+'Gas',
+            None,side+'Glut',side+'Sol',
+            None,side+'Gas',None,
             'HipPowerZ','KneePowerZ','AnklePowerZ']
 
-plotheightratios = [3,2,2,3,2,2,2,3]
-maintitlestr = 'Kinetics-EMG plot for '
-makepdf = True
-pdftitlestr = 'Kinetics_EMG_'
+nplotter.open_trial(nexusvars=plotvars)
+nplotter.plot_trial(plotheightratios=plotheightratios, maintitleprefix='Kinetics-EMG plot for ')
 
-nplotter = nexus_plotter(layout, plotvars)
-nplotter.open_trial()
-nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=False, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+nplotter.show()
+nplotter.create_pdf(pdf_prefix=pdf_prefix)
 
-nplotter.tracecolor_l = 'blue'
-
-nplotter.open_trial('C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\D0001AV\\2015_4_23_seur_AV\\2015_4_23_seur_AV19')
-nplotter.plot_trial(plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
-
-
-plt.show()

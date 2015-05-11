@@ -19,7 +19,6 @@ plotvars = ['RGlut','LGlut',
               'RGas','LGas',
               'RSol','LSol']
 maintitleprefix = 'EMG plot for '
-makepdf = True
 pdftitlestr = 'EMG_'
 
 nplotter = nexus_plotter(layout)
