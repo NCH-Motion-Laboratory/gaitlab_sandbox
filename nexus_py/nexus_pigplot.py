@@ -39,7 +39,7 @@ plotvars = ['HipMomentX',
              'KneePowerZ',
              'AnkleMomentX',None,None,
              'AnklePowerZ']                      
-maintitlestr = 'Kinetics plot for '
+maintitleprefix = 'Kinetics plot for '
 
 nplotter = nexus_plotter(layout)
 nplotter.open_trial(plotvars)

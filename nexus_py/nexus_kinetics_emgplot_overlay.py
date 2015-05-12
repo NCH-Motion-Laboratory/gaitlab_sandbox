@@ -20,6 +20,7 @@ MAX_TRIALS = 5
 
 nplotter = nexus_plotter(layout)
 trials = nplotter.trialselector()
+nplotter.annotate_disconnected = False
 
 if trials == None:
     sys.exit()
@@ -31,6 +32,7 @@ for i,trial in enumerate(trials):
     # need to open trial before detecting side
     nplotter.open_trial(trialpath=trial, nexusvars=None)
     side = nplotter.detect_side()
+    print(side)
     # choose EMG variables according to side
     plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
                 side+'Ham', side+'Rec', side+'TibA',
@@ -43,10 +45,10 @@ for i,trial in enumerate(trials):
     print('Opening: ', trial)
     nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
     nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='',
-                        onesided_kinematics=True, pig_linestyle=pigstyles[i],
+                        onesided_kinematics=False, pig_linestyle=pigstyles[i],
                         emg_tracecolor=emgcolors[i])
 
-nplotter.set_fig_title('\n'.join(trials))
+#nplotter.set_fig_title('\n'.join(trials))
 nplotter.show()
 #nplotter.create_pdf(pdf_name='test.pdf')
 

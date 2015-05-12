@@ -121,10 +121,11 @@ class nexus_plotter():
         self.emg_alpha = .6
         self.emg_normals_color = 'pink'
         self.emg_ylabel = 'mV'
+        self.annotate_disconnected = True
         # x label
         self.xlabel = ''
         self.fig = None
-
+        self.vgc = None
         self.vicon = None
 
     def get_eclipse_description(self, trialname):
@@ -199,8 +200,11 @@ class nexus_plotter():
             
     def detect_side(self):
         """ Detect the side of the loaded gait cycle. """
-        vgc = nexus_getdata.gaitcycle(self.vicon)
-        return vgc.detect_side(self.vicon)
+        self.vgc = nexus_getdata.gaitcycle(self.vicon)
+        return self.vgc.detect_side(self.vicon)
+        
+    def footstrikes(self):
+        pass
         
                                                       
     def open_trial(self, nexusvars, trialpath=None, side=None):
@@ -344,7 +348,8 @@ class nexus_plotter():
                     error_exit('Unexpected EMG channel name: ', thisch)
                 ax=plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if emgdata[thisch] == 'EMG_DISCONNECTED':
-                    ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+                    if self.annotate_disconnected:
+                        ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:
@@ -367,11 +372,11 @@ class nexus_plotter():
     def add_footstrike_markers(self):
         """ Add foot strike markers to the plot. """
         if self.fig:
+            pass
             # get footstrike info = x
             # loop thru subplots
             # y = get axis miny
             # add circle, e.g. plt.plot(x,y,'k.',markersize=5)
-
         else:
             raise Exception("No figure for adding markers!")
             pass
