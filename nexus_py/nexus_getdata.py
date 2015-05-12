@@ -23,7 +23,7 @@ def error_exit(message):
 
 def messagebox(message):
     """ Custom notification handler """
-    # graphical error dialog - Windows specific
+    # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
     
 class nexus_emg:

@@ -2,7 +2,8 @@
 """
 Created on Tue Apr 28 11:37:51 2015
 
-Kinematics-EMG plot from Nexus.
+Kinematics-EMG overlay plot from Nexus.
+Work in progress
 
 @author: Jussi
 """
@@ -16,10 +17,11 @@ plotheightratios = [3,2,2,3,2,2,2,3]
 pdftitlestr = 'Kinetics_EMG_'
 pigstyles = ['-','--','-.']
 emgcolors = ['black','blue','gray']
-MAX_TRIALS = 5
+MAX_TRIALS = 3
 
 nplotter = nexus_plotter(layout)
 trials = nplotter.trialselector()
+# annotating disconnected EMGs messes up plot
 nplotter.annotate_disconnected = False
 
 if trials == None:
@@ -31,8 +33,7 @@ if len(trials) > MAX_TRIALS:
 for i,trial in enumerate(trials):
     # need to open trial before detecting side
     nplotter.open_trial(trialpath=trial, nexusvars=None)
-    side = nplotter.detect_side()
-    print(side)
+    side = nplotter.side
     # choose EMG variables according to side
     plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
                 side+'Ham', side+'Rec', side+'TibA',

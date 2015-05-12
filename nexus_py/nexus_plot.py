@@ -20,7 +20,9 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
 
+fix EMG electrode mapping
 foot strike markers for each trials onto x axis; add function
+(where to put gait cycle info? )
 EMG can be disconnected in some trials and not in others; annotation?
 make legend for plot, indicating trial
 improve detection of disconnected EMG
