@@ -20,7 +20,7 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 TODO:
 
-foot strike markers for each trials onto x axis
+foot strike markers for each trials onto x axis; add function
 EMG can be disconnected in some trials and not in others; annotation?
 make legend for plot, indicating trial
 improve detection of disconnected EMG
@@ -161,7 +161,7 @@ class nexus_plotter():
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
-        # ugly callback: sets list to a "signal" value and destroys the window
+        # ugly callback: sets list to a "semaphor" value and destroys the window
         def creator_callback(window, list):
             list.append(1)
             window.destroy()
@@ -178,7 +178,6 @@ class nexus_plotter():
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
-        print("chosen: ", chosen)        
         mainloop()
         if not chosen:  # Cancel was pressed
             return None
@@ -373,12 +372,13 @@ class nexus_plotter():
             # resize figure to a4 size
             # self.fig.set_size_inches([8.27,11.69])
             if pdf_name:
+                # user specified name into session dir
                 pdf_name = self.sessionpath + pdf_name
             else:
                 # automatic naming by trialname
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
-                pdf_name = self.sessionpath + pdf_prefix + self.trialname
+                pdf_name = self.sessionpath + pdf_prefix + self.trialname + '.pdf'
             with PdfPages(pdf_name) as pdf:
                 print("Writing "+pdf_name)
                 pdf.savefig(self.fig)
