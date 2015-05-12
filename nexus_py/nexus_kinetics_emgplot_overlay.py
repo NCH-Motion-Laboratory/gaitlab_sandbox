@@ -7,34 +7,46 @@ Kinematics-EMG plot from Nexus.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plot
-import matplotlib.pyplot as plt
+from nexus_plot import nexus_plotter
+import sys
+from nexus_getdata import error_exit
 
 layout = [8,3]
-
-plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            'XHam', 'XRec', 'XTibA',
-            'XGlut','XVas','XPer',
-            'HipMomentX','KneeMomentX','AnkleMomentX',
-            'XRec','XHam','XGas',
-            None,'XGlut','XSol',
-            None,'XGas',None,
-            'HipPowerZ','KneePowerZ','AnklePowerZ']
-            
 plotheightratios = [3,2,2,3,2,2,2,3]
-maintitlestr = 'Kinetics-EMG plot for '
-makepdf = True
 pdftitlestr = 'Kinetics_EMG_'
+pigstyles = ['-','--','-.']
+emgcolors = ['black','blue','gray']
+MAX_TRIALS = 5
 
-vicon.OpenTrial(trialstr, 20)
-(fig, gs) = nexus_plot(layout, plotvars, plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+nplotter = nexus_plotter(layout)
+trials = nplotter.trialselector()
 
-# load_another_trial here
-vicon.OpenTrial(trialstr2, 20)
-nexus_plot(layout, plotvars, plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True,
-           overlay_fig=fig, overlay_gridspec=gs)
+if trials == None:
+    sys.exit()
+    
+if len(trials) > MAX_TRIALS:
+    error_exit('Too many trials selected for the overlay plot!')
 
+for i,trial in enumerate(trials):
+    # need to open trial before detecting side
+    nplotter.open_trial(trialpath=trial, nexusvars=None)
+    side = nplotter.detect_side()
+    # choose EMG variables according to side
+    plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
+                side+'Ham', side+'Rec', side+'TibA',
+                side+'Glut',side+'Vas',side+'Per',
+                'HipMomentX','KneeMomentX','AnkleMomentX',
+                side+'Rec',side+'Ham',side+'Gas',
+                None,side+'Glut',side+'Sol',
+                None,side+'Gas',None,
+                'HipPowerZ','KneePowerZ','AnklePowerZ']
+    print('Opening: ', trial)
+    nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
+    nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='',
+                        onesided_kinematics=True, pig_linestyle=pigstyles[i],
+                        emg_tracecolor=emgcolors[i])
 
-plt.show()
+nplotter.set_fig_title('\n'.join(trials))
+nplotter.show()
+#nplotter.create_pdf(pdf_name='test.pdf')
+

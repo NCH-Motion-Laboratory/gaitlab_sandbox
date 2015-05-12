@@ -7,26 +7,30 @@ Kinematics-EMG plot from Nexus.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plot
-import matplotlib.pyplot as plt
+from nexus_plot import nexus_plotter
 
 layout = [8,3]
-
-plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            'XHam', 'XRec', 'XTibA',
-            'XGlut','XVas','XPer',
-            'HipMomentX','KneeMomentX','AnkleMomentX',
-            'XRec','XHam','XGas',
-            None,'XGlut','XSol',
-            None,'XGas',None,
-            'HipPowerZ','KneePowerZ','AnklePowerZ']
-            
 plotheightratios = [3,2,2,3,2,2,2,3]
-maintitlestr = 'Kinetics-EMG plot for '
-makepdf = True
-pdftitlestr = 'Kinetics_EMG_'
+pdf_prefix = 'Kinetics_EMG_'
 
-nexus_plot(layout, plotvars, plotheightratios=plotheightratios, maintitlestr=maintitlestr, 
-           makepdf=makepdf, pdftitlestr=pdftitlestr, onesided_kinematics=True)
+nplotter = nexus_plotter(layout)
 
-plt.show()
+# need to open trial before detecting side
+nplotter.open_trial(nexusvars=None)
+side = nplotter.detect_side()
+# choose EMG variables according to side
+plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
+            side+'Ham', side+'Rec', side+'TibA',
+            side+'Glut',side+'Vas',side+'Per',
+            'HipMomentX','KneeMomentX','AnkleMomentX',
+            side+'Rec',side+'Ham',side+'Gas',
+            None,side+'Glut',side+'Sol',
+            None,side+'Gas',None,
+            'HipPowerZ','KneePowerZ','AnklePowerZ']
+
+nplotter.open_trial(nexusvars=plotvars)
+nplotter.plot_trial(plotheightratios=plotheightratios, maintitleprefix='Kinetics-EMG plot for ')
+
+nplotter.show()
+nplotter.create_pdf(pdf_prefix=pdf_prefix)
+
