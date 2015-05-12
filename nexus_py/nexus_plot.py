@@ -3,17 +3,10 @@
 
 Generic Nexus plotter
 
-params:
-plot layout
-channels to plot
-main title leading string
-create pdf or not
-pdf name leading string
-
 rules:
 channel type is autodetected by looking into corresponding dict
-variables always normalized
-always plot PiG normal data
+variables always normalized to gait cycle
+always plot PiG normal data if available
 kinetics always plotted for one side only
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
@@ -157,7 +150,7 @@ class nexus_plotter():
     def trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
         Will also show the Eclipse description for each processed trial, if 
-        available. """
+        available. Tk checkbox dialog. """
         trialpath = self.get_nexus_path()
         if trialpath == '':
             error_exit('Cannot get Nexus path. Please make sure Nexus is running, and open one trial to set the path.')
@@ -168,7 +161,7 @@ class nexus_plotter():
         def creator_callback(window, list):
             list.append(1)
             window.destroy()
-        # trial selector
+        # create trial selector
         master = Tk()
         Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
         vars = []
@@ -181,10 +174,11 @@ class nexus_plotter():
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
-        mainloop()
+        mainloop()  # Tk
         if not chosen:  # Cancel was pressed
             return None
         else:
+            # go through checkbox variables, add selected trial names to list
             chosen = []
             for i,trial in enumerate(proctrials):
                 if vars[i].get():
@@ -208,7 +202,7 @@ class nexus_plotter():
     def footstrikes(self):
         pass
         
-                                                      
+                                                    
     def open_trial(self, nexusvars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. The
         variables specified in nexusvars will be read. To open the trial without

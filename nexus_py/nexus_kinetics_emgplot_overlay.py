@@ -31,10 +31,10 @@ if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
 
 for i,trial in enumerate(trials):
-    # need to open trial before detecting side
+    # need to open trial to detect side (don't read variables yet)
     nplotter.open_trial(trialpath=trial, nexusvars=None)
     side = nplotter.side
-    # choose EMG variables according to side
+    # then choose EMG variables according to side
     plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
                 side+'Ham', side+'Rec', side+'TibA',
                 side+'Glut',side+'Vas',side+'Per',
@@ -43,7 +43,7 @@ for i,trial in enumerate(trials):
                 None,side+'Glut',side+'Sol',
                 None,side+'Gas',None,
                 'HipPowerZ','KneePowerZ','AnklePowerZ']
-    print('Opening: ', trial)
+    # open again and read vars now
     nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
     nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='',
                         onesided_kinematics=False, pig_linestyle=pigstyles[i],
