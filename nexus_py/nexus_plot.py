@@ -364,6 +364,18 @@ class nexus_plotter():
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
         
+    def add_footstrike_markers(self):
+        """ Add foot strike markers to the plot. """
+        if self.fig:
+            # get footstrike info = x
+            # loop thru subplots
+            # y = get axis miny
+            # add circle, e.g. plt.plot(x,y,'k.',markersize=5)
+
+        else:
+            raise Exception("No figure for adding markers!")
+            pass
+    
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
@@ -384,7 +396,7 @@ class nexus_plotter():
                 pdf.savefig(self.fig)
                 messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
-            error_exit('No figure to save!')
+            raise Exception('No figure to save!')
     
     def show(self):
         """ Shows the figure. """
