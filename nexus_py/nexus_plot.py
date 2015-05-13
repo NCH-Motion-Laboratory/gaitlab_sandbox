@@ -200,7 +200,6 @@ class nexus_plotter():
         return self.vgc.detect_side(self.vicon)
         
     def footstrikes(self):
-        pass
         
                                                     
     def open_trial(self, nexusvars, trialpath=None, side=None):
@@ -376,7 +375,7 @@ class nexus_plotter():
         else:
             raise Exception("No figure for adding markers!")
             pass
-    
+   
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
