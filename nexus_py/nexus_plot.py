@@ -3,24 +3,19 @@
 
 Generic Nexus plotter
 
-params:
-plot layout
-channels to plot
-main title leading string
-create pdf or not
-pdf name leading string
-
 rules:
 channel type is autodetected by looking into corresponding dict
-variables always normalized
-always plot PiG normal data
+variables always normalized to gait cycle
+always plot PiG normal data if available
 kinetics always plotted for one side only
 vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 
 
 TODO:
 
-foot strike markers for each trials onto x axis
+fix EMG electrode mapping
+foot strike markers for each trials onto x axis; add function
+(where to put gait cycle info? )
 EMG can be disconnected in some trials and not in others; annotation?
 make legend for plot, indicating trial
 improve detection of disconnected EMG
@@ -121,10 +116,11 @@ class nexus_plotter():
         self.emg_alpha = .6
         self.emg_normals_color = 'pink'
         self.emg_ylabel = 'mV'
+        self.annotate_disconnected = True
         # x label
         self.xlabel = ''
         self.fig = None
-
+        self.vgc = None
         self.vicon = None
 
     def get_eclipse_description(self, trialname):
@@ -154,18 +150,18 @@ class nexus_plotter():
     def trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
         Will also show the Eclipse description for each processed trial, if 
-        available. """
+        available. Tk checkbox dialog. """
         trialpath = self.get_nexus_path()
         if trialpath == '':
             error_exit('Cannot get Nexus path. Please make sure Nexus is running, and open a trial to set the path.')
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
-        # ugly callback: sets list to a "signal" value and destroys the window
+        # ugly callback: sets list to a "semaphor" value and destroys the window
         def creator_callback(window, list):
             list.append(1)
             window.destroy()
-        # trial selector
+        # create trial selector
         master = Tk()
         Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
         vars = []
@@ -178,11 +174,11 @@ class nexus_plotter():
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
-        print("chosen: ", chosen)        
-        mainloop()
+        mainloop()  # Tk
         if not chosen:  # Cancel was pressed
             return None
         else:
+            # go through checkbox variables, add selected trial names to list
             chosen = []
             for i,trial in enumerate(proctrials):
                 if vars[i].get():
@@ -200,10 +196,12 @@ class nexus_plotter():
             
     def detect_side(self):
         """ Detect the side of the loaded gait cycle. """
-        vgc = nexus_getdata.gaitcycle(self.vicon)
-        return vgc.detect_side(self.vicon)
+        self.vgc = nexus_getdata.gaitcycle(self.vicon)
+        return self.vgc.detect_side(self.vicon)
         
-                                                      
+    def footstrikes(self):
+        
+                                                    
     def open_trial(self, nexusvars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. The
         variables specified in nexusvars will be read. To open the trial without
@@ -344,7 +342,8 @@ class nexus_plotter():
                     error_exit('Unexpected EMG channel name: ', thisch)
                 ax=plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if emgdata[thisch] == 'EMG_DISCONNECTED':
-                    ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+                    if self.annotate_disconnected:
+                        ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:
@@ -364,6 +363,18 @@ class nexus_plotter():
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
         
+    def add_footstrike_markers(self):
+        """ Add foot strike markers to the plot. """
+        if self.fig:
+            pass
+            # get footstrike info = x
+            # loop thru subplots
+            # y = get axis miny
+            # add circle, e.g. plt.plot(x,y,'k.',markersize=5)
+        else:
+            raise Exception("No figure for adding markers!")
+            pass
+   
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
@@ -372,12 +383,13 @@ class nexus_plotter():
             # resize figure to a4 size
             # self.fig.set_size_inches([8.27,11.69])
             if pdf_name:
+                # user specified name into session dir
                 pdf_name = self.sessionpath + pdf_name
             else:
                 # automatic naming by trialname
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
-                pdf_name = self.sessionpath + pdf_prefix + self.trialname
+                pdf_name = self.sessionpath + pdf_prefix + self.trialname + '.pdf'
             with PdfPages(pdf_name) as pdf:
                 print("Writing "+pdf_name)
                 pdf.savefig(self.fig)

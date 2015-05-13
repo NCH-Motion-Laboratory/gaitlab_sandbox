@@ -22,8 +22,8 @@ def error_exit(message):
     sys.exit()
 
 def messagebox(message):
-    """ Custom error handler """
-    # graphical error dialog - Windows specific
+    """ Custom notification handler """
+    # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
     
 class nexus_emg:
@@ -247,8 +247,6 @@ class nexus_emg:
         if len(chlist) != 1:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
-
-
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
