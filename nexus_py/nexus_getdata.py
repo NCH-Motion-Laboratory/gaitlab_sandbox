@@ -258,6 +258,9 @@ class gaitcycle:
         # frames where foot strikes occur (1-frame discrepancies with Nexus?)
         self.lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
         self.rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
+        # frames where toe-off occurs
+        self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
+        self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
         # 2 strikes is one complete gait cycle, needed for analysis
         lenLFS = len(self.lfstrikes)
         lenRFS = len(self.rfstrikes)
@@ -272,14 +275,19 @@ class gaitcycle:
         self.rgc1end = max(self.rfstrikes[0:2])
         self.rgc1len = self.rgc1end-self.rgc1start
         self.tn = np.linspace(0, 100, 101)
+        # normalize toe off events to 1st gait cycles
+        # first toe-off may occur before the gait cycle starts
+        ltoeoff_gc1 = [x for x in self.ltoeoffs if x > self.lgc1start and x < self.lgc1end]
+        rtoeoff_gc1 = [x for x in self.rtoeoffs if x > self.rgc1start and x < self.rgc1end]
+        if len(ltoeoff_gc1) != 1 or len(rtoeoff_gc1) != 1:
+            error_exit('Expected single toe-off event during gait cycle')
+        self.ltoe1_norm = round((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len)
+        self.rtoe1_norm = round((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len)
         
-    def cut(self, y):
-        """ Cut a varible to left or right gait cycle, without interpolation. """
-        
+       
     def normalize(self, y, side):
-        """ Interpolate any variable y to left or right gait cycle.
-        New x axis will be 0..100, and data is taken from the specified 
-        gait cycle (side = L or R). """
+        """ Interpolate any variable y to left or right gait cycle of this trial.
+        New x axis will be 0..100 """
         lgc1t = np.linspace(0, 100, self.lgc1len)
         rgc1t = np.linspace(0, 100, self.rgc1len)
         if side.upper() == 'R':  # norm to right side
@@ -291,8 +299,8 @@ class gaitcycle:
             tstart = self.lgc1start
             tend = self.lgc1end
         # interpolate variable to gait cycle
-        yip = np.interp(self.tn, gc1t, y[tstart:tend])
-        return yip
+        return np.interp(self.tn, gc1t, y[tstart:tend])
+        
         
     def detect_side(self, vicon):
         """ Try to detect whether the trial has L or R forceplate strike.

@@ -194,9 +194,6 @@ class nexus_plotter():
             return None
         else:
             return(trialname_[0])
-        
-    def footstrikes(self):
-        pass            
                                                     
     def open_trial(self, nexusvars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. The
@@ -363,11 +360,11 @@ class nexus_plotter():
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
         
-    def add_footstrike_markers(self):
-        """ Add foot strike markers to the plot. """
+    def add_toeoff_markers(self):
+        """ Add markers for toeoff events to the plot. """
         if self.fig:
             pass
-            # get footstrike info = x
+            # get toeoff info = x
             # loop thru subplots
             # y = get axis miny
             # add circle, e.g. plt.plot(x,y,'k.',markersize=5)
