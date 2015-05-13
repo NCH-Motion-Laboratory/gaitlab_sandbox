@@ -14,14 +14,13 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 TODO:
 
 fix EMG electrode mapping
-foot strike markers for each trials onto x axis; add function
-(where to put gait cycle info? )
 EMG can be disconnected in some trials and not in others; annotation?
 make legend for plot, indicating trial
 improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
 """
+
 
 
 from Tkinter import *
@@ -104,6 +103,8 @@ class nexus_plotter():
         # trace colors, right and left
         self.tracecolor_r = 'lawngreen'
         self.tracecolor_l = 'red'
+        # relative length of toe-off arrow (multiples of plot y height)
+        self.toeoff_rel_len = .15
         # label font size
         self.fsize_labels=10
         # for plotting kinematics / kinetics normal data
@@ -115,6 +116,7 @@ class nexus_plotter():
         self.emg_normals_color = 'pink'
         self.emg_ylabel = 'mV'
         self.annotate_disconnected = True
+        self.add_toeoff_markers = True
         # x label
         self.xlabel = ''
         self.fig = None
@@ -301,7 +303,7 @@ class nexus_plotter():
         
         if self.pig_plot_vars:
             for k, var in enumerate(self.pig_plot_vars):
-                plt.subplot(self.gs[self.pig_plot_pos[k]])
+                ax = plt.subplot(self.gs[self.pig_plot_pos[k]])
                 varname_full = 'Norm'+self.side+var
                 # plot two-sided kinematics if applicable
                 if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
@@ -322,6 +324,30 @@ class nexus_plotter():
                 #plt.ylim(kinematicsymin[k], kinematicsymax[k])
                 plt.axhline(0, color='black')  # zero line
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
+                if self.add_toeoff_markers:
+                    ymin = ax.get_ylim()[0]
+                    ymax = ax.get_ylim()[1]
+                    xmin = ax.get_xlim()[0]
+                    xmax = ax.get_xlim()[1]
+                    ltoeoff = self.vgc.ltoe1_norm
+                    rtoeoff = self.vgc.rtoe1_norm
+                    arrlen = (ymax-ymin) * self.toeoff_rel_len
+                    hdlength = arrlen / 4.
+                    hdwidth = (xmax-xmin) / 40.
+                    if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
+                        plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
+                                  head_length=hdlength, head_width=hdwidth)
+                        plt.arrow(rtoeoff, ymin, 0, arrlen, color=self.tracecolor_r, 
+                                  head_length=hdlength, head_width=hdwidth)
+                    else:  # single trace was plotted - only plot one-sided toeoff
+                        if self.side == 'L':
+                            toeoff = ltoeoff
+                            arrowcolor = self.tracecolor_l
+                        else:
+                            toeoff = rtoeoff
+                            arrowcolor = self.tracecolor_r
+                        plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
+                          head_length=hdlength, head_width=hdwidth)
         
         if self.emg_plot_chs:
             for k, thisch in enumerate(self.emg_plot_chs):
@@ -337,7 +363,7 @@ class nexus_plotter():
                     emg_yscale = self.emg.yscale_gc1r
                 else:
                     error_exit('Unexpected EMG channel name: ', thisch)
-                ax=plt.subplot(self.gs[self.emg_plot_pos[k]])
+                ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if emgdata[thisch] == 'EMG_DISCONNECTED':
                     if self.annotate_disconnected:
                         ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
@@ -357,21 +383,31 @@ class nexus_plotter():
                 plt.xlabel(self.xlabel, fontsize=self.fsize_labels)
                 plt.ylabel(self.emg_ylabel, fontsize=self.fsize_labels)
                 plt.locator_params(axis = 'y', nbins = 4)
+                
+                if self.add_toeoff_markers:
+                    ymin = ax.get_ylim()[0]
+                    ymax = ax.get_ylim()[1]
+                    xmin = ax.get_xlim()[0]
+                    xmax = ax.get_xlim()[1]
+                    ltoeoff = self.vgc.ltoe1_norm
+                    rtoeoff = self.vgc.rtoe1_norm
+                    arrlen = (ymax-ymin) * self.toeoff_rel_len
+                    hdlength = arrlen / 4.
+                    hdwidth = (xmax-xmin) / 40.
+                    if side_this == 'L':
+                        toeoff = ltoeoff
+                        arrowcolor = self.tracecolor_l
+                    else:
+                        toeoff = rtoeoff
+                        arrowcolor = self.tracecolor_r
+                    plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
+                              head_length=hdlength, head_width=hdwidth)
+                    plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
+                              head_length=hdlength, head_width=hdwidth)
+        
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
         
-    def add_toeoff_markers(self):
-        """ Add markers for toeoff events to the plot. """
-        if self.fig:
-            pass
-            # get toeoff info = x
-            # loop thru subplots
-            # y = get axis miny
-            # add circle, e.g. plt.plot(x,y,'k.',markersize=5)
-        else:
-            raise Exception("No figure for adding markers!")
-            pass
-   
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 

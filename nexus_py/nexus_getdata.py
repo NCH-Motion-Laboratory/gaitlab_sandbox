@@ -281,8 +281,8 @@ class gaitcycle:
         rtoeoff_gc1 = [x for x in self.rtoeoffs if x > self.rgc1start and x < self.rgc1end]
         if len(ltoeoff_gc1) != 1 or len(rtoeoff_gc1) != 1:
             error_exit('Expected single toe-off event during gait cycle')
-        self.ltoe1_norm = round((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len)
-        self.rtoe1_norm = round((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len)
+        self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
+        self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
         
        
     def normalize(self, y, side):
