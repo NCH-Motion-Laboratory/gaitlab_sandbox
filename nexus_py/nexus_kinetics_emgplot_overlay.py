@@ -21,8 +21,11 @@ MAX_TRIALS = 3
 
 nplotter = nexus_plotter(layout)
 trials = nplotter.trialselector()
-# annotating disconnected EMGs messes up plot
+
+# annotating disconnected EMGs messes up overlay plot
 nplotter.annotate_disconnected = False
+
+nplotter.totalfigsize = (16,12)
 
 if trials == None:
     sys.exit()
@@ -40,16 +43,16 @@ for i,trial in enumerate(trials):
                 side+'Glut',side+'Vas',side+'Per',
                 'HipMomentX','KneeMomentX','AnkleMomentX',
                 side+'Rec',side+'Ham',side+'Gas',
-                None,side+'Glut',side+'Sol',
-                None,side+'Gas',None,
+                'emglegend',side+'Glut',side+'Sol',
+                'piglegend',side+'Gas',None,
                 'HipPowerZ','KneePowerZ','AnklePowerZ']
     # open again and read vars now
     nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
-    nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='',
+    nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='Kinetics-EMG overlay plot',
                         onesided_kinematics=False, pig_linestyle=pigstyles[i],
                         emg_tracecolor=emgcolors[i])
 
 #nplotter.set_fig_title('\n'.join(trials))
 nplotter.show()
-#nplotter.create_pdf(pdf_name='test.pdf')
+#nplotter.create_pdf(pdf_name='overlay.pdf')
 

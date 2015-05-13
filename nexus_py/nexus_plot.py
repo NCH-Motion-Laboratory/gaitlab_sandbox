@@ -5,6 +5,8 @@ Generic Nexus plotter
 
 rules:
 channel type is autodetected by looking into corresponding dict
+can specify 'None' to leave corresponding subplot empty
+can specify 'piglegend' or 'emglegend' to get a legend
 variables always normalized to gait cycle
 always plot PiG normal data if available
 kinetics always plotted for one side only
@@ -14,8 +16,6 @@ vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
 TODO:
 
 fix EMG electrode mapping
-EMG can be disconnected in some trials and not in others; annotation?
-make legend for plot, indicating trial
 improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -117,6 +117,12 @@ class nexus_plotter():
         self.emg_ylabel = 'mV'
         self.annotate_disconnected = True
         self.add_toeoff_markers = True
+        self.piglegendpos = None
+        self.emglegendpos = None
+        # used to collect trial names and styles for legend
+        self.pigartists = []
+        self.emgartists = []
+        self.legendnames = []
         # x label
         self.xlabel = ''
         self.fig = None
@@ -240,8 +246,12 @@ class nexus_plotter():
             self.pig_plot_vars = []
             self.pig_plot_pos = []
             for i, var in enumerate(self.nexusvars):
-                if var == None:
+                if var == None:  # indicates empty subplot
                     pass
+                elif var == 'piglegend':   # place legend on this subplot
+                    self.piglegendpos = i
+                elif var == 'emglegend':
+                    self.emglegendpos = i
                 else:
                     if self.emg.is_logical_channel(var):
                         read_emg = True
@@ -332,8 +342,9 @@ class nexus_plotter():
                     ltoeoff = self.vgc.ltoe1_norm
                     rtoeoff = self.vgc.rtoe1_norm
                     arrlen = (ymax-ymin) * self.toeoff_rel_len
-                    hdlength = arrlen / 4.
-                    hdwidth = (xmax-xmin) / 40.
+                    # these are related to plot height/width, to avoid aspect ratio effects
+                    hdlength = arrlen * .33
+                    hdwidth = (xmax-xmin) / 50.
                     if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
                         plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
@@ -404,6 +415,26 @@ class nexus_plotter():
                               head_length=hdlength, head_width=hdwidth)
                     plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                               head_length=hdlength, head_width=hdwidth)
+
+        """ Update legends on each added trial. The "artists" (corresponding to 
+        line styles) and the labels are appended into lists and the legend
+        is recreated when plotting each trial (the legend has no add method) """
+        if self.piglegendpos:
+            self.legendnames.append(self.trialname)
+            self.pigartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=pig_linestyle))
+            ax = plt.subplot(self.gs[self.piglegendpos])
+            plt.axis('off')
+            nothing = [plt.Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)]
+            legtitle = ['Kinematics/kinetics traces:']
+            ax.legend(nothing+self.pigartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
+        if self.emglegendpos:
+            self.legendnames.append(self.trialname)
+            self.emgartists.append(plt.Line2D((0,1),(0,0), color=emg_tracecolor))
+            ax = plt.subplot(self.gs[self.emglegendpos])
+            plt.axis('off')
+            nothing = [plt.Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)]
+            legtitle = ['EMG traces:']
+            ax.legend(nothing+self.emgartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
         
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
