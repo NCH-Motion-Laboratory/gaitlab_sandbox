@@ -54,8 +54,6 @@ class nexus_plotter():
         
         # default parameters, if none specified on cmd line or config file
         self.emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
-        self.side = None   # will autodetect unless specified
-        self.trialname = None
         
         # paths
         pathprefix = 'c:/users/' + getpass.getuser()
@@ -120,6 +118,9 @@ class nexus_plotter():
         # x label
         self.xlabel = ''
         self.fig = None
+        # these will be set by open_trial()
+        self.side = None
+        self.trialname = None
         self.vgc = None
         self.vicon = None
 
@@ -193,20 +194,16 @@ class nexus_plotter():
             return None
         else:
             return(trialname_[0])
-            
-    def detect_side(self):
-        """ Detect the side of the loaded gait cycle. """
-        self.vgc = nexus_getdata.gaitcycle(self.vicon)
-        return self.vgc.detect_side(self.vicon)
         
     def footstrikes(self):
-        
+        pass            
                                                     
     def open_trial(self, nexusvars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. The
         variables specified in nexusvars will be read. To open the trial without
         reading variables, set nexusvars=None (useful for e.g. detecting side) """
         self.nexusvars = nexusvars
+        # open connection to Nexus, if not previously opened
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
         if trialpath:
@@ -216,7 +213,7 @@ class nexus_plotter():
             # TODO: check errors
         subjectnames = self.vicon.GetSubjectNames()  
         if not subjectnames:
-            error_exit('No subject')
+            error_exit('No subject defined in Nexus')
         trialname_ = self.vicon.GetTrialName()
         if not trialname_:
             error_exit('No trial loaded')
@@ -224,9 +221,12 @@ class nexus_plotter():
         self.trialname = trialname_[1]
         self.subjectname = subjectnames[0]
         
-        # try to detect side (L/R) if not forced
+        # update gait cycle information
+        self.vgc = nexus_getdata.gaitcycle(self.vicon)
+        
+        # try to detect side (L/R) if not forced in arguments
         if not side:
-            self.side = self.detect_side()
+            self.side = self.vgc.detect_side(self.vicon)
         else:
             self.side = side    
         

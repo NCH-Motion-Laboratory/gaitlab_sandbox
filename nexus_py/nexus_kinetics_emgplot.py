@@ -17,7 +17,7 @@ nplotter = nexus_plotter(layout)
 
 # need to open trial before detecting side
 nplotter.open_trial(nexusvars=None)
-side = nplotter.detect_side()
+side = nplotter.side
 # choose EMG variables according to side
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             side+'Ham', side+'Rec', side+'TibA',
