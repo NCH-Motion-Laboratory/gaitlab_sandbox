@@ -7,7 +7,7 @@ Kinematics-EMG plot from Nexus.
 @author: Jussi
 """
 
-
+ 
 from nexus_plot import nexus_plotter
 
 layout = [8,3]

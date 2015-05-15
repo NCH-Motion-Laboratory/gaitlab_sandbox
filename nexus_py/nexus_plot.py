@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
 """
 
-Generic Nexus plotter
+Generic Nexus plotter. Plots Plug-in Gait variables and EMG from a running
+Vicon Nexus application, using matplotlib.
 
-rules:
-channel type is autodetected by looking into corresponding dict
-can specify 'None' to leave corresponding subplot empty
-can specify 'piglegend' or 'emglegend' to get a legend
-variables always normalized to gait cycle
-always plot PiG normal data if available
-kinetics always plotted for one side only
-vars can be specified without leading 'Norm'+side (e.g. 'HipMomentX')
+
+Rules:
+
+-channel type is autodetected by looking into corresponding dict
+-can specify 'None' to leave corresponding subplot empty
+-can specify 'piglegend' or 'emglegend' to get a legend on a particular subplot
+-variables always normalized to gait cycle
+-always plot PiG normal data if available
+-kinetics always plotted for one side only
+-vars can be specified without leading 'Norm'+side prefix (e.g. 'HipMomentX'
+ instead of 'NormRHipMomentX'
 
 
 TODO:
-
 fix EMG electrode mapping
 improve detection of disconnected EMG
 documentation
@@ -334,6 +337,7 @@ class nexus_plotter():
                 #plt.ylim(kinematicsymin[k], kinematicsymax[k])
                 plt.axhline(0, color='black')  # zero line
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
+                # add arrows indicating toe off times
                 if self.add_toeoff_markers:
                     ymin = ax.get_ylim()[0]
                     ymax = ax.get_ylim()[1]
@@ -416,7 +420,7 @@ class nexus_plotter():
                     plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                               head_length=hdlength, head_width=hdwidth)
 
-        """ Update legends on each added trial. The "artists" (corresponding to 
+        """ Update the legends on each added trial. The "artists" (corresponding to 
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
         if self.piglegendpos:
