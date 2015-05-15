@@ -59,7 +59,7 @@ class nexus_plotter():
         # paths
         pathprefix = 'c:/users/' + getpass.getuser()
         desktop = pathprefix + '/Desktop'
-        configfile = desktop + '/kinetics_emg_config.txt'
+        configfile = desktop + '/nexusplotter_config.txt'
         
         # parse args
         arglist = []
