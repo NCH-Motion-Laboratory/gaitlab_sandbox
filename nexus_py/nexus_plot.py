@@ -7,7 +7,7 @@ Vicon Nexus application, using matplotlib.
 
 Rules:
 
--channel type is autodetected by looking into corresponding dict
+-channel type is autodetected by looking into the known names
 -can specify 'None' to leave corresponding subplot empty
 -can specify 'piglegend' or 'emglegend' to get a legend on a particular subplot
 -variables always normalized to gait cycle
@@ -18,7 +18,6 @@ Rules:
 
 
 TODO:
-fix EMG electrode mapping
 improve detection of disconnected EMG
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -241,7 +240,7 @@ class nexus_plotter():
         if nexusvars:
             # will read EMG/PiG data only if necessary
             self.pig = nexus_getdata.pig_outputs()
-            self.emg = nexus_getdata.nexus_emg(mapping_changes=self.emg_mapping)
+            self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping)
             read_emg = False
             read_pig = False
             self.emg_plot_chs = []

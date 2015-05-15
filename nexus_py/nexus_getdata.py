@@ -31,10 +31,8 @@ class nexus_emg:
     vicon is a ViconNexus.ViconNexus() object. EMG object can be created
     without reading any actual data (e.g. to check electrode names). """
     
-    def define_emg_mapping(self, emg_system='Myon', mapping_changes=None):
-        """ Defines electrode mapping. mapping_changes contains the replacement
-        dict for EMG electrodes: e.g. key 'LGas'='LSol4' means that LGas data will be 
-        read from the LSol4 electrode. emg_system may be used to support systems
+    def define_emg_mapping(self, emg_system='Myon'):
+        """ Defines electrode mapping.  emg_system may be used to support systems
         other than Myon in the future. """
         if emg_system == 'Myon':
             self.ch_normals = {'RGas': [[16,50]],
@@ -70,36 +68,8 @@ class nexus_emg:
                        'LSol': 'Soleus (L)',
                        'LTibA': 'Tibialis anterior (L)',
                        'LPer': 'Peroneus (L)'}
-            # default mapping of logical channels to physical ones
-            self.ch_mapping = {'LGas': 'LGas4',
-             'LGlut': 'LGlut8',
-             'LHam': 'LHam7',
-             'LPer': 'LPer2',
-             'LRec': 'LRec5',
-             'LSol': 'LSol3',
-             'LTibA': 'LTibA1',
-             'LVas': 'LVas6',
-             'RGas': 'RGas12',
-             'RGlut': 'RGlut16',
-             'RHam': 'RHam15',
-             'RPer': 'RPer10',
-             'RRec': 'RRec13',
-             'RSol': 'RSol11',
-             'RTibA': 'RTibA9',
-             'RVas': 'RVas14'}
         else:
             error_exit('Unsupported EMG system: '+emg_system)
-            
-        # user specified changes to electrode mapping
-        if mapping_changes:
-            for logch in mapping_changes:
-                physch = mapping_changes[logch]
-                # mark channel as remapped
-                for ch in self.ch_mapping.keys():
-                    if self.ch_mapping[ch] == physch:
-                        self.ch_mapping[ch] = 'EMG_REUSED'
-                self.ch_mapping[logch] = mapping_changes[logch]
-                self.ch_labels[logch] += ' (read from ' + physch +')'
                 
     def emg_channelnames(self):
         """ Return names of known (logical) EMG channels. """
@@ -108,15 +78,20 @@ class nexus_emg:
     def is_logical_channel(self, chname):
         return chname in self.ch_names
 
-    def __init__(self, emg_system='Myon', mapping_changes=None):
+    def __init__(self, emg_system='Myon', emg_remapping=None):
+        """ emg_remapping contains the replacement dict for EMG electrodes:
+        e.g. key 'LGas'='LSol' means that LGas data will be 
+        read from the LSol electrode."""
         # default plotting scale in medians (channel-specific)
-        yscale_medians = 1
+        self.yscale_medians = 1
         # whether to auto-find disconnected EMG channels
         self.find_disconnected = True
         # normal data and logical chs
-        self.define_emg_mapping(emg_system, mapping_changes)
+        self.define_emg_mapping(emg_system)
+        self.emg_remapping=emg_remapping
 
     def read(self, vicon):
+        """ Read the actual EMG data from Nexus. """
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -125,90 +100,98 @@ class nexus_emg:
         if emgdevname in devnames:
             emg_id = vicon.GetDeviceIDFromName(emgdevname)
         else:
-           error_exit('no EMG device found in trial')
+           error_exit('No EMG device found in trial')
         # DType should be 'other', drate is sampling rate
         dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
         samplesperframe = drate / framerate
         # Myon should only have 1 output; if zero, EMG was not found
         assert(len(outputids)==1)
         outputid = outputids[0]
-        # list of channel names and IDs
+        
+        # get list of channel names and IDs
         _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
         for i in range(len(self.elnames)):
             elname = self.elnames[i]    
-            # if elname starts with 'Voltage', remove it
+            # if elname starts with 'Voltage.', remove it:
+            # Nexus 2 prepends 'Voltage.' to electrode names during processing
             if elname.find('Voltage') > -1:
                 elname = elname[elname.find('.')+1:]
             self.elnames[i] = elname
-        # read EMG channels into dict
-        # also cut data to L/R gait cycles
-        self.data = {}
-        vgc1 = gaitcycle(vicon)
-        self.data_gc1l = {}
-        self.data_gc1r = {}
+
         # gait cycle beginning and end, samples
+        vgc1 = gaitcycle(vicon)
         self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
         self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
         self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
         self.rgc1end_s = int(round((vgc1.rgc1end - 1) * samplesperframe))
         self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
         self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
-
-        # init dicts
-        self.reused = {}
-        self.disconnected = {}
-        for elname in self.elnames:
-            self.disconnected[elname] = False
-            self.reused[elname] = False
-        
-        # read all physical channels (electrodes)
+            
+        # read physical EMG channels and cut data to L/R gait cycles
+        self.data = {}
+        self.data_gc1l = {}
+        self.data_gc1r = {}
         for elid in self.chids:
             eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
-            assert(elrate == drate), 'Channel has an unexpected sampling rate'
             elname = self.elnames[elid-1]
             self.data[elname] = np.array(eldata)
-            # zero out invalid EMG signals
             if self.find_disconnected and not self.is_valid_emg(self.data[elname]):
-                self.data[elname] = "EMG_DISCONNECTED"
-                self.data_gc1l[elname] = "EMG_DISCONNECTED"
-                self.data_gc1r[elname] = "EMG_DISCONNECTED"
+                self.data[elname] = 'EMG_DISCONNECTED'
+                self.data_gc1l[elname] = 'EMG_DISCONNECTED'
+                self.data_gc1r[elname] = 'EMG_DISCONNECTED'
             else:
                 # cut to L/R gait cycles. no interpolation
                 self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
                 self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
-            # median scaling - beware of DC!
-            #self.yscalegc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
-            #self.yscalegc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
-            # fixed scale
 
-        # assign data to logical channels
+        """ Map logical channels into physical ones. Here, the rule is that the
+        name of the physical channel must start with the name of the logical channel.
+        For example, the logical name can be 'LPer' and the physical channel 'LPer12'
+        will be a match. Thus, the logical names can be shorter than the physical ones,
+        as long as an unique match is found. The user-defined replacements are also taken 
+        into account here. """
         self.logical_data = {}
         self.logical_data_gc1l = {}
         self.logical_data_gc1r = {}
         self.yscale_gc1l = {}
         self.yscale_gc1r = {}
-        
-        for logch in self.ch_mapping:
-            if self.ch_mapping[logch] != 'EMG_REUSED':
-                physch = self.ch_mapping[logch]
-                if physch not in self.data:
-                    error_exit('Cannot read requested physical channel: '+physch)
-                self.logical_data[logch] = self.data[physch]
+
+        for logch in self.ch_names:
+            # check if channel was already assigned (or marked as reused)
+            if logch not in self.logical_data:
+                # check if channel should be read from some other electrode
+                # in this case, the replacement is marked as reused
+                if logch in self.emg_remapping:
+                    datach = self.emg_remapping[logch]
+                    self.logical_data[datach] = 'EMG_REUSED'
+                    self.logical_data_gc1l[datach] = 'EMG_REUSED'
+                    self.logical_data_gc1r[datach] = 'EMG_REUSED'
+                    self.ch_labels[logch] += ' (read from ' + datach +')'
+                else:
+                    datach = logch
+                # find unique matching physical electrode name
+                matches = [x for x in self.elnames if x.find(datach) == 0]
+                if len(matches) != 1:
+                    error_exit('Cannot find unique electrode matching requested name ', logch)
+                elname = matches[0]
+                self.logical_data[logch] = self.data[elname]
                 # EMG data during gait cycles
-                if self.data[physch] != 'EMG_DISCONNECTED':
+                if self.data[elname] != 'EMG_DISCONNECTED':
                     self.logical_data_gc1l[logch] = self.logical_data[logch][self.lgc1start_s:self.lgc1end_s]
                     self.logical_data_gc1r[logch] = self.logical_data[logch][self.rgc1start_s:self.rgc1end_s]
                 else:
                     self.logical_data_gc1l[logch] = 'EMG_DISCONNECTED'
                     self.logical_data_gc1r[logch] = 'EMG_DISCONNECTED'                    
-            else:
-                self.logical_data[logch] = 'EMG_REUSED'
-                self.logical_data_gc1l[logch] = 'EMG_REUSED'
-                self.logical_data_gc1r[logch] = 'EMG_REUSED'
-            # set fixed scales
+
+        # set channel scaling
+        for logch in self.ch_names:
             self.yscale_gc1l[logch] = .5e-3
             self.yscale_gc1r[logch] = .5e-3
+            # median scaling - beware of DC!
+            #self.yscale_gc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
+            #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
 
+        # various variables
         self.datalen = len(eldata)
         assert(self.datalen == framecount * samplesperframe)
         self.sfrate = drate        
