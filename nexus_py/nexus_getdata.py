@@ -172,7 +172,7 @@ class nexus_emg:
                 # find unique matching physical electrode name
                 matches = [x for x in self.elnames if x.find(datach) == 0]
                 if len(matches) != 1:
-                    error_exit('Cannot find unique electrode matching requested name ', logch)
+                    error_exit('Cannot find unique electrode matching requested name '+datach)
                 elname = matches[0]
                 self.logical_data[logch] = self.data[elname]
                 # EMG data during gait cycles
