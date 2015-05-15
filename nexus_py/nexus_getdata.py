@@ -110,13 +110,16 @@ class nexus_emg:
         
         # get list of channel names and IDs
         _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
-        for i in range(len(self.elnames)):
-            elname = self.elnames[i]    
+
+        # fix "Voltage." bug - not necessary anymore (matching labels
+        # works at any position)
+        #for i in range(len(self.elnames)):
+            #elname = self.elnames[i]    
             # if elname starts with 'Voltage.', remove it:
             # Nexus 2 prepends 'Voltage.' to electrode names during processing
-            if elname.find('Voltage') > -1:
-                elname = elname[elname.find('.')+1:]
-            self.elnames[i] = elname
+            #if elname.find('Voltage') > -1:
+                #elname = elname[elname.find('.')+1:]
+            #self.elnames[i] = elname
 
         # gait cycle beginning and end, samples
         vgc1 = gaitcycle(vicon)
@@ -170,7 +173,7 @@ class nexus_emg:
                 else:
                     datach = logch
                 # find unique matching physical electrode name
-                matches = [x for x in self.elnames if x.find(datach) == 0]
+                matches = [x for x in self.elnames if x.find(datach) >= 0]
                 if len(matches) != 1:
                     error_exit('Cannot find unique electrode matching requested name '+datach)
                 elname = matches[0]
