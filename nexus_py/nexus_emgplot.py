@@ -24,7 +24,9 @@ pdftitlestr = 'EMG_'
 nplotter = nexus_plotter(layout)
 nplotter.open_trial(plotvars)
 trialname = nplotter.trialname
-nplotter.plot_trial(maintitle=maintitleprefix+trialname, onesided_kinematics=True)
+maintitle = maintitleprefix + trialname
+maintitle = maintitle + '\n' + nplotter.get_filter_description()
+nplotter.plot_trial(maintitle=maintitle, onesided_kinematics=True)
 nplotter.create_pdf(pdf_prefix=pdftitlestr)
 
 nplotter.show()

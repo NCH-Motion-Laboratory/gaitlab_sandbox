@@ -134,6 +134,13 @@ class nexus_plotter():
         self.trialname = None
         self.vgc = None
         self.vicon = None
+        
+    def get_filter_description(self):
+        """ Returns a string describing the filter applied to the EMG data """
+        if not self.emg_passband:
+            return "No filtering"
+        else:
+            return "bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
     def get_eclipse_description(self, trialname):
         """ Get the Eclipse database description for the specified trial. Specify
