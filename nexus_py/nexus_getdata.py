@@ -164,7 +164,7 @@ class nexus_emg:
             if logch not in self.logical_data:
                 # check if channel should be read from some other electrode
                 # in this case, the replacement is marked as reused
-                if logch in self.emg_remapping:
+                if self.emg_remapping and logch in self.emg_remapping:
                     datach = self.emg_remapping[logch]
                     self.logical_data[datach] = 'EMG_REUSED'
                     self.logical_data_gc1l[datach] = 'EMG_REUSED'

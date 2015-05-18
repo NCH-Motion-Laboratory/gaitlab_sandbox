@@ -5,6 +5,7 @@ Generic Nexus plotter. Plots Plug-in Gait variables and EMG from a running
 Vicon Nexus application, using matplotlib.
 
 
+
 Rules:
 
 -channel type is autodetected by looking into the known names
