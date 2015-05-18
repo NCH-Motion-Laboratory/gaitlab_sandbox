@@ -104,6 +104,7 @@ class nexus_emg:
         # DType should be 'other', drate is sampling rate
         dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
         samplesperframe = drate / framerate
+        self.sfrate = drate        
         # Myon should only have 1 output; if zero, EMG was not found
         assert(len(outputids)==1)
         outputid = outputids[0]
@@ -197,7 +198,6 @@ class nexus_emg:
         # various variables
         self.datalen = len(eldata)
         assert(self.datalen == framecount * samplesperframe)
-        self.sfrate = drate        
         # samples to time (s)
         self.t = np.arange(self.datalen)/self.sfrate
         # normalized grids (from 0..100) of EMG length; useful for plotting
@@ -207,9 +207,16 @@ class nexus_emg:
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
         # simple variance check
-        emg_max_variance = 5e-7
-        return np.var(y) < emg_max_variance
-        
+        # emg_max_variance = 5e-7
+        # return np.var(y) < emg_max_variance
+        emg_max_interference = 1e-9
+        # detect 50 Hz harmonics
+        yfilt1 = self.filter(y, [195,205])
+        yfilt2 = self.filter(y, [45,55])
+        yfilt3 = self.filter(y, [95,105])
+        filtvar = np.var(yfilt1+yfilt2+yfilt3)
+        return filtvar < emg_max_interference
+
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40].
         Passband is given in Hz. None for no filtering. """
