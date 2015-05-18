@@ -139,6 +139,10 @@ class nexus_emg:
             eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
             elname = self.elnames[elid-1]
             self.data[elname] = np.array(eldata)
+            # DEBUG
+            print(elname)
+            self.is_valid_emg(self.data[elname])
+            #
             if self.find_disconnected and not self.is_valid_emg(self.data[elname]):
                 self.data[elname] = 'EMG_DISCONNECTED'
                 self.data_gc1l[elname] = 'EMG_DISCONNECTED'
@@ -209,12 +213,13 @@ class nexus_emg:
         # simple variance check
         # emg_max_variance = 5e-7
         # return np.var(y) < emg_max_variance
-        emg_max_interference = 1e-9
+        emg_max_interference = 1e-8
         # detect 50 Hz harmonics
         yfilt1 = self.filter(y, [195,205])
         yfilt2 = self.filter(y, [45,55])
         yfilt3 = self.filter(y, [95,105])
         filtvar = np.var(yfilt1+yfilt2+yfilt3)
+        print('int variance: ', filtvar)
         return filtvar < emg_max_interference
 
     def filter(self, y, passband):
