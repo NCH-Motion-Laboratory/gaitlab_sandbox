@@ -13,7 +13,19 @@ import numpy as np
 import ctypes
 from scipy import signal
 import sys
+import psutil
 
+
+def nexus_pid():
+    """ Tries to return the PID of the running Nexus process. """
+    PROCNAME = "Nexus.exe"
+    for proc in psutil.process_iter():
+        try:
+            if proc.name() == PROCNAME:
+                return proc.pid
+        except psutil.AccessDenied:
+            pass
+    return None
 
 def error_exit(message):
     """ Custom error handler """

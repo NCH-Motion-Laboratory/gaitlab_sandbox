@@ -60,7 +60,13 @@ class nexus_plotter():
         # paths
         pathprefix = 'c:/users/' + getpass.getuser()
         desktop = pathprefix + '/Desktop'
-        configfile = desktop + '/nexusplotter_config.txt'
+        # select config file according to Nexus PID (process-unique config)
+        nexus_pid = nexus_getdata.nexus_pid()
+        if nexus_pid == None:
+            error_exit('Cannot get Nexus PID')
+            
+        configfile = desktop + '/nexusplotter/config_' + str(nexus_pid) + '.txt'
+        print(configfile)        
         
         # parse args
         arglist = []
