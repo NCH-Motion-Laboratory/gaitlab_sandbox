@@ -30,3 +30,6 @@ nplotter.plot_trial(maintitle=maintitle, onesided_kinematics=True)
 nplotter.create_pdf(pdf_prefix=pdftitlestr)
 
 nplotter.show()
+
+
+

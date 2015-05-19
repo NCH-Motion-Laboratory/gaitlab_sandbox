@@ -31,7 +31,8 @@ plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
 
 nplotter.open_trial(nexusvars=plotvars)
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitleprefix='Kinetics-EMG plot for ')
+nplotter.create_pdf(pdf_prefix=pdf_prefix)
 
 nplotter.show()
-nplotter.create_pdf(pdf_prefix=pdf_prefix)
+
 

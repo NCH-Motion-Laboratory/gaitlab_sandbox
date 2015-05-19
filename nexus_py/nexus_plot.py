@@ -470,7 +470,7 @@ class nexus_plotter():
             with PdfPages(pdf_name) as pdf:
                 print("Writing "+pdf_name)
                 pdf.savefig(self.fig)
-                messagebox('Successfully wrote PDF file: '+pdf_name)
+                #messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
             raise Exception('No figure to save!')
     
