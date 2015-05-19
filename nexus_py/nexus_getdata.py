@@ -210,17 +210,17 @@ class nexus_emg:
         
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
-        # simple variance check
-        #emg_max_variance = 5e-7
-        #return np.var(y) < emg_max_variance
-        emg_max_interference = 1e-8
+        # max. relative interference at 50 Hz harmonics
+        emg_max_interference = 50
         # detect 50 Hz harmonics
-        yfilt1 = self.filter(y, [195,205])
-        yfilt2 = self.filter(y, [45,55])
-        yfilt3 = self.filter(y, [95,105])
-        filtvar = np.var(yfilt1+yfilt2+yfilt3)
-        print('int variance: ', filtvar)
-        return filtvar < emg_max_interference
+        int200 = self.filter(y, [195,205])
+        int50 = self.filter(y, [45,55])
+        int100 = self.filter(y, [95,105])
+        # baseline of emg signal
+        emglevel = self.filter(y, [60,90])
+        intrel = np.var(int50+int100+int200)/np.var(emglevel)
+        print('rel. interference: ', intrel)
+        return intrel < emg_max_interference
 
     def filter(self, y, passband):
         """ Bandpass filter given data y to passband, e.g. [1, 40].

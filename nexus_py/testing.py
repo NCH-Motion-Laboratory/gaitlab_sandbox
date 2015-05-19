@@ -55,7 +55,7 @@ emg = nexus_getdata.nexus_emg(find_disconnected=False)
 
 emg.read(vicon)
 
-plotspectrum(emg.data['Voltage.RTibA'],emg.sfrate)
+plotspectrum(emg.data['Voltage.RSol'],emg.sfrate)
 
 
 
