@@ -16,6 +16,8 @@ import sys
 import psutil
 
 
+
+
 def nexus_pid():
     """ Tries to return the PID of the running Nexus process. """
     PROCNAME = "Nexus.exe"
@@ -86,6 +88,8 @@ class nexus_emg:
     def emg_channelnames(self):
         """ Return names of known (logical) EMG channels. """
         return self.ch_names
+        
+        
         
     def is_logical_channel(self, chname):
         return chname in self.ch_names

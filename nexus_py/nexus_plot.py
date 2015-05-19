@@ -19,7 +19,12 @@ Rules:
 
 
 TODO:
-improve detection of disconnected EMG
+
+config logic:
+-dialog for pid specific config, creates pid-specific file
+-plotter: if no config file for this pid found, use default config file
+
+
 documentation
 add default y ranges for kine(ma)tics variables?
 """
@@ -47,31 +52,46 @@ import glob
 def strip_ws(str):
     """ Remove spaces from string """
     return str.replace(' ','')
+    
+def get_homedir():
+    """ User's home dir """
+    return 'c:/users/' + getpass.getuser()
+    
+def config_filename():
+    """ Gives a pid-specific config filename for the currently running
+    Nexus instance. """
+    nexus_pid = nexus_getdata.nexus_pid()
+    if nexus_pid == None:
+        error_exit('Cannot get Nexus PID')
+    else:
+        return 'config_' + str(nexus_pid) + '.txt'
+    
+def configure(self):
+    """ Opens a configuration dialog for setting various options.
+    Options will be valid for the running Nexus session (determined
+    by pid). """
+    # check for old config files and remove
 
 class nexus_plotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
     def __init__(self, layout):
-        """ Sets plot layout and other stuff. """
         
         # default parameters, if none specified on cmd line or config file
         self.emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
         
         # paths
-        pathprefix = 'c:/users/' + getpass.getuser()
-        desktop = pathprefix + '/Desktop'
-        # select config file according to Nexus PID (process-unique config)
-        nexus_pid = nexus_getdata.nexus_pid()
-        if nexus_pid == None:
-            error_exit('Cannot get Nexus PID')
-            
-        configfile = desktop + '/nexusplotter/config_' + str(nexus_pid) + '.txt'
-        print(configfile)        
+        home = get_homedir()
+        desktop = home + '/Desktop'
+
+        # get instance-specific config file name
+        self.configfile = desktop + '/nexusplotter/' + config_filename()
+        print(self.configfile)        
         
-        # parse args
+        # read config file and command line arguments
         arglist = []
-        if os.path.isfile(configfile):  # from config file
-            f = open(configfile, 'r')
+        if os.path.isfile(self.configfile):  # from config file
+            f = open(self.configfile, 'r')
             arglist = f.read().splitlines()
             f.close()
         arglist += sys.argv[1:]  # add cmd line arguments    
