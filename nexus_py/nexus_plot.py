@@ -53,6 +53,31 @@ def strip_ws(str):
 class nexus_plotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
+    def configwindow(self):
+        """ Opens a Tk window for configuring Nexusplotter. """
+        
+        def saver_callback(window, list):
+            list.append(1)
+            window.destroy()
+            
+        emg_auto_off = 0
+        master = Tk()
+        Label(master, text="Select options for Nexus plotter:").grid(row=0, columnspan=2, pady=4)
+        save = []
+        Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)
+        Label(master, text='EMG lowpass (Hz):').grid(row=2, column=0)
+        Spinbox(master, from_=0, to=190).grid(row=2, column=1, pady=4)
+        Label(master, text='EMG highpass (Hz):').grid(row=2, column=0)
+        Spinbox(master, from_=200, to=400).grid(row=3, column=1, pady=4)
+        Button(master, text='Cancel', command=master.destroy).grid(row=4, column=0, pady=4)
+        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=4, column=1, pady=4)
+        mainloop()  # Tk
+        if not save:  # user hit Cancel
+            return None
+        else:
+            self.writeconfig()
+            
+
     def __init__(self, layout):
         """ Sets plot layout and other stuff. """
         
