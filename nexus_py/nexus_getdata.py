@@ -211,8 +211,8 @@ class nexus_emg:
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
         # simple variance check
-        # emg_max_variance = 5e-7
-        # return np.var(y) < emg_max_variance
+        #emg_max_variance = 5e-7
+        #return np.var(y) < emg_max_variance
         emg_max_interference = 1e-8
         # detect 50 Hz harmonics
         yfilt1 = self.filter(y, [195,205])

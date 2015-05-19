@@ -19,7 +19,9 @@ Rules:
 
 
 TODO:
-improve detection of disconnected EMG
+
+EMG-config script tied to PID?
+tests
 documentation
 add default y ranges for kine(ma)tics variables?
 """
@@ -135,12 +137,12 @@ class nexus_plotter():
         self.vgc = None
         self.vicon = None
         
-    def get_filter_description(self):
+    def get_emg_filter_description(self):
         """ Returns a string describing the filter applied to the EMG data """
         if not self.emg_passband:
-            return "No filtering"
+            return "No EMG filtering"
         else:
-            return "bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
+            return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
     def get_eclipse_description(self, trialname):
         """ Get the Eclipse database description for the specified trial. Specify

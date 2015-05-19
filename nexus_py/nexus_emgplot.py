@@ -25,7 +25,7 @@ nplotter = nexus_plotter(layout)
 nplotter.open_trial(plotvars)
 trialname = nplotter.trialname
 maintitle = maintitleprefix + trialname
-maintitle = maintitle + '\n' + nplotter.get_filter_description()
+maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
 nplotter.plot_trial(maintitle=maintitle, onesided_kinematics=True)
 nplotter.create_pdf(pdf_prefix=pdftitlestr)
 
