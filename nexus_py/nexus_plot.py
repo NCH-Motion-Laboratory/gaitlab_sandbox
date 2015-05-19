@@ -295,6 +295,7 @@ class nexus_plotter():
         maintitle plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         """        
+
         if not self.trialname:
             raise Exception('No trial loaded')
        
@@ -432,8 +433,9 @@ class nexus_plotter():
         """ Update the legends on each added trial. The "artists" (corresponding to 
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
+        if self.piglegendpos or self.emglegendpos:
+            self.legendnames.append(self.trialname)            
         if self.piglegendpos:
-            self.legendnames.append(self.trialname)
             self.pigartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=pig_linestyle))
             ax = plt.subplot(self.gs[self.piglegendpos])
             plt.axis('off')
@@ -441,7 +443,6 @@ class nexus_plotter():
             legtitle = ['Kinematics/kinetics traces:']
             ax.legend(nothing+self.pigartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
         if self.emglegendpos:
-            self.legendnames.append(self.trialname)
             self.emgartists.append(plt.Line2D((0,1),(0,0), color=emg_tracecolor))
             ax = plt.subplot(self.gs[self.emglegendpos])
             plt.axis('off')

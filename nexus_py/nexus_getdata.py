@@ -141,8 +141,6 @@ class nexus_emg:
             self.data[elname] = np.array(eldata)
             # DEBUG
             print(elname)
-            self.is_valid_emg(self.data[elname])
-            #
             if self.find_disconnected and not self.is_valid_emg(self.data[elname]):
                 self.data[elname] = 'EMG_DISCONNECTED'
                 self.data_gc1l[elname] = 'EMG_DISCONNECTED'
@@ -219,6 +217,7 @@ class nexus_emg:
         # baseline of emg signal
         emglevel = self.filter(y, [60,90])
         intrel = np.var(int50+int100+int200)/np.var(emglevel)
+        # DEBUG
         print('rel. interference: ', intrel)
         return intrel < emg_max_interference
 
