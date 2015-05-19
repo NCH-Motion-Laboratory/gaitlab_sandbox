@@ -467,9 +467,12 @@ class nexus_plotter():
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
                 pdf_name = self.sessionpath + pdf_prefix + self.trialname + '.pdf'
-            with PdfPages(pdf_name) as pdf:
-                print("Writing "+pdf_name)
-                pdf.savefig(self.fig)
+            try:
+                with PdfPages(pdf_name) as pdf:
+                    print("Writing "+pdf_name)
+                    pdf.savefig(self.fig)
+            except IOError:
+                messagebox('Error writing PDF file, check that file is not already open.')
                 #messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
             raise Exception('No figure to save!')
