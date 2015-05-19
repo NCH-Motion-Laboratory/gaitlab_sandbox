@@ -20,11 +20,8 @@ Rules:
 
 TODO:
 
-config logic:
--dialog for pid specific config, creates pid-specific file
--plotter: if no config file for this pid found, use default config file
-
-
+EMG-config script tied to PID?
+tests
 documentation
 add default y ranges for kine(ma)tics variables?
 """
@@ -52,46 +49,50 @@ import glob
 def strip_ws(str):
     """ Remove spaces from string """
     return str.replace(' ','')
-    
-def get_homedir():
-    """ User's home dir """
-    return 'c:/users/' + getpass.getuser()
-    
-def config_filename():
-    """ Gives a pid-specific config filename for the currently running
-    Nexus instance. """
-    nexus_pid = nexus_getdata.nexus_pid()
-    if nexus_pid == None:
-        error_exit('Cannot get Nexus PID')
-    else:
-        return 'config_' + str(nexus_pid) + '.txt'
-    
-def configure(self):
-    """ Opens a configuration dialog for setting various options.
-    Options will be valid for the running Nexus session (determined
-    by pid). """
-    # check for old config files and remove
 
 class nexus_plotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
+    def configwindow(self):
+        """ Opens a Tk window for configuring Nexusplotter. """
+        
+        def saver_callback(window, list):
+            list.append(1)
+            window.destroy()
+            
+        emg_auto_off = 0
+        master = Tk()
+        Label(master, text="Select options for Nexus plotter:").grid(row=0, columnspan=2, pady=4)
+        save = []
+        Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)
+        Label(master, text='EMG lowpass (Hz):').grid(row=2, column=0)
+        Spinbox(master, from_=0, to=190).grid(row=2, column=1, pady=4)
+        Label(master, text='EMG highpass (Hz):').grid(row=2, column=0)
+        Spinbox(master, from_=200, to=400).grid(row=3, column=1, pady=4)
+        Button(master, text='Cancel', command=master.destroy).grid(row=4, column=0, pady=4)
+        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=4, column=1, pady=4)
+        mainloop()  # Tk
+        if not save:  # user hit Cancel
+            return None
+        else:
+            self.writeconfig()
+            
+
     def __init__(self, layout):
+        """ Sets plot layout and other stuff. """
         
         # default parameters, if none specified on cmd line or config file
         self.emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
         
         # paths
-        home = get_homedir()
-        desktop = home + '/Desktop'
-
-        # get instance-specific config file name
-        self.configfile = desktop + '/nexusplotter/' + config_filename()
-        print(self.configfile)        
+        pathprefix = 'c:/users/' + getpass.getuser()
+        desktop = pathprefix + '/Desktop'
+        configfile = desktop + '/nexusplotter_config.txt'
         
-        # read config file and command line arguments
+        # parse args
         arglist = []
-        if os.path.isfile(self.configfile):  # from config file
-            f = open(self.configfile, 'r')
+        if os.path.isfile(configfile):  # from config file
+            f = open(configfile, 'r')
             arglist = f.read().splitlines()
             f.close()
         arglist += sys.argv[1:]  # add cmd line arguments    
@@ -161,12 +162,12 @@ class nexus_plotter():
         self.vgc = None
         self.vicon = None
         
-    def get_filter_description(self):
+    def get_emg_filter_description(self):
         """ Returns a string describing the filter applied to the EMG data """
         if not self.emg_passband:
-            return "No filtering"
+            return "No EMG filtering"
         else:
-            return "bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
+            return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
     def get_eclipse_description(self, trialname):
         """ Get the Eclipse database description for the specified trial. Specify
@@ -319,6 +320,7 @@ class nexus_plotter():
         maintitle plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         """        
+
         if not self.trialname:
             raise Exception('No trial loaded')
        
@@ -456,8 +458,9 @@ class nexus_plotter():
         """ Update the legends on each added trial. The "artists" (corresponding to 
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
+        if self.piglegendpos or self.emglegendpos:
+            self.legendnames.append(self.trialname)            
         if self.piglegendpos:
-            self.legendnames.append(self.trialname)
             self.pigartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=pig_linestyle))
             ax = plt.subplot(self.gs[self.piglegendpos])
             plt.axis('off')
@@ -465,7 +468,6 @@ class nexus_plotter():
             legtitle = ['Kinematics/kinetics traces:']
             ax.legend(nothing+self.pigartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
         if self.emglegendpos:
-            self.legendnames.append(self.trialname)
             self.emgartists.append(plt.Line2D((0,1),(0,0), color=emg_tracecolor))
             ax = plt.subplot(self.gs[self.emglegendpos])
             plt.axis('off')
@@ -491,10 +493,13 @@ class nexus_plotter():
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
                 pdf_name = self.sessionpath + pdf_prefix + self.trialname + '.pdf'
-            with PdfPages(pdf_name) as pdf:
-                print("Writing "+pdf_name)
-                pdf.savefig(self.fig)
-                messagebox('Successfully wrote PDF file: '+pdf_name)
+            try:
+                with PdfPages(pdf_name) as pdf:
+                    print("Writing "+pdf_name)
+                    pdf.savefig(self.fig)
+            except IOError:
+                messagebox('Error writing PDF file, check that file is not already open.')
+                #messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
             raise Exception('No figure to save!')
     
