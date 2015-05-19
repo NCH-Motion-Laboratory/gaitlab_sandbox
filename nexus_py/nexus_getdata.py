@@ -78,14 +78,14 @@ class nexus_emg:
     def is_logical_channel(self, chname):
         return chname in self.ch_names
 
-    def __init__(self, emg_system='Myon', emg_remapping=None):
+    def __init__(self, emg_system='Myon', emg_remapping=None, find_disconnected=True):
         """ emg_remapping contains the replacement dict for EMG electrodes:
         e.g. key 'LGas'='LSol' means that LGas data will be 
         read from the LSol electrode."""
         # default plotting scale in medians (channel-specific)
         self.yscale_medians = 1
         # whether to auto-find disconnected EMG channels
-        self.find_disconnected = True
+        self.find_disconnected = find_disconnected
         # normal data and logical chs
         self.define_emg_mapping(emg_system)
         self.emg_remapping=emg_remapping
