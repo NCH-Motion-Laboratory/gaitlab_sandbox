@@ -51,7 +51,7 @@ def plotspectrum(y, fs):
 
 
 vicon = ViconNexus.ViconNexus()
-emg = nexus_getdata.nexus_emg(find_disconnected=False)
+emg = nexus_getdata.nexus_emg(emg_auto_off=False)
 
 emg.read(vicon)
 
