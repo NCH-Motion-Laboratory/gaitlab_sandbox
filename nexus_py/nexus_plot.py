@@ -19,18 +19,7 @@ Rules:
 
 
 TODO:
-
-finish config stuff:
-
--use ConfigParser module
--init() reads config file from disk (if file not found, use default values)
--Tk config dialog reads and displays current values; saves to disk, if changed
-
--config items:
-    -normal.gcd location
-    -emg low/highpass freq
-    -autodetect disconnected electrodes
-
+finish config stuff
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -54,6 +43,7 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 import glob
+import ConfigParser
 from ConfigParser import SafeConfigParser
 
 
@@ -90,26 +80,40 @@ class nexus_plotter():
         if not save:  # user hit Cancel
             return None
         else:
+            # read vars, put into config dict and call write_config
             print(emg_lowpass.get())
-            
-            #self.config['emg_auto_off'] = emg_auto_off
-            #self.config['emg_passband'][0] = emg_lowpass
-            #self.config['emg_passband'][1] = emg_highpass
-            
+    
     def default_config(self):
         """ Initialize user-configurable values to default. """
         self.config = {}
-        self.config['emg_lowpass'] = 1
-        self.config['emg_highpass'] = 400
-        self.config['pig_normaldata_location'] = ''
-        self.config['emg_auto_off'] = True
+        self.config['emg_lowpass'] = '10'
+        self.config['emg_highpass'] = '400'
+        self.config['pig_normaldata_path'] = self.datadir + '/normal.gcd'
+        self.config['emg_auto_off'] = 'True'
+        
+    def process_config(self):
+        """ Set variables according to config. Do some sanity checks. """
+        self.emg_passband = [0,0]
+        self.emg_passband[0] = int(self.config['emg_lowpass'])
+        self.emg_passband[1] = int(self.config['emg_highpass'])
+        pig_normaldata_path = self.config['pig_normaldata_path']
+        if not os.path.isfile(pig_normaldata_path):
+            error_exit('PiG normal data not found at specified location')
+        if self.config['emg_auto_off'] == 'True':
+            self.emg_auto_off = True
+        else:
+            self.emg_auto_off = False
                        
     def read_config(self):
         """ Read configuration from disk file. """
+        self.config = {}
         parser = SafeConfigParser()
         parser.read(self.configfile)
         for key in self.config.keys():
-            parser.get('NexusPlotter', key)
+            try:
+                self.config[key] = parser.get('NexusPlotter', key)
+            except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+                error_exit('Invalid configuration file')
         
     def write_config(self):
         """ Save current configuration to a disk file. """
@@ -119,59 +123,31 @@ class nexus_plotter():
             error_exit('Cannot write config file: ', self.configfile)
         parser = SafeConfigParser()
         parser.add_section('NexusPlotter')
-        for key in config.keys():
-            parser.set('NexusPlotter', key, config[key])
+        for key in self.config.keys():
+            parser.set('NexusPlotter', key, self.config[key])
         parser.write(inifile)
         inifile.close()
 
     def __init__(self, layout):
-        """ Sets plot layout and other stuff. """
-        
-        # default parameters, if none specified on cmd line or config file
-        self.emg_passband = None   # none for no filtering, or [f1,f2] for bandpass
-        
-        # paths
+        # set paths
         pathprefix = 'c:/users/' + getpass.getuser()
-        desktop = pathprefix + '/Desktop'
-        configfile = desktop + '/nexusplotter_config.txt'
+        self.desktop = pathprefix + '/Desktop'
+        self.configdir = self.desktop + '/NexusPlotter/Config'
+        self.datadir = self.desktop + '/NexusPlotter/Data'
+        self.configfile = self.configdir + '/NexusPlotter.ini'
         
-        # parse args
-        arglist = []
-        if os.path.isfile(configfile):  # from config file
-            f = open(configfile, 'r')
-            arglist = f.read().splitlines()
-            f.close()
-        arglist += sys.argv[1:]  # add cmd line arguments    
-        arglist = [strip_ws(x) for x in arglist]  # rm whitespace
-        arglist = [x for x in arglist if x and x[0] != '#']  # rm comments
-        self.emg_mapping = {}
-        for arg in arglist:
-            eqpos = arg.find('=')
-            if eqpos < 2:
-                error_exit('Invalid argument!')
-            else:
-                key = arg[:eqpos]
-                val = arg[eqpos+1:]
-                # can add key/val pairs here (elif)
-                if key.lower() == 'emg_passband':
-                    try:
-                        self.emg_passband = [float(x) for x in val.split(',')]   
-                    except ValueError:
-                        error_exit('Invalid EMG passband. Specify as emg_passband=f1,f2')
-                else:
-                    # assume it's EMG channel remapping
-                    self.emg_mapping[key] = val
-        # locate PiG normal data
-        self.gcdpath = 'normal.gcd'
-        # check user's desktop also
-        if not os.path.isfile(self.gcdpath):
-            self.gcdpath = desktop + '/projects/llinna/nexus_py/normal.gcd'
-        if not os.path.isfile(self.gcdpath):
-            error_exit('Cannot find Plug-in Gait normal data (normal.gcd)')
-        # set default plotting parameters
+        # read ini file if available
+        if os.path.isfile(self.configfile):
+            self.read_config()
+        else:
+            self.default_config()
+            
+        # interpret options            
+        self.process_config()
+
+        # (currently) non-configurable stuff
         # figure size
-        # a4 size
-        #self.totalfigsize = (8.48*1.2,12*1.2)
+        #self.totalfigsize = (8.48*1.2,12*1.2) # a4
         self.totalfigsize = (14,12)
         # grid dimensions, vertical and horizontal
         self.gridv = layout[0]
@@ -349,7 +325,7 @@ class nexus_plotter():
             if read_emg:
                 self.emg.read(self.vicon)
             if read_pig:
-                self.pig.read(self.vicon, 'PiGLB', self.gcdpath)
+                self.pig.read(self.vicon, 'PiGLB', self.pig_normaldata_path)
 
 
     def set_fig_title(self, title):

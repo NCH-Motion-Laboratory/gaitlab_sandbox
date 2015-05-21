@@ -26,22 +26,37 @@ import glob
 from scipy import signal
 import psutil
 from ConfigParser import SafeConfigParser
+from nexus_plot import nexus_plotter
+
+nplotter = nexus_plotter([9,2])
+
+
+
+sys.exit()
 
 
 config = {}
 config['sfrate'] = '1000'
 config['name'] = "Jussi Nurminen"
 
-inifile = open('c:\\nexusplotter_test.ini','wt')
+inifile = open('nexusplotter_test.ini','wt')
 
 parser = SafeConfigParser()
 parser.add_section('NexusPlotter')
 for key in config.keys():
     parser.set('NexusPlotter', key, config[key])
-
 parser.write(inifile)
-
 inifile.close()
+
+inifile = open('nexusplotter_test.ini','rt')
+
+parser2 = SafeConfigParser()
+parser.read(inifile)
+for key in config.keys():
+    print(parser.get('NexusPlotter', key))
+
+parser.get('p','pop')
+
 
 sys.exit()
 
