@@ -28,6 +28,28 @@ import psutil
 from ConfigParser import SafeConfigParser
 
 
+config = {}
+config['sfrate'] = '1000'
+config['name'] = "Jussi Nurminen"
+
+inifile = open('c:\\nexusplotter_test.ini','wt')
+
+parser = SafeConfigParser()
+parser.add_section('NexusPlotter')
+for key in config.keys():
+    parser.set('NexusPlotter', key, config[key])
+
+parser.write(inifile)
+
+inifile.close()
+
+sys.exit()
+
+
+
+
+
+
 def nexus_pid():
     """ Tries to return the PID of the running Nexus process. """
     PROCNAME = "Nexus.exe"

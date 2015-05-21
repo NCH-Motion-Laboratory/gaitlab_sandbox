@@ -112,24 +112,17 @@ class nexus_plotter():
             parser.get('NexusPlotter', key)
         
     def write_config(self):
-        """ Save configuration to a disk file. """
-        pass
-    
-    def readkeys(lines):
-        """ Reads key/val pairs separated by '=' character. Returns None on
-        error. """
-        keylist = []
-        vallist = []
-        for line in lines:
-            eqpos = line.find('=')
-            if eqpos < 1:
-                return (None,None)
-            else:
-                key = line[:eqpos]
-                val = line[eqpos+1:]
-                keylist.append(key)
-                vallist.append(val)
-        return (keylist,vallist)
+        """ Save current configuration to a disk file. """
+        try:
+            inifile = open(self.configfile, 'wt')
+        except IOError:
+            error_exit('Cannot write config file: ', self.configfile)
+        parser = SafeConfigParser()
+        parser.add_section('NexusPlotter')
+        for key in config.keys():
+            parser.set('NexusPlotter', key, config[key])
+        parser.write(inifile)
+        inifile.close()
 
     def __init__(self, layout):
         """ Sets plot layout and other stuff. """
