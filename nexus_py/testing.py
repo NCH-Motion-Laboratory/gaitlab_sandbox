@@ -25,6 +25,7 @@ import getpass
 import glob
 from scipy import signal
 import psutil
+from ConfigParser import SafeConfigParser
 
 
 def nexus_pid():

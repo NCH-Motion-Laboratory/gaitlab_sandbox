@@ -20,7 +20,17 @@ Rules:
 
 TODO:
 
-finish config stuff
+finish config stuff:
+
+-use ConfigParser module
+-init() reads config file from disk (if file not found, use default values)
+-Tk config dialog reads and displays current values; saves to disk, if changed
+
+-config items:
+    -normal.gcd location
+    -emg low/highpass freq
+    -autodetect disconnected electrodes
+
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -44,6 +54,8 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 import glob
+from ConfigParser import SafeConfigParser
+
 
 
 def strip_ws(str):
@@ -59,6 +71,7 @@ class nexus_plotter():
         def saver_callback(window, list):
             list.append(1)
             window.destroy()
+
         self.config = {}
         emg_auto_off = 0
         master = Tk()
@@ -82,15 +95,41 @@ class nexus_plotter():
             #self.config['emg_auto_off'] = emg_auto_off
             #self.config['emg_passband'][0] = emg_lowpass
             #self.config['emg_passband'][1] = emg_highpass
+            
+    def default_config(self):
+        """ Initialize user-configurable values to default. """
+        self.config = {}
+        self.config['emg_lowpass'] = 1
+        self.config['emg_highpass'] = 400
+        self.config['pig_normaldata_location'] = ''
+        self.config['emg_auto_off'] = True
                        
     def read_config(self):
         """ Read configuration from disk file. """
-        pass
-    
+        parser = SafeConfigParser()
+        parser.read(self.configfile)
+        for key in self.config.keys():
+            parser.get('NexusPlotter', key)
+        
     def write_config(self):
         """ Save configuration to a disk file. """
         pass
-        
+    
+    def readkeys(lines):
+        """ Reads key/val pairs separated by '=' character. Returns None on
+        error. """
+        keylist = []
+        vallist = []
+        for line in lines:
+            eqpos = line.find('=')
+            if eqpos < 1:
+                return (None,None)
+            else:
+                key = line[:eqpos]
+                val = line[eqpos+1:]
+                keylist.append(key)
+                vallist.append(val)
+        return (keylist,vallist)
 
     def __init__(self, layout):
         """ Sets plot layout and other stuff. """
