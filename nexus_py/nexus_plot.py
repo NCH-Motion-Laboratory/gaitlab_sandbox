@@ -92,7 +92,8 @@ class nexus_plotter():
         self.config['emg_auto_off'] = 'True'
         
     def process_config(self):
-        """ Set variables according to config. Do some sanity checks. """
+        """ Set variables according to config. Do some sanity checks.
+        TODO: raise exception for invalid values, so caller can abort. """
         self.emg_passband = [0,0]
         self.emg_passband[0] = int(self.config['emg_lowpass'])
         self.emg_passband[1] = int(self.config['emg_highpass'])
@@ -136,12 +137,11 @@ class nexus_plotter():
         self.datadir = self.desktop + '/NexusPlotter/Data'
         self.configfile = self.configdir + '/NexusPlotter.ini'
         
-        # read ini file if available
+        # read .ini file if available
         if os.path.isfile(self.configfile):
             self.read_config()
         else:
             self.default_config()
-            
         # interpret options            
         self.process_config()
 
