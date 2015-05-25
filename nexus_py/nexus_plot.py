@@ -19,7 +19,7 @@ Rules:
 
 
 TODO:
-finish config stuff
+
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -47,7 +47,6 @@ import ConfigParser
 from ConfigParser import SafeConfigParser
 
 
-
 def strip_ws(str):
     """ Remove spaces from string """
     return str.replace(' ','')
@@ -56,32 +55,53 @@ class nexus_plotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
     def configwindow(self):
-        """ Opens a Tk window for configuring Nexusplotter. """
+        """ Opens a Tk window for configuring NexusPlotter. """
         
         def saver_callback(window, list):
+            """ Signaler callback for root window; modify list to indicate that 
+            user pressed save, and destroy the window. """
             list.append(1)
             window.destroy()
-
-        self.config = {}
-        emg_auto_off = 0
+        
         master = Tk()
+        emg_auto_off = IntVar()
         emg_lowpass = StringVar()
         emg_highpass = StringVar()
+        gcdpath = StringVar()
+        save = []   
         Label(master, text="Select options for Nexus plotter:").grid(row=0, columnspan=2, pady=4)
-        save = []
+        emg_auto_off.set(1)
         Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)
         Label(master, text='EMG lowpass (Hz):').grid(row=2, column=0)
-        Spinbox(master, from_=0, to=190, textvariable=emg_lowpass).grid(row=2, column=1, pady=4)
+        emg_lowpass.set(self.config['emg_lowpass'])
+        Spinbox(master, from_=self.EMG_LOWPASS_MIN, to=self.EMG_LOWPASS_MAX, textvariable=emg_lowpass).grid(row=2, column=1, pady=4)
         Label(master, text='EMG highpass (Hz):').grid(row=3, column=0)
-        sp2=Spinbox(master, from_=200, to=400, textvariable=emg_highpass).grid(row=3, column=1, pady=4)
-        Button(master, text='Cancel', command=master.destroy).grid(row=4, column=0, pady=4)
-        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=4, column=1, pady=4)
+        emg_highpass.set(self.config['emg_highpass'])
+        sp2=Spinbox(master, from_=self.EMG_HIGHPASS_MIN, to=self.EMG_HIGHPASS_MAX, textvariable=emg_highpass).grid(row=3, column=1, pady=4)
+        Label(master, text='Location of PiG normal data (.gcd)').grid(row=4, column=0)
+        gcdpath.set(self.config['pig_normaldata_path'])
+        e = Entry(master, textvariable=gcdpath).grid(row=4, column=1)
+        Button(master, text='Cancel', command=master.destroy).grid(row=5, column=0, pady=4)
+        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=5, column=1, pady=4)
         mainloop()  # Tk
         if not save:  # user hit Cancel
             return None
         else:
             # read vars, put into config dict and call write_config
-            print(emg_lowpass.get())
+            self.config['emg_lowpass'] = emg_lowpass.get()
+            self.config['emg_highpass'] = emg_highpass.get()
+            self.config['pig_normaldata_path'] = gcdpath.get()
+            if emg_auto_off.get():
+                self.config['emg_auto_off'] = 'True'
+            else:
+                self.config['emg_auto_off'] = 'False'
+            #if not self.check_config():
+            #    messagebox('Invalid configuration options specified!')
+            #    self.configwindow()
+            self.write_config()
+            # If the new config is to be used immediately (configwindow() call is
+            # followed by use of the class instance), we must call process_config().
+            self.process_config()
     
     def default_config(self):
         """ Initialize user-configurable values to default. """
@@ -91,15 +111,22 @@ class nexus_plotter():
         self.config['pig_normaldata_path'] = self.datadir + '/normal.gcd'
         self.config['emg_auto_off'] = 'True'
         
+    def check_config(self):
+        """ Validate config dict, useful before calling write_config() or process_config() """
+        if not self.EMG_LOWPASS_MIN < int(self.config['emg_lowpass']) < self.EMG_LOWPASS_MAX:
+            return False
+        if not self.EMG_HIGHPASS_MIN < int(self.config['emg_highpass']) < self.EMG_HIGHPASS_MAX:
+            return False
+        if not self.config['emg_auto_off'] in ['True', 'False']:
+            return False
+        return True
+        
     def process_config(self):
-        """ Set variables according to config. Do some sanity checks.
-        TODO: raise exception for invalid values, so caller can abort. """
+        """ Set class variables according to config. """
         self.emg_passband = [0,0]
         self.emg_passband[0] = int(self.config['emg_lowpass'])
         self.emg_passband[1] = int(self.config['emg_highpass'])
         pig_normaldata_path = self.config['pig_normaldata_path']
-        if not os.path.isfile(pig_normaldata_path):
-            error_exit('PiG normal data not found at specified location')
         if self.config['emg_auto_off'] == 'True':
             self.emg_auto_off = True
         else:
@@ -107,9 +134,9 @@ class nexus_plotter():
                        
     def read_config(self):
         """ Read configuration from disk file. """
-        self.config = {}
         parser = SafeConfigParser()
         parser.read(self.configfile)
+        # read keys that are defined by default_config()
         for key in self.config.keys():
             try:
                 self.config[key] = parser.get('NexusPlotter', key)
@@ -121,7 +148,7 @@ class nexus_plotter():
         try:
             inifile = open(self.configfile, 'wt')
         except IOError:
-            error_exit('Cannot write config file: ', self.configfile)
+            error_exit('Cannot open config file for writing: ', self.configfile)
         parser = SafeConfigParser()
         parser.add_section('NexusPlotter')
         for key in self.config.keys():
@@ -136,14 +163,21 @@ class nexus_plotter():
         self.configdir = self.desktop + '/NexusPlotter/Config'
         self.datadir = self.desktop + '/NexusPlotter/Data'
         self.configfile = self.configdir + '/NexusPlotter.ini'
+
+        # some defaults for config file validation      
+        self.EMG_LOWPASS_MIN = 0
+        self.EMG_LOWPASS_MAX = 190
+        self.EMG_HIGHPASS_MIN = 200
+        self.EMG_HIGHPASS_MAX = 490
         
         # read .ini file if available
+        self.default_config()
         if os.path.isfile(self.configfile):
             self.read_config()
+        if self.check_config():
+            self.process_config()
         else:
-            self.default_config()
-        # interpret options            
-        self.process_config()
+            error_exit('Invalid options specified in config file! Please fix or delete the file.')
 
         # (currently) non-configurable stuff
         # figure size

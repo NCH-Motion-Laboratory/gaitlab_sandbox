@@ -29,8 +29,7 @@ from ConfigParser import SafeConfigParser
 from nexus_plot import nexus_plotter
 
 nplotter = nexus_plotter([9,2])
-
-
+#nplotter.configwindow()
 
 sys.exit()
 

@@ -499,6 +499,8 @@ class pig_outputs:
 
         # read PiG normal data from given gcd file
         if gcdfile:
+            if not os.path.isfile(gcdfile):
+                error_exit('Cannot find specified PiG normal data file')
             f = open(gcdfile, 'r')
             lines = f.readlines()
             f.close()
