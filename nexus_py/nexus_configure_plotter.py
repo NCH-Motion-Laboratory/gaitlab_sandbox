@@ -2,15 +2,14 @@
 """
 Created on Tue Apr 28 11:25:38 2015
 
-EMG plot from Nexus.
+Configure NexusPlotter. Writes a config file to disk.
 
 @author: Jussi
 """
 
 from nexus_plot import nexus_plotter
 
-layout = [8,2]
-nplotter = nexus_plotter(layout)
+nplotter = nexus_plotter(None)
 nplotter.configwindow()
 
 

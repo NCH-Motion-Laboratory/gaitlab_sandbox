@@ -14,7 +14,7 @@ import ctypes
 from scipy import signal
 import sys
 import psutil
-
+import os
 
 
 
@@ -90,7 +90,7 @@ class nexus_emg:
         return self.ch_names
         
         
-        
+       
     def is_logical_channel(self, chname):
         return chname in self.ch_names
 

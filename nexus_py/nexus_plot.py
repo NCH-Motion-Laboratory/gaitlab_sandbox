@@ -20,6 +20,7 @@ Rules:
 
 TODO:
 
+apply pure highpass filter for highpass = 0 Hz
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -65,29 +66,40 @@ class nexus_plotter():
         
         master = Tk()
         emg_auto_off = IntVar()
+        emg_apply_filter = IntVar()
         emg_lowpass = StringVar()
         emg_highpass = StringVar()
         gcdpath = StringVar()
+        # read default values (config -> Tk variables)        
+        if self.config['emg_auto_off'] == 'True':
+            emg_auto_off.set(1)
+        else:
+            emg_auto_off.set(0)
+        if self.config['emg_apply_filter'] == 'True':
+            emg_apply_filter.set(1)
+        else:
+            emg_apply_filter.set(0)
+        emg_lowpass.set(self.config['emg_lowpass'])
+        emg_highpass.set(self.config['emg_highpass'])
+        gcdpath.set(self.config['pig_normaldata_path'])
+        # populate root window
         save = []   
         Label(master, text="Select options for Nexus plotter:").grid(row=0, columnspan=2, pady=4)
-        emg_auto_off.set(1)
-        Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)
-        Label(master, text='EMG lowpass (Hz):').grid(row=2, column=0)
-        emg_lowpass.set(self.config['emg_lowpass'])
-        Spinbox(master, from_=self.EMG_LOWPASS_MIN, to=self.EMG_LOWPASS_MAX, textvariable=emg_lowpass).grid(row=2, column=1, pady=4)
+        Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)              
+        Checkbutton(master, text="Apply EMG filter:", variable=emg_apply_filter).grid(row=2, columnspan=2, sticky=W)
         Label(master, text='EMG highpass (Hz):').grid(row=3, column=0)
-        emg_highpass.set(self.config['emg_highpass'])
         sp2=Spinbox(master, from_=self.EMG_HIGHPASS_MIN, to=self.EMG_HIGHPASS_MAX, textvariable=emg_highpass).grid(row=3, column=1, pady=4)
-        Label(master, text='Location of PiG normal data (.gcd)').grid(row=4, column=0)
-        gcdpath.set(self.config['pig_normaldata_path'])
-        e = Entry(master, textvariable=gcdpath).grid(row=4, column=1)
-        Button(master, text='Cancel', command=master.destroy).grid(row=5, column=0, pady=4)
-        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=5, column=1, pady=4)
+        Label(master, text='EMG lowpass (Hz):').grid(row=4, column=0)
+        Spinbox(master, from_=self.EMG_LOWPASS_MIN, to=self.EMG_LOWPASS_MAX, textvariable=emg_lowpass).grid(row=4, column=1, pady=4)
+        Label(master, text='Location of PiG normal data (.gcd):').grid(row=5, column=0)
+        e = Entry(master, textvariable=gcdpath).grid(row=5, column=1)
+        Button(master, text='Cancel', command=master.destroy).grid(row=6, column=0, pady=4)
+        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=6, column=1, pady=4)
         mainloop()  # Tk
         if not save:  # user hit Cancel
             return None
         else:
-            # read vars, put into config dict and call write_config
+            # Tk variables -> config
             self.config['emg_lowpass'] = emg_lowpass.get()
             self.config['emg_highpass'] = emg_highpass.get()
             self.config['pig_normaldata_path'] = gcdpath.get()
@@ -95,6 +107,11 @@ class nexus_plotter():
                 self.config['emg_auto_off'] = 'True'
             else:
                 self.config['emg_auto_off'] = 'False'
+            if emg_apply_filter.get():
+                self.config['emg_apply_filter'] = 'True'
+            else:
+                self.config['emg_apply_filter'] = 'False'
+            # TODO: error checking?
             #if not self.check_config():
             #    messagebox('Invalid configuration options specified!')
             #    self.configwindow()
@@ -106,31 +123,40 @@ class nexus_plotter():
     def default_config(self):
         """ Initialize user-configurable values to default. """
         self.config = {}
-        self.config['emg_lowpass'] = '10'
-        self.config['emg_highpass'] = '400'
+        self.config['emg_lowpass'] = '400'
+        self.config['emg_highpass'] = '10'
         self.config['pig_normaldata_path'] = self.datadir + '/normal.gcd'
         self.config['emg_auto_off'] = 'True'
+        self.config['emg_apply_filter'] = 'True'
         
     def check_config(self):
         """ Validate config dict, useful before calling write_config() or process_config() """
-        if not self.EMG_LOWPASS_MIN < int(self.config['emg_lowpass']) < self.EMG_LOWPASS_MAX:
+        # want to leave at least 5 Hz band, and lowpass > highpass
+        if not int(self.config['emg_highpass'])+5 <= int(self.config['emg_lowpass']) <= self.EMG_LOWPASS_MAX:
             return False
-        if not self.EMG_HIGHPASS_MIN < int(self.config['emg_highpass']) < self.EMG_HIGHPASS_MAX:
+        if not self.EMG_HIGHPASS_MIN <= int(self.config['emg_highpass']) <= int(self.config['emg_lowpass'])-5:
             return False
         if not self.config['emg_auto_off'] in ['True', 'False']:
+            return False
+        if not self.config['emg_apply_filter'] in ['True', 'False']:
             return False
         return True
         
     def process_config(self):
         """ Set class variables according to config. """
         self.emg_passband = [0,0]
-        self.emg_passband[0] = int(self.config['emg_lowpass'])
-        self.emg_passband[1] = int(self.config['emg_highpass'])
-        pig_normaldata_path = self.config['pig_normaldata_path']
+        self.emg_passband[1] = int(self.config['emg_lowpass'])
+        self.emg_passband[0] = int(self.config['emg_highpass'])
+        self.pig_normaldata_path = self.config['pig_normaldata_path']
         if self.config['emg_auto_off'] == 'True':
             self.emg_auto_off = True
         else:
             self.emg_auto_off = False
+        if self.config['emg_apply_filter'] == 'True':
+            self.emg_apply_filter = True
+        else:
+            self.emg_apply_filter = False
+            
                        
     def read_config(self):
         """ Read configuration from disk file. """
@@ -141,7 +167,7 @@ class nexus_plotter():
             try:
                 self.config[key] = parser.get('NexusPlotter', key)
             except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
-                error_exit('Invalid configuration file')
+                error_exit('Invalid configuration file, please fix or delete: ' + self.configfile)
         
     def write_config(self):
         """ Save current configuration to a disk file. """
@@ -164,11 +190,12 @@ class nexus_plotter():
         self.datadir = self.desktop + '/NexusPlotter/Data'
         self.configfile = self.configdir + '/NexusPlotter.ini'
 
-        # some defaults for config file validation      
-        self.EMG_LOWPASS_MIN = 0
-        self.EMG_LOWPASS_MAX = 190
-        self.EMG_HIGHPASS_MIN = 200
-        self.EMG_HIGHPASS_MAX = 490
+        # some defaults for config file validation (and Tk widgets)      
+        self.EMG_HIGHPASS_MIN = 0
+        self.EMG_LOWPASS_MAX = 500
+        self.EMG_HIGHPASS_MAX = 400
+        self.EMG_LOWPASS_MIN = 10
+
         
         # read .ini file if available
         self.default_config()
@@ -177,7 +204,11 @@ class nexus_plotter():
         if self.check_config():
             self.process_config()
         else:
-            error_exit('Invalid options specified in config file! Please fix or delete the file.')
+            error_exit('Invalid configuration file, please fix or delete: ' + self.configfile)
+
+        # can set layout=None, if no plots are intended
+        if not layout:
+            return
 
         # (currently) non-configurable stuff
         # figure size
@@ -217,10 +248,12 @@ class nexus_plotter():
         self.trialname = None
         self.vgc = None
         self.vicon = None
+        # TODO: put in config?
+        self.emg_mapping = {}
         
     def get_emg_filter_description(self):
         """ Returns a string describing the filter applied to the EMG data """
-        if not self.emg_passband:
+        if not self.emg_apply_filter:
             return "No EMG filtering"
         else:
             return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
@@ -331,7 +364,7 @@ class nexus_plotter():
         if nexusvars:
             # will read EMG/PiG data only if necessary
             self.pig = nexus_getdata.pig_outputs()
-            self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping)
+            self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
             self.emg_plot_chs = []
@@ -475,8 +508,11 @@ class nexus_plotter():
                         ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
-                else:
-                    plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
+                else:  # data OK
+                    if self.emg_apply_filter:
+                        plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
+                    else:
+                        plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
                 chlabel = self.emg.ch_labels[thisch]
                 # plot EMG normal bars
                 emgbar_ind = self.emg.ch_normals[thisch]
