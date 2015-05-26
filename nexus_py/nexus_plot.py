@@ -5,12 +5,11 @@ Generic Nexus plotter. Plots Plug-in Gait variables and EMG from a running
 Vicon Nexus application, using matplotlib.
 
 
-
 Rules:
-
 -channel type is autodetected by looking into the known names
--can specify 'None' to leave corresponding subplot empty
--can specify 'piglegend' or 'emglegend' to get a legend on a particular subplot
+-can specify channel as 'None' to leave corresponding subplot empty
+-can specify channel as 'piglegend' or 'emglegend' to get a legend on a particular subplot
+(useful for overlay plots)
 -variables always normalized to gait cycle
 -always plot PiG normal data if available
 -kinetics always plotted for one side only
