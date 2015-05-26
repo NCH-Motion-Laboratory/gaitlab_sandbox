@@ -20,7 +20,7 @@ Rules:
 
 TODO:
 
-apply pure highpass filter for highpass = 0 Hz
+check filter performance
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -100,25 +100,28 @@ class nexus_plotter():
             return None
         else:
             # Tk variables -> config
-            self.config['emg_lowpass'] = emg_lowpass.get()
-            self.config['emg_highpass'] = emg_highpass.get()
-            self.config['pig_normaldata_path'] = gcdpath.get()
+            config_ = {}  # tentative configuration to be tested
+            config_['emg_lowpass'] = emg_lowpass.get()
+            config_['emg_highpass'] = emg_highpass.get()
+            config_['pig_normaldata_path'] = gcdpath.get()
             if emg_auto_off.get():
-                self.config['emg_auto_off'] = 'True'
+                config_['emg_auto_off'] = 'True'
             else:
-                self.config['emg_auto_off'] = 'False'
+                config_['emg_auto_off'] = 'False'
             if emg_apply_filter.get():
-                self.config['emg_apply_filter'] = 'True'
+                config_['emg_apply_filter'] = 'True'
             else:
-                self.config['emg_apply_filter'] = 'False'
-            # TODO: error checking?
-            #if not self.check_config():
-            #    messagebox('Invalid configuration options specified!')
-            #    self.configwindow()
-            self.write_config()
-            # If the new config is to be used immediately (configwindow() call is
-            # followed by use of the class instance), we must call process_config().
-            self.process_config()
+                config_['emg_apply_filter'] = 'False'
+            config_ok, msg = self.check_config(config_)
+            if not config_ok:
+                messagebox('Invalid configuration: ' + msg)
+                self.configwindow()
+            else:
+                self.config = config_
+                self.write_config()
+                # If the new config is to be used immediately (configwindow() call is
+                # followed by use of the class instance), we must call process_config().
+                self.process_config()
     
     def default_config(self):
         """ Initialize user-configurable values to default. """
@@ -129,18 +132,18 @@ class nexus_plotter():
         self.config['emg_auto_off'] = 'True'
         self.config['emg_apply_filter'] = 'True'
         
-    def check_config(self):
+    def check_config(self, config):
         """ Validate config dict, useful before calling write_config() or process_config() """
         # want to leave at least 5 Hz band, and lowpass > highpass
-        if not int(self.config['emg_highpass'])+5 <= int(self.config['emg_lowpass']) <= self.EMG_LOWPASS_MAX:
-            return False
-        if not self.EMG_HIGHPASS_MIN <= int(self.config['emg_highpass']) <= int(self.config['emg_lowpass'])-5:
-            return False
-        if not self.config['emg_auto_off'] in ['True', 'False']:
-            return False
-        if not self.config['emg_apply_filter'] in ['True', 'False']:
-            return False
-        return True
+        if not int(config['emg_highpass'])+5 <= int(config['emg_lowpass']) <= self.EMG_LOWPASS_MAX:
+            return (False, 'Invalid lowpass frequency')
+        if not self.EMG_HIGHPASS_MIN <= int(config['emg_highpass']) <= int(config['emg_lowpass'])-5:
+            return (False, 'Invalid highpass frequency')
+        if not config['emg_auto_off'] in ['True', 'False']:
+            return (False, '')
+        if not config['emg_apply_filter'] in ['True', 'False']:
+            return (False, '')
+        return (True, '')
         
     def process_config(self):
         """ Set class variables according to config. """
@@ -196,15 +199,14 @@ class nexus_plotter():
         self.EMG_HIGHPASS_MAX = 400
         self.EMG_LOWPASS_MIN = 10
 
-        
         # read .ini file if available
         self.default_config()
         if os.path.isfile(self.configfile):
             self.read_config()
-        if self.check_config():
+        if self.check_config(self.config):
             self.process_config()
         else:
-            error_exit('Invalid configuration file, please fix or delete: ' + self.configfile)
+            error_exit('Invalid configuration file: ' + self.configfile)
 
         # can set layout=None, if no plots are intended
         if not layout:
@@ -510,7 +512,7 @@ class nexus_plotter():
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK
                     if self.emg_apply_filter:
-                        plt.plot(tn_emg, 1e3*self.emg.filter(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
+                        plt.plot(tn_emg, 1e3*self.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
                     else:
                         plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
                 chlabel = self.emg.ch_labels[thisch]

@@ -88,8 +88,6 @@ class nexus_emg:
     def emg_channelnames(self):
         """ Return names of known (logical) EMG channels. """
         return self.ch_names
-        
-        
        
     def is_logical_channel(self, chname):
         return chname in self.ch_names
@@ -227,26 +225,28 @@ class nexus_emg:
         # max. relative interference at 50 Hz harmonics
         emg_max_interference = 50
         # detect 50 Hz harmonics
-        int200 = self.filter(y, [195,205])
-        int50 = self.filter(y, [45,55])
-        int100 = self.filter(y, [95,105])
-        # baseline of emg signal
-        emglevel = self.filter(y, [60,90])
+        int200 = self.filt(y, [195,205])
+        int50 = self.filt(y, [45,55])
+        int100 = self.filt(y, [95,105])
+        # baseline emg signal
+        emglevel = self.filt(y, [60,90])
         intrel = np.var(int50+int100+int200)/np.var(emglevel)
         # DEBUG
-        print('rel. interference: ', intrel)
+        #print('rel. interference: ', intrel)
         return intrel < emg_max_interference
 
-    def filter(self, y, passband):
-        """ Bandpass filter given data y to passband, e.g. [1, 40].
+    def filt(self, y, passband):
+        """ Filter given data y to passband, e.g. [1, 40].
         Passband is given in Hz. None for no filtering. """
         if passband == None:
             return y
-        else:
-            passbandn = 2 * np.array(passband) / self.sfrate
+        passbandn = 2 * np.array(passband) / self.sfrate
+        if passbandn[0] > 0:  # bandpass
             b, a = signal.butter(4, passbandn, 'bandpass')
-            yfilt = signal.filtfilt(b, a, y)        
-            return yfilt
+        else:  # lowpass
+            b, a = signal.butter(4, passbandn[1])
+        yfilt = signal.filtfilt(b, a, y)        
+        return yfilt
 
     def findchs(self, str):
         """ Return list of channels whose name contains the given 
