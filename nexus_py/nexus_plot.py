@@ -74,7 +74,6 @@ class PlotterConfig():
         self.EMG_LOWPASS_MIN = 10
         if os.path.isfile(self.configfile):
             self.read()
-        print(self.config)
         
     def isnum(self, str):
         """ Check if str is numeric. """
@@ -90,6 +89,11 @@ class PlotterConfig():
 
     def check(self):
         """ Validate config. """
+        try:
+            float(self.getval('emg_highpass'))
+            float(self.getval('emg_lowpass'))
+        except ValueError:
+            return (False, 'Frequencies must be numeric')
         # want to leave at least 5 Hz band, and lowpass > highpass
         if not self.getval('emg_highpass')+5 <= self.getval('emg_lowpass') <= self.EMG_LOWPASS_MAX:
             return (False, 'Invalid lowpass frequency')
@@ -195,7 +199,7 @@ class PlotterConfig():
             config_ok, msg = newconfig.check()
             if not config_ok:
                 messagebox('Invalid configuration: ' + msg)
-                self.configwindow()
+                self.window()
             else:  # config ok
                 self.config = newconfig.config
                 self.write()
