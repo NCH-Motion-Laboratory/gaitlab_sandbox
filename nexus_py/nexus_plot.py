@@ -220,6 +220,7 @@ class nexus_plotter():
         self.emg_passband[1] = self.cfg.getval('emg_lowpass')
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
+        self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
 
         # can set layout=None, if no plots are intended
         if not layout:
