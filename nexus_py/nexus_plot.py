@@ -101,18 +101,18 @@ class PlotterConfig():
         """ Return value as float or boolean if possible, otherwise as string """
         val = self.config[key]
         if self.isboolean(val):
-            return val == True
+            return val == 'True'
         elif self.isnum(val):
             return float(val)
         else:
             return val
             
     def setval(self, key, val):
-        """ Stores val as string. """
+        """ Stores val into config dict as string. """
         self.config[key] = str(val)
                       
     def read(self):
-        """ Read configuration from disk file. """
+        """ Read config dict from disk file. """
         parser = SafeConfigParser()
         parser.read(self.configfile)
         for key in self.config.keys():
@@ -122,7 +122,7 @@ class PlotterConfig():
                 error_exit('Invalid configuration file, please fix or delete: ' + self.configfile)
         
     def write(self):
-        """ Save current configuration to a disk file. """
+        """ Save current config dict to a disk file. """
         try:
             inifile = open(self.configfile, 'wt')
         except IOError:
