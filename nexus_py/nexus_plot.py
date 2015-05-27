@@ -279,6 +279,8 @@ class nexus_plotter():
         """ Returns a string describing the filter applied to the EMG data """
         if not self.emg_apply_filter:
             return "No EMG filtering"
+        elif self.emg_passband[0] == 0:
+            return "EMG lowpass " + str(self.emg_passband[1]) + ' Hz'
         else:
             return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
