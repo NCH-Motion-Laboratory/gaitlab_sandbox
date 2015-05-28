@@ -98,6 +98,8 @@ class nexus_emg:
         read from the LSol electrode."""
         # default plotting scale in medians (channel-specific)
         self.yscale_medians = 1
+        # order of Butterworth filter
+        self.buttord = 5
         # whether to auto-find disconnected EMG channels
         self.emg_auto_off = emg_auto_off
         # normal data and logical chs
@@ -242,9 +244,9 @@ class nexus_emg:
             return y
         passbandn = 2 * np.array(passband) / self.sfrate
         if passbandn[0] > 0:  # bandpass
-            b, a = signal.butter(4, passbandn, 'bandpass')
+            b, a = signal.butter(self.buttord, passbandn, 'bandpass')
         else:  # lowpass
-            b, a = signal.butter(4, passbandn[1])
+            b, a = signal.butter(self.buttord, passbandn[1])
         yfilt = signal.filtfilt(b, a, y)        
         return yfilt
 

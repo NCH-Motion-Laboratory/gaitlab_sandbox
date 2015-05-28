@@ -28,17 +28,20 @@ import psutil
 from ConfigParser import SafeConfigParser
 from nexus_plot import nexus_plotter
 
-
-b, a = signal.butter(4, 100)
-w, h = signal.freqz(b, a)
-plt.plot(w, 20 * np.log10(abs(h)))
-plt.xscale('log')
-plt.title('Butterworth filter frequency response')
-plt.xlabel('Frequency [radians / second]')
+fs = 1000
+ord = 4
+lowp = 400
+hip = 1
+b, a = signal.butter(ord, 2./fs*np.array([hip, lowp]), 'bandpass')
+w, h = signal.freqz(b, a, worN=8192)
+f = w / np.pi * (fs / 2.)
+plt.plot(f, 20 * np.log10(abs(h)))
+#plt.xscale('log')
+plt.title('Freq response at order ' + str(ord))
+plt.xlabel('Frequency [Hz]')
 plt.ylabel('Amplitude [dB]')
 plt.margins(0, 0.1)
 plt.grid(which='both', axis='both')
-plt.axvline(100, color='green') # cutoff frequency
 plt.show()
 
 sys.exit()
