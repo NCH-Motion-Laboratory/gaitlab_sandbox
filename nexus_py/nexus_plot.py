@@ -62,21 +62,28 @@ class PlotterConfig():
         self.config = {}
         self.config['emg_lowpass'] = '400'
         self.config['emg_highpass'] = '10'
+        self.config['emg_yscale'] = '0.5'
         self.config['pig_normaldata_path'] = appdir + '/Data/normal.gcd'
         self.config['emg_auto_off'] = 'True'
         self.config['emg_apply_filter'] = 'True'
         self.configfile = appdir + '/Config/NexusPlotter.ini'
         self.appdir = appdir        
+
         # some limits for config file validation (and Tk widgets)      
-        self.EMG_HIGHPASS_MIN = 0
-        self.EMG_LOWPASS_MAX = 500
-        self.EMG_HIGHPASS_MAX = 490
-        self.EMG_LOWPASS_MIN = 10
+        self.min = {}
+        self.max = {}
+        self.min['emg_lowpass'] = 10
+        self.min['emg_highpass'] = 0
+        self.min['emg_yscale'] = 1e-2
+        self.max['emg_yscale'] = 100
+        self.max['emg_lowpass'] = 500
+        self.max['emg_highpass'] = 490
+        
         if os.path.isfile(self.configfile):
             self.read()
         
-    def isnum(self, str):
-        """ Check if str is numeric. """
+    def isfloat(self, str):
+        """ Check if str can be interpreted as floating point number. """
         try:
             float(str)
             return True
@@ -84,20 +91,19 @@ class PlotterConfig():
             return False
             
     def isboolean(self, str):
-        """ Check if str is boolean. """
+        """ Check if str is "boolean". """
         return str in ['True', 'False']
 
     def check(self):
         """ Validate config. """
-        try:
-            float(self.getval('emg_highpass'))
-            float(self.getval('emg_lowpass'))
-        except ValueError:
-            return (False, 'Frequencies must be numeric')
+        hp = self.getval('emg_highpass')
+        lp = self.getval('emg_lowpass')
+        if not self.isfloat(hp) and self.isfloat(lp):
+            return (False, 'Frequencies must be numeric')            
         # want to leave at least 5 Hz band, and lowpass > highpass
-        if not self.getval('emg_highpass')+5 <= self.getval('emg_lowpass') <= self.EMG_LOWPASS_MAX:
+        if not hp+5 <= lp <= self.max['emg_lowpass']:
             return (False, 'Invalid lowpass frequency')
-        if not self.EMG_HIGHPASS_MIN <= self.getval('emg_highpass') <= self.getval('emg_lowpass')-5:
+        if not self.min['emg_highpass'] <= hp <= lp-5:
             return (False, 'Invalid highpass frequency')
         return (True, '')
         
@@ -106,7 +112,7 @@ class PlotterConfig():
         val = self.config[key]
         if self.isboolean(val):
             return val == 'True'
-        elif self.isnum(val):
+        elif self.isfloat(val):
             return float(val)
         else:
             return val
@@ -146,12 +152,13 @@ class PlotterConfig():
             user pressed save, and destroy the window. """
             list.append(1)
             window.destroy()
-        
+        # Tk variables
         master = Tk()
         emg_auto_off = IntVar()
         emg_apply_filter = IntVar()
         emg_lowpass = StringVar()
         emg_highpass = StringVar()
+        emg_yscale = DoubleVar()
         gcdpath = StringVar()
         # read default values (config -> Tk variables)        
         if self.getval('emg_auto_off'):
@@ -164,20 +171,24 @@ class PlotterConfig():
             emg_apply_filter.set(0)
         emg_lowpass.set(self.getval('emg_lowpass'))
         emg_highpass.set(self.getval('emg_highpass'))
+        emg_yscale.set(self.getval('emg_yscale'))
         gcdpath.set(self.getval('pig_normaldata_path'))
         # populate root window
         save = []   
         Label(master, text="Select options for Nexus plotter:").grid(row=0, columnspan=2, pady=4)
         Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)              
-        Checkbutton(master, text="Apply EMG filter:", variable=emg_apply_filter).grid(row=2, columnspan=2, sticky=W)
-        Label(master, text='EMG highpass (Hz):').grid(row=3, column=0)
-        sp2=Spinbox(master, from_=self.EMG_HIGHPASS_MIN, to=self.EMG_HIGHPASS_MAX, textvariable=emg_highpass).grid(row=3, column=1, pady=4)
-        Label(master, text='EMG lowpass (Hz):').grid(row=4, column=0)
-        Spinbox(master, from_=self.EMG_LOWPASS_MIN, to=self.EMG_LOWPASS_MAX, textvariable=emg_lowpass).grid(row=4, column=1, pady=4)
-        Label(master, text='Location of PiG normal data (.gcd):').grid(row=5, column=0)
-        e = Entry(master, textvariable=gcdpath).grid(row=5, column=1)
-        Button(master, text='Cancel', command=master.destroy).grid(row=6, column=0, pady=4)
-        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=6, column=1, pady=4)
+        Checkbutton(master, text="Apply EMG filter", variable=emg_apply_filter).grid(row=2, columnspan=2, sticky=W)
+        Label(master, text='EMG highpass (Hz):').grid(row=3, column=0, sticky=W)
+        sp2=Spinbox(master, from_=self.min['emg_highpass'], to=self.max['emg_highpass'], textvariable=emg_highpass).grid(row=3, column=1, pady=4, sticky=W)
+        Label(master, text='EMG lowpass (Hz):').grid(row=4, column=0, sticky=W)
+        Spinbox(master, from_=self.min['emg_lowpass'], to=self.max['emg_lowpass'], textvariable=emg_lowpass).grid(row=4, column=1, pady=4, sticky=W)
+        Label(master, text='EMG y scale (mV):').grid(row=5, column=0, sticky=W)
+        e = Spinbox(master, from_=.05, to=5, format="%.2f", increment=.05, textvariable=emg_yscale).grid(row=5, column=1, sticky=W)
+        
+        Label(master, text='Location of PiG normal data (.gcd):   ').grid(row=6, column=0, sticky=W)
+        e = Entry(master, textvariable=gcdpath).grid(row=6, column=1, sticky=W)
+        Button(master, text='Cancel', command=master.destroy).grid(row=7, column=0, pady=4)
+        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=7, column=1, pady=4)
         mainloop()  # Tk
         if not save:  # user hit Cancel
             return None
@@ -187,6 +198,7 @@ class PlotterConfig():
             # from Tk variables to config
             newconfig.setval('emg_lowpass', emg_lowpass.get())
             newconfig.setval('emg_highpass', emg_highpass.get())
+            newconfig.setval('emg_yscale', emg_yscale.get())
             newconfig.setval('pig_normaldata_path', gcdpath.get())
             if emg_auto_off.get():
                 newconfig.setval('emg_auto_off', 'True')
@@ -521,13 +533,15 @@ class nexus_plotter():
                 if side_this == 'L':
                     tn_emg = self.emg.tn_emg_l
                     emgdata = self.emg.logical_data_gc1l
-                    emg_yscale = self.emg.yscale_gc1l
+                    #emg_yscale = self.emg.yscale_gc1l
                 elif side_this == 'R':
                     tn_emg = self.emg.tn_emg_r
                     emgdata = self.emg.logical_data_gc1r
-                    emg_yscale = self.emg.yscale_gc1r
+                    #emg_yscale = self.emg.yscale_gc1r
                 else:
                     error_exit('Unexpected EMG channel name: ', thisch)
+                # at least for now, use fixed scale defined in config
+                emg_yscale = self.cfg.getval('emg_yscale')
                 ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if emgdata[thisch] == 'EMG_DISCONNECTED':
                     if self.annotate_disconnected:
@@ -536,6 +550,7 @@ class nexus_plotter():
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK
                     if self.emg_apply_filter:
+                        # convert emg to millivolts
                         plt.plot(tn_emg, 1e3*self.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
                     else:
                         plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
@@ -545,7 +560,7 @@ class nexus_plotter():
                 for k in range(len(emgbar_ind)):
                     inds = emgbar_ind[k]
                     plt.axvspan(inds[0], inds[1], alpha=self.emg_normals_alpha, color=self.emg_normals_color)    
-                plt.ylim(-1e3*emg_yscale[thisch], 1e3*emg_yscale[thisch])  # scale from logical channel
+                plt.ylim(-emg_yscale, emg_yscale)  # scale is in mV
                 plt.xlim(0,100)
                 plt.title(chlabel, fontsize=10)
                 plt.xlabel(self.xlabel, fontsize=self.fsize_labels)
