@@ -12,8 +12,8 @@ from nexus_plot import nexus_plotter
 
 layout = [6,3]
 plotheightratios = [3,2,2,2,2,2]
-pdf_prefix = 'Kinetics_EMG_'
-maintitleprefix='Kinetics-EMG plot for '
+pdf_prefix = 'Kinematics_EMG_'
+maintitleprefix='Kinematics-EMG plot for '
 
 nplotter = nexus_plotter(layout)
 
