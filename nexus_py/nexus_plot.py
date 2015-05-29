@@ -389,7 +389,7 @@ class nexus_plotter():
         
         if nexusvars:
             # will read EMG/PiG data only if necessary
-            self.pig = nexus_getdata.pig_outputs()
+            self.pig = nexus_getdata.model_outputs()
             self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False

@@ -362,14 +362,12 @@ class gaitcycle:
         else:
             return 'R'
 
-class pig_outputs:
-    """ Reads given plug-in gait output variables (in varlist). Variable 
-    names starting with 'R' and'L' are normalized into left and right 
-    gait cycles, respectively. Can also use special keyword 'PiGLB'
-    to get the usual set of Plug-in Gait lower body variables."""
+class model_outputs:
+    """ Handles model output variables. """
         
     def __init__(self):
         """ Sets up some relevant variables, but does not read data """
+
         # descriptions of known PiG variables (without side info)
         self.pigdict = {'AnkleAnglesX': 'Ankle dorsi/plant',
                          'AnkleAnglesZ': 'Ankle rotation',
@@ -443,7 +441,11 @@ class pig_outputs:
                              'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
 
     def read(self, vicon, varlist, gcdfile):
-        """ Read the PiG output from Nexus. """
+        """ Read the model outputs from Nexus.
+        Variable names starting with 'R' and'L' are normalized into left and right 
+        gait cycles, respectively. Can also use special keyword 'PiGLB'
+        to get the usual set of Plug-in Gait lower body variables. """
+        
         # the vars to be read contain X,Y,Z components per each variable,
         # these will be separated into different variables
         if varlist == 'PiGLB':
@@ -476,15 +478,15 @@ class pig_outputs:
         # get gait cycle info 
         vgc1 = gaitcycle(vicon)
         # read all kinematics vars into dict. Also normalized variables will
-        # be created. Variables are named like 'NormLKneeAnglesX' (normalized)
+        # be created. Variables will be named like 'NormLKneeAnglesX' (normalized)
         # or 'RHipAnglesX' (non-normalized)
         self.Vars = {}
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
             NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
             if not NumVals:
-                error_exit('Unable to get Plug-in Gait output variable. '+
-                            'Check that the trial has been processed.')
+                error_exit('Unable to get model output variable. '+
+                            'Make sure that the appropriate model has been executed.')
             self.Vars[Var] = np.array(NumVals)
             # moment variables have to be divided by 1000 - not sure why    
             if Var.find('Moment') > 0:
