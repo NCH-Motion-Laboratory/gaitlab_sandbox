@@ -19,7 +19,7 @@ Rules:
 
 TODO:
 
-check filter performance
+get any kind of model output (not just PiG), for muscle lengths etc.
 tests
 documentation
 add default y ranges for kine(ma)tics variables?

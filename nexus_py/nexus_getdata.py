@@ -7,6 +7,7 @@ Utility classes for reading data from Vicon Nexus.
 @author: Jussi
 """
 
+
 from __future__ import division, print_function
 
 import numpy as np
@@ -15,7 +16,6 @@ from scipy import signal
 import sys
 import psutil
 import os
-
 
 
 def nexus_pid():
@@ -393,7 +393,8 @@ class model_outputs:
                          'PelvisAnglesZ': 'Pelvic rotation'}
 
         # default mapping from PiG variable names to normal data variables (in normal.gcd)
-        self.normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
+        # this applies to Vicon supplied normal.gcd
+        self.pig_normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
                     'AnkleAnglesZ': 'FootRotation',
                      'AnkleMomentX': 'DorsiPlanFlexMoment',
                      'AnklePowerZ': 'AnklePower',
@@ -416,7 +417,7 @@ class model_outputs:
                      'PelvisAnglesY': 'PelvicObliquity',
                      'PelvisAnglesZ': 'PelvicRotation'}
 
-         # y labels for plotting
+         # y labels for plotting PiG vars
         self.ylabeldict = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
                              'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
                              'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
@@ -571,7 +572,7 @@ class model_outputs:
         PiG variable var. """
         # strip leading 'Norm' and L/R from variable name
         vars = self.strip_varname(var)
-        if not vars in self.normdict:
+        if not vars in self.pig_normdict:
             error_exit('No normal data for variable ',+vars)
         else:
             return self.pig_normaldata[self.normdict[vars]]
