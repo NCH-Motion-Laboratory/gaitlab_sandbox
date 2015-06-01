@@ -401,7 +401,7 @@ class nexus_plotter():
         
         if nexusvars:
             # will read EMG/PiG data only if necessary
-            self.pig = nexus_getdata.model_outputs()
+            self.pig = nexus_getdata.model_outputs(gcdfile=self.pig_normaldata_path)
             self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
@@ -430,7 +430,7 @@ class nexus_plotter():
             if read_emg:
                 self.emg.read(self.vicon)
             if read_pig:
-                self.pig.read(self.vicon, 'PiGLB', self.pig_normaldata_path)
+                self.pig.read(self.vicon, 'PiGLB')
 
 
     def set_fig_title(self, title):

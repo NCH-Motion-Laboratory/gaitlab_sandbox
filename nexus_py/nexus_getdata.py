@@ -363,9 +363,10 @@ class gaitcycle:
             return 'R'
 
 class model_outputs:
-    """ Handles model output variables. """
+    """ Handles model output variables. Supports Plug-in Gait (PiG)
+        and "other" variables. """
         
-    def __init__(self):
+    def __init__(self, gcdfile=None):
         """ Sets up some relevant variables, but does not read data """
 
         # descriptions of known PiG variables (without side info)
@@ -418,7 +419,7 @@ class model_outputs:
                      'PelvisAnglesZ': 'PelvicRotation'}
 
          # y labels for plotting PiG vars
-        self.ylabeldict = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
+        self.pig_ylabeldict = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
                              'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
                              'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
                              'AnklePowerZ': 'Abs    W/kg    Gen',
@@ -441,9 +442,25 @@ class model_outputs:
                              'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
                              'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
 
-    def read(self, vicon, varlist, gcdfile):
-        """ Read the model outputs from Nexus.
-        Variable names starting with 'R' and'L' are normalized into left and right 
+        # read PiG normal data from given gcd file
+        if gcdfile:
+            if not os.path.isfile(gcdfile):
+                error_exit('Cannot find specified PiG normal data file')
+            f = open(gcdfile, 'r')
+            lines = f.readlines()
+            f.close()
+            pig_normaldata = {}
+            for li in lines:
+                if li[0] == '!':  # it's a variable name
+                    thisvar = li[1:li.find(' ')]  # set dict key
+                    pig_normaldata[thisvar] = list()
+                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
+                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
+            self.pig_normaldata = pig_normaldata
+
+    def read_pig(self, vicon, varlist):
+        """ Read the PiG model outputs from Nexus. Create corresponding gait-cycle normalized
+        variables. Variable names starting with 'R' and'L' are normalized into left and right 
         gait cycles, respectively. Can also use special keyword 'PiGLB'
         to get the usual set of Plug-in Gait lower body variables. """
         
@@ -502,21 +519,10 @@ class model_outputs:
             self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
             self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
 
-        # read PiG normal data from given gcd file
-        if gcdfile:
-            if not os.path.isfile(gcdfile):
-                error_exit('Cannot find specified PiG normal data file')
-            f = open(gcdfile, 'r')
-            lines = f.readlines()
-            f.close()
-            pig_normaldata = {}
-            for li in lines:
-                if li[0] == '!':  # it's a variable name
-                    thisvar = li[1:li.find(' ')]  # set dict key
-                    pig_normaldata[thisvar] = list()
-                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
-                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
-            self.pig_normaldata = pig_normaldata
+    def read_any(self, varlist):
+        """ Reads model variables other than PiG. """
+        
+
 
     def pig_varnames(self):
         """ Return list of known PiG variables. """
@@ -575,7 +581,7 @@ class model_outputs:
         if not vars in self.pig_normdict:
             error_exit('No normal data for variable ',+vars)
         else:
-            return self.pig_normaldata[self.normdict[vars]]
+            return self.pig_normaldata[self.pig_normdict[vars]]
 
 
 
