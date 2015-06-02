@@ -174,21 +174,28 @@ class PlotterConfig():
         emg_yscale.set(self.getval('emg_yscale'))
         gcdpath.set(self.getval('pig_normaldata_path'))
         # populate root window
-        save = []   
-        Label(master, text="Select options for Nexus plotter:").grid(row=0, columnspan=2, pady=4)
-        Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=1, columnspan=2, sticky=W)              
-        Checkbutton(master, text="Apply EMG filter", variable=emg_apply_filter).grid(row=2, columnspan=2, sticky=W)
-        Label(master, text='EMG highpass (Hz):').grid(row=3, column=0, sticky=W)
-        sp2=Spinbox(master, from_=self.min['emg_highpass'], to=self.max['emg_highpass'], textvariable=emg_highpass).grid(row=3, column=1, pady=4, sticky=W)
-        Label(master, text='EMG lowpass (Hz):').grid(row=4, column=0, sticky=W)
-        Spinbox(master, from_=self.min['emg_lowpass'], to=self.max['emg_lowpass'], textvariable=emg_lowpass).grid(row=4, column=1, pady=4, sticky=W)
-        Label(master, text='EMG y scale (mV):').grid(row=5, column=0, sticky=W)
-        e = Spinbox(master, from_=.05, to=5, format="%.2f", increment=.05, textvariable=emg_yscale).grid(row=5, column=1, sticky=W)
-        
-        Label(master, text='Location of PiG normal data (.gcd):   ').grid(row=6, column=0, sticky=W)
-        e = Entry(master, textvariable=gcdpath).grid(row=6, column=1, sticky=W)
-        Button(master, text='Cancel', command=master.destroy).grid(row=7, column=0, pady=4)
-        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=7, column=1, pady=4)
+        save = []
+        thisrow = 1
+        Label(master, text="Select options for Nexus plotter:").grid(row=thisrow, columnspan=2, pady=4)
+        thisrow += 1
+        Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=thisrow, pady=4, columnspan=2, sticky=W)              
+        thisrow += 1
+        Checkbutton(master, text="Apply EMG filter", variable=emg_apply_filter).grid(row=thisrow, pady=4, columnspan=2, sticky=W)
+        thisrow += 1
+        Label(master, text='EMG highpass (Hz):').grid(row=thisrow, column=0, pady=4, sticky=W)
+        sp2=Spinbox(master, from_=self.min['emg_highpass'], to=self.max['emg_highpass'], textvariable=emg_highpass).grid(row=thisrow, column=1, pady=4, sticky=W)
+        thisrow += 1
+        Label(master, text='EMG lowpass (Hz):').grid(row=thisrow, column=0, pady=4, sticky=W)
+        Spinbox(master, from_=self.min['emg_lowpass'], to=self.max['emg_lowpass'], textvariable=emg_lowpass).grid(row=thisrow, column=1, pady=4, sticky=W)
+        thisrow += 1        
+        Label(master, text='EMG y scale (mV):').grid(row=thisrow, column=0, pady=4, sticky=W)
+        e = Spinbox(master, from_=.05, to=5, format="%.2f", increment=.05, textvariable=emg_yscale).grid(row=thisrow, column=1, pady=4, sticky=W)
+        thisrow += 1        
+        Label(master, text='Location of PiG normal data (.gcd):   ').grid(row=thisrow, column=0, pady=4, sticky=W)
+        e = Entry(master, textvariable=gcdpath).grid(row=thisrow, column=1, pady=4, sticky=W)
+        thisrow += 1
+        Button(master, text='Cancel', command=master.destroy).grid(row=thisrow, column=0, pady=4)
+        Button(master, text='Save config', command=lambda: saver_callback(master, save)).grid(row=thisrow, column=1, pady=4)
         mainloop()  # Tk
         if not save:  # user hit Cancel
             return None
