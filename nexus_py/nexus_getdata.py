@@ -104,7 +104,7 @@ class nexus_emg:
         self.emg_auto_off = emg_auto_off
         # normal data and logical chs
         self.define_emg_mapping(emg_system)
-        self.emg_remapping=emg_remapping
+        self.emg_remapping = emg_remapping
 
     def read(self, vicon):
         """ Read the actual EMG data from Nexus. """

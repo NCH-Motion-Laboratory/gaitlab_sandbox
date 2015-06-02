@@ -48,6 +48,7 @@ import ConfigParser
 from ConfigParser import SafeConfigParser
 
 
+
 def strip_ws(str):
     """ Remove spaces from string """
     return str.replace(' ','')
@@ -59,6 +60,7 @@ class PlotterConfig():
 
     def __init__(self, appdir):
         """ Initialize user-configurable values to default. """
+        
         self.config = {}
         self.config['emg_lowpass'] = '400'
         self.config['emg_highpass'] = '10'
@@ -68,6 +70,12 @@ class PlotterConfig():
         self.config['emg_apply_filter'] = 'True'
         self.configfile = appdir + '/Config/NexusPlotter.ini'
         self.appdir = appdir        
+        
+        # get EMG electrode names and write enable/disable values
+        self.emg_names = nexus_getdata.nexus_emg().ch_names
+        self.emg_names.sort()
+        for ch in self.emg_names:
+            self.config['EMG_ENABLE:'+ch] = 'True'
 
         # some limits for config file validation (and Tk widgets)      
         self.min = {}
@@ -122,7 +130,8 @@ class PlotterConfig():
         self.config[key] = str(val)
                       
     def read(self):
-        """ Read config dict from disk file. """
+        """ Read config dict from disk file. Disk file must match the dict
+        object in memory. """
         parser = SafeConfigParser()
         parser.read(self.configfile)
         for key in self.config.keys():
@@ -160,6 +169,7 @@ class PlotterConfig():
         emg_highpass = StringVar()
         emg_yscale = DoubleVar()
         gcdpath = StringVar()
+        emg_enable_vars = []
         # read default values (config -> Tk variables)        
         if self.getval('emg_auto_off'):
             emg_auto_off.set(1)
@@ -190,7 +200,14 @@ class PlotterConfig():
         thisrow += 1        
         Label(master, text='EMG y scale (mV):').grid(row=thisrow, column=0, pady=4, sticky=W)
         e = Spinbox(master, from_=.05, to=5, format="%.2f", increment=.05, textvariable=emg_yscale).grid(row=thisrow, column=1, pady=4, sticky=W)
-        thisrow += 1        
+        thisrow += 1
+        Label(master, text='Enable or disable EMG electrodes:').grid(row=thisrow, column=0, pady=4, sticky=W)
+        thisrow += 1
+        for i, ch in enumerate(self.emg_names):
+            emg_enable_vars.append(IntVar())
+            emg_enable_vars[i].set(1)
+            Checkbutton(master, text=ch, variable=emg_enable_vars[i]).grid(row=thisrow, column=0, sticky=W)
+            thisrow += 1
         Label(master, text='Location of PiG normal data (.gcd):   ').grid(row=thisrow, column=0, pady=4, sticky=W)
         e = Entry(master, textvariable=gcdpath).grid(row=thisrow, column=1, pady=4, sticky=W)
         thisrow += 1
@@ -215,6 +232,11 @@ class PlotterConfig():
                 newconfig.setval('emg_apply_filter', 'True')
             else:
                 newconfig.setval('emg_apply_filter', 'False')
+            for i,var in enumerate(emg_enable_vars):
+                if var.get():
+                    newconfig.setval('EMG_ENABLE:'+self.emg_names[i], 'True')
+                else:
+                    newconfig.setval('EMG_ENABLE:'+self.emg_names[i], 'False')                    
             config_ok, msg = newconfig.check()
             if not config_ok:
                 messagebox('Invalid configuration: ' + msg)
@@ -244,6 +266,9 @@ class nexus_plotter():
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
         self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
+        self.emg_manual_enable={}
+        for ch in self.emg_names:
+            self.emg_manual_enable[ch] = self.cfg.getval('EMG_ENABLE'+ch)
 
         # can set layout=None, if no plots are intended
         if not layout:
