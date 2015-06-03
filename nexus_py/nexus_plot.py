@@ -611,7 +611,7 @@ class nexus_plotter():
                 ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if emgdata[thisch] == 'EMG_DISCONNECTED':
                     if self.annotate_disconnected:
-                        ax.annotate('disconnected', xy=(50,0), ha="center", va="center")
+                        ax.annotate('disconnected (auto)', xy=(50,0), ha="center", va="center")
                 elif not self.cfg.emg_enabled(thisch):
                         ax.annotate('disabled in config', xy=(50,0), ha="center", va="center")                    
                 elif emgdata[thisch] == 'EMG_REUSED':
