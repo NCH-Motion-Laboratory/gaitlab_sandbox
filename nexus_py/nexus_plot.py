@@ -74,8 +74,8 @@ class PlotterConfig():
         # get EMG electrode names and write enable/disable values
         self.emg_names = nexus_getdata.nexus_emg().ch_names
         self.emg_names.sort()
-        for ch in self.emg_names:
-            self.config['EMG_ENABLE:'+ch] = 'True'
+        for chname in self.emg_names:
+            self.config[self.emg_enabled_key(chname)] = 'True'
 
         # some limits for config file validation (and Tk widgets)      
         self.min = {}
@@ -128,15 +128,33 @@ class PlotterConfig():
     def setval(self, key, val):
         """ Stores val into config dict as string. """
         self.config[key] = str(val)
+        
+    def emg_enabled_key(self, emgch):
+        """ Returns an 'enable' key name for a given EMG channel. """
+        return 'EMG_ENABLE_'+emgch
+
+    def is_emg_enabled_key(self, key):
+        return key.find('EMG_ENABLE_') == 0
+    
+    def emg_enabled(self, emgch):
+        """ Return enabled value for the given EMG channel. """
+        key = self.emg_enabled_key(emgch)
+        print (key, self.config[key])
+        return self.config[key] == 'True'
                       
     def read(self):
         """ Read config dict from disk file. Disk file must match the dict
         object in memory. """
         parser = SafeConfigParser()
+        parser.optionxform = str  # make it case sensitive
         parser.read(self.configfile)
         for key in self.config.keys():
+            if self.is_emg_enabled_key(key):
+                section = 'EMG_enable'
+            else:
+                section = 'NexusPlotter'
             try:
-                self.config[key] = parser.get('NexusPlotter', key)
+                self.config[key] = parser.get(section, key)
             except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
                 error_exit('Invalid configuration file, please fix or delete: ' + self.configfile)
         
@@ -147,9 +165,15 @@ class PlotterConfig():
         except IOError:
             error_exit('Cannot open config file for writing: ', self.configfile)
         parser = SafeConfigParser()
+        parser.optionxform = str  # make it case sensitive
         parser.add_section('NexusPlotter')
+        parser.add_section('EMG_enable')  
         for key in self.config.keys():
-            parser.set('NexusPlotter', key, self.config[key])
+            if self.is_emg_enabled_key(key):
+                section = 'EMG_enable'
+            else:
+                section = 'NexusPlotter'
+            parser.set(section, key, self.config[key])
         parser.write(inifile)
         inifile.close()
 
@@ -205,9 +229,15 @@ class PlotterConfig():
         thisrow += 1
         for i, ch in enumerate(self.emg_names):
             emg_enable_vars.append(IntVar())
-            emg_enable_vars[i].set(1)
-            Checkbutton(master, text=ch, variable=emg_enable_vars[i]).grid(row=thisrow, column=0, sticky=W)
-            thisrow += 1
+            if self.emg_enabled(ch):
+                emg_enable_vars[i].set(1)
+            else:
+                emg_enable_vars[i].set(0)
+            if not i % 2:  # even - left col
+                Checkbutton(master, text=ch, variable=emg_enable_vars[i]).grid(row=thisrow, column=0, sticky=W)
+            else:  # right col
+                Checkbutton(master, text=ch, variable=emg_enable_vars[i]).grid(row=thisrow, column=1, sticky=W)            
+                thisrow += 1
         Label(master, text='Location of PiG normal data (.gcd):   ').grid(row=thisrow, column=0, pady=4, sticky=W)
         e = Entry(master, textvariable=gcdpath).grid(row=thisrow, column=1, pady=4, sticky=W)
         thisrow += 1
@@ -234,9 +264,9 @@ class PlotterConfig():
                 newconfig.setval('emg_apply_filter', 'False')
             for i,var in enumerate(emg_enable_vars):
                 if var.get():
-                    newconfig.setval('EMG_ENABLE:'+self.emg_names[i], 'True')
+                    newconfig.setval(newconfig.emg_enabled_key(self.emg_names[i]), 'True')
                 else:
-                    newconfig.setval('EMG_ENABLE:'+self.emg_names[i], 'False')                    
+                    newconfig.setval(newconfig.emg_enabled_key(self.emg_names[i]), 'False')                    
             config_ok, msg = newconfig.check()
             if not config_ok:
                 messagebox('Invalid configuration: ' + msg)
@@ -266,9 +296,11 @@ class nexus_plotter():
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
         self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
+        self.emg_names = nexus_getdata.nexus_emg().ch_names
+        self.emg_names.sort()
         self.emg_manual_enable={}
         for ch in self.emg_names:
-            self.emg_manual_enable[ch] = self.cfg.getval('EMG_ENABLE'+ch)
+            self.emg_manual_enable[ch] = self.cfg.emg_enabled(ch)
 
         # can set layout=None, if no plots are intended
         if not layout:
@@ -577,7 +609,9 @@ class nexus_plotter():
                 ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if emgdata[thisch] == 'EMG_DISCONNECTED':
                     if self.annotate_disconnected:
-                        ax.annotate('disconnected', xy=(50,0), ha="center", va="center")   
+                        ax.annotate('disconnected', xy=(50,0), ha="center", va="center")
+                elif not self.cfg.emg_enabled(thisch):
+                        ax.annotate('disabled in config', xy=(50,0), ha="center", va="center")                    
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK

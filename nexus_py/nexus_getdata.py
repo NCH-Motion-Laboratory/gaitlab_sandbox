@@ -156,7 +156,7 @@ class nexus_emg:
             elname = self.elnames[elid-1]
             self.data[elname] = np.array(eldata)
             # DEBUG
-            print(elname)
+            # print(elname)
             if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
                 self.data[elname] = 'EMG_DISCONNECTED'
                 self.data_gc1l[elname] = 'EMG_DISCONNECTED'
