@@ -139,7 +139,6 @@ class PlotterConfig():
     def emg_enabled(self, emgch):
         """ Return enabled value for the given EMG channel. """
         key = self.emg_enabled_key(emgch)
-        print (key, self.config[key])
         return self.config[key] == 'True'
                       
     def read(self):
