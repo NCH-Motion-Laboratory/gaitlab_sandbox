@@ -130,19 +130,21 @@ class PlotterConfig():
         self.config[key] = str(val)
         
     def emg_enabled_key(self, emgch):
-        """ Returns an 'enable' key name for a given EMG channel. """
+        """ Returns an 'enable' key name for a given EMG channel. 
+        This is just a prefix and the channel name. """
         return 'EMG_ENABLE_'+emgch
 
     def is_emg_enabled_key(self, key):
+        """ Tell whether it's an EMG 'enable' key. """
         return key.find('EMG_ENABLE_') == 0
     
     def emg_enabled(self, emgch):
-        """ Return enabled value for the given EMG channel. """
+        """ Return the 'enabled' value for the given EMG channel. """
         key = self.emg_enabled_key(emgch)
         return self.config[key] == 'True'
                       
     def read(self):
-        """ Read config dict from disk file. Disk file must match the dict
+        """ Read whole config dict from disk file. Disk file must match the dict
         object in memory. """
         parser = SafeConfigParser()
         parser.optionxform = str  # make it case sensitive
@@ -226,6 +228,7 @@ class PlotterConfig():
         thisrow += 1
         Label(master, text='Enable or disable EMG electrodes:').grid(row=thisrow, column=0, pady=4, sticky=W)
         thisrow += 1
+        # put EMG channel names into two columns
         for i, ch in enumerate(self.emg_names):
             emg_enable_vars.append(IntVar())
             if self.emg_enabled(ch):

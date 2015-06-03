@@ -15,7 +15,7 @@ from scipy import signal
 import sys
 import psutil
 import os
-
+import gaitlab  # lab-specific stuff
 
 
 def nexus_pid():
@@ -45,45 +45,11 @@ class nexus_emg:
     vicon is a ViconNexus.ViconNexus() object. EMG object can be created
     without reading any actual data (e.g. to check electrode names). """
     
-    def define_emg_mapping(self, emg_system='Myon'):
-        """ Defines electrode mapping.  emg_system may be used to support systems
-        other than Myon in the future. """
-        if emg_system == 'Myon':
-            self.ch_normals = {'RGas': [[16,50]],
-                   'RGlut': [[0,42],[96,100]],
-                   'RHam': [[0,2],[92,100]],
-                   'RPer': [[4,54]],
-                   'RRec': [[0,14],[56,100]],
-                   'RSol': [[10,54]],
-                   'RTibA': [[0,12],[56,100]],
-                   'RVas': [[0,24],[96,100]],
-                   'LGas': [[16,50]],
-                   'LGlut': [[0,42],[96,100]],
-                   'LHam': [[0,2],[92,100]],
-                   'LPer': [[4,54]],
-                   'LRec': [[0,14],[56,100]],
-                   'LSol': [[10,54]],
-                   'LTibA': [[0,12],[56,100]],
-                   'LVas': [[0,24],[96,100]]}
-            self.ch_names = self.ch_normals.keys()
-            self.ch_labels = {'RHam': 'Medial hamstrings (R)',
-                       'RRec': 'Rectus femoris (R)',
-                       'RGas': 'Gastrognemius (R)',
-                       'RGlut': 'Gluteus (R)',
-                       'RVas': 'Vastus (R)',
-                       'RSol': 'Soleus (R)',
-                       'RTibA': 'Tibialis anterior (R)',
-                       'RPer': 'Peroneus (R)',
-                       'LHam': 'Medial hamstrings (L)',
-                       'LRec': 'Rectus femoris (L)',
-                       'LGas': 'Gastrognemius (L)',
-                       'LGlut': 'Gluteus (L)',
-                       'LVas': 'Vastus (L)',
-                       'LSol': 'Soleus (L)',
-                       'LTibA': 'Tibialis anterior (L)',
-                       'LPer': 'Peroneus (L)'}
-        else:
-            error_exit('Unsupported EMG system: '+emg_system)
+    def define_emg_names(self):
+        """ Defines the electrode mapping. """
+        self.ch_normals = gaitlab.emg_normals
+        self.ch_names = gaitlab.emg_names
+        self.ch_labels = gaitlab.emg_labels
                 
     def emg_channelnames(self):
         """ Return names of known (logical) EMG channels. """
@@ -92,7 +58,7 @@ class nexus_emg:
     def is_logical_channel(self, chname):
         return chname in self.ch_names
 
-    def __init__(self, emg_system='Myon', emg_remapping=None, emg_auto_off=True):
+    def __init__(self, emg_remapping=None, emg_auto_off=True):
         """ emg_remapping contains the replacement dict for EMG electrodes:
         e.g. key 'LGas'='LSol' means that LGas data will be 
         read from the LSol electrode."""
@@ -103,7 +69,7 @@ class nexus_emg:
         # whether to auto-find disconnected EMG channels
         self.emg_auto_off = emg_auto_off
         # normal data and logical chs
-        self.define_emg_mapping(emg_system)
+        self.define_emg_names()
         self.emg_remapping = emg_remapping
 
     def read(self, vicon):
