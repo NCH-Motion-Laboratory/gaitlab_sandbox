@@ -438,6 +438,8 @@ class nexus_plotter():
         variables specified in nexusvars will be read. To open the trial without
         reading variables, set nexusvars=None (useful for e.g. detecting side) """
         self.nexusvars = nexusvars
+        if not nexus_getdata.nexus_pid():
+            error_exit('Cannot get Nexus PID, Nexus not running?')
         # open connection to Nexus, if not previously opened
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
@@ -450,10 +452,10 @@ class nexus_plotter():
         if not subjectnames:
             error_exit('No subject defined in Nexus')
         trialname_ = self.vicon.GetTrialName()
-        if not trialname_:
-            error_exit('No trial loaded')
         self.sessionpath = trialname_[0]
         self.trialname = trialname_[1]
+        if not self.trialname:
+            error_exit('No trial loaded')
         self.subjectname = subjectnames[0]
         
         # update gait cycle information
@@ -610,10 +612,10 @@ class nexus_plotter():
                 emg_yscale = self.cfg.getval('emg_yscale')
                 ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
                 if not self.cfg.emg_enabled(thisch):
-                        ax.annotate('disabled in config', xy=(50,0), ha="center", va="center")                    
+                        ax.annotate('disabled (manual)', xy=(50,0), ha="center", va="center")                    
                 elif emgdata[thisch] == 'EMG_DISCONNECTED':
                     if self.annotate_disconnected:
-                        ax.annotate('disconnected (auto)', xy=(50,0), ha="center", va="center")
+                        ax.annotate('disabled (auto)', xy=(50,0), ha="center", va="center")
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK
