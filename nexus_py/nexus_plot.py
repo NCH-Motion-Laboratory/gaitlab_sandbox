@@ -8,10 +8,10 @@ Vicon Nexus application, using matplotlib.
 Rules:
 -channel type is autodetected by looking into the known names
 -can specify channel as 'None' to leave corresponding subplot empty
--can specify channel as 'piglegend' or 'emglegend' to get a legend on a particular subplot
+-can specify channel as 'modellegend' or 'emglegend' to get a legend on a particular subplot
 (useful for overlay plots)
 -variables always normalized to gait cycle
--always plot PiG normal data if available
+-always plot model normal data if available
 -kinetics always plotted for one side only
 -vars can be specified without leading 'Norm'+side prefix (e.g. 'HipMomentX'
  instead of 'NormRHipMomentX'
@@ -304,6 +304,9 @@ class nexus_plotter():
         for ch in self.emg_names:
             self.emg_manual_enable[ch] = self.cfg.emg_enabled(ch)
 
+        # muscle length normal data - not yet used
+        self.mlen_normaldata_path = None
+
         # can set layout=None, if no plots are intended
         if not layout:
             return
@@ -332,10 +335,10 @@ class nexus_plotter():
         self.emg_ylabel = 'mV'
         self.annotate_disconnected = True
         self.add_toeoff_markers = True
-        self.piglegendpos = None
-        self.emglegendpos = None
+        self.model_legendpos = None
+        self.emg_legendpos = None
         # used to collect trial names and styles for legend
-        self.pigartists = []
+        self.modelartists = []
         self.emgartists = []
         self.legendnames = []
         # x label
@@ -464,40 +467,46 @@ class nexus_plotter():
             self.side = self.vgc.detect_side(self.vicon)
         else:
             self.side = side    
-        
+         
         if nexusvars:
-            # will read EMG/PiG data only if necessary
-            self.pig = nexus_getdata.model_outputs()
+            # will read EMG/model data only if necessary
+            self.model = nexus_getdata.model_outputs()
             self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
+            read_mlen = False
             self.emg_plot_chs = []
             self.emg_plot_pos = []
-            self.pig_plot_vars = []
-            self.pig_plot_pos = []
+            self.model_plot_vars = []
+            self.model_plot_pos = []
             for i, var in enumerate(self.nexusvars):
                 if var == None:  # indicates empty subplot
                     pass
-                elif var == 'piglegend':   # place legend on this subplot
-                    self.piglegendpos = i
+                elif var == 'modellegend':   # place legend on this subplot
+                    self.model_legendpos = i
                 elif var == 'emglegend':
-                    self.emglegendpos = i
+                    self.emg_legendpos = i
                 else:
                     if self.emg.is_logical_channel(var):
                         read_emg = True
                         self.emg_plot_chs.append(var)
                         self.emg_plot_pos.append(i)
-                    elif self.pig.is_pig_variable(var):
+                    elif self.model.is_pig_lb_variable(var):
                         read_pig = True
-                        self.pig_plot_vars.append(var)
-                        self.pig_plot_pos.append(i)
+                        self.model_plot_vars.append(var)
+                        self.model_plot_pos.append(i)
+                    elif self.model.is_mlen_variable(var):
+                        read_mlen = True
+                        self.model_plot_vars.append(var)
+                        self.model_plot_pos.append(i)
                     else:
                         error_exit('Unknown variable: ' + var)
             if read_emg:
                 self.emg.read(self.vicon)
             if read_pig:
-                self.pig.read(self.vicon, 'PiGLB', self.pig_normaldata_path)
-
+                self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
+            if read_mlen:
+                self.model.read_musclelen(self.vicon, self.mlen_normaldata_path)
 
     def set_fig_title(self, title):
         if self.fig:
@@ -506,7 +515,7 @@ class nexus_plotter():
 
 
     def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
-                 onesided_kinematics=False, pig_linestyle='-', emg_tracecolor='black'):
+                 onesided_kinematics=False, model_linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
@@ -542,22 +551,25 @@ class nexus_plotter():
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
-        if self.pig_plot_vars:
-            for k, var in enumerate(self.pig_plot_vars):
-                ax = plt.subplot(self.gs[self.pig_plot_pos[k]])
+        # handles model output vars (Plug-in Gait, muscle length, etc.)
+        # TODO: fix handling of muscle len variables
+        
+        if self.model_plot_vars:
+            for k, var in enumerate(self.model_plot_vars):
+                ax = plt.subplot(self.gs[self.model_plot_pos[k]])
                 varname_full = 'Norm'+self.side+var
                 # plot two-sided kinematics if applicable
-                if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
+                if not self.model.is_kinetic_var(var) and not onesided_kinematics:
                     varname_r = 'Norm' + 'R' + var
                     varname_l = 'Norm' + 'L' + var
-                    plt.plot(tn, self.pig.Vars[varname_r], self.tracecolor_r, linestyle=pig_linestyle, label=self.trialname)
-                    plt.plot(tn, self.pig.Vars[varname_l], self.tracecolor_l, linestyle=pig_linestyle, label=self.trialname)
+                    plt.plot(tn, self.model.Vars[varname_r], self.tracecolor_r, linestyle=model_linestyle, label=self.trialname)
+                    plt.plot(tn, self.model.Vars[varname_l], self.tracecolor_l, linestyle=model_linestyle, label=self.trialname)
                 else:
-                    plt.plot(tn, self.pig.Vars[varname_full], tracecolor, linestyle=pig_linestyle, label=self.trialname)
-                nor = np.array(self.pig.normaldata(var))[:,0]
-                nstd = np.array(self.pig.normaldata(var))[:,1]
-                title = self.pig.description(var)
-                ylabel = self.pig.ylabel(varname_full)
+                    plt.plot(tn, self.model.Vars[varname_full], tracecolor, linestyle=model_linestyle, label=self.trialname)
+                nor = np.array(self.model.normaldata(var))[:,0]
+                nstd = np.array(self.model.normaldata(var))[:,1]
+                title = self.model.description(var)
+                ylabel = self.model.ylabel(varname_full)
                 plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
@@ -577,7 +589,7 @@ class nexus_plotter():
                     # these are related to plot height/width, to avoid aspect ratio effects
                     hdlength = arrlen * .33
                     hdwidth = (xmax-xmin) / 50.
-                    if not self.pig.is_kinetic_var(var) and not onesided_kinematics:
+                    if not self.model.is_kinetic_var(var) and not onesided_kinematics:
                         plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
                         plt.arrow(rtoeoff, ymin, 0, arrlen, color=self.tracecolor_r, 
@@ -659,18 +671,18 @@ class nexus_plotter():
         """ Update the legends on each added trial. The "artists" (corresponding to 
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
-        if self.piglegendpos or self.emglegendpos:
+        if self.model_legendpos or self.emg_legendpos:
             self.legendnames.append(self.trialname)            
-        if self.piglegendpos:
-            self.pigartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=pig_linestyle))
-            ax = plt.subplot(self.gs[self.piglegendpos])
+        if self.model_legendpos:
+            self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
+            ax = plt.subplot(self.gs[self.model_legendpos])
             plt.axis('off')
             nothing = [plt.Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)]
             legtitle = ['Kinematics/kinetics traces:']
-            ax.legend(nothing+self.pigartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
-        if self.emglegendpos:
+            ax.legend(nothing+self.modelartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
+        if self.emg_legendpos:
             self.emgartists.append(plt.Line2D((0,1),(0,0), color=emg_tracecolor))
-            ax = plt.subplot(self.gs[self.emglegendpos])
+            ax = plt.subplot(self.gs[self.emg_legendpos])
             plt.axis('off')
             nothing = [plt.Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)]
             legtitle = ['EMG traces:']
