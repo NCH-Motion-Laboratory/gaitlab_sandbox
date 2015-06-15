@@ -329,10 +329,10 @@ class gaitcycle:
             return 'R'
 
 class model_outputs:
-    """ Handles model output variables. """
+    """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. """
     
     def merge_dicts(self, dict1, dict2):
-        """ Helper function """
+        """ Merge two dicts, return result. """
         x = dict1.copy()
         x.update(dict2)
         return x
@@ -341,7 +341,7 @@ class model_outputs:
         """ Sets up some relevant variables, but does not read data """
 
         # descriptive labels
-        # these are without 'Norm' and 'L/R' in beginning of var name
+        # note: without 'Norm' and 'L/R' in beginning of var name
         self.pig_lb_varlabels = {'AnkleAnglesX': 'Ankle dorsi/plant',
                          'AnkleAnglesZ': 'Ankle rotation',
                          'AnkleMomentX': 'Ankle dors/plan moment',
@@ -365,49 +365,50 @@ class model_outputs:
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}
                          
-        self.mlen_varlabels = {'AdBrLength': 'length',
-                     'AdLoLength': 'length',
-                     'AdMaInfLength': 'length',
-                     'AdMaMidLength': 'length',
-                     'AdMaSupLength': 'length',
-                     'BiFLLength': 'length',
-                     'BiFSLength': 'length',
-                     'ExDLLength': 'length',
-                     'ExHLLength': 'length',
-                     'FlDLLength': 'length',
-                     'FlHLLength': 'length',
-                     'GMedAntLength': 'length',
-                     'GMedMidLength': 'length',
-                     'GMedPosLength': 'length',
-                     'GMinAntLength': 'length',
-                     'GMinMidLength': 'length',
-                     'GMinPosLength': 'length',
-                     'GemeLength': 'length',
-                     'GlMaInfLength': 'length',
-                     'GlMaMidLength': 'length',
-                     'GlMaSupLength': 'length',
-                     'GracLength': 'length',
-                     'IliaLength': 'length',
-                     'LaGaLength': 'length',
-                     'MeGaLength': 'length',
-                     'PELOLength': 'length',
-                     'PeBrLength': 'length',
-                     'PeTeLength': 'length',
-                     'PectLength': 'length',
-                     'PeriLength': 'length',
-                     'PsoaLength': 'length',
-                     'QuFeLength': 'length',
-                     'ReFeLength': 'length',
-                     'SartLength': 'length',
-                     'SeMeLength': 'length',
-                     'SeTeLength': 'length',
-                     'SoleLength': 'length',
-                     'TiAnLength': 'length',
-                     'TiPoLength': 'length',
-                     'VaInLength': 'length',
-                     'VaLaLength': 'length',
-                     'VaMeLength': 'length'}
-
+        # TODO: better labels
+        self.mlen_varlabels = {'AdBrLength': 'AdBrLength',
+                               'AdLoLength': 'AdLoLength',
+                                'AdMaInfLength': 'AdMaInfLength',
+                                'AdMaMidLength': 'AdMaMidLength',
+                                'AdMaSupLength': 'AdMaSupLength',
+                                'BiFLLength': 'BiFLLength',
+                                'BiFSLength': 'BiFSLength',
+                                'ExDLLength': 'ExDLLength',
+                                'ExHLLength': 'ExHLLength',
+                                'FlDLLength': 'FlDLLength',
+                                'FlHLLength': 'FlHLLength',
+                                'GMedAntLength': 'GMedAntLength',
+                                'GMedMidLength': 'GMedMidLength',
+                                'GMedPosLength': 'GMedPosLength',
+                                'GMinAntLength': 'GMinAntLength',
+                                'GMinMidLength': 'GMinMidLength',
+                                'GMinPosLength': 'GMinPosLength',
+                                'GemeLength': 'GemeLength',
+                                'GlMaInfLength': 'GlMaInfLength',
+                                'GlMaMidLength': 'GlMaMidLength',
+                                'GlMaSupLength': 'GlMaSupLength',
+                                'GracLength': 'GracLength',
+                                'IliaLength': 'IliaLength',
+                                'LaGaLength': 'LaGaLength',
+                                'MeGaLength': 'MeGaLength',
+                                'PELOLength': 'PELOLength',
+                                'PeBrLength': 'PeBrLength',
+                                'PeTeLength': 'PeTeLength',
+                                'PectLength': 'PectLength',
+                                'PeriLength': 'PeriLength',
+                                'PsoaLength': 'PsoaLength',
+                                'QuFeLength': 'QuFeLength',
+                                'ReFeLength': 'ReFeLength',
+                                'SartLength': 'SartLength',
+                                'SeMeLength': 'SeMeLength',
+                                'SeTeLength': 'SeTeLength',
+                                'SoleLength': 'SoleLength',
+                                'TiAnLength': 'TiAnLength',
+                                'TiPoLength': 'TiPoLength',
+                                'VaInLength': 'VaInLength',
+                                'VaLaLength': 'VaLaLength',
+                                'VaMeLength': 'VaMeLength'}
+        
         # merge all variable dicts into one
         self.varlabels = self.merge_dicts(self.pig_lb_varlabels, self.mlen_varlabels)
 
@@ -714,12 +715,12 @@ class model_outputs:
         
     def normaldata(self, var):
         """ Return the normal data (in the given gcd file) for 
-        PiG variable var.
+        PiG variable var, if available.
         TODO: normal data for muscle lengths? """
         # strip leading 'Norm' and L/R from variable name
         vars = self.strip_varname(var)
         if not vars in self.normdict:
-            error_exit('No normal data for variable ',+vars)
+            return None
         else:
             return self.pig_normaldata[self.normdict[vars]]
 

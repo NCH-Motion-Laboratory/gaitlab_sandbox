@@ -13,8 +13,8 @@ Rules:
 -variables always normalized to gait cycle
 -always plot model normal data if available
 -kinetics always plotted for one side only
--vars can be specified without leading 'Norm'+side prefix (e.g. 'HipMomentX'
- instead of 'NormRHipMomentX'
+-vars are specified without leading 'Norm'+side prefix (e.g. 'HipMomentX'
+ instead of 'NormRHipMomentX'; side is either autodetected or manually forced
 
 
 TODO:
@@ -566,11 +566,14 @@ class nexus_plotter():
                     plt.plot(tn, self.model.Vars[varname_l], self.tracecolor_l, linestyle=model_linestyle, label=self.trialname)
                 else:
                     plt.plot(tn, self.model.Vars[varname_full], tracecolor, linestyle=model_linestyle, label=self.trialname)
-                nor = np.array(self.model.normaldata(var))[:,0]
-                nstd = np.array(self.model.normaldata(var))[:,1]
+                # plot normal data, if available
+                if self.model.normaldata(var):
+                    nor = np.array(self.model.normaldata(var))[:,0]
+                    nstd = np.array(self.model.normaldata(var))[:,1]
+                    plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 title = self.model.description(var)
                 ylabel = self.model.ylabel(varname_full)
-                plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
+
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
