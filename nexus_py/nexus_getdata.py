@@ -341,7 +341,7 @@ class model_outputs:
         """ Sets up some relevant variables, but does not read data.
         Model data is usually stored in normalized form with variables named
         e.g. NormRHipAnglesX, but shorter variable names are used in
-        label dicts etc., e.g. HipAnglesX """
+        label dicts etc., e.g. HipAnglesX. """
 
         # descriptive labels
         # note: without 'Norm' and 'L/R' in beginning of var name
@@ -663,22 +663,26 @@ class model_outputs:
         
     def is_pig_lb_variable(self, var):
         """ Is var a PiG lower body variable? var might be preceded with Norm and L/R """
-        return var in self.pig_lb_varnames() or self.strip_varname(var) in self.pig_lb_varnames()
+        return var in self.pig_lb_varnames() or self.unnorm_varname(var) in self.pig_lb_varnames()
 
     def is_mlen_variable(self, var):
         """ Is var a muscle length variable? var might be preceded with Norm and L/R """
-        return var in self.mlen_varnames() or self.strip_varname(var) in self.mlen_varnames()
+        return var in self.mlen_varnames() or self.unnorm_varname(var) in self.mlen_varnames()
         
     def is_kinetic_var(self, var):
         """ Tell whether a variable represents kinetics. """
         return var.find('Power') > -1 or var.find('Moment') > -1
 
-    def strip_varname(self, var):
+    def unnorm_varname(self, var):
         """ Remove Norm and 'L/R' from beginning of variable name. """
         if var[:4] == 'Norm':
             return var[5:]
         else:
             return var
+           
+    def norm_varname(self, var, side):
+        """ Create normalized variable name corresponding to var. """
+        return 'Norm'+side.upper()+var
 
     def description(self, var):
         """ Returns a more elaborate description for a model variable,
@@ -703,9 +707,14 @@ class model_outputs:
         
     def ylabel(self, var):
         """ Return y label for plotting a given variable. """
-        vars = self.strip_varname(var)
+        vars = self.unnorm_varname(var)
+        # explicitly specified        
         if vars in self.ylabels:
             return self.ylabels[vars]
+        # default for non-specified muscle len variable
+        elif self.is_mlen_variable(var):
+            return 'Length (mm)'
+        # unknown var
         else:
             return None
         
@@ -714,7 +723,7 @@ class model_outputs:
         PiG variable var, if available.
         TODO: normal data for muscle lengths? """
         # strip leading 'Norm' and L/R from variable name
-        vars = self.strip_varname(var)
+        vars = self.unnorm_varname(var)
         if not vars in self.normdict:
             return None
         else:

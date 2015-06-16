@@ -552,15 +552,16 @@ class nexus_plotter():
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
         # handles model output vars (Plug-in Gait, muscle length, etc.)
-        # TODO: fix handling of muscle len variables
+
         if self.model_plot_vars:
             for k, var in enumerate(self.model_plot_vars):
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
-                varname_full = 'Norm'+self.side+var
+                # get normalized variable name
+                varname_full = self.model.norm_varname(var, self.side)
                 # plot two-sided kinematics if applicable
                 if not self.model.is_kinetic_var(var) and not onesided_kinematics:
-                    varname_r = 'Norm' + 'R' + var
-                    varname_l = 'Norm' + 'L' + var
+                    varname_r = self.model.norm_varname(var, 'R')
+                    varname_l = self.model.norm_varname(var, 'L')
                     plt.plot(tn, self.model.Vars[varname_r], self.tracecolor_r, linestyle=model_linestyle, label=self.trialname)
                     plt.plot(tn, self.model.Vars[varname_l], self.tracecolor_l, linestyle=model_linestyle, label=self.trialname)
                 else:
@@ -577,7 +578,17 @@ class nexus_plotter():
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
                 # variable-specific scales
                 #plt.ylim(kinematicsymin[k], kinematicsymax[k])
+                ylim_default= ax.get_ylim()
+                # include zero line and extend y scale a bit for kin* variables
                 plt.axhline(0, color='black')  # zero line
+                if self.model.is_pig_lb_variable(var):
+                    if ylim_default[0] == 0:
+                        plt.ylim(-10, ylim_default[1])
+                    if ylim_default[1] == 0:
+                        plt.ylim(ylim_default[0], 10)
+                # expand the default scale a bit for muscle length variables
+                if self.model.is_mlen_variable(var):
+                    plt.ylim(ylim_default[0]-10, ylim_default[1]+10)
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
                 # add arrows indicating toe off times
                 if self.add_toeoff_markers:
