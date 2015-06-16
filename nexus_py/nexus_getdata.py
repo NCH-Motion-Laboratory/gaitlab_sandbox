@@ -338,7 +338,10 @@ class model_outputs:
         return x
         
     def __init__(self):
-        """ Sets up some relevant variables, but does not read data """
+        """ Sets up some relevant variables, but does not read data.
+        Model data is usually stored in normalized form with variables named
+        e.g. NormRHipAnglesX, but shorter variable names are used in
+        label dicts etc., e.g. HipAnglesX """
 
         # descriptive labels
         # note: without 'Norm' and 'L/R' in beginning of var name
@@ -671,28 +674,28 @@ class model_outputs:
         return var.find('Power') > -1 or var.find('Moment') > -1
 
     def strip_varname(self, var):
-        """ Remove Norm and/or L/R from beginning of variable name. """
-        vars = var
-        if vars[:4] == 'Norm':
-            vars = var[4:]
-        if vars[0] in ['L','R']:
-            vars = vars[1:]
-        return vars
+        """ Remove Norm and 'L/R' from beginning of variable name. """
+        if var[:4] == 'Norm':
+            return var[5:]
+        else:
+            return var
 
     def description(self, var):
         """ Returns a more elaborate description for a model variable,
-        if known. """
-        vars = var
+        if known. If var is normalized to a gait cycle, side will be reflected
+        in the name. """
         if var[:3] == 'Norm':
             vars = var[4:]
-        if vars[0] == 'L':
-            sidestr = ( 'L')
-            vars = vars[1:]
-        elif var[0] == 'R':
-            sidestr = ( 'R')
-            vars = vars[1:]
+            if vars[0] == 'L':
+                sidestr = ( 'L')
+                vars = vars[1:]
+            elif var[0] == 'R':
+                sidestr = ( 'R')
+                vars = vars[1:]
         else:
+            vars = var
             sidestr = ''
+        print(vars)
         if vars in self.varlabels:
             return self.varlabels[vars]+sidestr
         else:
