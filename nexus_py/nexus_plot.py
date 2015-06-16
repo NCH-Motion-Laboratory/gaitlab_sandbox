@@ -553,7 +553,6 @@ class nexus_plotter():
         
         # handles model output vars (Plug-in Gait, muscle length, etc.)
         # TODO: fix handling of muscle len variables
-        
         if self.model_plot_vars:
             for k, var in enumerate(self.model_plot_vars):
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
@@ -573,10 +572,10 @@ class nexus_plotter():
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 title = self.model.description(var)
                 ylabel = self.model.ylabel(varname_full)
-
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
+                # variable-specific scales
                 #plt.ylim(kinematicsymin[k], kinematicsymax[k])
                 plt.axhline(0, color='black')  # zero line
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks

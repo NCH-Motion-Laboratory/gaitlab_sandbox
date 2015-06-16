@@ -365,13 +365,13 @@ class model_outputs:
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}
                          
-        # TODO: better labels
+        # TODO: fill out rest of labels
         self.mlen_varlabels = {'AdBrLength': 'AdBrLength',
                                'AdLoLength': 'AdLoLength',
                                 'AdMaInfLength': 'AdMaInfLength',
                                 'AdMaMidLength': 'AdMaMidLength',
                                 'AdMaSupLength': 'AdMaSupLength',
-                                'BiFLLength': 'BiFLLength',
+                                'BiFLLength': 'Biceps femoris length',
                                 'BiFSLength': 'BiFSLength',
                                 'ExDLLength': 'ExDLLength',
                                 'ExHLLength': 'ExHLLength',
@@ -387,23 +387,23 @@ class model_outputs:
                                 'GlMaInfLength': 'GlMaInfLength',
                                 'GlMaMidLength': 'GlMaMidLength',
                                 'GlMaSupLength': 'GlMaSupLength',
-                                'GracLength': 'GracLength',
+                                'GracLength': 'Gracilis length',
                                 'IliaLength': 'IliaLength',
-                                'LaGaLength': 'LaGaLength',
-                                'MeGaLength': 'MeGaLength',
+                                'LaGaLength': 'Lateral gastrocnemius length',
+                                'MeGaLength': 'Medial gastrocnemius length',
                                 'PELOLength': 'PELOLength',
                                 'PeBrLength': 'PeBrLength',
                                 'PeTeLength': 'PeTeLength',
                                 'PectLength': 'PectLength',
                                 'PeriLength': 'PeriLength',
-                                'PsoaLength': 'PsoaLength',
+                                'PsoaLength': 'Psoas length',
                                 'QuFeLength': 'QuFeLength',
-                                'ReFeLength': 'ReFeLength',
+                                'ReFeLength': 'Rectus femoris length',
                                 'SartLength': 'SartLength',
-                                'SeMeLength': 'SeMeLength',
-                                'SeTeLength': 'SeTeLength',
-                                'SoleLength': 'SoleLength',
-                                'TiAnLength': 'TiAnLength',
+                                'SeMeLength': 'Semimembranosus length',
+                                'SeTeLength': 'Semitendinosus length',
+                                'SoleLength': 'Soleus length',
+                                'TiAnLength': 'Tibialis anterior length',
                                 'TiPoLength': 'TiPoLength',
                                 'VaInLength': 'VaInLength',
                                 'VaLaLength': 'VaLaLength',
@@ -437,7 +437,7 @@ class model_outputs:
                      'PelvisAnglesY': 'PelvicObliquity',
                      'PelvisAnglesZ': 'PelvicRotation'}
                      
-        # TODO: concat all vars
+        # TODO: concat all vars that have normal data
         self.normdict = self.pig_lb_normdict
       
         # y labels for plotting
@@ -468,7 +468,7 @@ class model_outputs:
         # TODO: concat all vars
         self.ylabels = self.pig_lb_ylabels
         
-        # will be read by read_() methods
+        # Vars will be read by read_() methods
         self.Vars = {}
                           
 
@@ -563,9 +563,6 @@ class model_outputs:
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
         vgc1 = gaitcycle(vicon)
-        # read all kinematics vars into dict. Also normalized variables will
-        # be created. Variables will be named like 'NormLKneeAnglesX' (normalized)
-        # or 'RHipAnglesX' (non-normalized)
 
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
@@ -662,16 +659,12 @@ class model_outputs:
         return self.mlen_varlabels.keys()
         
     def is_pig_lb_variable(self, var):
-        """ Is var a PiG lower body variable? """
-        vars = self.strip_varname(var)        
-        varlist = self.pig_lb_varnames()
-        return vars in varlist
+        """ Is var a PiG lower body variable? var might be preceded with Norm and L/R """
+        return var in self.pig_lb_varnames() or self.strip_varname(var) in self.pig_lb_varnames()
 
     def is_mlen_variable(self, var):
-        """ Is var a muscle length variable? """
-        vars = self.strip_varname(var)        
-        varlist = self.mlen_varnames()
-        return vars in varlist
+        """ Is var a muscle length variable? var might be preceded with Norm and L/R """
+        return var in self.mlen_varnames() or self.strip_varname(var) in self.mlen_varnames()
         
     def is_kinetic_var(self, var):
         """ Tell whether a variable represents kinetics. """
