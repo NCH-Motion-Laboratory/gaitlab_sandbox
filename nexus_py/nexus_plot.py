@@ -19,7 +19,6 @@ Rules:
 
 TODO:
 
-check filter performance
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
@@ -493,7 +492,7 @@ class nexus_plotter():
                         read_emg = True
                         self.emg_plot_chs.append(var)
                         self.emg_plot_pos.append(i)
-                    elif self.model.is_pig_lb_variable(var):
+                    elif self.model.is_pig_lowerbody_variable(var):
                         read_pig = True
                         self.model_plot_vars.append(var)
                         self.model_plot_pos.append(i)
@@ -583,7 +582,7 @@ class nexus_plotter():
                 ylim_default= ax.get_ylim()
                 # include zero line and extend y scale a bit for kin* variables
                 plt.axhline(0, color='black')  # zero line
-                if self.model.is_pig_lb_variable(var):
+                if self.model.is_pig_lowerbody_variable(var):
                     if ylim_default[0] == 0:
                         plt.ylim(-10, ylim_default[1])
                     if ylim_default[1] == 0:

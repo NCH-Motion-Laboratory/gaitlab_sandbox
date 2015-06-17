@@ -7,6 +7,7 @@ Utility classes for reading data from Vicon Nexus.
 @author: Jussi
 """
 
+
 from __future__ import division, print_function
 
 import numpy as np
@@ -205,7 +206,8 @@ class nexus_emg:
 
     def filt(self, y, passband):
         """ Filter given data y to passband, e.g. [1, 40].
-        Passband is given in Hz. None for no filtering. """
+        Passband is given in Hz. None for no filtering. 
+        Implemented as pure lowpass, if highpass freq = 0 """
         if passband == None:
             return y
         passbandn = 2 * np.array(passband) / self.sfrate
@@ -344,8 +346,7 @@ class model_outputs:
         label dicts etc., e.g. HipAnglesX. """
 
         # descriptive labels
-        # note: without 'Norm' and 'L/R' in beginning of var name
-        self.pig_lb_varlabels = {'AnkleAnglesX': 'Ankle dorsi/plant',
+        self.pig_lowerbody_varlabels = {'AnkleAnglesX': 'Ankle dorsi/plant',
                          'AnkleAnglesZ': 'Ankle rotation',
                          'AnkleMomentX': 'Ankle dors/plan moment',
                          'AnklePowerZ': 'Ankle power',
@@ -413,11 +414,11 @@ class model_outputs:
                                 'VaMeLength': 'VaMeLength'}
         
         # merge all variable dicts into one
-        self.varlabels = self.merge_dicts(self.pig_lb_varlabels, self.mlen_varlabels)
+        self.varlabels = self.merge_dicts(self.pig_lowerbody_varlabels, self.mlen_varlabels)
 
         # mapping from PiG variable names to normal data variables (in normal.gcd)
         # works with Vicon supplied .gcd (at least)
-        self.pig_lb_normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
+        self.pig_lowerbody_normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
                     'AnkleAnglesZ': 'FootRotation',
                      'AnkleMomentX': 'DorsiPlanFlexMoment',
                      'AnklePowerZ': 'AnklePower',
@@ -441,11 +442,11 @@ class model_outputs:
                      'PelvisAnglesZ': 'PelvicRotation'}
                      
         # TODO: concat all vars that have normal data
-        self.normdict = self.pig_lb_normdict
+        self.normdict = self.pig_lowerbody_normdict
       
         # y labels for plotting
         # TODO: add muscle len variables
-        self.pig_lb_ylabels = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
+        self.pig_lowerbody_ylabels = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
                              'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
                              'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
                              'AnklePowerZ': 'Abs    W/kg    Gen',
@@ -469,14 +470,15 @@ class model_outputs:
                              'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
 
         # TODO: concat all vars
-        self.ylabels = self.pig_lb_ylabels
+        self.ylabels = self.pig_lowerbody_ylabels
         
         # Vars will be read by read_() methods
         self.Vars = {}
                           
 
     def read_musclelen(self, vicon, gcdfile=None):
-        """ Read muscle length variables produced by MuscleLengths.mod. """
+        """ Read muscle length variables produced by MuscleLengths.mod.
+        Reads into self.Vars """
         
         varlist = ['LGMedAntLength',
                      'RGMedAntLength',
@@ -581,7 +583,8 @@ class model_outputs:
     def read_pig_lowerbody(self, vicon, gcdfile=None):
         """ Read the lower body Plug-in Gait model outputs from Nexus.
         Variable names starting with 'R' and'L' are normalized into left and right 
-        gait cycles, respectively. gcdfile contains PiG normal data variables. """
+        gait cycles, respectively. gcdfile contains PiG normal data variables. 
+        Reads into self.Vars """
         
         # the PiG kin *vars contain X,Y,Z components per each variable,
         # these will be separated into different variables
@@ -653,17 +656,17 @@ class model_outputs:
                     pig_normaldata[thisvar].append([float(x) for x in li.split()])
             self.pig_normaldata = pig_normaldata
 
-    def pig_lb_varnames(self):
+    def pig_lowerbody_varnames(self):
         """ Return list of known PiG variables. """
-        return self.pig_lb_varlabels.keys()
+        return self.pig_lowerbody_varlabels.keys()
         
     def mlen_varnames(self):
         """ Return list of known muscle length variables. """
         return self.mlen_varlabels.keys()
         
-    def is_pig_lb_variable(self, var):
+    def is_pig_lowerbody_variable(self, var):
         """ Is var a PiG lower body variable? var might be preceded with Norm and L/R """
-        return var in self.pig_lb_varnames() or self.unnorm_varname(var) in self.pig_lb_varnames()
+        return var in self.pig_lowerbody_varnames() or self.unnorm_varname(var) in self.pig_lowerbody_varnames()
 
     def is_mlen_variable(self, var):
         """ Is var a muscle length variable? var might be preceded with Norm and L/R """
@@ -708,10 +711,10 @@ class model_outputs:
     def ylabel(self, var):
         """ Return y label for plotting a given variable. """
         vars = self.unnorm_varname(var)
-        # explicitly specified        
+        # explicitly specified label?       
         if vars in self.ylabels:
             return self.ylabels[vars]
-        # default for non-specified muscle len variable
+        # use default for muscle len variable
         elif self.is_mlen_variable(var):
             return 'Length (mm)'
         # unknown var
