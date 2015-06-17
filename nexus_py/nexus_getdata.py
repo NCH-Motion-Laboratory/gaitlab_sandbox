@@ -372,7 +372,7 @@ class model_outputs:
                          'PelvisAnglesZ': 'Pelvic rotation'}
                          
         # muscle length (MuscleLength.mod)
-        self.mlen_varlabels = {'AdBrLength': 'AdBrLength',
+        self.musclelen_varlabels = {'AdBrLength': 'AdBrLength',
                                'AdLoLength': 'AdLoLength',
                                 'AdMaInfLength': 'AdMaInfLength',
                                 'AdMaMidLength': 'AdMaMidLength',
@@ -416,7 +416,7 @@ class model_outputs:
                                 'VaMeLength': 'VaMeLength'}
         
         # merge all variable dicts into one
-        self.varlabels = self.merge_dicts(self.pig_lowerbody_varlabels, self.mlen_varlabels)
+        self.varlabels = self.merge_dicts(self.pig_lowerbody_varlabels, self.musclelen_varlabels)
 
         # mapping from PiG variable names to normal data variables (in normal.gcd)
         # works with Vicon supplied .gcd (at least)
@@ -444,9 +444,9 @@ class model_outputs:
                      'PelvisAnglesZ': 'PelvicRotation'}
 
         # TODO: muscle len normal data
-        self.mlen_normdict = {}
+        self.musclelen_normdict = {}
                      
-        self.normdict = self.merge_dicts(self.pig_lowerbody_normdict, self.mlen_normdict)
+        self.normdict = self.merge_dicts(self.pig_lowerbody_normdict, self.musclelen_normdict)
       
         # y labels for plotting
         self.pig_lowerbody_ylabels = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
@@ -671,13 +671,13 @@ class model_outputs:
         """ Tell whether a (PiG) variable represents kinetics. """
         return var.find('Power') > -1 or var.find('Moment') > -1
         
-    def mlen_varnames(self):
+    def musclelen_varnames(self):
         """ Return list of known muscle length variables. """
-        return self.mlen_varlabels.keys()
+        return self.musclelen_varlabels.keys()
 
-    def is_mlen_variable(self, var):
+    def is_musclelen_variable(self, var):
         """ Is var a muscle length variable? var might be preceded with Norm and L/R """
-        return var in self.mlen_varnames() or self.unnorm_varname(var) in self.mlen_varnames()
+        return var in self.musclelen_varnames() or self.unnorm_varname(var) in self.musclelen_varnames()
 
     def unnorm_varname(self, var):
         """ Remove Norm and 'L/R' from beginning of variable name. """
@@ -718,7 +718,7 @@ class model_outputs:
         if vars in self.ylabels:
             return self.ylabels[vars]
         # use default for muscle len variable
-        elif self.is_mlen_variable(var):
+        elif self.is_musclelen_variable(var):
             return 'Length (mm)'
         # unknown var
         else:

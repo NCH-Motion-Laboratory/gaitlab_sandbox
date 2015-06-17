@@ -304,7 +304,7 @@ class nexus_plotter():
             self.emg_manual_enable[ch] = self.cfg.emg_enabled(ch)
 
         # muscle length normal data - not yet used
-        self.mlen_normaldata_path = None
+        self.musclelen_normaldata_path = None
 
         # can set layout=None, if no plots are intended
         if not layout:
@@ -475,7 +475,7 @@ class nexus_plotter():
             self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
-            read_mlen = False
+            read_musclelen = False
             self.emg_plot_chs = []
             self.emg_plot_pos = []
             self.model_plot_vars = []
@@ -496,8 +496,8 @@ class nexus_plotter():
                         read_pig = True
                         self.model_plot_vars.append(var)
                         self.model_plot_pos.append(i)
-                    elif self.model.is_mlen_variable(var):
-                        read_mlen = True
+                    elif self.model.is_musclelen_variable(var):
+                        read_musclelen = True
                         self.model_plot_vars.append(var)
                         self.model_plot_pos.append(i)
                     else:
@@ -506,8 +506,8 @@ class nexus_plotter():
                 self.emg.read(self.vicon)
             if read_pig:
                 self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
-            if read_mlen:
-                self.model.read_musclelen(self.vicon, self.mlen_normaldata_path)
+            if read_musclelen:
+                self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
 
     def set_fig_title(self, title):
         if self.fig:
@@ -553,7 +553,6 @@ class nexus_plotter():
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
         # handles model output vars (Plug-in Gait, muscle length, etc.)
-
         if self.model_plot_vars:
             for k, var in enumerate(self.model_plot_vars):
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
@@ -587,8 +586,8 @@ class nexus_plotter():
                         plt.ylim(-10, ylim_default[1])
                     if ylim_default[1] == 0:
                         plt.ylim(ylim_default[0], 10)
-                # expand the default scale a bit for muscle length variables
-                if self.model.is_mlen_variable(var):
+                # expand the default scale a bit for muscle length variables, but no zeroline
+                if self.model.is_musclelen_variable(var):
                     plt.ylim(ylim_default[0]-10, ylim_default[1]+10)
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
                 # add arrows indicating toe off times
@@ -618,6 +617,7 @@ class nexus_plotter():
                         plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                           head_length=hdlength, head_width=hdwidth)
         
+        # emg plotting
         if self.emg_plot_chs:
             for k, thisch in enumerate(self.emg_plot_chs):
                 side_this = thisch[0]
