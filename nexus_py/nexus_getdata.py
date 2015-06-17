@@ -340,12 +340,14 @@ class model_outputs:
         return x
         
     def __init__(self):
-        """ Sets up some relevant variables, but does not read data.
+        """ Sets up some variables, but does not read data.
         Model data is usually stored in normalized form with variables named
         e.g. NormRHipAnglesX, but shorter variable names are used in
-        label dicts etc., e.g. HipAnglesX. """
+        label dicts etc., e.g. HipAnglesX. *_varname functions convert between
+        these. """
 
-        # descriptive labels
+        # descriptive labels for variables
+        # Plug-in Gait lowerbody
         self.pig_lowerbody_varlabels = {'AnkleAnglesX': 'Ankle dorsi/plant',
                          'AnkleAnglesZ': 'Ankle rotation',
                          'AnkleMomentX': 'Ankle dors/plan moment',
@@ -369,7 +371,7 @@ class model_outputs:
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}
                          
-        # TODO: fill out rest of labels
+        # muscle length (MuscleLength.mod)
         self.mlen_varlabels = {'AdBrLength': 'AdBrLength',
                                'AdLoLength': 'AdLoLength',
                                 'AdMaInfLength': 'AdMaInfLength',
@@ -419,7 +421,7 @@ class model_outputs:
         # mapping from PiG variable names to normal data variables (in normal.gcd)
         # works with Vicon supplied .gcd (at least)
         self.pig_lowerbody_normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
-                    'AnkleAnglesZ': 'FootRotation',
+                     'AnkleAnglesZ': 'FootRotation',
                      'AnkleMomentX': 'DorsiPlanFlexMoment',
                      'AnklePowerZ': 'AnklePower',
                      'FootProgressAnglesZ': 'FootProgression',
@@ -440,12 +442,13 @@ class model_outputs:
                      'PelvisAnglesX': 'PelvicTilt',
                      'PelvisAnglesY': 'PelvicObliquity',
                      'PelvisAnglesZ': 'PelvicRotation'}
+
+        # TODO: muscle len normal data
+        self.mlen_normdict = {}
                      
-        # TODO: concat all vars that have normal data
-        self.normdict = self.pig_lowerbody_normdict
+        self.normdict = self.merge_dicts(self.pig_lowerbody_normdict, self.mlen_normdict)
       
         # y labels for plotting
-        # TODO: add muscle len variables
         self.pig_lowerbody_ylabels = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
                              'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
                              'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
@@ -469,10 +472,10 @@ class model_outputs:
                              'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
                              'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
 
-        # TODO: concat all vars
+        # concat all vars
         self.ylabels = self.pig_lowerbody_ylabels
         
-        # Vars will be read by read_() methods
+        # Vars will actually be read by read_() methods, as needed
         self.Vars = {}
                           
 
@@ -731,6 +734,4 @@ class model_outputs:
             return None
         else:
             return self.pig_normaldata[self.normdict[vars]]
-
-
 
