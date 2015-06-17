@@ -19,10 +19,6 @@ maintitleprefix='Muscle length plot for '
 
 nplotter = nexus_plotter(layout)
 
-# need to open trial before detecting side
-nplotter.open_trial(nexusvars=None)
-side = nplotter.side
-
 plotvars = ['PsoaLength', 'GracLength', 'ReFeLength',
             'BiFLLength', 'SeTeLength', 'SeMeLength',
             'MeGaLength', 'LaGaLength', 'SoleLength']
@@ -35,9 +31,6 @@ maintitle = maintitleprefix + trialname
 nplotter.plot_trial(maintitle=maintitle)
 
 nplotter.show()
-
-
-
 
 
 

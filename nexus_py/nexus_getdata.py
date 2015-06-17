@@ -344,7 +344,7 @@ class model_outputs:
         Model data is usually stored in normalized form with variables named
         e.g. NormRHipAnglesX, but shorter variable names are used in
         label dicts etc., e.g. HipAnglesX. *_varname functions convert between
-        these. """
+        these names. """
 
         # descriptive labels for variables
         # Plug-in Gait lowerbody
@@ -662,22 +662,22 @@ class model_outputs:
     def pig_lowerbody_varnames(self):
         """ Return list of known PiG variables. """
         return self.pig_lowerbody_varlabels.keys()
-        
-    def mlen_varnames(self):
-        """ Return list of known muscle length variables. """
-        return self.mlen_varlabels.keys()
-        
+
     def is_pig_lowerbody_variable(self, var):
         """ Is var a PiG lower body variable? var might be preceded with Norm and L/R """
         return var in self.pig_lowerbody_varnames() or self.unnorm_varname(var) in self.pig_lowerbody_varnames()
 
+    def is_kinetic_var(self, var):
+        """ Tell whether a (PiG) variable represents kinetics. """
+        return var.find('Power') > -1 or var.find('Moment') > -1
+        
+    def mlen_varnames(self):
+        """ Return list of known muscle length variables. """
+        return self.mlen_varlabels.keys()
+
     def is_mlen_variable(self, var):
         """ Is var a muscle length variable? var might be preceded with Norm and L/R """
         return var in self.mlen_varnames() or self.unnorm_varname(var) in self.mlen_varnames()
-        
-    def is_kinetic_var(self, var):
-        """ Tell whether a variable represents kinetics. """
-        return var.find('Power') > -1 or var.find('Moment') > -1
 
     def unnorm_varname(self, var):
         """ Remove Norm and 'L/R' from beginning of variable name. """
