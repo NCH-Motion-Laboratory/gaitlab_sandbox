@@ -44,12 +44,12 @@ for i,trial in enumerate(trials):
                 'HipMomentX','KneeMomentX','AnkleMomentX',
                 side+'Rec',side+'Ham',side+'Gas',
                 'emglegend',side+'Glut',side+'Sol',
-                'piglegend',side+'Gas',None,
+                'modellegend',side+'Gas',None,
                 'HipPowerZ','KneePowerZ','AnklePowerZ']
     # open again and read vars now
     nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
     nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='Kinetics-EMG overlay plot',
-                        onesided_kinematics=False, pig_linestyle=pigstyles[i],
+                        onesided_kinematics=False, model_linestyle=pigstyles[i],
                         emg_tracecolor=emgcolors[i])
 
 #nplotter.set_fig_title('\n'.join(trials))
