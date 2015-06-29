@@ -29,15 +29,15 @@ if trials == None:
 if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
 
-    plotvars = ['RGlut','LGlut',
-              'RHam','LHam',
-              'RRec','LRec',
-              'RVas','LVas',
-              'RTibA','LTibA',
-              'RPer','LPer',
-              'RGas','LGas',
-              'RSol','LSol',
-              'emglegend',None]
+plotvars = ['RGlut','LGlut',
+          'RHam','LHam',
+          'RRec','LRec',
+          'RVas','LVas',
+          'RTibA','LTibA',
+          'RPer','LPer',
+          'RGas','LGas',
+          'RSol','LSol',
+          'emglegend',None]
 
 for i,trial in enumerate(trials):
     # open again and read vars now
