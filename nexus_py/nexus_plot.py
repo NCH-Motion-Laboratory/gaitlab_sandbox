@@ -686,7 +686,8 @@ class nexus_plotter():
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
         if self.model_legendpos or self.emg_legendpos:
-            self.legendnames.append(self.trialname)            
+            self.legendnames.append(self.trialname)
+            # TODO: + self.get_eclipse_description(self.trialname))            
         if self.model_legendpos:
             self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
             ax = plt.subplot(self.gs[self.model_legendpos])
