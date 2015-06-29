@@ -29,10 +29,6 @@ if trials == None:
 if len(trials) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
 
-for i,trial in enumerate(trials):
-    # need to open trial to detect side (don't read variables yet)
-    nplotter.open_trial(trialpath=trial, nexusvars=None)
-
     plotvars = ['RGlut','LGlut',
               'RHam','LHam',
               'RRec','LRec',
@@ -43,6 +39,7 @@ for i,trial in enumerate(trials):
               'RSol','LSol',
               'emglegend',None]
 
+for i,trial in enumerate(trials):
     # open again and read vars now
     nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
     maintitle = 'EMG overlay plot' + '\n' + nplotter.get_emg_filter_description()
