@@ -128,7 +128,7 @@ class nexus_emg(emg):
     """ Read and process EMG data from Nexus. """
 
     def read(self, vicon):
-        """ Read the actual EMG data from Nexus. """
+
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -242,48 +242,7 @@ class nexus_emg(emg):
         # normalized grids (from 0..100) of EMG length; useful for plotting
         self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
         self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
-        
-    def is_valid_emg(self, y):
-        """ Check whether channel contains valid EMG signal. """
-        # max. relative interference at 50 Hz harmonics
-        emg_max_interference = 50
-        # detect 50 Hz harmonics
-        int200 = self.filt(y, [195,205])
-        int50 = self.filt(y, [45,55])
-        int100 = self.filt(y, [95,105])
-        # baseline emg signal
-        emglevel = self.filt(y, [60,90])
-        intrel = np.var(int50+int100+int200)/np.var(emglevel)
-        # DEBUG
-        #print('rel. interference: ', intrel)
-        return intrel < emg_max_interference
 
-    def filt(self, y, passband):
-        """ Filter given data y to passband, e.g. [1, 40].
-        Passband is given in Hz. None for no filtering. 
-        Implemented as pure lowpass, if highpass freq = 0 """
-        if passband == None:
-            return y
-        passbandn = 2 * np.array(passband) / self.sfrate
-        if passbandn[0] > 0:  # bandpass
-            b, a = signal.butter(self.buttord, passbandn, 'bandpass')
-        else:  # lowpass
-            b, a = signal.butter(self.buttord, passbandn[1])
-        yfilt = signal.filtfilt(b, a, y)        
-        return yfilt
-
-    def findchs(self, str):
-        """ Return list of channels whose name contains the given 
-        string str. """
-        return [chn for chn in self.elnames if chn.find(str) > -1]
-
-    def findch(self, str):
-        """ Return name of (unique) channel containing the given 
-        string str. """
-        chlist = [chn for chn in self.elnames if chn.find(str) > -1]
-        if len(chlist) != 1:
-            error_exit('Cannot find unique channel matching '+str)
-        return chlist[0]
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
@@ -321,7 +280,6 @@ class gaitcycle:
         self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
         self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
         
-       
     def normalize(self, y, side):
         """ Interpolate any variable y to left or right gait cycle of this trial.
         New x axis will be 0..100 """
@@ -337,7 +295,6 @@ class gaitcycle:
             tend = self.lgc1end
         # interpolate variable to gait cycle
         return np.interp(self.tn, gc1t, y[tstart:tend])
-        
         
     def detect_side(self, vicon):
         """ Try to detect whether the trial has L or R forceplate strike.
