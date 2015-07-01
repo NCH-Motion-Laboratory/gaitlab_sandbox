@@ -434,8 +434,17 @@ class nexus_plotter():
             return None
         else:
             return(trialname_[0])
+            
+    def open_c3d_trial(self, trialpath):
+        """ Open a trial from a c3d file. Get:
+        subject name
+        trial name
+        gait cycle info (?)
+        self.emg instance
+        self.model instance
+        """
                                                     
-    def open_trial(self, nexusvars, trialpath=None, side=None):
+    def open_nexus_trial(self, nexusvars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. The
         variables specified in nexusvars will be read. To open the trial without
         reading variables, set nexusvars=None (useful for e.g. detecting side) """

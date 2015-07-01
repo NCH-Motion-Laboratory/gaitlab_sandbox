@@ -40,12 +40,11 @@ def messagebox(message):
     """ Custom notification handler """
     # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
-    
-class nexus_emg:
-    """ Class for reading and processing EMG data from Nexus.
-    vicon is a ViconNexus.ViconNexus() object. EMG object can be created
-    without reading any actual data (e.g. to check electrode names). """
-    
+
+class emg:
+    """ Read and process emg data. Derive a subclass and implement the
+    read() method. """
+
     def define_emg_names(self):
         """ Defines the electrode mapping. """
         self.ch_normals = gaitlab.emg_normals
@@ -72,6 +71,61 @@ class nexus_emg:
         # normal data and logical chs
         self.define_emg_names()
         self.emg_remapping = emg_remapping
+        
+    def read(self):
+        """ Override in subclass """
+        pass
+            
+    def is_valid_emg(self, y):
+        """ Check whether channel contains valid EMG signal. """
+        # max. relative interference at 50 Hz harmonics
+        emg_max_interference = 50
+        # detect 50 Hz harmonics
+        int200 = self.filt(y, [195,205])
+        int50 = self.filt(y, [45,55])
+        int100 = self.filt(y, [95,105])
+        # baseline emg signal
+        emglevel = self.filt(y, [60,90])
+        intrel = np.var(int50+int100+int200)/np.var(emglevel)
+        # DEBUG
+        #print('rel. interference: ', intrel)
+        return intrel < emg_max_interference
+
+    def filt(self, y, passband):
+        """ Filter given data y to passband, e.g. [1, 40].
+        Passband is given in Hz. None for no filtering. 
+        Implemented as pure lowpass, if highpass freq = 0 """
+        if passband == None:
+            return y
+        passbandn = 2 * np.array(passband) / self.sfrate
+        if passbandn[0] > 0:  # bandpass
+            b, a = signal.butter(self.buttord, passbandn, 'bandpass')
+        else:  # lowpass
+            b, a = signal.butter(self.buttord, passbandn[1])
+        yfilt = signal.filtfilt(b, a, y)        
+        return yfilt
+
+    def findchs(self, str):
+        """ Return list of channels whose name contains the given 
+        string str. """
+        return [chn for chn in self.elnames if chn.find(str) > -1]
+
+    def findch(self, str):
+        """ Return name of (unique) channel containing the given 
+        string str. """
+        chlist = [chn for chn in self.elnames if chn.find(str) > -1]
+        if len(chlist) != 1:
+            error_exit('Cannot find unique channel matching '+str)
+        return chlist[0]
+        
+class c3d_emg(emg):
+    """ Read and process EMG data from a c3d file. """
+    
+    def read(self, c3dfile):
+      pass      
+  
+class nexus_emg(emg):
+    """ Read and process EMG data from Nexus. """
 
     def read(self, vicon):
         """ Read the actual EMG data from Nexus. """

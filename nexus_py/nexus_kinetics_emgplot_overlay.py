@@ -35,7 +35,7 @@ if len(trials) > MAX_TRIALS:
 
 for i,trial in enumerate(trials):
     # need to open trial to detect side (don't read variables yet)
-    nplotter.open_trial(trialpath=trial, nexusvars=None)
+    nplotter.open_nexus_trial(trialpath=trial, nexusvars=None)
     side = nplotter.side
     # then choose EMG variables according to side
     plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
@@ -47,7 +47,7 @@ for i,trial in enumerate(trials):
                 'modellegend',side+'Gas',None,
                 'HipPowerZ','KneePowerZ','AnklePowerZ']
     # open again and read vars now
-    nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
+    nplotter.open_nexus_trial(trialpath=trial, nexusvars=plotvars)
     nplotter.plot_trial(plotheightratios=plotheightratios, maintitle='Kinetics-EMG overlay plot',
                         onesided_kinematics=False, model_linestyle=pigstyles[i],
                         emg_tracecolor=emgcolors[i])

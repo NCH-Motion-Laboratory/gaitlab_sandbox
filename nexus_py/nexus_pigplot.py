@@ -27,7 +27,7 @@ plotvars = ['PelvisAnglesX',
 maintitleprefix = 'Kinematics plot for '
 
 nplotter = nexus_plotter(layout)
-nplotter.open_trial(plotvars)
+nplotter.open_nexus_trial(plotvars)
 nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
 plotvars = ['HipMomentX',
@@ -43,7 +43,7 @@ plotvars = ['HipMomentX',
 maintitleprefix = 'Kinetics plot for '
 
 nplotter = nexus_plotter(layout)
-nplotter.open_trial(plotvars)
+nplotter.open_nexus_trial(plotvars)
 nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
 nplotter.show()

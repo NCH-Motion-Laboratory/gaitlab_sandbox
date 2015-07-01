@@ -41,7 +41,7 @@ plotvars = ['RGlut','LGlut',
 
 for i,trial in enumerate(trials):
     # open again and read vars now
-    nplotter.open_trial(trialpath=trial, nexusvars=plotvars)
+    nplotter.open_nexus_trial(trialpath=trial, nexusvars=plotvars)
     maintitle = 'EMG overlay plot' + '\n' + nplotter.get_emg_filter_description()
     nplotter.plot_trial(maintitle=maintitle,
                         emg_tracecolor=emgcolors[i])

@@ -23,7 +23,7 @@ plotvars = ['PsoaLength', 'GracLength', 'ReFeLength',
             'BiFLLength', 'SeTeLength', 'SeMeLength',
             'MeGaLength', 'LaGaLength', 'SoleLength']
 
-nplotter.open_trial(nexusvars=plotvars)
+nplotter.open_nexus_trial(nexusvars=plotvars)
 
 trialname = nplotter.trialname
 maintitle = maintitleprefix + trialname

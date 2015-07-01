@@ -18,7 +18,7 @@ maintitleprefix='Kinematics-EMG plot for '
 nplotter = nexus_plotter(layout)
 
 # need to open trial before detecting side
-nplotter.open_trial(nexusvars=None)
+nplotter.open_nexus_trial(nexusvars=None)
 side = nplotter.side
 # choose EMG variables according to side
 plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
@@ -28,7 +28,7 @@ plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
             None,side+'Glut',side+'Sol',
             None,side+'Gas',None]
 
-nplotter.open_trial(nexusvars=plotvars)
+nplotter.open_nexus_trial(nexusvars=plotvars)
 
 trialname = nplotter.trialname
 maintitle = maintitleprefix + trialname
