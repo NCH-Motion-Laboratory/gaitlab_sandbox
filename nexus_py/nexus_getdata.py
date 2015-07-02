@@ -118,17 +118,8 @@ class emg:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
         
-class c3d_emg(emg):
-    """ Read and process EMG data from a c3d file. """
-    
-    def read(self, c3dfile):
-      pass      
-  
-class nexus_emg(emg):
-    """ Read and process EMG data from Nexus. """
-
-    def read(self, vicon):
-
+    def read_nexus(self, vicon):
+        """ Read EMG data from a running Vicon Nexus application. """
         # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
@@ -160,7 +151,8 @@ class nexus_emg(emg):
             #self.elnames[i] = elname
 
         # gait cycle beginning and end, samples
-        vgc1 = gaitcycle(vicon)
+        vgc1 = gaitcycle()
+        vgc1.read_nexus(vicon)
         self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
         self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
         self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
@@ -242,13 +234,22 @@ class nexus_emg(emg):
         # normalized grids (from 0..100) of EMG length; useful for plotting
         self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
         self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
+        
+    def read_c3d(self):
+        """ Read EMG data from a c3d file. """
+        
+
+        
+  
+
 
 
 class gaitcycle:
     """ Determines 1st L/R gait cycles from data. Can also normalize
     vars to 0..100% of gait cycle. """
     
-    def __init__(self, vicon):
+    def read_nexus(self, vicon):
+        """ Read gait cycle info from a Vicon Nexus instance. """
         subjectname = vicon.GetSubjectNames()[0]
         # figure out gait cycle
         # frames where foot strikes occur (1-frame discrepancies with Nexus?)
@@ -279,6 +280,9 @@ class gaitcycle:
             error_exit('Expected single toe-off event during gait cycle')
         self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
         self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
+        
+    def read_c3d(self, c3dfile):
+        """ Read gait cycle info from a c3d file. """
         
     def normalize(self, y, side):
         """ Interpolate any variable y to left or right gait cycle of this trial.
@@ -581,7 +585,8 @@ class model_outputs:
                      
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
-        vgc1 = gaitcycle(vicon)
+        vgc1 = gaitcycle()
+        vgc1.read_nexus(vicon)
 
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
@@ -629,7 +634,8 @@ class model_outputs:
               
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
-        vgc1 = gaitcycle(vicon)
+        vgc1 = gaitcycle()
+        vgc1.read_nexus(vicon)
         # read all kinematics vars into dict. Also normalized variables will
         # be created. Variables will be named like 'NormLKneeAnglesX' (normalized)
         # or 'RHipAnglesX' (non-normalized)

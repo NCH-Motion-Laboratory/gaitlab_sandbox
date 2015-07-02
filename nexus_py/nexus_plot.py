@@ -71,7 +71,7 @@ class PlotterConfig():
         self.appdir = appdir        
         
         # get EMG electrode names and write enable/disable values
-        self.emg_names = nexus_getdata.nexus_emg().ch_names
+        self.emg_names = nexus_getdata.emg().ch_names
         self.emg_names.sort()
         for chname in self.emg_names:
             self.config[self.emg_enabled_key(chname)] = 'True'
@@ -297,7 +297,7 @@ class nexus_plotter():
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
         self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
-        self.emg_names = nexus_getdata.nexus_emg().ch_names
+        self.emg_names = nexus_getdata.emg().ch_names
         self.emg_names.sort()
         self.emg_manual_enable={}
         for ch in self.emg_names:
@@ -470,7 +470,8 @@ class nexus_plotter():
         self.subjectname = subjectnames[0]
         
         # update gait cycle information
-        self.vgc = nexus_getdata.gaitcycle(self.vicon)
+        self.vgc = nexus_getdata.gaitcycle()
+        self.vgc.read_nexus(self.vicon)
         
         # try to detect side (L/R) if not forced in arguments
         if not side:
@@ -481,7 +482,7 @@ class nexus_plotter():
         if nexusvars:
             # will read EMG/model data only if necessary
             self.model = nexus_getdata.model_outputs()
-            self.emg = nexus_getdata.nexus_emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            self.emg = nexus_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
             read_musclelen = False
@@ -512,7 +513,7 @@ class nexus_plotter():
                     else:
                         error_exit('Unknown variable: ' + var)
             if read_emg:
-                self.emg.read(self.vicon)
+                self.emg.read_nexus(self.vicon)
             if read_pig:
                 self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
             if read_musclelen:
