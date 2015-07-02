@@ -121,7 +121,6 @@ class emg:
         
     def read_nexus(self, vicon):
         """ Read EMG data from a running Vicon Nexus application. """
-        # find EMG device and get some info
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
         emgdevname = 'Myon'
@@ -137,21 +136,9 @@ class emg:
         # Myon should only have 1 output; if zero, EMG was not found
         assert(len(outputids)==1)
         outputid = outputids[0]
-        
         # get list of channel names and IDs
         _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
-
-        # fix "Voltage." bug - not necessary anymore (matching labels
-        # works at any position)
-        #for i in range(len(self.elnames)):
-            #elname = self.elnames[i]    
-            # if elname starts with 'Voltage.', remove it:
-            # Nexus 2 prepends 'Voltage.' to electrode names during processing
-            #if elname.find('Voltage') > -1:
-                #elname = elname[elname.find('.')+1:]
-            #self.elnames[i] = elname
-
-        # gait cycle beginning and end, samples
+        # get gait cycle
         vgc1 = gaitcycle()
         vgc1.read_nexus(vicon)
         self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
@@ -160,7 +147,6 @@ class emg:
         self.rgc1end_s = int(round((vgc1.rgc1end - 1) * samplesperframe))
         self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
         self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
-            
         # read physical EMG channels and cut data to L/R gait cycles
         self.data = {}
         self.data_gc1l = {}
@@ -169,8 +155,6 @@ class emg:
             eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
             elname = self.elnames[elid-1]
             self.data[elname] = np.array(eldata)
-            # DEBUG
-            # print(elname)
             if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
                 self.data[elname] = 'EMG_DISCONNECTED'
                 self.data_gc1l[elname] = 'EMG_DISCONNECTED'
@@ -179,7 +163,27 @@ class emg:
                 # cut to L/R gait cycles. no interpolation
                 self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
                 self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
+        self.datalen = len(eldata)
+        assert(self.datalen == framecount * samplesperframe)
+        # time grid (s)
+        self.t = np.arange(self.datalen)/self.sfrate
+        # normalized grids (from 0..100) of EMG length; useful for plotting
+        self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
+        self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
+        # map physical channels to logical ones
+        self.map_data()
+        
+    def read_c3d(self):
+        """ Read EMG data from a c3d file. Need at least:
+        sampling rate
+        EMG samples per gait cycle frame (sfrate/framerate)
+        EMG data """
+        
+        
+        self.map_data()
 
+
+    def map_data(self):
         """ Map logical channels into physical ones. Here, the rule is that the
         name of the physical channel must start with the name of the logical channel.
         For example, the logical name can be 'LPer' and the physical channel 'LPer12'
@@ -227,18 +231,8 @@ class emg:
             #self.yscale_gc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
             #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
 
-        # various variables
-        self.datalen = len(eldata)
-        assert(self.datalen == framecount * samplesperframe)
-        # samples to time (s)
-        self.t = np.arange(self.datalen)/self.sfrate
-        # normalized grids (from 0..100) of EMG length; useful for plotting
-        self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
-        self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
         
-    def read_c3d(self):
-        """ Read EMG data from a c3d file. """
-        pass
+    
 
 
 class gaitcycle:
@@ -306,11 +300,10 @@ class gaitcycle:
         ltoeoff_gc1 = [x for x in self.ltoeoffs if x > self.lgc1start and x < self.lgc1end]
         rtoeoff_gc1 = [x for x in self.rtoeoffs if x > self.rgc1start and x < self.rgc1end]
         if len(ltoeoff_gc1) != 1 or len(rtoeoff_gc1) != 1:
-            error_exit('Expected single toe-off event during gait cycle')
+            error_exit('Expected a single toe-off event during gait cycle')
         self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
         self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
-        
-        
+      
     def normalize(self, y, side):
         """ Interpolate any variable y to left or right (1st) gait cycle of this trial.
         New x axis will be 0..100. """
