@@ -2,7 +2,7 @@
 """
 Created on Tue Mar 17 14:41:31 2015
 
-Utility classes for reading data from Vicon Nexus.
+Utility classes for reading gait data.
 
 @author: Jussi
 """
@@ -43,8 +43,7 @@ def messagebox(message):
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
 
 class emg:
-    """ Read and process emg data. Derive a subclass and implement the
-    read() method. """
+    """ Read and process emg data. """
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
@@ -121,6 +120,7 @@ class emg:
         
     def read_nexus(self, vicon):
         """ Read EMG data from a running Vicon Nexus application. """
+        self.source = 'Nexus'
         framerate = vicon.GetFrameRate()
         framecount = vicon.GetFrameCount()
         emgdevname = 'Myon'
@@ -173,23 +173,61 @@ class emg:
         # map physical channels to logical ones
         self.map_data()
         
-    def read_c3d(self):
-        """ Read EMG data from a c3d file. Need at least:
-        sampling rate
-        EMG samples per gait cycle frame (sfrate/framerate)
-        EMG data """
-        
-        
+    def read_c3d(self, c3dfile):
+        """ Read EMG data from a c3d file. """
+        self.source = 'c3d'
+        reader = btk.btkAcquisitionFileReader()
+        reader.SetFilename(c3dfile)  # check existence?
+        reader.Update()
+        acq = reader.GetOutput()
+        frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
+        samplesperframe = acq.GetNumberAnalogSamplePerFrame()
+        self.sfrate = acq.GetAnalogFrequency()
+        # get gait cycle
+        vgc1 = gaitcycle()
+        vgc1.read_c3d(c3dfile)
+        # convert gait cycle times to EMG samples
+        # in c3d, the data is already cut to the region of interest, so
+        # frames must be translated by start of ROI (frame1)
+        self.lgc1start_s = int(round((vgc1.lgc1start - frame1) * samplesperframe))
+        self.lgc1end_s = int(round((vgc1.lgc1end - frame1) * samplesperframe))
+        self.rgc1start_s = int(round((vgc1.rgc1start - frame1) * samplesperframe))
+        self.rgc1end_s = int(round((vgc1.rgc1end - frame1) * samplesperframe))
+        self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
+        self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
+        # read physical EMG channels and cut data to L/R gait cycles
+        self.data = {}
+        self.data_gc1l = {}
+        self.data_gc1r = {}
+        self.elnames = []
+        for i in btk.Iterate(acq.GetAnalogs()):
+            if i.GetDescription().find('EMG') >= 0 and i.GetUnit() == 'V':
+                print(i.GetDescription())
+                elname = i.GetLabel()
+                self.elnames.append(elname)
+                self.data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension
+                if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
+                    self.data[elname] = 'EMG_DISCONNECTED'
+                    self.data_gc1l[elname] = 'EMG_DISCONNECTED'
+                    self.data_gc1r[elname] = 'EMG_DISCONNECTED'
+                else:
+                    self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
+                    self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
+        self.datalen = len(self.data[elname])
+        # time grid (s)
+        self.t = np.arange(self.datalen)/self.sfrate
+        # normalized grids (from 0..100) of EMG length; useful for plotting
+        self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
+        self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
+        # map physical channels to logical ones
         self.map_data()
-
 
     def map_data(self):
         """ Map logical channels into physical ones. Here, the rule is that the
         name of the physical channel must start with the name of the logical channel.
         For example, the logical name can be 'LPer' and the physical channel 'LPer12'
-        will be a match. Thus, the logical names can be shorter than the physical ones,
-        as long as an unique match is found. The user-defined replacements are also taken 
-        into account here. """
+        will be a match. Thus, the logical names can be shorter than the physical ones.
+        The shortest match will be found. """
         self.logical_data = {}
         self.logical_data_gc1l = {}
         self.logical_data_gc1r = {}
@@ -211,9 +249,14 @@ class emg:
                     datach = logch
                 # find unique matching physical electrode name
                 matches = [x for x in self.elnames if x.find(datach) >= 0]
-                if len(matches) != 1:
-                    error_exit('Cannot find unique electrode matching requested name '+datach)
-                elname = matches[0]
+                if len(matches) == 0:
+                    error_exit('Cannot find electrode matching requested name '+datach)
+                elname = min(matches, key=len)  # choose shortest matching name
+                # FIXME: matching logic for Nexus, when multiple matches found?
+                if len(matches) > 1:
+                    print('map_data: multiple matching channels for: ', datach)
+                    if self.source == 'Nexus':
+                        messagebox('Warning: multiple matching channels for: '+datach+'\nChoosing: '+elname)
                 self.logical_data[logch] = self.data[elname]
                 # EMG data during gait cycles
                 if self.data[elname] != 'EMG_DISCONNECTED':
@@ -230,9 +273,6 @@ class emg:
             # median scaling - beware of DC!
             #self.yscale_gc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
             #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
-
-        
-    
 
 
 class gaitcycle:
@@ -306,6 +346,7 @@ class gaitcycle:
       
     def normalize(self, y, side):
         """ Interpolate any variable y to left or right (1st) gait cycle of this trial.
+        Variable is assumed to share the same time axis as the gait events.
         New x axis will be 0..100. """
         lgc1t = np.linspace(0, 100, self.lgc1len)
         rgc1t = np.linspace(0, 100, self.rgc1len)
