@@ -475,7 +475,7 @@ class nexus_plotter():
         
         # try to detect side (L/R) if not forced in arguments
         if not side:
-            self.side = self.vgc.detect_side(self.vicon)
+            self.side = self.vgc.side
         else:
             self.side = side    
          

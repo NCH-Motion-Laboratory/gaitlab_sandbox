@@ -41,7 +41,6 @@ print vgc2.lfstrikes
 emg2 = nexus_getdata.emg()
 emg2.read_nexus(vicon)
 
-
 emg1 = nexus_getdata.emg()
 emg1.read_c3d(c3dfile)
 

@@ -274,13 +274,18 @@ class emg:
             #self.yscale_gc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
             #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
 
-
 class gaitcycle:
-    """ Determines 1st L/R gait cycles from data. Can also normalize
-    vars to 0..100% of gait cycle. """
+    """ Determines start and end points of 1st gait cycles (L/R) from data. 
+    Can also normalize variables to 0..100% of either gait cycle.
+    Currently only handles the 1st (L/R) gait cycles, rest are ignored. """
+    
+    def __init__(self):
+        self.side = None
+        self.source = None
     
     def read_nexus(self, vicon):
         """ Read gait cycle info from a Vicon Nexus instance. """
+        self.source = 'Nexus'
         subjectname = vicon.GetSubjectNames()[0]
         # figure out gait cycle
         # frames where foot strikes occur (1-frame discrepancies with Nexus?)
@@ -290,9 +295,11 @@ class gaitcycle:
         self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
         self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
         self.compute_cycle()
+        self.detect_side_nexus(vicon)
 
     def read_c3d(self, c3dfile):
         """ Read gait cycle info from a c3d file. """
+        self.source = 'c3d'
         reader = btk.btkAcquisitionFileReader()
         reader.SetFilename(c3dfile)  # check existence?
         reader.Update()
@@ -345,8 +352,9 @@ class gaitcycle:
         self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
       
     def normalize(self, y, side):
-        """ Interpolate any variable y to left or right (1st) gait cycle of this trial.
-        Variable is assumed to share the same time axis as the gait events.
+        """ Interpolate variable y to left or right (1st) gait cycle of this trial.
+        Variable is assumed to share the same time axis (frames) as the gait events
+        (analog data does not, due to different sampling rate)
         New x axis will be 0..100. """
         lgc1t = np.linspace(0, 100, self.lgc1len)
         rgc1t = np.linspace(0, 100, self.rgc1len)
@@ -361,9 +369,9 @@ class gaitcycle:
         # interpolate variable to gait cycle
         return np.interp(self.tn, gc1t, y[tstart:tend])
         
-    def detect_side(self, vicon):
+    def detect_side_nexus(self, vicon):
         """ Try to determine trial side, i.e. whether the 1st gait cycle has 
-        L or R forceplate strike.
+        L or R forceplate strike. Forceplate data is read from Nexus.
         Simple heuristic is to look at the forceplate data
         150 ms after each foot strike, when the other foot should have
         lifted off. Might not work with very slow walkers. """
@@ -399,13 +407,18 @@ class gaitcycle:
         delay = int(delay_ms/1000. * drate)
         lfsforces = forcetot[lfsind.astype(int) + delay]
         rfsforces = forcetot[rfsind.astype(int) + delay]
-        #print('Total force', delay_ms, 'ms after foot strikes:')
-        #print('Left: ', lfsforces)
-        #print('Right: ', rfsforces)
+        print('Total force', delay_ms, 'ms after foot strikes:')
+        #rint('Left: ', lfsforces)
+        print('Right: ', rfsforces)
         if max(lfsforces) > max(rfsforces):
-            return 'L'
+            self.side = 'L'
         else:
-            return 'R'
+            self.side = 'R'
+            
+    def detect_side_c3d(self):
+        """ Trial side from c3d file. """
+        pass
+      
 
 class model_outputs:
     """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. """
