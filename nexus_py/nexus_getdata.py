@@ -17,6 +17,7 @@ import sys
 import psutil
 import os
 import gaitlab  # lab-specific stuff
+import btk  # biomechanical toolkit for c3d reading
 
 
 def nexus_pid():
@@ -237,11 +238,7 @@ class emg:
         
     def read_c3d(self):
         """ Read EMG data from a c3d file. """
-        
-
-        
-  
-
+        pass
 
 
 class gaitcycle:
@@ -258,6 +255,38 @@ class gaitcycle:
         # frames where toe-off occurs
         self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
         self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
+        self.compute_cycle()
+
+    def read_c3d(self, c3dfile):
+        """ Read gait cycle info from a c3d file. """
+        reader = btk.btkAcquisitionFileReader()
+        reader.SetFilename(c3dfile)  # check existence?
+        reader.Update()
+        acq = reader.GetOutput()
+        self.lfstrikes = []
+        self.rfstrikes = []
+        self.ltoeoffs = []
+        self.rtoeoffs = []
+        #  get the events
+        for i in btk.Iterate(acq.GetEvents()):
+            if i.GetLabel() == "Foot Strike":
+                if i.GetContext() == "Right":
+                    self.rfstrikes.append(i.GetFrame())
+                elif i.GetContext() == "Left":
+                    self.lfstrikes.append(i.GetFrame())
+                else:
+                    raise Exception("Unknown context")
+            elif i.GetLabel() == "Foot Off":
+                if i.GetContext() == "Right":
+                    self.rtoeoffs.append(i.GetFrame())
+                elif i.GetContext() == "Left":
+                    self.ltoeoffs.append(i.GetFrame())
+                else:
+                    raise Exception("Unknown context")
+        self.compute_cycle()
+        
+    def compute_cycle(self):
+        """ Compute gait cycles. Currently only determines the first gait cycle. """
         # 2 strikes is one complete gait cycle, needed for analysis
         lenLFS = len(self.lfstrikes)
         lenRFS = len(self.rfstrikes)
@@ -281,12 +310,10 @@ class gaitcycle:
         self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
         self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
         
-    def read_c3d(self, c3dfile):
-        """ Read gait cycle info from a c3d file. """
         
     def normalize(self, y, side):
-        """ Interpolate any variable y to left or right gait cycle of this trial.
-        New x axis will be 0..100 """
+        """ Interpolate any variable y to left or right (1st) gait cycle of this trial.
+        New x axis will be 0..100. """
         lgc1t = np.linspace(0, 100, self.lgc1len)
         rgc1t = np.linspace(0, 100, self.rgc1len)
         if side.upper() == 'R':  # norm to right side
@@ -301,8 +328,9 @@ class gaitcycle:
         return np.interp(self.tn, gc1t, y[tstart:tend])
         
     def detect_side(self, vicon):
-        """ Try to detect whether the trial has L or R forceplate strike.
-        Simple heuristic is to look at the force data
+        """ Try to determine trial side, i.e. whether the 1st gait cycle has 
+        L or R forceplate strike.
+        Simple heuristic is to look at the forceplate data
         150 ms after each foot strike, when the other foot should have
         lifted off. Might not work with very slow walkers. """
         delay_ms = 150
