@@ -27,6 +27,7 @@ vicon = ViconNexus.ViconNexus()
 # gait cycle test - ok
 vgc1 = nexus_getdata.gaitcycle()
 vgc1.read_c3d(c3dfile)
+
 vgc2 = nexus_getdata.gaitcycle()
 vgc2.read_nexus(vicon)
 
@@ -34,6 +35,12 @@ print vgc1.rfstrikes
 print vgc2.rfstrikes
 print vgc1.lfstrikes
 print vgc2.lfstrikes
+
+
+
+
+sys.exit()
+
 
 
 # emg test

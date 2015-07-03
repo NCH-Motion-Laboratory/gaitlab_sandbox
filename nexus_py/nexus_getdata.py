@@ -4,6 +4,10 @@ Created on Tue Mar 17 14:41:31 2015
 
 Utility classes for reading gait data.
 
+TODO:
+trial class for grouping trial-specific data?
+-factor out read methods for Nexus/c3d
+
 @author: Jussi
 """
 
@@ -41,6 +45,72 @@ def messagebox(message):
     """ Custom notification handler """
     # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
+    
+class trial:
+    """ Handles a gait trial.
+    -read trial data (model data, emg, forceplate, gait cycle info)
+    -process data (filter etc.)
+    -load normal data
+    -detect side
+    -cut / normalize data to gait cycles
+    """
+  
+    
+    
+    
+class forceplate:
+    """ Read and process forceplate data. """
+    
+    def read_nexus(self, vicon):
+        """ Read from Vicon Nexus. """
+        framerate = vicon.GetFrameRate()
+        framecount = vicon.GetFrameCount()
+        fpdevicename = 'Forceplate'
+        devicenames = vicon.GetDeviceNames()
+        if fpdevicename in devicenames:
+            fpid = vicon.GetDeviceIDFromName(fpdevicename)
+        else:
+           error_exit('No forceplate device found in trial!')
+        # DType should be 'ForcePlate', drate is sampling rate
+        dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
+        self.sfrate = drate
+        self.samplesperframe = drate / framerate  # fp samples per Vicon frame
+        assert(len(outputids)==3)
+        # outputs should be force, moment, cop. select force
+        outputid = outputids[0]
+        # get list of channel names and IDs
+        _,_,_,_,chnames,chids = vicon.GetDeviceOutputDetails(fpid, outputid)
+        # read x,y,z forces
+        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fx')
+        self.forcex, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fy')
+        self.forcey, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fz')
+        self.forcez, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        self.forceall = np.array([self.forcex,self.forcey,self.forcez])
+        self.forcetot = np.sqrt(sum(self.forceall**2,1))
+    
+    def read_c3d(self, c3dfile):
+        """ Read from c3d file. Note: gives force on ROI. """
+        reader = btk.btkAcquisitionFileReader()
+        reader.SetFilename(c3dfile)  # check existence?
+        reader.Update()
+        acq = reader.GetOutput()
+        self.frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
+        self.samplesperframe = acq.GetNumberAnalogSamplePerFrame()
+        self.sfrate = acq.GetAnalogFrequency()
+        for i in btk.Iterate(acq.GetAnalogs()):
+            desc = i.GetLabel()
+            if desc.find('Force.') >= 0 and i.GetUnit() == 'N':
+                if desc.find('Fx') > 0:
+                    self.forcex = np.squeeze(i.GetValues())  # rm singleton dimension
+                elif desc.find('Fy') > 0:
+                    self.forcey = np.squeeze(i.GetValues())
+                elif desc.find('Fz') > 0:
+                    self.forcez = np.squeeze(i.GetValues())
+                    
+        self.forceall = np.array([self.forcex,self.forcey,self.forcez])
+        self.forcetot = np.sqrt(sum(self.forceall**2,1))
 
 class emg:
     """ Read and process emg data. """
@@ -325,6 +395,7 @@ class gaitcycle:
                 else:
                     raise Exception("Unknown context")
         self.compute_cycle()
+        self.detect_side_c3d(c3dfile)
         
     def compute_cycle(self):
         """ Compute gait cycles. Currently only determines the first gait cycle. """
@@ -376,35 +447,14 @@ class gaitcycle:
         150 ms after each foot strike, when the other foot should have
         lifted off. Might not work with very slow walkers. """
         delay_ms = 150
-        framerate = vicon.GetFrameRate()
-        framecount = vicon.GetFrameCount()
-        fpdevicename = 'Forceplate'
-        devicenames = vicon.GetDeviceNames()
-        if fpdevicename in devicenames:
-            fpid = vicon.GetDeviceIDFromName(fpdevicename)
-        else:
-           error_exit('No forceplate device found in trial!')
-        # DType should be 'ForcePlate', drate is sampling rate
-        dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
-        samplesperframe = drate / framerate  # fp samples per Vicon frame
-        assert(len(outputids)==3)
-        # outputs should be force, moment, cop. select force
-        outputid = outputids[0]
-        # get list of channel names and IDs
-        _,_,_,_,chnames,chids = vicon.GetDeviceOutputDetails(fpid, outputid)
-        # read x,y,z forces
-        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fx')
-        forcex, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
-        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fy')
-        forcey, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
-        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fz')
-        forcez, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
-        forceall = np.array([forcex,forcey,forcez])
-        forcetot = np.sqrt(sum(forceall**2,1))
-        # get forces during foot strike events        
-        lfsind = np.array(self.lfstrikes) * samplesperframe
-        rfsind = np.array(self.rfstrikes) * samplesperframe
-        delay = int(delay_ms/1000. * drate)
+        # get force data
+        fp1 = forceplate()
+        fp1.read_nexus(vicon)
+        forcetot = fp1.forcetot
+        # foot strike frames -> EMG samples
+        lfsind = np.array(self.lfstrikes) * fp1.samplesperframe
+        rfsind = np.array(self.rfstrikes) * fp1.samplesperframe
+        delay = int(delay_ms/1000. * fp1.sfrate)
         lfsforces = forcetot[lfsind.astype(int) + delay]
         rfsforces = forcetot[rfsind.astype(int) + delay]
         print('Total force', delay_ms, 'ms after foot strikes:')
@@ -414,10 +464,28 @@ class gaitcycle:
             self.side = 'L'
         else:
             self.side = 'R'
-            
-    def detect_side_c3d(self):
+           
+    def detect_side_c3d(self, c3dfile):
         """ Trial side from c3d file. """
-        pass
+        delay_ms = 150
+        # get force data
+        fp1 = forceplate()
+        fp1.read_c3d(c3dfile)
+        forcetot = fp1.forcetot
+        # foot strike frames -> EMG samples
+        # note: c3d frames start from beginning of roi
+        lfsind = (np.array(self.lfstrikes) - fp1.frame1) * fp1.samplesperframe
+        rfsind = (np.array(self.rfstrikes) - fp1.frame1) * fp1.samplesperframe
+        delay = int(delay_ms/1000. * fp1.sfrate)
+        lfsforces = forcetot[lfsind.astype(int) + delay]
+        rfsforces = forcetot[rfsind.astype(int) + delay]
+        print('Total force', delay_ms, 'ms after foot strikes:')
+        #rint('Left: ', lfsforces)
+        print('Right: ', rfsforces)
+        if max(lfsforces) > max(rfsforces):
+            self.side = 'L'
+        else:
+            self.side = 'R'
       
 
 class model_outputs:
@@ -722,7 +790,8 @@ class model_outputs:
                 error_exit('Unable to get Plug-in Gait output variable. '+
                             'Make sure that the appropriate model has been executed.')
             self.Vars[Var] = np.array(NumVals)
-            # moment variables have to be divided by 1000 - not sure why    
+            # moment variables have to be divided by 1000 - not sure why
+            # apparently stored in Newton-millimeters!
             if Var.find('Moment') > 0:
                 self.Vars[Var] /= 1000.
             # pick non-normalized X,Y,Z components into separate vars

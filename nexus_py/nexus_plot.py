@@ -45,7 +45,7 @@ import getpass
 import glob
 import ConfigParser
 from ConfigParser import SafeConfigParser
-
+import btk
 
 
 def strip_ws(str):
@@ -346,7 +346,7 @@ class nexus_plotter():
         # these will be set by open_trial()
         self.side = None
         self.trialname = None
-        self.vgc = None
+        self.gc = None
         self.vicon = None
         # TODO: put in config?
         self.emg_mapping = {}
@@ -435,20 +435,71 @@ class nexus_plotter():
         else:
             return(trialname_[0])
             
-    def open_c3d_trial(self, trialpath):
-        """ Open a trial from a c3d file. Get:
-        subject name
-        trial name
-        gait cycle info (?)
-        self.emg instance
-        self.model instance
-        """
+    def open_c3d_trial(self, vars, c3dfile, side=None):
+        """ Open a trial from a c3d file. """
+        self.vars = vars
+        reader = btk.btkAcquisitionFileReader()
+        reader.SetFilename(c3dfile)  # check existence?
+        reader.Update()
+        acq = reader.GetOutput()
+        
+        self.gc = nexus_getdata.gaitcycle()
+        self.gc.read_c3d(c3dfile)
+        self.trialname = c3dfile
+        self.sessionpath = os.path.dirname(c3dfile)
+        
+        if not side:
+            self.side = self.gc.side
+        else:
+            self.side = side
+        
+        # FIXME: support also model vars
+        if vars:
+            self.emg = nexus_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            read_emg = False
+            read_pig = False
+            read_musclelen = False
+            self.emg_plot_chs = []
+            self.emg_plot_pos = []
+            self.model_plot_vars = []
+            self.model_plot_pos = []
+            for i, var in enumerate(self.vars):
+                if var == None:  # indicates empty subplot
+                    pass
+                elif var == 'modellegend':   # place legend on this subplot
+                    self.model_legendpos = i
+                elif var == 'emglegend':
+                    self.emg_legendpos = i
+                else:
+                    if self.emg.is_logical_channel(var):
+                        read_emg = True
+                        self.emg_plot_chs.append(var)
+                        self.emg_plot_pos.append(i)
+                    elif self.model.is_pig_lowerbody_variable(var):
+                        raise Exception("c3d model reading not implemented yet")
+                        #read_pig = True
+                        #self.model_plot_vars.append(var)
+                        #self.model_plot_pos.append(i)
+                    elif self.model.is_musclelen_variable(var):
+                        raise Exception("c3d model reading not implemented yet")
+                        #read_musclelen = True
+                        #self.model_plot_vars.append(var)
+                        #self.model_plot_pos.append(i)
+                    else:
+                        error_exit('Unknown variable: ' + var)
+            if read_emg:
+                self.emg.read_c3d(c3dfile)
+            if read_pig:
+                self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
+            if read_musclelen:
+                self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
+
                                                     
-    def open_nexus_trial(self, nexusvars, trialpath=None, side=None):
+    def open_nexus_trial(self, vars, trialpath=None, side=None):
         """ Read specified trial, or the one already opened in Nexus. The
-        variables specified in nexusvars will be read. To open the trial without
-        reading variables, set nexusvars=None (useful for e.g. detecting side) """
-        self.nexusvars = nexusvars
+        variables specified in vars will be read. To open the trial without
+        reading variables, set vars=None (useful for e.g. detecting side) """
+        self.vars = vars
         if not nexus_getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         # open connection to Nexus, if not previously opened
@@ -470,16 +521,16 @@ class nexus_plotter():
         self.subjectname = subjectnames[0]
         
         # update gait cycle information
-        self.vgc = nexus_getdata.gaitcycle()
-        self.vgc.read_nexus(self.vicon)
+        self.gc = nexus_getdata.gaitcycle()
+        self.gc.read_nexus(self.vicon)
         
         # try to detect side (L/R) if not forced in arguments
         if not side:
-            self.side = self.vgc.side
+            self.side = self.gc.side
         else:
             self.side = side    
          
-        if nexusvars:
+        if vars:
             # will read EMG/model data only if necessary
             self.model = nexus_getdata.model_outputs()
             self.emg = nexus_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
@@ -490,7 +541,7 @@ class nexus_plotter():
             self.emg_plot_pos = []
             self.model_plot_vars = []
             self.model_plot_pos = []
-            for i, var in enumerate(self.nexusvars):
+            for i, var in enumerate(self.vars):
                 if var == None:  # indicates empty subplot
                     pass
                 elif var == 'modellegend':   # place legend on this subplot
@@ -606,8 +657,8 @@ class nexus_plotter():
                     ymax = ax.get_ylim()[1]
                     xmin = ax.get_xlim()[0]
                     xmax = ax.get_xlim()[1]
-                    ltoeoff = self.vgc.ltoe1_norm
-                    rtoeoff = self.vgc.rtoe1_norm
+                    ltoeoff = self.gc.ltoe1_norm
+                    rtoeoff = self.gc.rtoe1_norm
                     arrlen = (ymax-ymin) * self.toeoff_rel_len
                     # these are related to plot height/width, to avoid aspect ratio effects
                     hdlength = arrlen * .33
@@ -676,8 +727,8 @@ class nexus_plotter():
                     ymax = ax.get_ylim()[1]
                     xmin = ax.get_xlim()[0]
                     xmax = ax.get_xlim()[1]
-                    ltoeoff = self.vgc.ltoe1_norm
-                    rtoeoff = self.vgc.rtoe1_norm
+                    ltoeoff = self.gc.ltoe1_norm
+                    rtoeoff = self.gc.rtoe1_norm
                     arrlen = (ymax-ymin) * self.toeoff_rel_len
                     hdlength = arrlen / 4.
                     hdwidth = (xmax-xmin) / 40.
