@@ -2,8 +2,12 @@
 """
 Created on Tue Apr 28 11:37:51 2015
 
-Kinematics-EMG overlay plot from Nexus.
-Work in progress
+EMG overlay plot from Nexus. WIP
+
+FIXME: implement dialog to load c3d files from different sessions.
+-choose session (dir)
+-use trialselector to show trials?
+-list trials in separate window
 
 @author: Jussi
 """

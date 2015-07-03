@@ -47,13 +47,20 @@ def messagebox(message):
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
     
 class trial:
-    """ Handles a gait trial.
+    """ FIXME:
+     Handles a gait trial.
     -read trial data (model data, emg, forceplate, gait cycle info)
     -process data (filter etc.)
     -load normal data
     -detect side
     -cut / normalize data to gait cycles
     """
+
+    def read_vars(self, trialpath, vars):
+        pass
+    
+        
+    
   
     
     
