@@ -2,7 +2,7 @@
 """
 Created on Tue Mar 17 14:41:31 2015
 
-Utility classes for reading gait data.
+Gaitplotter utility classes for reading gait data.
 
 TODO:
 trial class for grouping trial-specific data?

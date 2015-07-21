@@ -2,7 +2,7 @@
 """
 Created on Tue Apr 28 11:25:38 2015
 
-Configure NexusPlotter. Writes a config file to disk.
+Interface to configure Gaitplotter.
 
 @author: Jussi
 """

@@ -2,6 +2,8 @@
 """
 Created on Fri Jul 03 12:20:36 2015
 
+Handles configuration for Gaitplotter.
+
 @author: Jussi
 """
 
