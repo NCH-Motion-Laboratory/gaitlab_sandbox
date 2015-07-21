@@ -1,0 +1,10 @@
+
+
+
+File naming:
+    
+gait*py          mostly for internal use
+gaitplotter*py   to be run by users
+nexus*           to be run from Vicon Nexus
+
+
