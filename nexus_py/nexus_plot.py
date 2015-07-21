@@ -30,8 +30,8 @@ add default y ranges for kine(ma)tics variables?
 from Tkinter import *
 import matplotlib.pyplot as plt
 import numpy as np
-import nexus_getdata
-from nexus_getdata import error_exit, messagebox
+import gait_getdata
+from gait_getdata import error_exit, messagebox
 import gaitplotter_config
 import sys
 # these needed for Nexus 2.1
@@ -50,7 +50,6 @@ import btk
 def strip_ws(str):
     """ Remove spaces from string """
     return str.replace(' ','')
-
 
 
 class nexus_plotter():
@@ -74,7 +73,7 @@ class nexus_plotter():
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
         self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
-        self.emg_names = nexus_getdata.emg().ch_names
+        self.emg_names = gait_getdata.emg().ch_names
         self.emg_names.sort()
         self.emg_manual_enable={}
         for ch in self.emg_names:
@@ -220,7 +219,7 @@ class nexus_plotter():
         reader.Update()
         acq = reader.GetOutput()
         
-        self.gc = nexus_getdata.gaitcycle()
+        self.gc = gait_getdata.gaitcycle()
         self.gc.read_c3d(c3dfile)
         self.trialname = c3dfile
         self.sessionpath = os.path.dirname(c3dfile)
@@ -232,7 +231,7 @@ class nexus_plotter():
         
         # FIXME: support also model vars
         if vars:
-            self.emg = nexus_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            self.emg = gait_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
             read_musclelen = False
@@ -277,7 +276,7 @@ class nexus_plotter():
         variables specified in vars will be read. To open the trial without
         reading variables, set vars=None (useful for e.g. detecting side) """
         self.vars = vars
-        if not nexus_getdata.nexus_pid():
+        if not gait_getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         # open connection to Nexus, if not previously opened
         if not self.vicon:
@@ -298,7 +297,7 @@ class nexus_plotter():
         self.subjectname = subjectnames[0]
         
         # update gait cycle information
-        self.gc = nexus_getdata.gaitcycle()
+        self.gc = gait_getdata.gaitcycle()
         self.gc.read_nexus(self.vicon)
         
         # try to detect side (L/R) if not forced in arguments
@@ -309,8 +308,8 @@ class nexus_plotter():
          
         if vars:
             # will read EMG/model data only if necessary
-            self.model = nexus_getdata.model_outputs()
-            self.emg = nexus_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            self.model = gait_getdata.model_outputs()
+            self.emg = gait_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             read_emg = False
             read_pig = False
             read_musclelen = False

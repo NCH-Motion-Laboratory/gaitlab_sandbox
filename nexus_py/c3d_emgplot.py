@@ -29,7 +29,7 @@ trialname = nplotter.trialname
 maintitle = maintitleprefix + trialname
 maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
 nplotter.plot_trial(maintitle=maintitle, onesided_kinematics=True)
-nplotter.create_pdf(pdf_prefix=pdftitlestr)
+#nplotter.create_pdf(pdf_prefix=pdftitlestr)
 
 nplotter.show()
 
