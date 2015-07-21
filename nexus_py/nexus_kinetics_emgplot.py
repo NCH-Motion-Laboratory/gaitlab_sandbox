@@ -8,14 +8,14 @@ Kinematics-EMG plot from Nexus.
 """
 
  
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 
 layout = [8,3]
 plotheightratios = [3,2,2,3,2,2,2,3]
 pdf_prefix = 'Kinetics_EMG_'
 maintitleprefix='Kinetics-EMG plot for '
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 
 # need to open trial before detecting side
 nplotter.open_nexus_trial(nexusvars=None)

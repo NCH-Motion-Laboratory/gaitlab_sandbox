@@ -8,7 +8,7 @@ Plot PiG outputs (online) from Nexus.
 """
 
 
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 
 layout = [4,3]
 
@@ -26,7 +26,7 @@ plotvars = ['PelvisAnglesX',
            'AnkleAnglesZ']
 maintitleprefix = 'Kinematics plot for '
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial(plotvars)
 nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
@@ -42,7 +42,7 @@ plotvars = ['HipMomentX',
              'AnklePowerZ']                      
 maintitleprefix = 'Kinetics plot for '
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial(plotvars)
 nplotter.plot_trial(maintitleprefix=maintitleprefix)
 

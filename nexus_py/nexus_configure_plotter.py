@@ -7,9 +7,9 @@ Configure NexusPlotter. Writes a config file to disk.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 
-nplotter = nexus_plotter(None)
+nplotter = gaitplotter(None)
 nplotter.configwindow()
 
 

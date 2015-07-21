@@ -11,13 +11,13 @@ Muscle length plot.
  
  
  
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 
 layout = [3,3]
 
 maintitleprefix='Muscle length plot for '
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 
 plotvars = ['PsoaLength', 'GracLength', 'ReFeLength',
             'BiFLLength', 'SeTeLength', 'SeMeLength',

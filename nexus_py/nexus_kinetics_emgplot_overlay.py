@@ -8,9 +8,9 @@ Work in progress
 @author: Jussi
 """
 
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 import sys
-from nexus_getdata import error_exit
+from gait_getdata import error_exit
 
 layout = [8,3]
 plotheightratios = [3,2,2,3,2,2,2,3]
@@ -19,7 +19,7 @@ pigstyles = ['-','--','-.']
 emgcolors = ['black','blue','gray']
 MAX_TRIALS = 3
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 trials = nplotter.trialselector()
 
 # annotating disconnected EMGs messes up overlay plot

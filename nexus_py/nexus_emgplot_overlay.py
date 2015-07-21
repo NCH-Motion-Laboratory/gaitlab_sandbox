@@ -9,16 +9,16 @@ FIXME: implement dialog to load c3d files from different sessions.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 import sys
-from nexus_getdata import error_exit
+from gait_getdata import error_exit
 
 layout = [9,2]
 pdftitlestr = 'EMG_'
 emgcolors = ['black','blue','gray']
 MAX_TRIALS = 3
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 trials = nplotter.trialselector()
 
 # annotating disconnected EMGs messes up overlay plot
@@ -42,7 +42,7 @@ plotvars = ['RGlut','LGlut',
 
 for i,trial in enumerate(trials):
     # open again and read vars now
-    nplotter.open_nexus_trial(trialpath=trial, nexusvars=plotvars)
+    nplotter.open_nexus_trial(trialpath=trial, vars=plotvars)
     maintitle = 'EMG overlay plot' + '\n' + nplotter.get_emg_filter_description()
     nplotter.plot_trial(maintitle=maintitle,
                         emg_tracecolor=emgcolors[i])

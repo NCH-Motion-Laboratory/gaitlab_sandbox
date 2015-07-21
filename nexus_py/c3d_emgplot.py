@@ -7,7 +7,7 @@ EMG plot from c3d file. WIP
 @author: Jussi
 """
 
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 
 c3dfile = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS33.c3d"
 
@@ -23,7 +23,7 @@ plotvars = ['RGlut','LGlut',
 maintitleprefix = 'EMG plot for '
 pdftitlestr = 'EMG_'
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 nplotter.open_c3d_trial(plotvars, c3dfile)
 trialname = nplotter.trialname
 maintitle = maintitleprefix + trialname

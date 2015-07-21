@@ -7,7 +7,7 @@ EMG plot from Nexus.
 @author: Jussi
 """
 
-from nexus_plot import nexus_plotter
+from gait_plot import gaitplotter
 
 layout = [8,2]
 plotvars = ['RGlut','LGlut',
@@ -21,7 +21,7 @@ plotvars = ['RGlut','LGlut',
 maintitleprefix = 'EMG plot for '
 pdftitlestr = 'EMG_'
 
-nplotter = nexus_plotter(layout)
+nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial(plotvars)
 trialname = nplotter.trialname
 maintitle = maintitleprefix + trialname
