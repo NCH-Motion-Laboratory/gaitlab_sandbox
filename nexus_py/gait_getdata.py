@@ -20,7 +20,7 @@ from scipy import signal
 import sys
 import psutil
 import os
-import gaitlab  # lab-specific stuff
+import gait_defs  # lab-specific stuff
 import btk  # biomechanical toolkit for c3d reading
 
 
@@ -133,9 +133,9 @@ class emg:
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
-        self.ch_normals = gaitlab.emg_normals
-        self.ch_names = gaitlab.emg_names
-        self.ch_labels = gaitlab.emg_labels
+        self.ch_normals = gait_defs.emg_normals
+        self.ch_names = gait_defs.emg_names
+        self.ch_labels = gait_defs.emg_labels
                 
     def emg_channelnames(self):
         """ Return names of known (logical) EMG channels. """
