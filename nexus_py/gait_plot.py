@@ -215,20 +215,19 @@ class gaitplotter():
             ntrials = len(chosen)
             options = {}
             options['defaultextension'] = '.c3d'
-            #options['filetypes'] = [('all files', '.*'), ('text files', '.txt')]
+            options['filetypes'] = [('C3D files', '.c3d'), ('All files', '.*')]
             options['initialdir'] = 'C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\'
-            options['initialfile'] = 'myfile.txt'
+            #options['initialfile'] = 'myfile.txt'
             options['parent'] = window
-            options['title'] = 'This is a title'
+            options['title'] = 'Load a trial (c3d file):'
             trialpath = tkFileDialog.askopenfilename(**options)
             # if file was chosen, add it to the list
             if os.path.isfile(trialpath):
                 desc = self.get_eclipse_description(trialpath)
                 trial =  os.path.basename(os.path.splitext(trialpath)[0])
                 trialstr = trial+4*' '+desc
-                Label(window, text=trial).grid(row=ntrials+1, columnspan=2, pady=4)
+                Label(window, text=trialstr).grid(row=ntrials+1, columnspan=2, pady=4)
                 chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
-
         # create trial selector window
         chosen = []
         create = []
@@ -238,7 +237,6 @@ class gaitplotter():
         Button(master, text='Load trials', command=lambda: load_trial(master, chosen)).grid(row=6, column=1, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, create)).grid(row=6, column=2, pady=4)
         mainloop()  # Tk
-       
         if not create:  # cancel pressed
             return None
         else:
