@@ -18,7 +18,10 @@ emgcolors = ['black','blue','gray']
 MAX_TRIALS = 3
 
 plotter = gaitplotter(layout)
-trials = plotter.trialselector()
+trials = plotter.c3d_trialselector()
+
+print(trials)
+#sys.exit()
 
 # annotating disconnected EMGs messes up overlay plot
 plotter.annotate_disconnected = False
@@ -40,8 +43,7 @@ plotvars = ['RGlut','LGlut',
           'emglegend',None]
 
 for i,trial in enumerate(trials):
-    # open again and read vars now
-    plotter.open_nexus_trial(trialpath=trial, vars=plotvars)
+    plotter.open_c3d_trial(trial, plotvars)
     maintitle = 'EMG overlay plot' + '\n' + plotter.get_emg_filter_description()
     plotter.plot_trial(maintitle=maintitle,
                         emg_tracecolor=emgcolors[i])

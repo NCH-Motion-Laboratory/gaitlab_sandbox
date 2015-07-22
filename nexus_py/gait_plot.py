@@ -26,6 +26,7 @@ add default y ranges for kine(ma)tics variables?
 
 
 from Tkinter import *
+import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 import gait_getdata
@@ -160,9 +161,10 @@ class gaitplotter():
                 val = line[eqpos+1:]
                 if key == 'DESCRIPTION':
                     description = val
-        return description
+        # assume utf-8 encoding for Windows text files, return Unicode object
+        return unicode(description, 'utf-8')
        
-    def trialselector(self):
+    def nexus_trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
         Will also show the Eclipse description for each processed trial, if 
         available. Tk checkbox dialog. """
@@ -200,6 +202,48 @@ class gaitplotter():
                     chosen.append(trial)
             return chosen
 
+    def c3d_trialselector(self):
+        """ Load c3d trial(s). Present window with trial info and load option. """
+       
+        # ugly callback: sets list to a "semaphor" value and destroys the window
+        def creator_callback(window, list):
+            list.append(1)
+            window.destroy()
+
+        # load additional trial; returns filename
+        def load_trial(window, chosen):
+            ntrials = len(chosen)
+            options = {}
+            options['defaultextension'] = '.c3d'
+            #options['filetypes'] = [('all files', '.*'), ('text files', '.txt')]
+            options['initialdir'] = 'C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\'
+            options['initialfile'] = 'myfile.txt'
+            options['parent'] = window
+            options['title'] = 'This is a title'
+            trialpath = tkFileDialog.askopenfilename(**options)
+            # if file was chosen, add it to the list
+            if os.path.isfile(trialpath):
+                desc = self.get_eclipse_description(trialpath)
+                trial =  os.path.basename(os.path.splitext(trialpath)[0])
+                trialstr = trial+4*' '+desc
+                Label(window, text=trial).grid(row=ntrials+1, columnspan=2, pady=4)
+                chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
+
+        # create trial selector window
+        chosen = []
+        create = []
+        master = Tk()
+        Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
+        Button(master, text='Cancel', command=master.destroy).grid(row=6, column=0, pady=4)
+        Button(master, text='Load trials', command=lambda: load_trial(master, chosen)).grid(row=6, column=1, pady=4)
+        Button(master, text='Create plot', command=lambda: creator_callback(master, create)).grid(row=6, column=2, pady=4)
+        mainloop()  # Tk
+       
+        if not create:  # cancel pressed
+            return None
+        else:
+            return chosen
+
     def get_nexus_path(self):
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
@@ -209,7 +253,7 @@ class gaitplotter():
         else:
             return(trialname_[0])
             
-    def open_c3d_trial(self, vars, c3dfile, side=None):
+    def open_c3d_trial(self, c3dfile, vars, side=None):
         """ Open a trial from a c3d file. """
         self.vars = vars
         reader = btk.btkAcquisitionFileReader()
