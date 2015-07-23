@@ -20,10 +20,9 @@ MAX_TRIALS = 4
 initialdir = 'C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\D0012_VS\\2015_6_9_seur_VS\\'
 
 plotter = gaitplotter(layout)
-selec = plotter.c3d_trialselectorclass(max_trials=4, initialdir=initialdir)
+selec = plotter.c3d_trialselector(max_trials=MAX_TRIALS, initialdir=initialdir)
 
-print(selec.chosen)
-sys.exit()
+trials = selec.chosen
 
 # annotating disconnected EMGs messes up overlay plot
 plotter.annotate_disconnected = False
@@ -31,9 +30,6 @@ plotter.annotate_disconnected = False
 if trials == None:
     sys.exit()
     
-if len(trials) > MAX_TRIALS:
-    error_exit('Too many trials selected for the overlay plot!')
-
 plotvars = ['RGlut','LGlut',
           'RHam','LHam',
           'RRec','LRec',

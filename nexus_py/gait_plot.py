@@ -206,7 +206,9 @@ class gaitplotter():
             return chosen
             
             
-    class c3d_trialselectorclass():
+    class c3d_trialselector():
+        """ Presents file selector window for choosing c3d trials. After user
+        presses 'Create', selected trials are stored in the 'chosen' variable."""
 
         def create(self):
             self.master.destroy()
@@ -220,16 +222,14 @@ class gaitplotter():
             self.tributtons[ntrial].grid_remove()
             self.trilabels[ntrial].grid_remove()
             self.chosen[ntrial] = None
-            ntrials = len([x for x in self.chosen if x])  # n of actual trials (excludes deleted)
-            if ntrials < self.MAX_TRIALS:
+            self.ntrials -= 1
+            if self.ntrials < self.MAX_TRIALS:
                 self.loadb.config(state='normal')
 
         def load_trial(self):
-            nthis = len(self.chosen)  # index of trial in the lists (includes deleted trials)
-            ntrials = len([x for x in self.chosen if x])  # n of actual trials (excludes deleted)
-            nrow = ntrials + 1
-            print('using row: ', nrow)
-            trialpath = tkFileDialog.askopenfilename(**options)
+            nthis = len(self.chosen)  # list index (includes deleted trials)
+            nrow = self.ntrials + 1
+            trialpath = tkFileDialog.askopenfilename(**self.options)
             if os.path.isfile(trialpath):
                 desc = get_eclipse_description(trialpath)
                 trial =  os.path.basename(os.path.splitext(trialpath)[0])
@@ -241,20 +241,23 @@ class gaitplotter():
                 bu.grid(row=nrow, column=2)
                 self.tributtons.append(bu)
                 self.chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
-                if ntrials+1 == self.MAX_TRIALS:
+                self.ntrials += 1                
+                if self.ntrials == self.MAX_TRIALS:
                     self.loadb.config(state='disabled')
 
         def __init__(self, max_trials=4, initialdir='C:\\'):
+            self.chosen = []
+            self.trilabels = []
+            self.tributtons = []
+            self.master = Tk()
+            self.ntrials = 0
+            self.MAX_TRIALS = max_trials
             self.options = {}
             self.options['defaultextension'] = '.c3d'
             self.options['filetypes'] = [('C3D files', '.c3d'), ('All files', '.*')]
             self.options['parent'] = self.master
             self.options['title'] = 'Load a trial (c3d file):'
-            self.chosen = []
-            self.trilabels = []
-            self.tributtons = []
-            self.master = Tk()
-            self.MAX_TRIALS = max_trials
+            self.options['initialdir'] = initialdir
             bottom = self.MAX_TRIALS + 1
             Label(self.master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
             Button(self.master, text='Cancel', command=self.cancel).grid(row=bottom, column=0, pady=4)
