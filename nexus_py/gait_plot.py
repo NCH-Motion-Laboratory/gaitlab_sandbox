@@ -50,6 +50,33 @@ def strip_ws(str):
     """ Remove spaces from string """
     return str.replace(' ','')
 
+def get_eclipse_description(trialname):
+    """ Get the Eclipse database description for the specified trial. Specify
+    trialname with full path. """
+    # remove c3d extension if present
+    trialname = os.path.splitext(trialname)[0]
+    if not os.path.isfile(trialname+'.c3d'):
+        raise Exception('Cannot find c3d file for trial')
+    enfname = trialname + '.Trial.enf'
+    description = None
+    if os.path.isfile(enfname):
+        f = open(enfname, 'r')
+        eclipselines = f.read().splitlines()
+        f.close()
+    else:
+        return None
+    for line in eclipselines:
+        eqpos = line.find('=')
+        if eqpos > 0:
+            key = line[:eqpos]
+            val = line[eqpos+1:]
+            if key == 'DESCRIPTION':
+                description = val
+    # assume utf-8 encoding for Windows text files, return Unicode object
+    # could also use codecs.read with encoding=utf-8 (recommended way)
+    return unicode(description, 'utf-8')
+
+
 
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
@@ -139,31 +166,6 @@ class gaitplotter():
         else:
             return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
-    def get_eclipse_description(self, trialname):
-        """ Get the Eclipse database description for the specified trial. Specify
-        trialname with full path. """
-        # remove c3d extension if present
-        trialname = os.path.splitext(trialname)[0]
-        if not os.path.isfile(trialname+'.c3d'):
-            raise Exception('Cannot find c3d file for trial')
-        enfname = trialname + '.Trial.enf'
-        description = None
-        if os.path.isfile(enfname):
-            f = open(enfname, 'r')
-            eclipselines = f.read().splitlines()
-            f.close()
-        else:
-            return None
-        for line in eclipselines:
-            eqpos = line.find('=')
-            if eqpos > 0:
-                key = line[:eqpos]
-                val = line[eqpos+1:]
-                if key == 'DESCRIPTION':
-                    description = val
-        # assume utf-8 encoding for Windows text files, return Unicode object
-        # could also use codecs.read with encoding=utf-8 (recommended way)
-        return unicode(description, 'utf-8')
        
     def nexus_trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
@@ -188,7 +190,7 @@ class gaitplotter():
             vars.append(IntVar())
             # remove path and extension from full trial name
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
-            desc = self.get_eclipse_description(trialpath)
+            desc = get_eclipse_description(trialpath)
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
@@ -202,46 +204,70 @@ class gaitplotter():
                 if vars[i].get():
                     chosen.append(trial)
             return chosen
+            
+            
+    class c3d_trialselectorclass():
 
-    def c3d_trialselector(self):
-        """ Load c3d trial(s). Present window with trial info and load option. """
-       
-        # ugly callback: sets list to a "semaphor" value and destroys the window
-        def creator_callback(window, list):
-            list.append(1)
-            window.destroy()
+        def create(self):
+            self.master.destroy()
+            self.chosen = [x for x in self.chosen if x]  # rm 'None' entries
+            
+        def cancel(self):
+            self.chosen = []
+            self.master.destroy()
+            
+        def delete_trial(self, ntrial):
+            self.tributtons[ntrial].grid_remove()
+            self.trilabels[ntrial].grid_remove()
+            self.chosen[ntrial] = None
+            ntrials = len([x for x in self.chosen if x])  # n of actual trials (excludes deleted)
+            if ntrials < self.MAX_TRIALS:
+                self.loadb.config(state='normal')
 
-        # load additional trial; returns filename
-        def load_trial(window, chosen):
-            ntrials = len(chosen)
-            options = {}
-            options['defaultextension'] = '.c3d'
-            options['filetypes'] = [('C3D files', '.c3d'), ('All files', '.*')]
-            options['initialdir'] = 'C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\'
-            options['parent'] = window
-            options['title'] = 'Load a trial (c3d file):'
+        def load_trial(self):
+            nthis = len(self.chosen)  # index of trial in the lists (includes deleted trials)
+            ntrials = len([x for x in self.chosen if x])  # n of actual trials (excludes deleted)
+            nrow = ntrials + 1
+            print('using row: ', nrow)
             trialpath = tkFileDialog.askopenfilename(**options)
-            # if file was chosen, add it to the list
             if os.path.isfile(trialpath):
-                desc = self.get_eclipse_description(trialpath)
+                desc = get_eclipse_description(trialpath)
                 trial =  os.path.basename(os.path.splitext(trialpath)[0])
                 trialstr = trial+4*' '+desc
-                Label(window, text=trialstr).grid(row=ntrials+1, column=0, columnspan=2, sticky=W)
-                Button(window, text='Delete', command=delete_trial(window, ntrials+1)).grid(row=ntrials+1, column=2)
-                chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
-        # create trial selector window
-        chosen = []
-        create = []
-        master = Tk()
-        Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
-        Button(master, text='Cancel', command=master.destroy).grid(row=6, column=0, pady=4)
-        Button(master, text='Load trial', command=lambda: load_trial(master, chosen)).grid(row=6, column=1, pady=4)
-        Button(master, text='Create plot', command=lambda: creator_callback(master, create)).grid(row=6, column=2, pady=4)
-        mainloop()  # Tk
-        if not create:  # cancel pressed
-            return None
-        else:
-            return chosen
+                la = Label(self.master, text=trialstr)
+                la.grid(row=nrow, column=0, columnspan=2, sticky=W)
+                self.trilabels.append(la)
+                bu = Button(self.master, text='Delete', command=lambda: self.delete_trial(nthis))
+                bu.grid(row=nrow, column=2)
+                self.tributtons.append(bu)
+                self.chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
+                if ntrials+1 == self.MAX_TRIALS:
+                    self.loadb.config(state='disabled')
+
+        def __init__(self, max_trials=4, initialdir='C:\\'):
+            self.options = {}
+            self.options['defaultextension'] = '.c3d'
+            self.options['filetypes'] = [('C3D files', '.c3d'), ('All files', '.*')]
+            self.options['parent'] = self.master
+            self.options['title'] = 'Load a trial (c3d file):'
+            self.chosen = []
+            self.trilabels = []
+            self.tributtons = []
+            self.master = Tk()
+            self.MAX_TRIALS = max_trials
+            bottom = self.MAX_TRIALS + 1
+            Label(self.master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
+            Button(self.master, text='Cancel', command=self.cancel).grid(row=bottom, column=0, pady=4)
+            self.loadb = Button(self.master, text='Load trial', command=self.load_trial)
+            self.loadb.grid(row=bottom, column=1, pady=4)
+            Button(self.master, text='Create plot', command=self.create).grid(row=bottom, column=2, pady=4)
+            mainloop()  # Tk
+
+
+
+            
+            
+
 
     def get_nexus_path(self):
         if not self.vicon:
@@ -565,7 +591,7 @@ class gaitplotter():
         is recreated when plotting each trial (the legend has no add method) """
         if self.model_legendpos or self.emg_legendpos:
             self.legendnames.append(self.trialname)
-            # TODO: + self.get_eclipse_description(self.trialname))            
+            # TODO: + get_eclipse_description(self.trialname))            
         if self.model_legendpos:
             self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
             ax = plt.subplot(self.gs[self.model_legendpos])

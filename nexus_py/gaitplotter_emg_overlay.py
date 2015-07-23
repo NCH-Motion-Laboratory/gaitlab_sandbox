@@ -17,11 +17,13 @@ pdftitlestr = 'EMG_'
 emgcolors = ['black','blue','gray','red']
 MAX_TRIALS = 4
 
-plotter = gaitplotter(layout)
-trials = plotter.c3d_trialselector()
+initialdir = 'C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\D0012_VS\\2015_6_9_seur_VS\\'
 
-print(trials)
-#sys.exit()
+plotter = gaitplotter(layout)
+selec = plotter.c3d_trialselectorclass(max_trials=4, initialdir=initialdir)
+
+print(selec.chosen)
+sys.exit()
 
 # annotating disconnected EMGs messes up overlay plot
 plotter.annotate_disconnected = False
