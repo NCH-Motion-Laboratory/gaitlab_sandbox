@@ -162,6 +162,7 @@ class gaitplotter():
                 if key == 'DESCRIPTION':
                     description = val
         # assume utf-8 encoding for Windows text files, return Unicode object
+        # could also use codecs.read with encoding=utf-8 (recommended way)
         return unicode(description, 'utf-8')
        
     def nexus_trialselector(self):
@@ -217,7 +218,6 @@ class gaitplotter():
             options['defaultextension'] = '.c3d'
             options['filetypes'] = [('C3D files', '.c3d'), ('All files', '.*')]
             options['initialdir'] = 'C:\\Users\\HUS20664877\\Desktop\\Vicon\\vicon_data\\test\\'
-            #options['initialfile'] = 'myfile.txt'
             options['parent'] = window
             options['title'] = 'Load a trial (c3d file):'
             trialpath = tkFileDialog.askopenfilename(**options)
@@ -226,7 +226,8 @@ class gaitplotter():
                 desc = self.get_eclipse_description(trialpath)
                 trial =  os.path.basename(os.path.splitext(trialpath)[0])
                 trialstr = trial+4*' '+desc
-                Label(window, text=trialstr).grid(row=ntrials+1, columnspan=2, pady=4)
+                Label(window, text=trialstr).grid(row=ntrials+1, column=0, columnspan=2, sticky=W)
+                Button(window, text='Delete', command=delete_trial(window, ntrials+1)).grid(row=ntrials+1, column=2)
                 chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
         # create trial selector window
         chosen = []
@@ -234,7 +235,7 @@ class gaitplotter():
         master = Tk()
         Label(master, text="Choose trials for overlay plot:").grid(row=0, columnspan=2, pady=4)
         Button(master, text='Cancel', command=master.destroy).grid(row=6, column=0, pady=4)
-        Button(master, text='Load trials', command=lambda: load_trial(master, chosen)).grid(row=6, column=1, pady=4)
+        Button(master, text='Load trial', command=lambda: load_trial(master, chosen)).grid(row=6, column=1, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, create)).grid(row=6, column=2, pady=4)
         mainloop()  # Tk
         if not create:  # cancel pressed

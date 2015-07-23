@@ -14,8 +14,8 @@ from gait_getdata import error_exit
 
 layout = [9,2]
 pdftitlestr = 'EMG_'
-emgcolors = ['black','blue','gray']
-MAX_TRIALS = 3
+emgcolors = ['black','blue','gray','red']
+MAX_TRIALS = 4
 
 plotter = gaitplotter(layout)
 trials = plotter.c3d_trialselector()
