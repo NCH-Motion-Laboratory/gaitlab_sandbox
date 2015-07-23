@@ -24,6 +24,33 @@ import gait_defs  # lab-specific stuff
 import btk  # biomechanical toolkit for c3d reading
 
 
+def get_eclipse_description(trialname):
+    """ Get the Eclipse database description for the specified trial. Specify
+    trialname with full path. """
+    # remove c3d extension if present
+    trialname = os.path.splitext(trialname)[0]
+    if not os.path.isfile(trialname+'.c3d'):
+        raise Exception('Cannot find c3d file for trial')
+    enfname = trialname + '.Trial.enf'
+    description = None
+    if os.path.isfile(enfname):
+        f = open(enfname, 'r')
+        eclipselines = f.read().splitlines()
+        f.close()
+    else:
+        return None
+    for line in eclipselines:
+        eqpos = line.find('=')
+        if eqpos > 0:
+            key = line[:eqpos]
+            val = line[eqpos+1:]
+            if key == 'DESCRIPTION':
+                description = val
+    # assume utf-8 encoding for Windows text files, return Unicode object
+    # could also use codecs.read with encoding=utf-8 (recommended way)
+    return unicode(description, 'utf-8')
+
+
 def nexus_pid():
     """ Tries to return the PID of the running Nexus process. """
     PROCNAME = "Nexus.exe"

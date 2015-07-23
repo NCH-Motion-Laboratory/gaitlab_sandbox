@@ -46,38 +46,6 @@ import glob
 import btk
 
 
-def strip_ws(str):
-    """ Remove spaces from string """
-    return str.replace(' ','')
-
-def get_eclipse_description(trialname):
-    """ Get the Eclipse database description for the specified trial. Specify
-    trialname with full path. """
-    # remove c3d extension if present
-    trialname = os.path.splitext(trialname)[0]
-    if not os.path.isfile(trialname+'.c3d'):
-        raise Exception('Cannot find c3d file for trial')
-    enfname = trialname + '.Trial.enf'
-    description = None
-    if os.path.isfile(enfname):
-        f = open(enfname, 'r')
-        eclipselines = f.read().splitlines()
-        f.close()
-    else:
-        return None
-    for line in eclipselines:
-        eqpos = line.find('=')
-        if eqpos > 0:
-            key = line[:eqpos]
-            val = line[eqpos+1:]
-            if key == 'DESCRIPTION':
-                description = val
-    # assume utf-8 encoding for Windows text files, return Unicode object
-    # could also use codecs.read with encoding=utf-8 (recommended way)
-    return unicode(description, 'utf-8')
-
-
-
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
@@ -190,7 +158,7 @@ class gaitplotter():
             vars.append(IntVar())
             # remove path and extension from full trial name
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
-            desc = get_eclipse_description(trialpath)
+            desc = gait_getdata.get_eclipse_description(trialpath)
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
@@ -231,7 +199,7 @@ class gaitplotter():
             nrow = self.ntrials + 1
             trialpath = tkFileDialog.askopenfilename(**self.options)
             if os.path.isfile(trialpath):
-                desc = get_eclipse_description(trialpath)
+                desc = gait_getdata.get_eclipse_description(trialpath)
                 trial =  os.path.basename(os.path.splitext(trialpath)[0])
                 trialstr = trial+4*' '+desc
                 la = Label(self.master, text=trialstr)
@@ -291,7 +259,7 @@ class gaitplotter():
         
         self.gc = gait_getdata.gaitcycle()
         self.gc.read_c3d(c3dfile)
-        self.trialname = c3dfile
+        self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
         self.sessionpath = os.path.dirname(c3dfile)
         
         if not side:
@@ -594,7 +562,7 @@ class gaitplotter():
         is recreated when plotting each trial (the legend has no add method) """
         if self.model_legendpos or self.emg_legendpos:
             self.legendnames.append(self.trialname)
-            # TODO: + get_eclipse_description(self.trialname))            
+            # TODO: + gait_getdata.get_eclipse_description(self.trialname))            
         if self.model_legendpos:
             self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
             ax = plt.subplot(self.gs[self.model_legendpos])
