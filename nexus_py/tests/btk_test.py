@@ -31,6 +31,9 @@ for i in btk.Iterate(acq.GetAnalogs()):
         pass
 #        data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension        
 
+for i in btk.Iterate(acq.GetPoints()):
+    print i.GetLabel()
+
 sys.exit()
 
 plt.figure()

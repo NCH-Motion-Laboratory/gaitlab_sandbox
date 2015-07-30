@@ -94,13 +94,13 @@ class trial:
     -detect side
     -cut / normalize data to gait cycles
     """
-  
+ 
     def __init__(self, source, side=None):
         """ Open trial, read subject info etc. """
         self.gc = gaitcycle()
         if os.path.isfile(source):
             c3dfile = source
-            self.gc.read_c3d(c3dfile)
+            self.gc.read(c3dfile)
             self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
             self.sessionpath = os.path.dirname(c3dfile)
         elif source == 'Nexus':
@@ -117,7 +117,7 @@ class trial:
                 error_exit('No trial loaded')
             self.subjectname = subjectnames[0]
             # update gait cycle information
-            self.gc.read_nexus(self.vicon)
+            self.gc.read(self.vicon)
         else:
             raise Exception('Invalid source')
         # try to detect side (L/R) if not forced in arguments
@@ -133,7 +133,7 @@ class trial:
         self.emg = None
         self.model = None
         
-    def read_vars(self, vars):
+    def read(self, vars):
         """ Read specified variables from the trial data. """
         self.emg = emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
         for i, var in enumerate(self.vars):
@@ -144,7 +144,7 @@ class trial:
             elif self.model.is_musclelen_variable(var):
                 read_musclelen = True
         if read_emg:
-            self.emg.read_c3d(c3dfile)
+            self.emg.read(c3dfile)
         if read_pig:
             self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
         if read_musclelen:
@@ -193,7 +193,7 @@ class trial:
                 else:
                     error_exit('Unknown variable: ' + var)
         if read_emg:
-            self.emg.read_c3d(c3dfile)
+            self.emg.read(c3dfile)
         if read_pig:
             self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
         if read_musclelen:
@@ -329,7 +329,7 @@ class emg:
         return chlist[0]
         
     def read(self, source):
-        """ Read the EMG data """
+        """ Read the EMG data. """
         if is_vicon_instance(source):
             vicon = source
             framerate = vicon.GetFrameRate()
@@ -351,7 +351,7 @@ class emg:
             _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
             # get gait cycle
             vgc1 = gaitcycle()
-            vgc1.read_nexus(vicon)
+            vgc1.read(vicon)
             self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
             self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
             self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
@@ -388,7 +388,7 @@ class emg:
             self.sfrate = acq.GetAnalogFrequency()
             # get gait cycle
             vgc1 = gaitcycle()
-            vgc1.read_c3d(c3dfile)
+            vgc1.read(c3dfile)
             # convert gait cycle times to EMG samples
             # in c3d, the data is already cut to the region of interest, so
             # frames must be translated by start of ROI (frame1)
@@ -586,7 +586,7 @@ class gaitcycle:
             delay_ms = 150
             # get force data
             fp1 = forceplate()
-            fp1.read_nexus(vicon)
+            fp1.read(vicon)
             forcetot = fp1.forcetot
             # foot strike frames -> EMG samples
             lfsind = np.array(self.lfstrikes) * fp1.samplesperframe
@@ -596,7 +596,7 @@ class gaitcycle:
             delay_ms = 150
             # get force data
             fp1 = forceplate()
-            fp1.read_c3d(c3dfile)
+            fp1.read(c3dfile)
             forcetot = fp1.forcetot
             # foot strike frames -> EMG samples
             # note: c3d frames start from beginning of roi
@@ -856,7 +856,7 @@ class model_outputs:
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
         vgc1 = gaitcycle()
-        vgc1.read_nexus(vicon)
+        vgc1.read(vicon)
 
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
@@ -869,13 +869,13 @@ class model_outputs:
             side = Var[0]  # L or R
             self.Vars['Norm'+Var] = vgc1.normalize(self.Vars[Var], side)
 
-    def read_pig_lowerbody(self, vicon, gcdfile=None):
-        """ Read the lower body Plug-in Gait model outputs from Nexus.
+    def read_pig_lowerbody(self, source, gcdfile=None):
+        """ Read the lower body Plug-in Gait model outputs.
         Variable names starting with 'R' and'L' are normalized into left and right 
         gait cycles, respectively. gcdfile contains PiG normal data variables. 
         Reads into self.Vars """
         
-        # the PiG kin *vars contain X,Y,Z components per each variable,
+        # the PiG kin* vars contain X,Y,Z components per each variable,
         # these will be separated into different variables
         varlist = ['LHipMoment',
               'LKneeMoment',
@@ -901,35 +901,44 @@ class model_outputs:
               'RAnkleAngles',
               'RPelvisAngles',
               'RFootProgressAngles']
-              
-        SubjectName = vicon.GetSubjectNames()[0]
-        # get gait cycle info 
-        vgc1 = gaitcycle()
-        vgc1.read_nexus(vicon)
-        # read all kinematics vars into dict. Also normalized variables will
-        # be created. Variables will be named like 'NormLKneeAnglesX' (normalized)
-        # or 'RHipAnglesX' (non-normalized)
 
-        for Var in varlist:
-            # not sure what the BoolVals are, discard for now
-            NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
-            if not NumVals:
-                error_exit('Unable to get Plug-in Gait output variable. '+
-                            'Make sure that the appropriate model has been executed.')
-            self.Vars[Var] = np.array(NumVals)
-            # moment variables have to be divided by 1000 - not sure why
-            # apparently stored in Newton-millimeters!
-            if Var.find('Moment') > 0:
-                self.Vars[Var] /= 1000.
-            # pick non-normalized X,Y,Z components into separate vars
-            self.Vars[Var+'X'] = self.Vars[Var][0,:]
-            self.Vars[Var+'Y'] = self.Vars[Var][1,:]
-            self.Vars[Var+'Z'] = self.Vars[Var][2,:]
-            # normalize vars to gait cycle 1
-            side = Var[0]  # L or R
-            self.Vars['Norm'+Var+'X'] = vgc1.normalize(self.Vars[Var+'X'], side)
-            self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
-            self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
+        if is_vicon_instance(source):
+            vicon = source
+            SubjectName = vicon.GetSubjectNames()[0]
+            # get gait cycle info 
+            # read all kinematics vars into dict. Also normalized variables will
+            # be created. Variables will be named like 'NormLKneeAnglesX' (normalized)
+            # or 'RHipAnglesX' (non-normalized)
+    
+            for Var in varlist:
+                # not sure what the BoolVals are, discard for now
+                NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
+                if not NumVals:
+                    error_exit('Unable to get Plug-in Gait output variable. '+
+                                'Make sure that the appropriate model has been executed.')
+                self.Vars[Var] = np.array(NumVals)
+
+        elif is_c3dfile(source):
+            c3dfile = source
+            
+            
+
+        vgc1 = gaitcycle()
+        vgc1.read(source)
+
+        # moment variables have to be divided by 1000 - not sure why
+        # apparently stored in Newton-millimeters!
+        if Var.find('Moment') > 0:
+            self.Vars[Var] /= 1000.
+        # pick non-normalized X,Y,Z components into separate vars
+        self.Vars[Var+'X'] = self.Vars[Var][0,:]
+        self.Vars[Var+'Y'] = self.Vars[Var][1,:]
+        self.Vars[Var+'Z'] = self.Vars[Var][2,:]
+        # normalize vars to gait cycle 1
+        side = Var[0]  # L or R
+        self.Vars['Norm'+Var+'X'] = vgc1.normalize(self.Vars[Var+'X'], side)
+        self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
+        self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
 
         # read PiG normal data from given gcd file
         if gcdfile:
