@@ -119,7 +119,7 @@ class trial:
             # update gait cycle information
             self.gc.read_nexus(self.vicon)
         else:
-            raise Exception('Unknown data source')
+            raise Exception('Invalid source')
         # try to detect side (L/R) if not forced in arguments
         if not side:
             self.side = self.gc.side
@@ -426,10 +426,6 @@ class emg:
         self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
         # map physical channels to logical ones
         self.map_data()
-        
-        
-            
-
 
     def map_data(self):
         """ Map logical channels into physical ones. Here, the rule is that the
