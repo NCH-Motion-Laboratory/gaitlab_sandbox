@@ -46,6 +46,12 @@ import glob
 import btk
 
 
+
+  
+    
+    
+
+
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
@@ -234,12 +240,6 @@ class gaitplotter():
             Button(self.master, text='Create plot', command=self.create).grid(row=bottom, column=2, pady=4)
             mainloop()  # Tk
 
-
-
-            
-            
-
-
     def get_nexus_path(self):
         if not self.vicon:
             self.vicon = ViconNexus.ViconNexus()
@@ -248,6 +248,15 @@ class gaitplotter():
             return None
         else:
             return(trialname_[0])
+
+    def read_trial(self, source, vars):
+        """ Open a gait trial. """
+        self.trial = gait_getdata.trial(source)
+        self.trial.read_vars(vars)
+           
+        
+        
+        
             
     def open_c3d_trial(self, c3dfile, vars, side=None):
         """ Open a trial from a c3d file. """

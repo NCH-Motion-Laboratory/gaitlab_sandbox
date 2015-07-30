@@ -22,7 +22,20 @@ import psutil
 import os
 import gait_defs  # lab-specific stuff
 import btk  # biomechanical toolkit for c3d reading
+# these needed for Nexus 2.1
+sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
+# needed at least when running outside Nexus
+sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
+import ViconNexus
 
+
+def is_vicon_instance(obj):
+    """ Check if obj is an instance of ViconNexus """
+    return obj.__class__.__name__ == 'ViconNexus'
+
+def is_c3dfile(obj):
+    """ Check c3d file; currently just checks existence of file """
+    return os.path.isfile(obj)
 
 def get_eclipse_description(trialname):
     """ Get the Eclipse database description for the specified trial. Specify
@@ -49,7 +62,6 @@ def get_eclipse_description(trialname):
     # assume utf-8 encoding for Windows text files, return Unicode object
     # could also use codecs.read with encoding=utf-8 (recommended way)
     return unicode(description, 'utf-8')
-
 
 def nexus_pid():
     """ Tries to return the PID of the running Nexus process. """
@@ -82,78 +94,167 @@ class trial:
     -detect side
     -cut / normalize data to gait cycles
     """
-   
-    def __init__(self):
-        """ Open trial, read subject info etc. """
-        pass
-        
-    def read_vars(self, trialpath, vars):
-        """ Read specified variables from the trial data. """
-        pass
-
-    def normalize(self):
-        """ Return a variable normalized to a given gait cycle. """
-        pass
-        
-        
-    
   
-    
+    def __init__(self, source, side=None):
+        """ Open trial, read subject info etc. """
+        self.gc = gaitcycle()
+        if os.path.isfile(source):
+            c3dfile = source
+            self.gc.read_c3d(c3dfile)
+            self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
+            self.sessionpath = os.path.dirname(c3dfile)
+        elif source == 'Nexus':
+            if not gait_getdata.nexus_pid():
+                error_exit('Cannot get Nexus PID, Nexus not running?')
+            self.vicon = ViconNexus.ViconNexus()
+            subjectnames = self.vicon.GetSubjectNames()  
+            if not subjectnames:
+                error_exit('No subject defined in Nexus')
+            trialname_ = self.vicon.GetTrialName()
+            self.sessionpath = trialname_[0]
+            self.trialname = trialname_[1]
+            if not self.trialname:
+                error_exit('No trial loaded')
+            self.subjectname = subjectnames[0]
+            # update gait cycle information
+            self.gc.read_nexus(self.vicon)
+        else:
+            raise Exception('Unknown data source')
+        # try to detect side (L/R) if not forced in arguments
+        if not side:
+            self.side = self.gc.side
+        else:
+            self.side = side    
+        self.source = source
+        # TODO: read from config / put as init params?
+        self.emg_mapping = {}
+        self.emg_auto_off = True
+        # will be read by read_vars
+        self.emg = None
+        self.model = None
+        
+    def read_vars(self, vars):
+        """ Read specified variables from the trial data. """
+        self.emg = emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+        for i, var in enumerate(self.vars):
+            if self.emg.is_logical_channel(var):
+                read_emg = True
+            elif self.model.is_pig_lowerbody_variable(var):
+                read_pig = True
+            elif self.model.is_musclelen_variable(var):
+                read_musclelen = True
+        if read_emg:
+            self.emg.read_c3d(c3dfile)
+        if read_pig:
+            self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
+        if read_musclelen:
+            self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
+          
+                
+            
+            
+
+
+            
+            
+
+        read_emg = False
+        read_pig = False
+        read_musclelen = False
+
+
+
+        self.emg_plot_chs = []
+        self.emg_plot_pos = []
+        self.model_plot_vars = []
+        self.model_plot_pos = []
+        for i, var in enumerate(self.vars):
+            if var == None:  # indicates empty subplot
+                pass
+            elif var == 'modellegend':   # place legend on this subplot
+                self.model_legendpos = i
+            elif var == 'emglegend':
+                self.emg_legendpos = i
+            else:
+                if self.emg.is_logical_channel(var):
+                    read_emg = True
+                    self.emg_plot_chs.append(var)
+                    self.emg_plot_pos.append(i)
+                elif self.model.is_pig_lowerbody_variable(var):
+                    raise Exception("c3d model reading not implemented yet")
+                    #read_pig = True
+                    #self.model_plot_vars.append(var)
+                    #self.model_plot_pos.append(i)
+                elif self.model.is_musclelen_variable(var):
+                    raise Exception("c3d model reading not implemented yet")
+                    #read_musclelen = True
+                    #self.model_plot_vars.append(var)
+                    #self.model_plot_pos.append(i)
+                else:
+                    error_exit('Unknown variable: ' + var)
+        if read_emg:
+            self.emg.read_c3d(c3dfile)
+        if read_pig:
+            self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
+        if read_musclelen:
+            self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
+   
     
     
 class forceplate:
     """ Read and process forceplate data. """
-    
-    def read_nexus(self, vicon):
-        """ Read from Vicon Nexus. """
-        framerate = vicon.GetFrameRate()
-        framecount = vicon.GetFrameCount()
-        fpdevicename = 'Forceplate'
-        devicenames = vicon.GetDeviceNames()
-        if fpdevicename in devicenames:
-            fpid = vicon.GetDeviceIDFromName(fpdevicename)
+
+    def __init__(self, source):
+        if is_vicon_instance(source):
+            vicon = source
+            framerate = vicon.GetFrameRate()
+            framecount = vicon.GetFrameCount()
+            fpdevicename = 'Forceplate'
+            devicenames = vicon.GetDeviceNames()
+            if fpdevicename in devicenames:
+                fpid = vicon.GetDeviceIDFromName(fpdevicename)
+            else:
+               error_exit('No forceplate device found in trial!')
+            # DType should be 'ForcePlate', drate is sampling rate
+            dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
+            self.sfrate = drate
+            self.samplesperframe = drate / framerate  # fp samples per Vicon frame
+            assert(len(outputids)==3)
+            # outputs should be force, moment, cop. select force
+            outputid = outputids[0]
+            # get list of channel names and IDs
+            _,_,_,_,chnames,chids = vicon.GetDeviceOutputDetails(fpid, outputid)
+            # read x,y,z forces
+            Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fx')
+            self.forcex, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+            Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fy')
+            self.forcey, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+            Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fz')
+            self.forcez, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+        elif is_c3dfile(source):
+            """ Read from c3d file. Note: gives force on ROI. """
+            c3dfile = source
+            reader = btk.btkAcquisitionFileReader()
+            reader.SetFilename(c3dfile)  # check existence?
+            reader.Update()
+            acq = reader.GetOutput()
+            self.frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
+            self.samplesperframe = acq.GetNumberAnalogSamplePerFrame()
+            self.sfrate = acq.GetAnalogFrequency()
+            for i in btk.Iterate(acq.GetAnalogs()):
+                desc = i.GetLabel()
+                if desc.find('Force.') >= 0 and i.GetUnit() == 'N':
+                    if desc.find('Fx') > 0:
+                        self.forcex = np.squeeze(i.GetValues())  # rm singleton dimension
+                    elif desc.find('Fy') > 0:
+                        self.forcey = np.squeeze(i.GetValues())
+                    elif desc.find('Fz') > 0:
+                        self.forcez = np.squeeze(i.GetValues())
         else:
-           error_exit('No forceplate device found in trial!')
-        # DType should be 'ForcePlate', drate is sampling rate
-        dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
-        self.sfrate = drate
-        self.samplesperframe = drate / framerate  # fp samples per Vicon frame
-        assert(len(outputids)==3)
-        # outputs should be force, moment, cop. select force
-        outputid = outputids[0]
-        # get list of channel names and IDs
-        _,_,_,_,chnames,chids = vicon.GetDeviceOutputDetails(fpid, outputid)
-        # read x,y,z forces
-        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fx')
-        self.forcex, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
-        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fy')
-        self.forcey, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
-        Fxid = vicon.GetDeviceChannelIDFromName(fpid, outputid, 'Fz')
-        self.forcez, chready, chrate = vicon.GetDeviceChannel(fpid, outputid, Fxid)
+            raise Exception('Invalid source')
         self.forceall = np.array([self.forcex,self.forcey,self.forcez])
         self.forcetot = np.sqrt(sum(self.forceall**2,1))
-    
-    def read_c3d(self, c3dfile):
-        """ Read from c3d file. Note: gives force on ROI. """
-        reader = btk.btkAcquisitionFileReader()
-        reader.SetFilename(c3dfile)  # check existence?
-        reader.Update()
-        acq = reader.GetOutput()
-        self.frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
-        self.samplesperframe = acq.GetNumberAnalogSamplePerFrame()
-        self.sfrate = acq.GetAnalogFrequency()
-        for i in btk.Iterate(acq.GetAnalogs()):
-            desc = i.GetLabel()
-            if desc.find('Force.') >= 0 and i.GetUnit() == 'N':
-                if desc.find('Fx') > 0:
-                    self.forcex = np.squeeze(i.GetValues())  # rm singleton dimension
-                elif desc.find('Fy') > 0:
-                    self.forcey = np.squeeze(i.GetValues())
-                elif desc.find('Fz') > 0:
-                    self.forcez = np.squeeze(i.GetValues())
                     
-        self.forceall = np.array([self.forcex,self.forcey,self.forcez])
-        self.forcetot = np.sqrt(sum(self.forceall**2,1))
 
 class emg:
     """ Read and process emg data. """
@@ -184,11 +285,7 @@ class emg:
         # normal data and logical chs
         self.define_emg_names()
         self.emg_remapping = emg_remapping
-        
-    def read(self):
-        """ Override in subclass """
-        pass
-            
+                    
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
         # max. relative interference at 50 Hz harmonics
@@ -231,54 +328,98 @@ class emg:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
         
-    def read_nexus(self, vicon):
-        """ Read EMG data from a running Vicon Nexus application. """
-        self.source = 'Nexus'
-        framerate = vicon.GetFrameRate()
-        framecount = vicon.GetFrameCount()
-        emgdevname = 'Myon'
-        devnames = vicon.GetDeviceNames()
-        if emgdevname in devnames:
-            emg_id = vicon.GetDeviceIDFromName(emgdevname)
-        else:
-           error_exit('No EMG device found in trial')
-        # DType should be 'other', drate is sampling rate
-        dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
-        samplesperframe = drate / framerate
-        self.sfrate = drate        
-        # Myon should only have 1 output; if zero, EMG was not found
-        assert(len(outputids)==1)
-        outputid = outputids[0]
-        # get list of channel names and IDs
-        _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
-        # get gait cycle
-        vgc1 = gaitcycle()
-        vgc1.read_nexus(vicon)
-        self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
-        self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
-        self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
-        self.rgc1end_s = int(round((vgc1.rgc1end - 1) * samplesperframe))
-        self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
-        self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
-        # read physical EMG channels and cut data to L/R gait cycles
-        self.data = {}
-        self.data_gc1l = {}
-        self.data_gc1r = {}
-        for elid in self.chids:
-            eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
-            elname = self.elnames[elid-1]
-            self.data[elname] = np.array(eldata)
-            if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
-                self.data[elname] = 'EMG_DISCONNECTED'
-                self.data_gc1l[elname] = 'EMG_DISCONNECTED'
-                self.data_gc1r[elname] = 'EMG_DISCONNECTED'
+    def read(self, source):
+        """ Read the EMG data """
+        if is_vicon_instance(source):
+            vicon = source
+            framerate = vicon.GetFrameRate()
+            framecount = vicon.GetFrameCount()
+            emgdevname = 'Myon'
+            devnames = vicon.GetDeviceNames()
+            if emgdevname in devnames:
+                emg_id = vicon.GetDeviceIDFromName(emgdevname)
             else:
-                # cut to L/R gait cycles. no interpolation
-                self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
-                self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
-        self.datalen = len(eldata)
-        assert(self.datalen == framecount * samplesperframe)
-        # time grid (s)
+               error_exit('No EMG device found in trial')
+            # DType should be 'other', drate is sampling rate
+            dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
+            samplesperframe = drate / framerate
+            self.sfrate = drate        
+            # Myon should only have 1 output; if zero, EMG was not found
+            assert(len(outputids)==1)
+            outputid = outputids[0]
+            # get list of channel names and IDs
+            _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
+            # get gait cycle
+            vgc1 = gaitcycle()
+            vgc1.read_nexus(vicon)
+            self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
+            self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
+            self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
+            self.rgc1end_s = int(round((vgc1.rgc1end - 1) * samplesperframe))
+            self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
+            self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
+            # read physical EMG channels and cut data to L/R gait cycles
+            self.data = {}
+            self.data_gc1l = {}
+            self.data_gc1r = {}
+            for elid in self.chids:
+                eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
+                elname = self.elnames[elid-1]
+                self.data[elname] = np.array(eldata)
+                if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
+                    self.data[elname] = 'EMG_DISCONNECTED'
+                    self.data_gc1l[elname] = 'EMG_DISCONNECTED'
+                    self.data_gc1r[elname] = 'EMG_DISCONNECTED'
+                else:
+                    # cut to L/R gait cycles. no interpolation
+                    self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
+                    self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
+            self.datalen = len(eldata)
+            assert(self.datalen == framecount * samplesperframe)
+
+        elif is_c3dfile(source):
+            c3dfile = source
+            reader = btk.btkAcquisitionFileReader()
+            reader.SetFilename(c3dfile)  # check existence?
+            reader.Update()
+            acq = reader.GetOutput()
+            frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
+            samplesperframe = acq.GetNumberAnalogSamplePerFrame()
+            self.sfrate = acq.GetAnalogFrequency()
+            # get gait cycle
+            vgc1 = gaitcycle()
+            vgc1.read_c3d(c3dfile)
+            # convert gait cycle times to EMG samples
+            # in c3d, the data is already cut to the region of interest, so
+            # frames must be translated by start of ROI (frame1)
+            self.lgc1start_s = int(round((vgc1.lgc1start - frame1) * samplesperframe))
+            self.lgc1end_s = int(round((vgc1.lgc1end - frame1) * samplesperframe))
+            self.rgc1start_s = int(round((vgc1.rgc1start - frame1) * samplesperframe))
+            self.rgc1end_s = int(round((vgc1.rgc1end - frame1) * samplesperframe))
+            self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
+            self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
+            # read physical EMG channels and cut data to L/R gait cycles
+            self.data = {}
+            self.data_gc1l = {}
+            self.data_gc1r = {}
+            self.elnames = []
+            for i in btk.Iterate(acq.GetAnalogs()):
+                if i.GetDescription().find('EMG') >= 0 and i.GetUnit() == 'V':
+                    print(i.GetDescription())
+                    elname = i.GetLabel()
+                    self.elnames.append(elname)
+                    self.data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension
+                    if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
+                        self.data[elname] = 'EMG_DISCONNECTED'
+                        self.data_gc1l[elname] = 'EMG_DISCONNECTED'
+                        self.data_gc1r[elname] = 'EMG_DISCONNECTED'
+                    else:
+                        self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
+                        self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
+            self.datalen = len(self.data[elname])
+            # time grid (s)
+        else:
+            raise Exception('Invalid source')
         self.t = np.arange(self.datalen)/self.sfrate
         # normalized grids (from 0..100) of EMG length; useful for plotting
         self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
@@ -286,54 +427,9 @@ class emg:
         # map physical channels to logical ones
         self.map_data()
         
-    def read_c3d(self, c3dfile):
-        """ Read EMG data from a c3d file. """
-        self.source = 'c3d'
-        reader = btk.btkAcquisitionFileReader()
-        reader.SetFilename(c3dfile)  # check existence?
-        reader.Update()
-        acq = reader.GetOutput()
-        frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
-        samplesperframe = acq.GetNumberAnalogSamplePerFrame()
-        self.sfrate = acq.GetAnalogFrequency()
-        # get gait cycle
-        vgc1 = gaitcycle()
-        vgc1.read_c3d(c3dfile)
-        # convert gait cycle times to EMG samples
-        # in c3d, the data is already cut to the region of interest, so
-        # frames must be translated by start of ROI (frame1)
-        self.lgc1start_s = int(round((vgc1.lgc1start - frame1) * samplesperframe))
-        self.lgc1end_s = int(round((vgc1.lgc1end - frame1) * samplesperframe))
-        self.rgc1start_s = int(round((vgc1.rgc1start - frame1) * samplesperframe))
-        self.rgc1end_s = int(round((vgc1.rgc1end - frame1) * samplesperframe))
-        self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
-        self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
-        # read physical EMG channels and cut data to L/R gait cycles
-        self.data = {}
-        self.data_gc1l = {}
-        self.data_gc1r = {}
-        self.elnames = []
-        for i in btk.Iterate(acq.GetAnalogs()):
-            if i.GetDescription().find('EMG') >= 0 and i.GetUnit() == 'V':
-                print(i.GetDescription())
-                elname = i.GetLabel()
-                self.elnames.append(elname)
-                self.data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension
-                if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
-                    self.data[elname] = 'EMG_DISCONNECTED'
-                    self.data_gc1l[elname] = 'EMG_DISCONNECTED'
-                    self.data_gc1r[elname] = 'EMG_DISCONNECTED'
-                else:
-                    self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
-                    self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
-        self.datalen = len(self.data[elname])
-        # time grid (s)
-        self.t = np.arange(self.datalen)/self.sfrate
-        # normalized grids (from 0..100) of EMG length; useful for plotting
-        self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
-        self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
-        # map physical channels to logical ones
-        self.map_data()
+        
+            
+
 
     def map_data(self):
         """ Map logical channels into physical ones. Here, the rule is that the
@@ -395,51 +491,51 @@ class gaitcycle:
     def __init__(self):
         self.side = None
         self.source = None
-    
-    def read_nexus(self, vicon):
-        """ Read gait cycle info from a Vicon Nexus instance. """
-        self.source = 'Nexus'
-        subjectname = vicon.GetSubjectNames()[0]
-        # figure out gait cycle
-        # frames where foot strikes occur (1-frame discrepancies with Nexus?)
-        self.lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
-        self.rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
-        # frames where toe-off occurs
-        self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
-        self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
-        self.compute_cycle()
-        self.detect_side_nexus(vicon)
-
-    def read_c3d(self, c3dfile):
-        """ Read gait cycle info from a c3d file. """
-        self.source = 'c3d'
-        reader = btk.btkAcquisitionFileReader()
-        reader.SetFilename(c3dfile)  # check existence?
-        reader.Update()
-        acq = reader.GetOutput()
-        self.lfstrikes = []
-        self.rfstrikes = []
-        self.ltoeoffs = []
-        self.rtoeoffs = []
-        #  get the events
-        for i in btk.Iterate(acq.GetEvents()):
-            if i.GetLabel() == "Foot Strike":
-                if i.GetContext() == "Right":
-                    self.rfstrikes.append(i.GetFrame())
-                elif i.GetContext() == "Left":
-                    self.lfstrikes.append(i.GetFrame())
-                else:
-                    raise Exception("Unknown context")
-            elif i.GetLabel() == "Foot Off":
-                if i.GetContext() == "Right":
-                    self.rtoeoffs.append(i.GetFrame())
-                elif i.GetContext() == "Left":
-                    self.ltoeoffs.append(i.GetFrame())
-                else:
-                    raise Exception("Unknown context")
-        self.compute_cycle()
-        self.detect_side_c3d(c3dfile)
         
+    def read(self, source):
+        """ Read gait cycle info. """
+        if is_vicon_instance(source):
+            vicon = source
+            self.source = 'Nexus'
+            subjectname = vicon.GetSubjectNames()[0]
+            # figure out gait cycle
+            # frames where foot strikes occur (1-frame discrepancies with Nexus?)
+            self.lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
+            self.rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
+            # frames where toe-off occurs
+            self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
+            self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
+            self.compute_cycle()
+            self.detect_side_nexus(vicon)
+        elif is_c3dfile(source):
+            c3dfile = source
+            reader = btk.btkAcquisitionFileReader()
+            reader.SetFilename(c3dfile)  # check existence?
+            reader.Update()
+            acq = reader.GetOutput()
+            self.lfstrikes = []
+            self.rfstrikes = []
+            self.ltoeoffs = []
+            self.rtoeoffs = []
+            #  get the events
+            for i in btk.Iterate(acq.GetEvents()):
+                if i.GetLabel() == "Foot Strike":
+                    if i.GetContext() == "Right":
+                        self.rfstrikes.append(i.GetFrame())
+                    elif i.GetContext() == "Left":
+                        self.lfstrikes.append(i.GetFrame())
+                    else:
+                        raise Exception("Unknown context")
+                elif i.GetLabel() == "Foot Off":
+                    if i.GetContext() == "Right":
+                        self.rtoeoffs.append(i.GetFrame())
+                    elif i.GetContext() == "Left":
+                        self.ltoeoffs.append(i.GetFrame())
+                    else:
+                        raise Exception("Unknown context")
+            self.compute_cycle()
+            self.detect_side_c3d(c3dfile)
+       
     def compute_cycle(self):
         """ Compute gait cycles. Currently only determines the first gait cycle. """
         # 2 strikes is one complete gait cycle, needed for analysis
@@ -482,54 +578,46 @@ class gaitcycle:
             tend = self.lgc1end
         # interpolate variable to gait cycle
         return np.interp(self.tn, gc1t, y[tstart:tend])
-        
-    def detect_side_nexus(self, vicon):
+
+    def detect_side(self, source):
         """ Try to determine trial side, i.e. whether the 1st gait cycle has 
-        L or R forceplate strike. Forceplate data is read from Nexus.
+        L or R forceplate strike.
         Simple heuristic is to look at the forceplate data
         150 ms after each foot strike, when the other foot should have
         lifted off. Might not work with very slow walkers. """
-        delay_ms = 150
-        # get force data
-        fp1 = forceplate()
-        fp1.read_nexus(vicon)
-        forcetot = fp1.forcetot
-        # foot strike frames -> EMG samples
-        lfsind = np.array(self.lfstrikes) * fp1.samplesperframe
-        rfsind = np.array(self.rfstrikes) * fp1.samplesperframe
+        if is_vicon_instance(source):
+            vicon = source
+            delay_ms = 150
+            # get force data
+            fp1 = forceplate()
+            fp1.read_nexus(vicon)
+            forcetot = fp1.forcetot
+            # foot strike frames -> EMG samples
+            lfsind = np.array(self.lfstrikes) * fp1.samplesperframe
+            rfsind = np.array(self.rfstrikes) * fp1.samplesperframe
+        elif is_c3dfile(source):
+            c3dfile = source
+            delay_ms = 150
+            # get force data
+            fp1 = forceplate()
+            fp1.read_c3d(c3dfile)
+            forcetot = fp1.forcetot
+            # foot strike frames -> EMG samples
+            # note: c3d frames start from beginning of roi
+            lfsind = (np.array(self.lfstrikes) - fp1.frame1) * fp1.samplesperframe
+            rfsind = (np.array(self.rfstrikes) - fp1.frame1) * fp1.samplesperframe
+        else:
+            raise Exception('Invalid source')
         delay = int(delay_ms/1000. * fp1.sfrate)
         lfsforces = forcetot[lfsind.astype(int) + delay]
         rfsforces = forcetot[rfsind.astype(int) + delay]
-        print('Total force', delay_ms, 'ms after foot strikes:')
-        #rint('Left: ', lfsforces)
-        print('Right: ', rfsforces)
+        #print('Total force', delay_ms, 'ms after foot strikes:')
+        #print('Left: ', lfsforces)
+        #print('Right: ', rfsforces)
         if max(lfsforces) > max(rfsforces):
             self.side = 'L'
         else:
             self.side = 'R'
-           
-    def detect_side_c3d(self, c3dfile):
-        """ Trial side from c3d file. """
-        delay_ms = 150
-        # get force data
-        fp1 = forceplate()
-        fp1.read_c3d(c3dfile)
-        forcetot = fp1.forcetot
-        # foot strike frames -> EMG samples
-        # note: c3d frames start from beginning of roi
-        lfsind = (np.array(self.lfstrikes) - fp1.frame1) * fp1.samplesperframe
-        rfsind = (np.array(self.rfstrikes) - fp1.frame1) * fp1.samplesperframe
-        delay = int(delay_ms/1000. * fp1.sfrate)
-        lfsforces = forcetot[lfsind.astype(int) + delay]
-        rfsforces = forcetot[rfsind.astype(int) + delay]
-        print('Total force', delay_ms, 'ms after foot strikes:')
-        #rint('Left: ', lfsforces)
-        print('Right: ', rfsforces)
-        if max(lfsforces) > max(rfsforces):
-            self.side = 'L'
-        else:
-            self.side = 'R'
-      
 
 class model_outputs:
     """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. """
