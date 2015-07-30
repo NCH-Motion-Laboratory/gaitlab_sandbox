@@ -32,7 +32,9 @@ for i in btk.Iterate(acq.GetAnalogs()):
 #        data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension        
 
 for i in btk.Iterate(acq.GetPoints()):
-    print i.GetLabel()
+    print(i.GetLabel())
+    if i.GetLabel() == 'LHipMoment':
+        datax = np.squeeze(i.GetValues())
 
 sys.exit()
 

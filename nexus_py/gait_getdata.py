@@ -29,6 +29,12 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
 
+class ModelVarNotFound(Exception):
+    pass
+
+class InvalidDataSource(Exception):
+    pass
+
 def is_vicon_instance(obj):
     """ Check if obj is an instance of ViconNexus """
     return obj.__class__.__name__ == 'ViconNexus'
@@ -98,12 +104,12 @@ class trial:
     def __init__(self, source, side=None):
         """ Open trial, read subject info etc. """
         self.gc = gaitcycle()
-        if os.path.isfile(source):
+        if is_c3dfile(source):
             c3dfile = source
             self.gc.read(c3dfile)
             self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
             self.sessionpath = os.path.dirname(c3dfile)
-        elif source == 'Nexus':
+        elif is_vicon_instance(source):
             if not gait_getdata.nexus_pid():
                 error_exit('Cannot get Nexus PID, Nexus not running?')
             self.vicon = ViconNexus.ViconNexus()
@@ -119,7 +125,7 @@ class trial:
             # update gait cycle information
             self.gc.read(self.vicon)
         else:
-            raise Exception('Invalid source')
+            raise InvalidDataSource()
         # try to detect side (L/R) if not forced in arguments
         if not side:
             self.side = self.gc.side
@@ -615,6 +621,8 @@ class gaitcycle:
         else:
             self.side = 'R'
 
+
+
 class model_outputs:
     """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. """
     
@@ -868,6 +876,33 @@ class model_outputs:
             # normalize var to gait cycle 1
             side = Var[0]  # L or R
             self.Vars['Norm'+Var] = vgc1.normalize(self.Vars[Var], side)
+            
+            
+    def read_raw(self, source, varlist):
+        """ Read specified model output variables. Returns a dict. """
+        Vars = {}
+        if is_vicon_instance(source):
+            vicon = source
+            SubjectName = vicon.GetSubjectNames()[0]
+            for Var in varlist:
+                NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
+                if not NumVals:
+                    raise ModelVarNotFound
+                Vars[Var] = np.array(NumVals)
+        elif is_c3dfile(source):
+            c3dfile = source
+            reader = btk.btkAcquisitionFileReader()
+            reader.SetFilename(c3dfile)
+            reader.Update()
+            acq = reader.GetOutput()
+            for Var in varlist:
+                # TODO: needs error checking + raise ModelVarNotFound
+                Vars[Var] = np.squeeze(acq.GetPoint(Var).GetValues())
+        else:
+            raise Exception('Invalid source')
+        return Vars
+        
+        
 
     def read_pig_lowerbody(self, source, gcdfile=None):
         """ Read the lower body Plug-in Gait model outputs.
@@ -902,25 +937,6 @@ class model_outputs:
               'RPelvisAngles',
               'RFootProgressAngles']
 
-        if is_vicon_instance(source):
-            vicon = source
-            SubjectName = vicon.GetSubjectNames()[0]
-            # get gait cycle info 
-            # read all kinematics vars into dict. Also normalized variables will
-            # be created. Variables will be named like 'NormLKneeAnglesX' (normalized)
-            # or 'RHipAnglesX' (non-normalized)
-    
-            for Var in varlist:
-                # not sure what the BoolVals are, discard for now
-                NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
-                if not NumVals:
-                    error_exit('Unable to get Plug-in Gait output variable. '+
-                                'Make sure that the appropriate model has been executed.')
-                self.Vars[Var] = np.array(NumVals)
-
-        elif is_c3dfile(source):
-            c3dfile = source
-            
             
 
         vgc1 = gaitcycle()
