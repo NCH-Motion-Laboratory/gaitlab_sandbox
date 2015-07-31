@@ -41,7 +41,10 @@ def is_vicon_instance(obj):
 
 def is_c3dfile(obj):
     """ Check c3d file; currently just checks existence of file """
-    return os.path.isfile(obj)
+    try:
+        return os.path.isfile(obj)
+    except TypeError:
+        return False
 
 def get_eclipse_description(trialname):
     """ Get the Eclipse database description for the specified trial. Specify
@@ -90,6 +93,37 @@ def messagebox(message):
     """ Custom notification handler """
     # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
+
+
+class gaitcycle_:
+    """" Holds information about one gait cycle. Offset is the frame where
+    the data begins; 1 for Vicon Nexus (which always returns whole trial) and
+    start of the ROI for c3d files, which contain data only for the ROI. """
+    
+    def __init__(self, start, end, offset, toeoff, smp_per_frame):
+        self.len = start - end
+        self.start = start - offset
+        self.end = end - offset
+        # start and end on the analog samples axis; round to whole samples
+        self.start_smp = int(round(self.start * smp_per_frame))
+        self.end_smp = int(round(self.end * smp_per_frame))
+        self.len_smp = self.end_smp - self.start_smp
+        # normalized x-axis (% of gait cycle) of same length as cycle
+        self.t = np.linspace(0, 100, self.len)
+        # normalized x-axis of 0,1,2..100%
+        self.tn = np.linspace(0, 100, 101)
+        # TODO: normalize toe-off event to the cycle
+
+    def normalize(self, var):
+        """ Normalize frames-based variable var to this cycle.
+        New interpolated x axis is 0..100% of the cycle. """
+        return np.interp(self.tn, self.t, var[self.start:self.end])
+
+    def cut_analog_to_cycle(self, var):
+        """ Crop analog variable (EMG, forceplate, etc. ) to this
+        cycle; no interpolation """
+        return var[self.start_smp:self.end_smp]
+
     
 class trial:
     """
@@ -100,34 +134,60 @@ class trial:
     -detect side
     -cut / normalize data to gait cycles
     """
- 
     def __init__(self, source, side=None):
-        """ Open trial, read subject info etc. """
-        self.gc = gaitcycle(source)
+        """ Open trial, read subject info, events etc. """
+        self.lfstrikes = []
+        self.rfstrikes = []
+        self.ltoeoffs = []
+        self.rtoeoffs = []
+        # TODO: needs to be determined from file
+        self.smp_per_frame = 100
         if is_c3dfile(source):
             c3dfile = source
             self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
             self.sessionpath = os.path.dirname(c3dfile)
+            reader = btk.btkAcquisitionFileReader()
+            reader.SetFilename(c3dfile)  # check existence?
+            reader.Update()
+            acq = reader.GetOutput()
+            # frame offset (start of trial data in frames)
+            self.offset = acq.GetFirstFrame()
+            #  get events
+            for i in btk.Iterate(acq.GetEvents()):
+                if i.GetLabel() == "Foot Strike":
+                    if i.GetContext() == "Right":
+                        self.rfstrikes.append(i.GetFrame())
+                    elif i.GetContext() == "Left":
+                        self.lfstrikes.append(i.GetFrame())
+                    else:
+                        raise Exception("Unknown context")
+                elif i.GetLabel() == "Foot Off":
+                    if i.GetContext() == "Right":
+                        self.rtoeoffs.append(i.GetFrame())
+                    elif i.GetContext() == "Left":
+                        self.ltoeoffs.append(i.GetFrame())
+                    else:
+                        raise Exception("Unknown context")
         elif is_vicon_instance(source):
-            if not gait_getdata.nexus_pid():
-                error_exit('Cannot get Nexus PID, Nexus not running?')
-            self.vicon = ViconNexus.ViconNexus()
-            subjectnames = self.vicon.GetSubjectNames()  
+            vicon = source
+            subjectnames = vicon.GetSubjectNames()  
             if not subjectnames:
                 error_exit('No subject defined in Nexus')
-            trialname_ = self.vicon.GetTrialName()
+            trialname_ = vicon.GetTrialName()
             self.sessionpath = trialname_[0]
             self.trialname = trialname_[1]
             if not self.trialname:
                 error_exit('No trial loaded')
             self.subjectname = subjectnames[0]
+            # get events
+            self.lfstrikes = vicon.GetEvents(self.subjectname, "Left", "Foot Strike")[0]
+            self.rfstrikes = vicon.GetEvents(self.subjectname, "Right", "Foot Strike")[0]
+            self.ltoeoffs = vicon.GetEvents(self.subjectname, "Left", "Foot Off")[0]
+            self.rtoeoffs = vicon.GetEvents(self.subjectname, "Right", "Foot Off")[0]
+            # frame offset (start of trial data in frames)
+            self.offset = 1
         else:
             raise InvalidDataSource()
-        # try to detect side (L/R) if not forced in arguments
-        if not side:
-            self.side = self.gc.side
-        else:
-            self.side = side    
         self.source = source
         # TODO: read from config / put as init params?
         self.emg_mapping = {}
@@ -135,6 +195,66 @@ class trial:
         # will be read by read_vars
         self.emg = None
         self.model = None
+        self.scan_cycles()
+        
+    def scan_cycles(self):
+        """ Scan for foot strike events and create gait cycles. """
+        self.cycles = []
+        for strikes in [self.lfstrikes, self.rfstrikes]:
+            len_s = len(strikes)
+            if len_s < 2:
+                error_exit("Insufficient number of foot strike events detected. "+
+                        "Check that the trial has been processed.")
+            if len_s % 2:
+                strikes.pop()  # assure even number of foot strikes
+            if strikes == self.lfstrikes:
+                toeoffs = self.ltoeoffs
+            else:
+                toeoffs = self.rtoeoffs
+            for k in range(0, 2, len_s):
+                start = strikes[k]
+                end = strikes[k+1]
+                toeoff = [x for x in toeoffs if x > start and x < end]
+                if len(toeoff) != 1:
+                    error_exit('Expected a single toe-off event during gait cycle')
+                cycle = gaitcycle_(start, end, self.offset, toeoff, self.smp_per_frame)
+                self.cycles.append(cycle)
+        
+            
+        
+
+
+    def compute_cycle(self):
+        """ Compute gait cycles. Currently only determines the first gait cycle. """
+        # 2 strikes is one complete gait cycle, needed for analysis
+        lenLFS = len(self.lfstrikes)
+        lenRFS = len(self.rfstrikes)
+        if lenLFS < 2 or lenRFS < 2:
+            error_exit("Insufficient number of foot strike events detected. "+
+                        "Check that the trial has been processed.")
+        # extract times for 1st gait cycles, L and R
+        self.lgc1start = min(self.lfstrikes[0:2])
+        self.lgc1end = max(self.lfstrikes[0:2])
+        self.lgc1len = self.lgc1end-self.lgc1start
+        self.rgc1start = min(self.rfstrikes[0:2])
+        self.rgc1end = max(self.rfstrikes[0:2])
+        self.rgc1len = self.rgc1end-self.rgc1start
+        self.tn = np.linspace(0, 100, 101)
+        # normalize toe off events to 1st gait cycles
+        # first toe-off may occur before the gait cycle starts
+        ltoeoff_gc1 = [x for x in self.ltoeoffs if x > self.lgc1start and x < self.lgc1end]
+        rtoeoff_gc1 = [x for x in self.rtoeoffs if x > self.rgc1start and x < self.rgc1end]
+        if len(ltoeoff_gc1) != 1 or len(rtoeoff_gc1) != 1:
+            error_exit('Expected a single toe-off event during gait cycle')
+        self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
+        self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
+
+
+
+
+
+
+
         
     def read(self, vars):
         """ Read specified variables from the trial data. """
@@ -206,7 +326,9 @@ class trial:
     
 class forceplate:
     """ Read and process forceplate data. source may be a c3d file or a
-    ViconNexus instance. """
+    ViconNexus instance. Gives x,y,z and total forces during the whole
+    trial (or ROI, for c3d files). Support only single (first) forceplate 
+    for now. """
 
     def __init__(self, source):
         if is_vicon_instance(source):
@@ -481,13 +603,27 @@ class emg:
             #self.yscale_gc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
             #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
 
+
+
+        
+    
+    
+        
+        
+
+
 class gaitcycle:
     """ Determines start and end points of 1st gait cycles (L/R) from data. 
     Can also normalize variables to 0..100% of either gait cycle.
-    Currently only handles the 1st (L/R) gait cycles, rest are ignored. """
+    Currently only handles the 1st (L/R) gait cycles, rest are ignored. 
+    source may be a c3d file or a ViconNexus instance. """
     
     def __init__(self, source):
-        """ Read gait cycle info. """
+        """ Read foot strike / toeoff events, compute gait cycles. """
+        self.lfstrikes = []
+        self.rfstrikes = []
+        self.ltoeoffs = []
+        self.rtoeoffs = []
         if is_vicon_instance(source):
             vicon = source
             subjectname = vicon.GetSubjectNames()[0]
@@ -504,10 +640,6 @@ class gaitcycle:
             reader.SetFilename(c3dfile)  # check existence?
             reader.Update()
             acq = reader.GetOutput()
-            self.lfstrikes = []
-            self.rfstrikes = []
-            self.ltoeoffs = []
-            self.rtoeoffs = []
             #  get the events
             for i in btk.Iterate(acq.GetEvents()):
                 if i.GetLabel() == "Foot Strike":
@@ -524,6 +656,8 @@ class gaitcycle:
                         self.ltoeoffs.append(i.GetFrame())
                     else:
                         raise Exception("Unknown context")
+        else:
+            raise InvalidDataSource
         self.compute_cycle()
         self.detect_side(source)
        

@@ -18,11 +18,18 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
                       
             
-            
+
 
 
 c3dfile = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS33.c3d"
 vicon = ViconNexus.ViconNexus()
+
+
+tfile = gait_getdata.trial(c3dfile)
+tnexus = gait_getdata.trial(vicon)
+
+
+sys.exit()
 
 # gait cycle test - ok
 vgc1 = gait_getdata.gaitcycle(c3dfile)
