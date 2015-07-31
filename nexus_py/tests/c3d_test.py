@@ -9,7 +9,7 @@ test nexusplotter c3d/btk functions
 """
 
 
-import nexus_getdata
+import gait_getdata
 import sys
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -25,11 +25,9 @@ c3dfile = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_
 vicon = ViconNexus.ViconNexus()
 
 # gait cycle test - ok
-vgc1 = nexus_getdata.gaitcycle()
-vgc1.read_c3d(c3dfile)
+vgc1 = gait_getdata.gaitcycle(c3dfile)
 
-vgc2 = nexus_getdata.gaitcycle()
-vgc2.read_nexus(vicon)
+vgc2 = gait_getdata.gaitcycle(vicon)
 
 print vgc1.rfstrikes
 print vgc2.rfstrikes

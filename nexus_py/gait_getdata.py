@@ -103,10 +103,9 @@ class trial:
  
     def __init__(self, source, side=None):
         """ Open trial, read subject info etc. """
-        self.gc = gaitcycle()
+        self.gc = gaitcycle(source)
         if is_c3dfile(source):
             c3dfile = source
-            self.gc.read(c3dfile)
             self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
             self.sessionpath = os.path.dirname(c3dfile)
         elif is_vicon_instance(source):
@@ -122,8 +121,6 @@ class trial:
             if not self.trialname:
                 error_exit('No trial loaded')
             self.subjectname = subjectnames[0]
-            # update gait cycle information
-            self.gc.read(self.vicon)
         else:
             raise InvalidDataSource()
         # try to detect side (L/R) if not forced in arguments
@@ -208,7 +205,8 @@ class trial:
     
     
 class forceplate:
-    """ Read and process forceplate data. """
+    """ Read and process forceplate data. source may be a c3d file or a
+    ViconNexus instance. """
 
     def __init__(self, source):
         if is_vicon_instance(source):
@@ -356,8 +354,7 @@ class emg:
             # get list of channel names and IDs
             _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
             # get gait cycle
-            vgc1 = gaitcycle()
-            vgc1.read(vicon)
+            vgc1 = gaitcycle(source)
             self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
             self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
             self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
@@ -393,8 +390,7 @@ class emg:
             samplesperframe = acq.GetNumberAnalogSamplePerFrame()
             self.sfrate = acq.GetAnalogFrequency()
             # get gait cycle
-            vgc1 = gaitcycle()
-            vgc1.read(c3dfile)
+            vgc1 = gaitcycle(source)
             # convert gait cycle times to EMG samples
             # in c3d, the data is already cut to the region of interest, so
             # frames must be translated by start of ROI (frame1)
@@ -490,15 +486,10 @@ class gaitcycle:
     Can also normalize variables to 0..100% of either gait cycle.
     Currently only handles the 1st (L/R) gait cycles, rest are ignored. """
     
-    def __init__(self):
-        self.side = None
-        self.source = None
-        
-    def read(self, source):
+    def __init__(self, source):
         """ Read gait cycle info. """
         if is_vicon_instance(source):
             vicon = source
-            self.source = 'Nexus'
             subjectname = vicon.GetSubjectNames()[0]
             # figure out gait cycle
             # frames where foot strikes occur (1-frame discrepancies with Nexus?)
@@ -507,8 +498,6 @@ class gaitcycle:
             # frames where toe-off occurs
             self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
             self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
-            self.compute_cycle()
-            self.detect_side_nexus(vicon)
         elif is_c3dfile(source):
             c3dfile = source
             reader = btk.btkAcquisitionFileReader()
@@ -535,8 +524,8 @@ class gaitcycle:
                         self.ltoeoffs.append(i.GetFrame())
                     else:
                         raise Exception("Unknown context")
-            self.compute_cycle()
-            self.detect_side_c3d(c3dfile)
+        self.compute_cycle()
+        self.detect_side(source)
        
     def compute_cycle(self):
         """ Compute gait cycles. Currently only determines the first gait cycle. """
@@ -587,24 +576,16 @@ class gaitcycle:
         Simple heuristic is to look at the forceplate data
         150 ms after each foot strike, when the other foot should have
         lifted off. Might not work with very slow walkers. """
+        delay_ms = 150
+        # get force data
+        fp1 = forceplate(source)
+        forcetot = fp1.forcetot
         if is_vicon_instance(source):
-            vicon = source
-            delay_ms = 150
-            # get force data
-            fp1 = forceplate()
-            fp1.read(vicon)
-            forcetot = fp1.forcetot
-            # foot strike frames -> EMG samples
+            # foot strike frames -> analog samples
             lfsind = np.array(self.lfstrikes) * fp1.samplesperframe
             rfsind = np.array(self.rfstrikes) * fp1.samplesperframe
         elif is_c3dfile(source):
-            c3dfile = source
-            delay_ms = 150
-            # get force data
-            fp1 = forceplate()
-            fp1.read(c3dfile)
-            forcetot = fp1.forcetot
-            # foot strike frames -> EMG samples
+            # foot strike frames -> analog samples
             # note: c3d frames start from beginning of roi
             lfsind = (np.array(self.lfstrikes) - fp1.frame1) * fp1.samplesperframe
             rfsind = (np.array(self.rfstrikes) - fp1.frame1) * fp1.samplesperframe
@@ -863,8 +844,7 @@ class model_outputs:
                      
         SubjectName = vicon.GetSubjectNames()[0]
         # get gait cycle info 
-        vgc1 = gaitcycle()
-        vgc1.read(vicon)
+        vgc1 = gaitcycle(vicon)
 
         for Var in varlist:
             # not sure what the BoolVals are, discard for now
