@@ -4,9 +4,20 @@ Created on Tue Mar 17 14:41:31 2015
 
 Gaitplotter utility classes for reading gait data.
 
+NEXT:
+-figure out fp data for the gait cycle, where to use it and how
+
 TODO:
+-handling of error situations (exceptions/error method)
 trial class for grouping trial-specific data?
 -factor out read methods for Nexus/c3d
+
+Notes:
+x axis for c3d variables is ROI; i.e. first frame is beginning of ROI (=offset)
+However, event times are referred to whole trial. Thus offset needs to be subtracted
+from event times to put them on the common x axis.
+For Vicon Nexus data, x axis is the whole trial. 
+
 
 @author: Jussi
 """
@@ -100,10 +111,16 @@ class gaitcycle_:
     the data begins; 1 for Vicon Nexus (which always returns whole trial) and
     start of the ROI for c3d files, which contain data only for the ROI. """
     
-    def __init__(self, start, end, offset, toeoff, smp_per_frame):
-        self.len = start - end
+    def __init__(self, start, end, offset, toeoff, context, kinetics, smp_per_frame):
+        self.offset = offset
+        self.len = end - start
         self.start = start - offset
         self.end = end - offset
+        self.toeoff = toeoff - offset
+        # which foot begins and ends the cycle
+        self.context = context
+        # whether we have kinetics for L/R/both sides/none
+        self.kinetics = kinetics
         # start and end on the analog samples axis; round to whole samples
         self.start_smp = int(round(self.start * smp_per_frame))
         self.end_smp = int(round(self.end * smp_per_frame))
@@ -112,8 +129,9 @@ class gaitcycle_:
         self.t = np.linspace(0, 100, self.len)
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
-        # TODO: normalize toe-off event to the cycle
-
+        # normalize toe-off event to the cycle
+        self.toeoffn = round(100*((self.toeoff - self.start) / self.len))
+        
     def normalize(self, var):
         """ Normalize frames-based variable var to this cycle.
         New interpolated x axis is 0..100% of the cycle. """
@@ -123,8 +141,7 @@ class gaitcycle_:
         """ Crop analog variable (EMG, forceplate, etc. ) to this
         cycle; no interpolation """
         return var[self.start_smp:self.end_smp]
-
-    
+  
 class trial:
     """
      A gait trial. WIP
@@ -189,6 +206,7 @@ class trial:
         else:
             raise InvalidDataSource()
         self.source = source
+        self.fp = forceplate(source)
         # TODO: read from config / put as init params?
         self.emg_mapping = {}
         self.emg_auto_off = True
@@ -198,7 +216,7 @@ class trial:
         self.scan_cycles()
         
     def scan_cycles(self):
-        """ Scan for foot strike events and create gait cycles. """
+        """ Scan for foot strike events and create gait cycle objects """
         self.cycles = []
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
@@ -209,20 +227,23 @@ class trial:
                 strikes.pop()  # assure even number of foot strikes
             if strikes == self.lfstrikes:
                 toeoffs = self.ltoeoffs
+                context = 'L'
             else:
                 toeoffs = self.rtoeoffs
+                context = 'R'
             for k in range(0, 2, len_s):
                 start = strikes[k]
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
                 if len(toeoff) != 1:
                     error_exit('Expected a single toe-off event during gait cycle')
-                cycle = gaitcycle_(start, end, self.offset, toeoff, self.smp_per_frame)
+                # check forceplate data to see whether we have context
+                
+                cycle = gaitcycle_(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
+      
+         
         
-            
-        
-
 
     def compute_cycle(self):
         """ Compute gait cycles. Currently only determines the first gait cycle. """
@@ -321,7 +342,7 @@ class trial:
             self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
         if read_musclelen:
             self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
-   
+  
     
     
 class forceplate:
