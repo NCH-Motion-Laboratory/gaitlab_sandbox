@@ -5,7 +5,7 @@ Created on Tue Mar 17 14:41:31 2015
 Gaitplotter utility classes for reading gait data.
 
 NEXT:
--figure out fp data for the gait cycle, where to use it and how
+-rewrite EMG class to use new gait cycle defs
 
 TODO:
 -handling of error situations (exceptions/error method)
@@ -146,12 +146,11 @@ class gaitcycle:
   
 class trial:
     """
-     A gait trial. WIP
-    -read trial data (model data, emg, forceplate, gait cycle info)
-    -process data (filter etc.)
-    -load model /emg normal data
-    -detect side
-    -cut / normalize data to gait cycles
+    A gait trial. Contains:
+    -subject and trial info
+    -gait cycles (beginning and end frames)
+    -analog data (EMG, forceplate, etc.)
+    -model variables (Plug-in Gait, muscle length, etc.)
     """
     def __init__(self, source, side=None):
         """ Open trial, read subject info, events etc. """
@@ -273,111 +272,25 @@ class trial:
                 toeoff = [x for x in toeoffs if x > start and x < end]
                 if len(toeoff) != 1:
                     error_exit('Expected a single toe-off event during gait cycle')
-                # check forceplate data to see whether we have context
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
-      
-         
+            self.ncycles = len(self.cycles)
         
-
-    def compute_cycle(self):
-        """ Compute gait cycles. Currently only determines the first gait cycle. """
-        # 2 strikes is one complete gait cycle, needed for analysis
-        lenLFS = len(self.lfstrikes)
-        lenRFS = len(self.rfstrikes)
-        if lenLFS < 2 or lenRFS < 2:
-            error_exit("Insufficient number of foot strike events detected. "+
-                        "Check that the trial has been processed.")
-        # extract times for 1st gait cycles, L and R
-        self.lgc1start = min(self.lfstrikes[0:2])
-        self.lgc1end = max(self.lfstrikes[0:2])
-        self.lgc1len = self.lgc1end-self.lgc1start
-        self.rgc1start = min(self.rfstrikes[0:2])
-        self.rgc1end = max(self.rfstrikes[0:2])
-        self.rgc1len = self.rgc1end-self.rgc1start
-        self.tn = np.linspace(0, 100, 101)
-        # normalize toe off events to 1st gait cycles
-        # first toe-off may occur before the gait cycle starts
-        ltoeoff_gc1 = [x for x in self.ltoeoffs if x > self.lgc1start and x < self.lgc1end]
-        rtoeoff_gc1 = [x for x in self.rtoeoffs if x > self.rgc1start and x < self.rgc1end]
-        if len(ltoeoff_gc1) != 1 or len(rtoeoff_gc1) != 1:
-            error_exit('Expected a single toe-off event during gait cycle')
-        self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
-        self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
-
-
-
-
-
-
-
-        
-    def read(self, vars):
-        """ Read specified variables from the trial data. """
-        self.emg = emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
-        for i, var in enumerate(self.vars):
-            if self.emg.is_logical_channel(var):
-                read_emg = True
-            elif self.model.is_pig_lowerbody_variable(var):
-                read_pig = True
-            elif self.model.is_musclelen_variable(var):
-                read_musclelen = True
-        if read_emg:
-            self.emg.read(c3dfile)
-        if read_pig:
-            self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
-        if read_musclelen:
-            self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
-          
-                
+    def read_emg(self):
+        """ Read EMG channels from trial data. """
+        if not self.emg:
+            self.emg = emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            self.emg.read()
             
-            
+    def cut_analog_to_cycle(self, cycle, data):
+        """ Returns given analog data (should be an instance variable)
+        during a specified gait cycle (1,2,3...) """
+        if cycle > ncycles:
+            raise Exception("No such gait cycle in data")
+        return self.cycles[cycle-1].cut_analog_to_cycle(data)
 
-
-            
-            
-
-        read_emg = False
-        read_pig = False
-        read_musclelen = False
-
-
-
-        self.emg_plot_chs = []
-        self.emg_plot_pos = []
-        self.model_plot_vars = []
-        self.model_plot_pos = []
-        for i, var in enumerate(self.vars):
-            if var == None:  # indicates empty subplot
-                pass
-            elif var == 'modellegend':   # place legend on this subplot
-                self.model_legendpos = i
-            elif var == 'emglegend':
-                self.emg_legendpos = i
-            else:
-                if self.emg.is_logical_channel(var):
-                    read_emg = True
-                    self.emg_plot_chs.append(var)
-                    self.emg_plot_pos.append(i)
-                elif self.model.is_pig_lowerbody_variable(var):
-                    raise Exception("c3d model reading not implemented yet")
-                    #read_pig = True
-                    #self.model_plot_vars.append(var)
-                    #self.model_plot_pos.append(i)
-                elif self.model.is_musclelen_variable(var):
-                    raise Exception("c3d model reading not implemented yet")
-                    #read_musclelen = True
-                    #self.model_plot_vars.append(var)
-                    #self.model_plot_pos.append(i)
-                else:
-                    error_exit('Unknown variable: ' + var)
-        if read_emg:
-            self.emg.read(c3dfile)
-        if read_pig:
-            self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
-        if read_musclelen:
-            self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
-  
+    def read_model(self, var):
+        pass
     
     
 class forceplate:
@@ -385,7 +298,6 @@ class forceplate:
     ViconNexus instance. Gives x,y,z and total forces during the whole
     trial (or ROI, for c3d files). Support only single (first) forceplate 
     for now. """
-
     def __init__(self, source):
         if is_vicon_instance(source):
             vicon = source
@@ -439,7 +351,7 @@ class forceplate:
                     
 
 class emg:
-    """ Read and process emg data. """
+    """ Read and process EMG data. """
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
