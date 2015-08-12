@@ -40,6 +40,10 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
 
+def viconnexus():
+    """ Return a ViconNexus instance. Convenience for calling classes. """
+    return ViconNexus.ViconNexus()
+
 class ModelVarNotFound(Exception):
     pass
 
@@ -106,12 +110,12 @@ def messagebox(message):
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
 
 
-class gaitcycle_:
+class gaitcycle:
     """" Holds information about one gait cycle. Offset is the frame where
     the data begins; 1 for Vicon Nexus (which always returns whole trial) and
     start of the ROI for c3d files, which contain data only for the ROI. """
     
-    def __init__(self, start, end, offset, toeoff, context, kinetics, smp_per_frame):
+    def __init__(self, start, end, offset, toeoff, context, smp_per_frame):
         self.offset = offset
         self.len = end - start
         self.start = start - offset
@@ -119,8 +123,6 @@ class gaitcycle_:
         self.toeoff = toeoff - offset
         # which foot begins and ends the cycle
         self.context = context
-        # whether we have kinetics for L/R/both sides/none
-        self.kinetics = kinetics
         # start and end on the analog samples axis; round to whole samples
         self.start_smp = int(round(self.start * smp_per_frame))
         self.end_smp = int(round(self.end * smp_per_frame))
@@ -202,7 +204,7 @@ class trial:
             self.ltoeoffs = vicon.GetEvents(self.subjectname, "Left", "Foot Off")[0]
             self.rtoeoffs = vicon.GetEvents(self.subjectname, "Right", "Foot Off")[0]
             # frame offset (start of trial data in frames)
-            self.offset = 1
+            self.offset = 1  # DEBUG
         else:
             raise InvalidDataSource()
         self.source = source
@@ -213,10 +215,44 @@ class trial:
         # will be read by read_vars
         self.emg = None
         self.model = None
+        self.kinetics = self.kinetics_available()
         self.scan_cycles()
         
+    def kinetics_available(self):
+        """ See whether this trial has full kinetics for left/right side
+        (or neither, or both). Kinetics require the GRF for the corresponding
+        side, i.e. a forceplate strike. Thus look at strike event times and 
+        determine whether (clean) forceplate contact is happening at each time.
+        Currently this method is not very smart and does not work for multiple-plate
+        systems. Trials with double contact may also be misclassified. """
+        # delay between foot strike event and forceplate data evaluation.
+        # idea is to wait until the other foot has lifted off
+        delay_ms = 150
+        # minimum force (N) to consider it a clean contact
+        min_force = 100
+        # get force data
+        forcetot = self.fp.forcetot
+        # foot strike frames -> analog samples
+        lfsind = (np.array(self.lfstrikes) - self.offset) * self.fp.samplesperframe
+        rfsind = (np.array(self.rfstrikes) - self.offset) * self.fp.samplesperframe
+        delay = int(delay_ms/1000. * self.fp.sfrate)
+        lfsforces = forcetot[lfsind.astype(int) + delay]
+        rfsforces = forcetot[rfsind.astype(int) + delay]
+        kinetics = ''
+        if max(lfsforces) > min_force:
+            kinetics += 'L'
+        if max(rfsforces) > min_force:
+            kinetics += 'R'
+        #print('Strike frames:')
+        #print(lfsind)
+        #print(rfsind)
+        #print('Total force', delay_ms, 'ms after foot strikes:')
+        #print('Left: ', lfsforces)
+        #print('Right: ', rfsforces)
+        return kinetics
+
     def scan_cycles(self):
-        """ Scan for foot strike events and create gait cycle objects """
+        """ Scan for foot strike events and create gait cycle objects. """
         self.cycles = []
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
@@ -238,8 +274,7 @@ class trial:
                 if len(toeoff) != 1:
                     error_exit('Expected a single toe-off event during gait cycle')
                 # check forceplate data to see whether we have context
-                
-                cycle = gaitcycle_(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
+                cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
       
          
@@ -630,133 +665,6 @@ class emg:
     
     
         
-        
-
-
-class gaitcycle:
-    """ Determines start and end points of 1st gait cycles (L/R) from data. 
-    Can also normalize variables to 0..100% of either gait cycle.
-    Currently only handles the 1st (L/R) gait cycles, rest are ignored. 
-    source may be a c3d file or a ViconNexus instance. """
-    
-    def __init__(self, source):
-        """ Read foot strike / toeoff events, compute gait cycles. """
-        self.lfstrikes = []
-        self.rfstrikes = []
-        self.ltoeoffs = []
-        self.rtoeoffs = []
-        if is_vicon_instance(source):
-            vicon = source
-            subjectname = vicon.GetSubjectNames()[0]
-            # figure out gait cycle
-            # frames where foot strikes occur (1-frame discrepancies with Nexus?)
-            self.lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
-            self.rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
-            # frames where toe-off occurs
-            self.ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
-            self.rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
-        elif is_c3dfile(source):
-            c3dfile = source
-            reader = btk.btkAcquisitionFileReader()
-            reader.SetFilename(c3dfile)  # check existence?
-            reader.Update()
-            acq = reader.GetOutput()
-            #  get the events
-            for i in btk.Iterate(acq.GetEvents()):
-                if i.GetLabel() == "Foot Strike":
-                    if i.GetContext() == "Right":
-                        self.rfstrikes.append(i.GetFrame())
-                    elif i.GetContext() == "Left":
-                        self.lfstrikes.append(i.GetFrame())
-                    else:
-                        raise Exception("Unknown context")
-                elif i.GetLabel() == "Foot Off":
-                    if i.GetContext() == "Right":
-                        self.rtoeoffs.append(i.GetFrame())
-                    elif i.GetContext() == "Left":
-                        self.ltoeoffs.append(i.GetFrame())
-                    else:
-                        raise Exception("Unknown context")
-        else:
-            raise InvalidDataSource
-        self.compute_cycle()
-        self.detect_side(source)
-       
-    def compute_cycle(self):
-        """ Compute gait cycles. Currently only determines the first gait cycle. """
-        # 2 strikes is one complete gait cycle, needed for analysis
-        lenLFS = len(self.lfstrikes)
-        lenRFS = len(self.rfstrikes)
-        if lenLFS < 2 or lenRFS < 2:
-            error_exit("Insufficient number of foot strike events detected. "+
-                        "Check that the trial has been processed.")
-        # extract times for 1st gait cycles, L and R
-        self.lgc1start = min(self.lfstrikes[0:2])
-        self.lgc1end = max(self.lfstrikes[0:2])
-        self.lgc1len = self.lgc1end-self.lgc1start
-        self.rgc1start = min(self.rfstrikes[0:2])
-        self.rgc1end = max(self.rfstrikes[0:2])
-        self.rgc1len = self.rgc1end-self.rgc1start
-        self.tn = np.linspace(0, 100, 101)
-        # normalize toe off events to 1st gait cycles
-        # first toe-off may occur before the gait cycle starts
-        ltoeoff_gc1 = [x for x in self.ltoeoffs if x > self.lgc1start and x < self.lgc1end]
-        rtoeoff_gc1 = [x for x in self.rtoeoffs if x > self.rgc1start and x < self.rgc1end]
-        if len(ltoeoff_gc1) != 1 or len(rtoeoff_gc1) != 1:
-            error_exit('Expected a single toe-off event during gait cycle')
-        self.ltoe1_norm = round(100*((ltoeoff_gc1[0] - self.lgc1start) / self.lgc1len))
-        self.rtoe1_norm = round(100*((rtoeoff_gc1[0] - self.rgc1start) / self.rgc1len))
-      
-    def normalize(self, y, side):
-        """ Interpolate variable y to left or right (1st) gait cycle of this trial.
-        Variable is assumed to share the same time axis (frames) as the gait events
-        (analog data does not, due to different sampling rate)
-        New x axis will be 0..100. """
-        lgc1t = np.linspace(0, 100, self.lgc1len)
-        rgc1t = np.linspace(0, 100, self.rgc1len)
-        if side.upper() == 'R':  # norm to right side
-            gc1t = rgc1t
-            tstart = self.rgc1start
-            tend = self.rgc1end
-        else:  # to left side
-            gc1t = lgc1t
-            tstart = self.lgc1start
-            tend = self.lgc1end
-        # interpolate variable to gait cycle
-        return np.interp(self.tn, gc1t, y[tstart:tend])
-
-    def detect_side(self, source):
-        """ Try to determine trial side, i.e. whether the 1st gait cycle has 
-        L or R forceplate strike.
-        Simple heuristic is to look at the forceplate data
-        150 ms after each foot strike, when the other foot should have
-        lifted off. Might not work with very slow walkers. """
-        delay_ms = 150
-        # get force data
-        fp1 = forceplate(source)
-        forcetot = fp1.forcetot
-        if is_vicon_instance(source):
-            # foot strike frames -> analog samples
-            lfsind = np.array(self.lfstrikes) * fp1.samplesperframe
-            rfsind = np.array(self.rfstrikes) * fp1.samplesperframe
-        elif is_c3dfile(source):
-            # foot strike frames -> analog samples
-            # note: c3d frames start from beginning of roi
-            lfsind = (np.array(self.lfstrikes) - fp1.frame1) * fp1.samplesperframe
-            rfsind = (np.array(self.rfstrikes) - fp1.frame1) * fp1.samplesperframe
-        else:
-            raise Exception('Invalid source')
-        delay = int(delay_ms/1000. * fp1.sfrate)
-        lfsforces = forcetot[lfsind.astype(int) + delay]
-        rfsforces = forcetot[rfsind.astype(int) + delay]
-        #print('Total force', delay_ms, 'ms after foot strikes:')
-        #print('Left: ', lfsforces)
-        #print('Right: ', rfsforces)
-        if max(lfsforces) > max(rfsforces):
-            self.side = 'L'
-        else:
-            self.side = 'R'
-
 
 
 class model_outputs:
