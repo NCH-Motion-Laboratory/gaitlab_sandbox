@@ -44,7 +44,7 @@ emg_normals = {'RGas': [[16,50]],
        'LTibA': [[0,12],[56,100]],
        'LVas': [[0,24],[96,100]]}
 
-# names into a separate variable
+# put names into a separate variable
 emg_names = emg_labels.keys()
 
 

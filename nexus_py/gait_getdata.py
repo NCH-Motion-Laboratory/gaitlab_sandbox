@@ -279,7 +279,7 @@ class trial:
     def read_emg(self):
         """ Read EMG channels from trial data. """
         if not self.emg:
-            self.emg = emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            self.emg = emg(self.source, emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
             self.emg.read()
             
     def cut_analog_to_cycle(self, cycle, data):
@@ -353,23 +353,11 @@ class forceplate:
 class emg:
     """ Read and process EMG data. """
 
-    def define_emg_names(self):
-        """ Defines the electrode mapping. """
-        self.ch_normals = gait_defs.emg_normals
-        self.ch_names = gait_defs.emg_names
-        self.ch_labels = gait_defs.emg_labels
-                
-    def emg_channelnames(self):
-        """ Return names of known (logical) EMG channels. """
-        return self.ch_names
-       
-    def is_logical_channel(self, chname):
-        return chname in self.ch_names
-
-    def __init__(self, emg_remapping=None, emg_auto_off=True):
-        """ emg_remapping contains the replacement dict for EMG electrodes:
-        e.g. key 'LGas'='LSol' means that LGas data will be 
+    def __init__(self, source, emg_remapping=None, emg_auto_off=True):
+        """ emg_remapping is the replacement dict for EMG electrodes:
+        e.g. key 'LGas'='LSol' means that data for LGas will be 
         read from the LSol electrode."""
+        self.source = source
         # default plotting scale in medians (channel-specific)
         self.yscale_medians = 1
         # order of Butterworth filter
@@ -379,6 +367,15 @@ class emg:
         # normal data and logical chs
         self.define_emg_names()
         self.emg_remapping = emg_remapping
+
+    def define_emg_names(self):
+        """ Defines the electrode mapping. """
+        self.ch_normals = gait_defs.emg_normals
+        self.ch_names = gait_defs.emg_names
+        self.ch_labels = gait_defs.emg_labels
+      
+    def is_logical_channel(self, chname):
+        return chname in self.ch_names
                     
     def is_valid_emg(self, y):
         """ Check whether channel contains valid EMG signal. """
@@ -422,10 +419,10 @@ class emg:
             error_exit('Cannot find unique channel matching '+str)
         return chlist[0]
         
-    def read(self, source):
+    def read(self):
         """ Read the EMG data. """
-        if is_vicon_instance(source):
-            vicon = source
+        if is_vicon_instance(self.source):
+            vicon = self.source
             framerate = vicon.GetFrameRate()
             framecount = vicon.GetFrameCount()
             emgdevname = 'Myon'
@@ -443,35 +440,19 @@ class emg:
             outputid = outputids[0]
             # get list of channel names and IDs
             _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
-            # get gait cycle
-            vgc1 = gaitcycle(source)
-            self.lgc1start_s = int(round((vgc1.lgc1start - 1) * samplesperframe))
-            self.lgc1end_s = int(round((vgc1.lgc1end - 1) * samplesperframe))
-            self.rgc1start_s = int(round((vgc1.rgc1start - 1) * samplesperframe))
-            self.rgc1end_s = int(round((vgc1.rgc1end - 1) * samplesperframe))
-            self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
-            self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
-            # read physical EMG channels and cut data to L/R gait cycles
+            # read all (physical) EMG channels
             self.data = {}
-            self.data_gc1l = {}
-            self.data_gc1r = {}
             for elid in self.chids:
                 eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
                 elname = self.elnames[elid-1]
                 self.data[elname] = np.array(eldata)
                 if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
                     self.data[elname] = 'EMG_DISCONNECTED'
-                    self.data_gc1l[elname] = 'EMG_DISCONNECTED'
-                    self.data_gc1r[elname] = 'EMG_DISCONNECTED'
-                else:
-                    # cut to L/R gait cycles. no interpolation
-                    self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
-                    self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
             self.datalen = len(eldata)
             assert(self.datalen == framecount * samplesperframe)
 
-        elif is_c3dfile(source):
-            c3dfile = source
+        elif is_c3dfile(self.source):
+            c3dfile = self.source
             reader = btk.btkAcquisitionFileReader()
             reader.SetFilename(c3dfile)  # check existence?
             reader.Update()
@@ -479,58 +460,34 @@ class emg:
             frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
             samplesperframe = acq.GetNumberAnalogSamplePerFrame()
             self.sfrate = acq.GetAnalogFrequency()
-            # get gait cycle
-            vgc1 = gaitcycle(source)
-            # convert gait cycle times to EMG samples
-            # in c3d, the data is already cut to the region of interest, so
-            # frames must be translated by start of ROI (frame1)
-            self.lgc1start_s = int(round((vgc1.lgc1start - frame1) * samplesperframe))
-            self.lgc1end_s = int(round((vgc1.lgc1end - frame1) * samplesperframe))
-            self.rgc1start_s = int(round((vgc1.rgc1start - frame1) * samplesperframe))
-            self.rgc1end_s = int(round((vgc1.rgc1end - frame1) * samplesperframe))
-            self.lgc1len_s = self.lgc1end_s - self.lgc1start_s
-            self.rgc1len_s = self.rgc1end_s - self.rgc1start_s
             # read physical EMG channels and cut data to L/R gait cycles
             self.data = {}
-            self.data_gc1l = {}
-            self.data_gc1r = {}
             self.elnames = []
             for i in btk.Iterate(acq.GetAnalogs()):
                 if i.GetDescription().find('EMG') >= 0 and i.GetUnit() == 'V':
-                    print(i.GetDescription())
                     elname = i.GetLabel()
                     self.elnames.append(elname)
                     self.data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension
                     if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
                         self.data[elname] = 'EMG_DISCONNECTED'
-                        self.data_gc1l[elname] = 'EMG_DISCONNECTED'
-                        self.data_gc1r[elname] = 'EMG_DISCONNECTED'
-                    else:
-                        self.data_gc1l[elname] = self.data[elname][self.lgc1start_s:self.lgc1end_s]
-                        self.data_gc1r[elname] = self.data[elname][self.rgc1start_s:self.rgc1end_s]
             self.datalen = len(self.data[elname])
-            # time grid (s)
         else:
             raise Exception('Invalid source')
         self.t = np.arange(self.datalen)/self.sfrate
-        # normalized grids (from 0..100) of EMG length; useful for plotting
-        self.tn_emg_r = np.linspace(0, 100, self.rgc1len_s)
-        self.tn_emg_l = np.linspace(0, 100, self.lgc1len_s)
-        # map physical channels to logical ones
         self.map_data()
+        # set scales for plotting channels. Automatic scaling logic may
+        # be put here if needed
+        self.yscale = {}
+        for logch in self.ch_names:
+            self.yscale[logch] = .5e-3
+            # median scaling - beware of DC!
+            #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
 
     def map_data(self):
-        """ Map logical channels into physical ones. Here, the rule is that the
-        name of the physical channel must start with the name of the logical channel.
-        For example, the logical name can be 'LPer' and the physical channel 'LPer12'
-        will be a match. Thus, the logical names can be shorter than the physical ones.
-        The shortest match will be found. """
+        """ Map logical channels into physical ones. For example, the logical name can be 
+        'LPer' and the physical channel 'LPer12' will be a match. Thus, the logical names can be 
+        shorter than the physical ones. The shortest matches will be found. """
         self.logical_data = {}
-        self.logical_data_gc1l = {}
-        self.logical_data_gc1r = {}
-        self.yscale_gc1l = {}
-        self.yscale_gc1r = {}
-
         for logch in self.ch_names:
             # check if channel was already assigned (or marked as reused)
             if logch not in self.logical_data:
@@ -539,8 +496,6 @@ class emg:
                 if self.emg_remapping and logch in self.emg_remapping:
                     datach = self.emg_remapping[logch]
                     self.logical_data[datach] = 'EMG_REUSED'
-                    self.logical_data_gc1l[datach] = 'EMG_REUSED'
-                    self.logical_data_gc1r[datach] = 'EMG_REUSED'
                     self.ch_labels[logch] += ' (read from ' + datach +')'
                 else:
                     datach = logch
@@ -549,33 +504,10 @@ class emg:
                 if len(matches) == 0:
                     error_exit('Cannot find electrode matching requested name '+datach)
                 elname = min(matches, key=len)  # choose shortest matching name
-                # FIXME: matching logic for Nexus, when multiple matches found?
                 if len(matches) > 1:
-                    print('map_data: multiple matching channels for: ', datach)
-                    if self.source == 'Nexus':
-                        messagebox('Warning: multiple matching channels for: '+datach+'\nChoosing: '+elname)
+                    print('map_data: multiple matching channels for: '+datach+' Choosing: '+elname)
                 self.logical_data[logch] = self.data[elname]
-                # EMG data during gait cycles
-                if self.data[elname] != 'EMG_DISCONNECTED':
-                    self.logical_data_gc1l[logch] = self.logical_data[logch][self.lgc1start_s:self.lgc1end_s]
-                    self.logical_data_gc1r[logch] = self.logical_data[logch][self.rgc1start_s:self.rgc1end_s]
-                else:
-                    self.logical_data_gc1l[logch] = 'EMG_DISCONNECTED'
-                    self.logical_data_gc1r[logch] = 'EMG_DISCONNECTED'                    
 
-        # set channel scaling
-        for logch in self.ch_names:
-            self.yscale_gc1l[logch] = .5e-3
-            self.yscale_gc1r[logch] = .5e-3
-            # median scaling - beware of DC!
-            #self.yscale_gc1l[elname] = yscale_medians * np.median(np.abs(self.datagc1l[elname]))
-            #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
-
-
-
-        
-    
-    
         
 
 
