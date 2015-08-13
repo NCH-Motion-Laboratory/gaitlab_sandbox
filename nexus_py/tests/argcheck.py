@@ -5,6 +5,61 @@ Created on Fri Apr 17 15:23:37 2015
 @author: HUS20664877
 """
 
+import sys
+
+
+class NotProcessed(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+
+def funex():
+    raise NotProcessed('xxx')
+
+def foo():
+    funex()
+    
+
+def bar():
+    try:
+        foo()
+    except NotProcessed:
+        print('Not Processed caught!')
+        
+    
+ 
+bar() 
+sys.exit()
+
+
+
+class NotProcessed(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+        
+try:
+    raise NotProcessed('jotain')
+except NotProcessed as np:
+    print np.msg
+    
+
+
+class ChannelNotFound(Exception):
+    def __init__(self, chname):
+        self.chname = chname
+    def __str__(self):
+        return repr(self.chname)
+
+raise ChannelNotFound()
+        
+try:
+    raise ChannelNotFound('LTib')
+except ChannelNotFound as c:
+    print 'Cannot find channel:', c.chname
+    
+
+
+
 
 class give():
 

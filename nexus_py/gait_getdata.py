@@ -5,14 +5,23 @@ Created on Tue Mar 17 14:41:31 2015
 Gaitplotter utility classes for reading gait data.
 
 NEXT:
--rewrite EMG class to use new gait cycle defs
+-exceptions with messages (e.g. channel 'X' not found)
+-how (whether) to pass config vars to the trial class instance
+-check emg class outputs
+    -nexus and c3d tentatively match
+-how to introduce emg filtering
 
 TODO:
--handling of error situations (exceptions/error method)
-trial class for grouping trial-specific data?
+-classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
+dialogs
 -factor out read methods for Nexus/c3d
 
-Notes:
+Exceptions policy:
+-for commonly encountered errors (e.g. device not found, channel not found)
+create and raise custom exceptions. Caller may then catch those
+-for rare/unexpected errors, raise Exception with description of the error
+
+ROI on Vicon/c3d:
 x axis for c3d variables is ROI; i.e. first frame is beginning of ROI (=offset)
 However, event times are referred to whole trial. Thus offset needs to be subtracted
 from event times to put them on the common x axis.
@@ -44,6 +53,25 @@ def viconnexus():
     """ Return a ViconNexus instance. Convenience for calling classes. """
     return ViconNexus.ViconNexus()
 
+class TrialNotProcessed(Exception):
+    """ Gait trial was not processed properly """
+    def __init__(self, msg):
+        self.msg = msg
+    def __str__(self):
+        return repr(self.chname)
+
+class ChannelNotFound(Exception):
+    """ Analog channel not found """
+    def __init__(self, chname):
+        self.chname = chname
+    def __str__(self):
+        return repr(self.chname)
+        
+
+class DeviceNotFound(Exception):
+    """ Device (EMG, forceplate, etc.) not found """
+    pass
+
 class ModelVarNotFound(Exception):
     pass
 
@@ -55,7 +83,7 @@ def is_vicon_instance(obj):
     return obj.__class__.__name__ == 'ViconNexus'
 
 def is_c3dfile(obj):
-    """ Check c3d file; currently just checks existence of file """
+    """ Check whether obj is a valid path to c3d file """
     try:
         return os.path.isfile(obj)
     except TypeError:
@@ -158,8 +186,9 @@ class trial:
         self.rfstrikes = []
         self.ltoeoffs = []
         self.rtoeoffs = []
+        # analog samples per frame
         # TODO: needs to be determined from file
-        self.smp_per_frame = 100
+        self.smp_per_frame = 10
         if is_c3dfile(source):
             c3dfile = source
             self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
@@ -237,6 +266,7 @@ class trial:
         delay = int(delay_ms/1000. * self.fp.sfrate)
         lfsforces = forcetot[lfsind.astype(int) + delay]
         rfsforces = forcetot[rfsind.astype(int) + delay]
+        # TODO: check for double contact
         kinetics = ''
         if max(lfsforces) > min_force:
             kinetics += 'L'
@@ -256,7 +286,7 @@ class trial:
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
             if len_s < 2:
-                error_exit("Insufficient number of foot strike events detected. "+
+                raise TrialNotProcessed("Insufficient number of foot strike events detected. "+
                         "Check that the trial has been processed.")
             if len_s % 2:
                 strikes.pop()  # assure even number of foot strikes
@@ -271,23 +301,33 @@ class trial:
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
                 if len(toeoff) != 1:
-                    error_exit('Expected a single toe-off event during gait cycle')
+                    raise TrialNotProcessed('Expected a single toe-off event during gait cycle')
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
             self.ncycles = len(self.cycles)
         
-    def read_emg(self):
+    def read_emg(self, emg_remapping=None, emg_auto_off=None):
         """ Read EMG channels from trial data. """
         if not self.emg:
-            self.emg = emg(self.source, emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
+            self.emg = emg(self.source, emg_remapping=emg_remapping, emg_auto_off=emg_auto_off)
             self.emg.read()
             
-    def cut_analog_to_cycle(self, cycle, data):
+            
+    def cut_analog_to_cycle(self, data, cycle):
         """ Returns given analog data (should be an instance variable)
-        during a specified gait cycle (1,2,3...) """
-        if cycle > ncycles:
+        during the specified gait cycle (1,2,3...) """
+        if cycle > self.ncycles:
             raise Exception("No such gait cycle in data")
         return self.cycles[cycle-1].cut_analog_to_cycle(data)
+
+
+    def emg_on_cycle(self, chname, cycle):
+        """ Cut EMG channel to a given gait cycle. OBSOLETED """
+        if cycle > self.ncycles:
+            raise Exception("No such gait cycle in data")
+        data = self.emg.get_logical_channel(chname)
+        return self.cycles[cycle-1].cut_analog_to_cycle(data)
+
 
     def read_model(self, var):
         pass
@@ -299,6 +339,7 @@ class forceplate:
     trial (or ROI, for c3d files). Support only single (first) forceplate 
     for now. """
     def __init__(self, source):
+        self.nplates = 1  # need to also implement reading multiple plates later
         if is_vicon_instance(source):
             vicon = source
             framerate = vicon.GetFrameRate()
@@ -308,7 +349,7 @@ class forceplate:
             if fpdevicename in devicenames:
                 fpid = vicon.GetDeviceIDFromName(fpdevicename)
             else:
-               error_exit('No forceplate device found in trial!')
+               raise DeviceNotFound()
             # DType should be 'ForcePlate', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
             self.sfrate = drate
@@ -335,6 +376,7 @@ class forceplate:
             self.frame1 = acq.GetFirstFrame()  # start of ROI (1-based)
             self.samplesperframe = acq.GetNumberAnalogSamplePerFrame()
             self.sfrate = acq.GetAnalogFrequency()
+            # TODO: raise DeviceNotFound if needed
             for i in btk.Iterate(acq.GetAnalogs()):
                 desc = i.GetLabel()
                 if desc.find('Force.') >= 0 and i.GetUnit() == 'N':
@@ -367,6 +409,19 @@ class emg:
         # normal data and logical chs
         self.define_emg_names()
         self.emg_remapping = emg_remapping
+        self.passband = None
+    
+    def set_filter(self, passband):
+        """ Set EMG passband (in Hz). None for off. Affects get_channel. """
+        self.passband = passband
+        
+    def get_logical_channel(self, chname):
+        """ Get EMG channel, filtered if self.passband is set. """
+        if self.is_logical_channel(chname):
+            data = self.logical_data[chname]
+            return self.filt(data, self.passband)
+        else:
+            raise ChannelNotFound(chname)
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
@@ -430,7 +485,7 @@ class emg:
             if emgdevname in devnames:
                 emg_id = vicon.GetDeviceIDFromName(emgdevname)
             else:
-               error_exit('No EMG device found in trial')
+               raise DeviceNotFound()
             # DType should be 'other', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
             samplesperframe = drate / framerate
@@ -502,7 +557,7 @@ class emg:
                 # find unique matching physical electrode name
                 matches = [x for x in self.elnames if x.find(datach) >= 0]
                 if len(matches) == 0:
-                    error_exit('Cannot find electrode matching requested name '+datach)
+                    raise ChannelNotFound(datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
                     print('map_data: multiple matching channels for: '+datach+' Choosing: '+elname)
@@ -790,7 +845,6 @@ class model_outputs:
         return Vars
         
         
-
     def read_pig_lowerbody(self, source, gcdfile=None):
         """ Read the lower body Plug-in Gait model outputs.
         Variable names starting with 'R' and'L' are normalized into left and right 
