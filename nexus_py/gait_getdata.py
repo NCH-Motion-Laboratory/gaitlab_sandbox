@@ -4,21 +4,23 @@ Created on Tue Mar 17 14:41:31 2015
 
 Gaitplotter utility classes for reading gait data.
 
+
 NEXT:
--exceptions with messages (e.g. channel 'X' not found)
--how (whether) to pass config vars to the trial class instance
--check emg class outputs
-    -nexus and c3d tentatively match
--how to introduce emg filtering
+-read model data over roi/trial (model class should not normalize it)
+-add c3d model reading
+
+    
+
 
 TODO:
 -classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
-dialogs
--factor out read methods for Nexus/c3d
+dialogs if needed
+
+
 
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)
-create and raise custom exceptions. Caller may then catch those
+create and raise custom exceptions. Caller may catch those
 -for rare/unexpected errors, raise Exception with description of the error
 
 ROI on Vicon/c3d:
@@ -30,6 +32,7 @@ For Vicon Nexus data, x axis is the whole trial.
 
 @author: Jussi
 """
+
 
 
 from __future__ import division, print_function
@@ -49,34 +52,35 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
 
-def viconnexus():
-    """ Return a ViconNexus instance. Convenience for calling classes. """
-    return ViconNexus.ViconNexus()
 
-class TrialNotProcessed(Exception):
+class TrialNotProcessedError(Exception):
     """ Gait trial was not processed properly """
     def __init__(self, msg):
         self.msg = msg
     def __str__(self):
         return repr(self.chname)
 
-class ChannelNotFound(Exception):
+class ChannelNotFoundError(Exception):
     """ Analog channel not found """
     def __init__(self, chname):
         self.chname = chname
     def __str__(self):
         return repr(self.chname)
-        
 
-class DeviceNotFound(Exception):
+class DeviceNotFoundError(Exception):
     """ Device (EMG, forceplate, etc.) not found """
     pass
 
-class ModelVarNotFound(Exception):
+class ModelVarNotFoundError(Exception):
     pass
 
-class InvalidDataSource(Exception):
+class InvalidDataSourceError(Exception):
     pass
+
+
+def viconnexus():
+    """ Return a ViconNexus instance. Convenience for calling classes. """
+    return ViconNexus.ViconNexus()
 
 def is_vicon_instance(obj):
     """ Check if obj is an instance of ViconNexus """
@@ -234,7 +238,7 @@ class trial:
             # frame offset (start of trial data in frames)
             self.offset = 1  # DEBUG
         else:
-            raise InvalidDataSource()
+            raise InvalidDataSourceError()
         self.source = source
         self.fp = forceplate(source)
         # TODO: read from config / put as init params?
@@ -286,7 +290,7 @@ class trial:
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
             if len_s < 2:
-                raise TrialNotProcessed("Insufficient number of foot strike events detected. "+
+                raise TrialNotProcessedError("Insufficient number of foot strike events detected. "+
                         "Check that the trial has been processed.")
             if len_s % 2:
                 strikes.pop()  # assure even number of foot strikes
@@ -301,7 +305,7 @@ class trial:
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
                 if len(toeoff) != 1:
-                    raise TrialNotProcessed('Expected a single toe-off event during gait cycle')
+                    raise TrialNotProcessedError('Expected a single toe-off event during gait cycle')
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
             self.ncycles = len(self.cycles)
@@ -319,6 +323,13 @@ class trial:
         if cycle > self.ncycles:
             raise Exception("No such gait cycle in data")
         return self.cycles[cycle-1].cut_analog_to_cycle(data)
+        
+    def normalize_to_cycle(self, var, cycle):
+        """ Returns model variable (e.g. PiG) normalized to given gait cycle.
+        var should be an instance variable. """
+        if cycle > self.ncycles:
+            raise Exception("No such gait cycle in data")
+        return self.cycles[cycle-1].normalize(var)
 
 
     def emg_on_cycle(self, chname, cycle):
@@ -349,7 +360,7 @@ class forceplate:
             if fpdevicename in devicenames:
                 fpid = vicon.GetDeviceIDFromName(fpdevicename)
             else:
-               raise DeviceNotFound()
+               raise DeviceNotFoundError()
             # DType should be 'ForcePlate', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
             self.sfrate = drate
@@ -421,7 +432,7 @@ class emg:
             data = self.logical_data[chname]
             return self.filt(data, self.passband)
         else:
-            raise ChannelNotFound(chname)
+            raise ChannelNotFoundError(chname)
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
@@ -485,7 +496,7 @@ class emg:
             if emgdevname in devnames:
                 emg_id = vicon.GetDeviceIDFromName(emgdevname)
             else:
-               raise DeviceNotFound()
+               raise DeviceNotFoundError()
             # DType should be 'other', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
             samplesperframe = drate / framerate
@@ -557,14 +568,13 @@ class emg:
                 # find unique matching physical electrode name
                 matches = [x for x in self.elnames if x.find(datach) >= 0]
                 if len(matches) == 0:
-                    raise ChannelNotFound(datach)
+                    raise ChannelNotFoundError(datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
                     print('map_data: multiple matching channels for: '+datach+' Choosing: '+elname)
                 self.logical_data[logch] = self.data[elname]
 
-        
-
+       
 
 class model_outputs:
     """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. """
@@ -829,7 +839,7 @@ class model_outputs:
             for Var in varlist:
                 NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
                 if not NumVals:
-                    raise ModelVarNotFound
+                    raise ModelVarNotFoundError
                 Vars[Var] = np.array(NumVals)
         elif is_c3dfile(source):
             c3dfile = source
@@ -877,8 +887,6 @@ class model_outputs:
               'RAnkleAngles',
               'RPelvisAngles',
               'RFootProgressAngles']
-
-            
 
         vgc1 = gaitcycle()
         vgc1.read(source)
