@@ -8,10 +8,9 @@ test nexusplotter c3d/btk functions
 
 """
 
-
+import sys
 sys.path.append('C:\\Users\\HUS20664877\\Desktop\\projects\\llinna\\nexus_py\\')
 import gait_getdata
-import sys
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 # needed at least when running outside Nexus

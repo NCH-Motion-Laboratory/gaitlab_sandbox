@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+
 Gaitplotter: plot gait data using matplotlib.
 
 
@@ -15,14 +16,16 @@ Rules:
  instead of 'NormRHipMomentX'; side is either autodetected or manually forced
 
 
+NEXT:
+-adapt to new classes WIP
+
+
 TODO:
 
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
 """
-
-
 
 
 from Tkinter import *
@@ -47,11 +50,6 @@ import btk
 
 
 
-  
-    
-    
-
-
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
@@ -73,7 +71,7 @@ class gaitplotter():
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
         self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
-        self.emg_names = gait_getdata.emg().ch_names
+        self.emg_names = gait_getdata.emg(None).ch_names
         self.emg_names.sort()
         self.emg_manual_enable={}
         for ch in self.emg_names:
@@ -121,9 +119,8 @@ class gaitplotter():
         self.fig = None
         # these will be set by open_trial()
         self.side = None
-        self.trialname = None
         self.gc = None
-        self.vicon = None
+        self.trial = None
         # TODO: put in config?
         self.emg_mapping = {}
         
@@ -140,7 +137,6 @@ class gaitplotter():
         else:
             return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
-       
     def nexus_trialselector(self):
         """ Let the user choose from processed trials in the trial directory. 
         Will also show the Eclipse description for each processed trial, if 
@@ -178,12 +174,11 @@ class gaitplotter():
                 if vars[i].get():
                     chosen.append(trial)
             return chosen
-            
-            
+    
     class c3d_trialselector():
         """ Presents file selector window for choosing c3d trials. After user
         presses 'Create', selected trials are stored in the 'chosen' variable."""
-
+    
         def create(self):
             self.master.destroy()
             self.chosen = [x for x in self.chosen if x]  # rm 'None' entries
@@ -199,7 +194,7 @@ class gaitplotter():
             self.ntrials -= 1
             if self.ntrials < self.MAX_TRIALS:
                 self.loadb.config(state='normal')
-
+    
         def load_trial(self):
             nthis = len(self.chosen)  # list index (includes deleted trials)
             nrow = self.ntrials + 1
@@ -218,7 +213,7 @@ class gaitplotter():
                 self.ntrials += 1                
                 if self.ntrials == self.MAX_TRIALS:
                     self.loadb.config(state='disabled')
-
+    
         def __init__(self, max_trials=4, initialdir='C:\\'):
             self.chosen = []
             self.trilabels = []
@@ -249,180 +244,92 @@ class gaitplotter():
         else:
             return(trialname_[0])
 
-    def read_trial(self, source, vars):
-        """ Open a gait trial. """
-        self.trial = gait_getdata.trial(source)
-        self.trial.read_vars(vars)
-           
-        
-        
-        
-            
-    def open_c3d_trial(self, c3dfile, vars, side=None):
-        """ Open a trial from a c3d file. """
-        self.vars = vars
-        reader = btk.btkAcquisitionFileReader()
-        reader.SetFilename(c3dfile)  # check existence?
-        reader.Update()
-        acq = reader.GetOutput()
-        
-        self.gc = gait_getdata.gaitcycle()
-        self.gc.read_c3d(c3dfile)
-        self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
-        self.sessionpath = os.path.dirname(c3dfile)
-        
-        if not side:
-            self.side = self.gc.side
-        else:
-            self.side = side
-        
-        # FIXME: support also model vars
-        if vars:
-            self.emg = gait_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
-            read_emg = False
-            read_pig = False
-            read_musclelen = False
-            self.emg_plot_chs = []
-            self.emg_plot_pos = []
-            self.model_plot_vars = []
-            self.model_plot_pos = []
-            for i, var in enumerate(self.vars):
-                if var == None:  # indicates empty subplot
-                    pass
-                elif var == 'modellegend':   # place legend on this subplot
-                    self.model_legendpos = i
-                elif var == 'emglegend':
-                    self.emg_legendpos = i
-                else:
-                    if self.emg.is_logical_channel(var):
-                        read_emg = True
-                        self.emg_plot_chs.append(var)
-                        self.emg_plot_pos.append(i)
-                    elif self.model.is_pig_lowerbody_variable(var):
-                        raise Exception("c3d model reading not implemented yet")
-                        #read_pig = True
-                        #self.model_plot_vars.append(var)
-                        #self.model_plot_pos.append(i)
-                    elif self.model.is_musclelen_variable(var):
-                        raise Exception("c3d model reading not implemented yet")
-                        #read_musclelen = True
-                        #self.model_plot_vars.append(var)
-                        #self.model_plot_pos.append(i)
-                    else:
-                        error_exit('Unknown variable: ' + var)
-            if read_emg:
-                self.emg.read_c3d(c3dfile)
-            if read_pig:
-                self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
-            if read_musclelen:
-                self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
-
-                                                    
-    def open_nexus_trial(self, vars, trialpath=None, side=None):
-        """ Read specified trial, or the one already opened in Nexus. The
-        variables specified in vars will be read. To open the trial without
-        reading variables, set vars=None (useful for e.g. detecting side) """
-        self.vars = vars
+    def open_nexus_trial(self):
+        """ Open trial from Nexus. """
         if not gait_getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
-        # open connection to Nexus, if not previously opened
-        if not self.vicon:
-            self.vicon = ViconNexus.ViconNexus()
-        if trialpath:
-            # remove filename extension if present
-            trialpath = os.path.splitext(trialpath)[0]
-            self.vicon.OpenTrial(trialpath, 10)            
-            # TODO: check errors
-        subjectnames = self.vicon.GetSubjectNames()  
-        if not subjectnames:
-            error_exit('No subject defined in Nexus')
-        trialname_ = self.vicon.GetTrialName()
-        self.sessionpath = trialname_[0]
-        self.trialname = trialname_[1]
-        if not self.trialname:
-            error_exit('No trial loaded')
-        self.subjectname = subjectnames[0]
+        vicon = gait_getdata.viconnexus()
+        self.trial = gait_getdata.trial(vicon)
         
-        # update gait cycle information
-        self.gc = gait_getdata.gaitcycle()
-        self.gc.read_nexus(self.vicon)
+    def open_c3d_trial(self, trialpath):
+        """ Open a c3d trial. """
+        if not os.path.isfile(trialpath):
+            error_exit('Cannot find trial: '+trialpath)
+        self.trial = gait_getdata.trial(trialpath)
         
-        # try to detect side (L/R) if not forced in arguments
-        if not side:
-            self.side = self.gc.side
-        else:
-            self.side = side    
-         
-        if vars:
-            # will read EMG/model data only if necessary
-            self.model = gait_getdata.model_outputs()
-            self.emg = gait_getdata.emg(emg_remapping=self.emg_mapping, emg_auto_off=self.emg_auto_off)
-            read_emg = False
-            read_pig = False
-            read_musclelen = False
-            self.emg_plot_chs = []
-            self.emg_plot_pos = []
-            self.model_plot_vars = []
-            self.model_plot_pos = []
-            for i, var in enumerate(self.vars):
-                if var == None:  # indicates empty subplot
-                    pass
-                elif var == 'modellegend':   # place legend on this subplot
-                    self.model_legendpos = i
-                elif var == 'emglegend':
-                    self.emg_legendpos = i
+    def read_trial(self, vars):
+        """ Read requested trial variables; interpret variables that modify
+        the plot. """
+        self.vars = vars
+        read_emg = False
+        read_pig = False
+        read_musclelen = False
+        self.emg_plot_chs = []
+        self.emg_plot_pos = []
+        self.model_plot_vars = []
+        self.model_plot_pos = []
+        for i, var in enumerate(self.vars):
+            if var == None:  # indicates empty subplot
+                pass
+            elif var == 'modellegend':   # place legend on this subplot
+                self.model_legendpos = i
+            elif var == 'emglegend':
+                self.emg_legendpos = i
+            else:
+                if self.trial.emg.is_logical_channel(var):
+                    read_emg = True
+                    self.emg_plot_chs.append(var)
+                    self.emg_plot_pos.append(i)
+                elif self.trial.model.is_pig_lowerbody_variable(var):
+                    read_pig = True
+                    self.model_plot_vars.append(var)
+                    self.model_plot_pos.append(i)
+                elif self.trial.model.is_musclelen_variable(var):
+                    read_musclelen = True
+                    self.model_plot_vars.append(var)
+                    self.model_plot_pos.append(i)
                 else:
-                    if self.emg.is_logical_channel(var):
-                        read_emg = True
-                        self.emg_plot_chs.append(var)
-                        self.emg_plot_pos.append(i)
-                    elif self.model.is_pig_lowerbody_variable(var):
-                        read_pig = True
-                        self.model_plot_vars.append(var)
-                        self.model_plot_pos.append(i)
-                    elif self.model.is_musclelen_variable(var):
-                        read_musclelen = True
-                        self.model_plot_vars.append(var)
-                        self.model_plot_pos.append(i)
-                    else:
-                        error_exit('Unknown variable: ' + var)
-            if read_emg:
-                self.emg.read_nexus(self.vicon)
-            if read_pig:
-                self.model.read_pig_lowerbody(self.vicon, self.pig_normaldata_path)
-            if read_musclelen:
-                self.model.read_musclelen(self.vicon, self.musclelen_normaldata_path)
-
+                    error_exit('Unknown variable: ' + var)
+        if read_emg:
+            self.trial.emg.read()
+        if read_pig:
+            self.trial.model.read_pig_lowerbody()
+        if read_musclelen:
+            self.trial.model.read_musclelen()
+                                      
     def set_fig_title(self, title):
         if self.fig:
             plt.figure(self.fig.number) 
             plt.suptitle(title, fontsize=12, fontweight="bold")
 
-
-    def plot_trial(self, plotheightratios=None, maintitle=None, maintitleprefix='',
+    def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
                  onesided_kinematics=False, model_linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
-        maintitle plot title; leave unspecified for automatic title (can also then
+        cycle: which gait cycle to use
+        side: which side kinetics/kinematics to plot (autodetect from trial by default).
+        note that kinematics are two-sided by default.
+        maintitle: plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         """        
 
-        if not self.trialname:
-            raise Exception('No trial loaded')
-       
-        if self.side == 'L':
-            tracecolor = self.tracecolor_l
-        else:
-            tracecolor = self.tracecolor_r
+        if not self.trial:
+            error_exit('No trial loaded')
 
+        # which side kinetics/kinematics to plot (if one-sided)
+        if not side:
+            side = self.trial.kinetics    
+        else:
+            side = side.upper()
+       
         # if plot height ratios not set, set them all equal    
         if not plotheightratios:
             self.plotheightratios = [1] * self.gridv
 
         # automatic title
         if not maintitle:
-            maintitle = maintitleprefix + self.trialname + ' ('+self.side+')'
+            maintitle = maintitleprefix + self.trial.trialname + ' ('+self.trial.kinetics+')'
         
         # x variable for kinematics / kinetics: 0,1...100
         tn = np.linspace(0, 100, 101)
@@ -440,23 +347,25 @@ class gaitplotter():
         if self.model_plot_vars:
             for k, var in enumerate(self.model_plot_vars):
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
-                # get normalized variable name
-                varname_full = self.model.norm_varname(var, self.side)
-                # plot two-sided kinematics if applicable
-                if not self.model.is_kinetic_var(var) and not onesided_kinematics:
-                    varname_r = self.model.norm_varname(var, 'R')
-                    varname_l = self.model.norm_varname(var, 'L')
-                    plt.plot(tn, self.model.Vars[varname_r], self.tracecolor_r, linestyle=model_linestyle, label=self.trialname)
-                    plt.plot(tn, self.model.Vars[varname_l], self.tracecolor_l, linestyle=model_linestyle, label=self.trialname)
+                if not self.trial.model.is_kinetic_var(var) and not onesided_kinematics:  # plot both sides (L/R)
+                    sides = ['L','R']
                 else:
-                    plt.plot(tn, self.model.Vars[varname_full], tracecolor, linestyle=model_linestyle, label=self.trialname)
+                    sides = side
+                for side_ in sides:
+                    varname = side_ + var
+                    data_gc = self.trial.normalize_to_cycle(self.trial.model.Vars[varname], cycle)
+                    if side_ == 'L':
+                        tracecolor = self.tracecolor_l
+                    elif side_ == 'R':
+                        tracecolor = self.tracecolor_r
+                    plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
-                if self.model.normaldata(var):
-                    nor = np.array(self.model.normaldata(var))[:,0]
-                    nstd = np.array(self.model.normaldata(var))[:,1]
+                if self.trial.model.normaldata(var):
+                    nor = np.array(self.trial.model.normaldata(var))[:,0]
+                    nstd = np.array(self.trial.model.normaldata(var))[:,1]
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
-                title = self.model.description(var)
-                ylabel = self.model.ylabel(varname_full)
+                title = self.trial.model.description(var)
+                ylabel = self.trial.model.ylabel(varname)
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
@@ -465,13 +374,13 @@ class gaitplotter():
                 ylim_default= ax.get_ylim()
                 # include zero line and extend y scale a bit for kin* variables
                 plt.axhline(0, color='black')  # zero line
-                if self.model.is_pig_lowerbody_variable(var):
+                if self.trial.model.is_pig_lowerbody_variable(var):
                     if ylim_default[0] == 0:
                         plt.ylim(-10, ylim_default[1])
                     if ylim_default[1] == 0:
                         plt.ylim(ylim_default[0], 10)
                 # expand the default scale a bit for muscle length variables, but no zeroline
-                if self.model.is_musclelen_variable(var):
+                if self.trial.model.is_musclelen_variable(var):
                     plt.ylim(ylim_default[0]-10, ylim_default[1]+10)
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
                 # add arrows indicating toe off times
@@ -486,13 +395,13 @@ class gaitplotter():
                     # these are related to plot height/width, to avoid aspect ratio effects
                     hdlength = arrlen * .33
                     hdwidth = (xmax-xmin) / 50.
-                    if not self.model.is_kinetic_var(var) and not onesided_kinematics:
+                    if not self.trial.model.is_kinetic_var(var) and not onesided_kinematics:
                         plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
                         plt.arrow(rtoeoff, ymin, 0, arrlen, color=self.tracecolor_r, 
                                   head_length=hdlength, head_width=hdwidth)
                     else:  # single trace was plotted - only plot one-sided toeoff
-                        if self.side == 'L':
+                        if self.trial.kinetics == 'L':
                             toeoff = ltoeoff
                             arrowcolor = self.tracecolor_l
                         else:
@@ -529,9 +438,9 @@ class gaitplotter():
                 else:  # data OK
                     if self.emg_apply_filter:
                         # convert emg to millivolts
-                        plt.plot(tn_emg, 1e3*self.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
+                        plt.plot(tn_emg, 1e3*self.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
                     else:
-                        plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trialname)
+                        plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
                 chlabel = self.emg.ch_labels[thisch]
                 # plot EMG normal bars
                 emgbar_ind = self.emg.ch_normals[thisch]
@@ -570,8 +479,8 @@ class gaitplotter():
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
         if self.model_legendpos or self.emg_legendpos:
-            self.legendnames.append(self.trialname)
-            # TODO: + gait_getdata.get_eclipse_description(self.trialname))            
+            self.legendnames.append(self.trial.trialname)
+            # TODO: + gait_getdata.get_eclipse_description(self.trial.trialname))            
         if self.model_legendpos:
             self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
             ax = plt.subplot(self.gs[self.model_legendpos])
@@ -604,7 +513,7 @@ class gaitplotter():
                 # automatic naming by trialname
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
-                pdf_name = self.sessionpath + pdf_prefix + self.trialname + '.pdf'
+                pdf_name = self.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
             try:
                 with PdfPages(pdf_name) as pdf:
                     print("Writing "+pdf_name)

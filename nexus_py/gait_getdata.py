@@ -33,6 +33,9 @@ For Vicon Nexus data, x axis is the whole trial.
 
 from __future__ import division, print_function
 
+
+from Tkinter import *
+import tkFileDialog
 import numpy as np
 import ctypes
 from scipy import signal
@@ -138,6 +141,8 @@ def messagebox(message):
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
 
 
+
+
 class gaitcycle:
     """" Holds information about one gait cycle. Offset is the frame where
     the data begins; 1 for Vicon Nexus (which always returns whole trial) and
@@ -180,7 +185,7 @@ class trial:
     -analog data (EMG, forceplate, etc.)
     -model variables (Plug-in Gait, muscle length, etc.)
     """
-    def __init__(self, source, side=None):
+    def __init__(self, source, side=None, emg_remapping=None, emg_auto_off=None):
         """ Open trial, read subject info, events etc. """
         self.lfstrikes = []
         self.rfstrikes = []
@@ -241,9 +246,12 @@ class trial:
         self.emg_mapping = {}
         self.emg_auto_off = True
         # will be read by read_vars
-        self.emg = None
+        # TODO: emg params
+        self.emg = emg(source)
         self.model = model_outputs(self.source)
         self.kinetics = self.kinetics_available()
+        # normalized x-axis of 0,1,2..100%
+        self.tn = np.linspace(0, 100, 101)
         self.scan_cycles()
         
     def kinetics_available(self):
@@ -305,13 +313,7 @@ class trial:
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
             self.ncycles = len(self.cycles)
-        
-    def read_emg(self, emg_remapping=None, emg_auto_off=None):
-        """ Read EMG channels from trial data. """
-        if not self.emg:
-            self.emg = emg(self.source, emg_remapping=emg_remapping, emg_auto_off=emg_auto_off)
-            self.emg.read()
-          
+         
     def cut_analog_to_cycle(self, data, cycle):
         """ Returns given analog data (should be an instance variable)
         during the specified gait cycle (1,2,3...) """
@@ -325,8 +327,6 @@ class trial:
         if cycle > self.ncycles:
             raise Exception("No such gait cycle in data")
         return self.cycles[cycle-1].normalize(var)
-
-
 
     def emg_on_cycle(self, chname, cycle):
         """ Cut EMG channel to a given gait cycle. OBSOLETED """
@@ -883,7 +883,6 @@ class model_outputs:
                     self.Vars[Var+'Y'] = self.Vars[Var][1,:]
                     self.Vars[Var+'Z'] = self.Vars[Var][2,:]
 
-        
     def pig_lowerbody_varnames(self):
         """ Return list of known PiG variables. """
         return self.pig_lowerbody_varlabels.keys()
