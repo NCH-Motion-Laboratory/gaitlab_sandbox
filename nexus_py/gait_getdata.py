@@ -6,16 +6,12 @@ Gaitplotter utility classes for reading gait data.
 
 
 NEXT:
--read model data over roi/trial (model class should not normalize it)
--add c3d model reading
-
-    
-
+-verify c3d/Nexus model reading/normalization
+-adapt gait_plot to use new classes    
 
 TODO:
 -classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
 dialogs if needed
-
 
 
 Exceptions policy:
@@ -246,7 +242,7 @@ class trial:
         self.emg_auto_off = True
         # will be read by read_vars
         self.emg = None
-        self.model = None
+        self.model = model_outputs(self.source)
         self.kinetics = self.kinetics_available()
         self.scan_cycles()
         
@@ -315,8 +311,7 @@ class trial:
         if not self.emg:
             self.emg = emg(self.source, emg_remapping=emg_remapping, emg_auto_off=emg_auto_off)
             self.emg.read()
-            
-            
+          
     def cut_analog_to_cycle(self, data, cycle):
         """ Returns given analog data (should be an instance variable)
         during the specified gait cycle (1,2,3...) """
@@ -332,6 +327,7 @@ class trial:
         return self.cycles[cycle-1].normalize(var)
 
 
+
     def emg_on_cycle(self, chname, cycle):
         """ Cut EMG channel to a given gait cycle. OBSOLETED """
         if cycle > self.ncycles:
@@ -339,10 +335,7 @@ class trial:
         data = self.emg.get_logical_channel(chname)
         return self.cycles[cycle-1].cut_analog_to_cycle(data)
 
-
-    def read_model(self, var):
-        pass
-    
+               
     
 class forceplate:
     """ Read and process forceplate data. source may be a c3d file or a
@@ -585,12 +578,42 @@ class model_outputs:
         x.update(dict2)
         return x
         
-    def __init__(self):
+    def __init__(self, source):
         """ Sets up some variables, but does not read data.
         Model data is usually stored in normalized form with variables named
         e.g. NormRHipAnglesX, but shorter variable names are used in
         label dicts etc., e.g. HipAnglesX. *_varname functions convert between
-        these names. """
+        these names. 
+        source can be either a ViconNexus instance or a c3d file. """
+
+        self.source = source        
+        
+        # PiG variables to be read. these are 3d arrays that will be split
+        # into x,y,z components
+        self.pig_lowerbody_read_vars = ['LHipMoment',
+              'LKneeMoment',
+              'LAnkleMoment',
+              'LHipPower',
+              'LKneePower',
+              'LAnklePower',
+              'RHipMoment',
+              'RKneeMoment',
+              'RAnkleMoment',
+              'RHipPower',
+              'RKneePower',
+              'RAnklePower',
+              'LHipAngles',
+              'LKneeAngles',
+              'LAbsAnkleAngle',
+              'LAnkleAngles',
+              'LPelvisAngles',
+              'LFootProgressAngles',
+              'RHipAngles',
+              'RKneeAngles',
+              'RAbsAnkleAngle',
+              'RAnkleAngles',
+              'RPelvisAngles',
+              'RFootProgressAngles']
 
         # descriptive labels for variables
         # Plug-in Gait lowerbody
@@ -616,120 +639,9 @@ class model_outputs:
                          'PelvisAnglesX': 'Pelvic tilt',
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}
-                         
-        # muscle length (MuscleLength.mod)
-        self.musclelen_varlabels = {'AdBrLength': 'AdBrLength',
-                               'AdLoLength': 'AdLoLength',
-                                'AdMaInfLength': 'AdMaInfLength',
-                                'AdMaMidLength': 'AdMaMidLength',
-                                'AdMaSupLength': 'AdMaSupLength',
-                                'BiFLLength': 'Biceps femoris length',
-                                'BiFSLength': 'BiFSLength',
-                                'ExDLLength': 'ExDLLength',
-                                'ExHLLength': 'ExHLLength',
-                                'FlDLLength': 'FlDLLength',
-                                'FlHLLength': 'FlHLLength',
-                                'GMedAntLength': 'GMedAntLength',
-                                'GMedMidLength': 'GMedMidLength',
-                                'GMedPosLength': 'GMedPosLength',
-                                'GMinAntLength': 'GMinAntLength',
-                                'GMinMidLength': 'GMinMidLength',
-                                'GMinPosLength': 'GMinPosLength',
-                                'GemeLength': 'GemeLength',
-                                'GlMaInfLength': 'GlMaInfLength',
-                                'GlMaMidLength': 'GlMaMidLength',
-                                'GlMaSupLength': 'GlMaSupLength',
-                                'GracLength': 'Gracilis length',
-                                'IliaLength': 'IliaLength',
-                                'LaGaLength': 'Lateral gastrocnemius length',
-                                'MeGaLength': 'Medial gastrocnemius length',
-                                'PELOLength': 'PELOLength',
-                                'PeBrLength': 'PeBrLength',
-                                'PeTeLength': 'PeTeLength',
-                                'PectLength': 'PectLength',
-                                'PeriLength': 'PeriLength',
-                                'PsoaLength': 'Psoas length',
-                                'QuFeLength': 'QuFeLength',
-                                'ReFeLength': 'Rectus femoris length',
-                                'SartLength': 'SartLength',
-                                'SeMeLength': 'Semimembranosus length',
-                                'SeTeLength': 'Semitendinosus length',
-                                'SoleLength': 'Soleus length',
-                                'TiAnLength': 'Tibialis anterior length',
-                                'TiPoLength': 'TiPoLength',
-                                'VaInLength': 'VaInLength',
-                                'VaLaLength': 'VaLaLength',
-                                'VaMeLength': 'VaMeLength'}
-        
-        # merge all variable dicts into one
-        self.varlabels = self.merge_dicts(self.pig_lowerbody_varlabels, self.musclelen_varlabels)
 
-        # mapping from PiG variable names to normal data variables (in normal.gcd)
-        # works with Vicon supplied .gcd (at least)
-        self.pig_lowerbody_normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
-                     'AnkleAnglesZ': 'FootRotation',
-                     'AnkleMomentX': 'DorsiPlanFlexMoment',
-                     'AnklePowerZ': 'AnklePower',
-                     'FootProgressAnglesZ': 'FootProgression',
-                     'HipAnglesX': 'HipFlexExt',
-                     'HipAnglesY': 'HipAbAdduct',
-                     'HipAnglesZ': 'HipRotation',
-                     'HipMomentX': 'HipFlexExtMoment',
-                     'HipMomentY': 'HipAbAdductMoment',
-                     'HipMomentZ': 'HipRotationMoment',
-                     'HipPowerZ': 'HipPower',
-                     'KneeAnglesX': 'KneeFlexExt',
-                     'KneeAnglesY': 'KneeValgVar',
-                     'KneeAnglesZ': 'KneeRotation',
-                     'KneeMomentX': 'KneeFlexExtMoment',
-                     'KneeMomentY': 'KneeValgVarMoment',
-                     'KneeMomentZ': 'KneeRotationMoment',
-                     'KneePowerZ': 'KneePower',
-                     'PelvisAnglesX': 'PelvicTilt',
-                     'PelvisAnglesY': 'PelvicObliquity',
-                     'PelvisAnglesZ': 'PelvicRotation'}
-
-        # TODO: muscle len normal data
-        self.musclelen_normdict = {}
-                     
-        self.normdict = self.merge_dicts(self.pig_lowerbody_normdict, self.musclelen_normdict)
-      
-        # y labels for plotting
-        self.pig_lowerbody_ylabels = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
-                             'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
-                             'AnklePowerZ': 'Abs    W/kg    Gen',
-                             'FootProgressAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'HipAnglesX': 'Ext     ($^\\circ$)      Flex',
-                             'HipAnglesY': 'Abd     ($^\\circ$)      Add',
-                             'HipAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'HipMomentX': 'Int flex    Nm/kg    Int ext',
-                             'HipMomentY': 'Int add    Nm/kg    Int abd',
-                             'HipMomentZ': 'Int flex    Nm/kg    Int ext',
-                             'HipPowerZ': 'Abs    W/kg    Gen',
-                             'KneeAnglesX': 'Ext     ($^\\circ$)      Flex',
-                             'KneeAnglesY': 'Val     ($^\\circ$)      Var',
-                             'KneeAnglesZ': 'Ext     ($^\\circ$)      Int',
-                             'KneeMomentX': 'Int flex    Nm/kg    Int ext',
-                             'KneeMomentY': 'Int var    Nm/kg    Int valg',
-                             'KneeMomentZ': 'Int flex    Nm/kg    Int ext',
-                             'KneePowerZ': 'Abs    W/kg    Gen',
-                             'PelvisAnglesX': 'Pst     ($^\\circ$)      Ant',
-                             'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
-                             'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
-
-        # concat all vars
-        self.ylabels = self.pig_lowerbody_ylabels
-        
-        # Vars will actually be read by read_() methods, as needed
-        self.Vars = {}
-                          
-
-    def read_musclelen(self, vicon, gcdfile=None):
-        """ Read muscle length variables produced by MuscleLengths.mod.
-        Reads into self.Vars """
-        
-        varlist = ['LGMedAntLength',
+        # muscle length variables to be read
+        self.musclelen_read_vars = ['LGMedAntLength',
                      'RGMedAntLength',
                      'LGMedMidLength',
                      'RGMedMidLength',
@@ -813,26 +725,130 @@ class model_outputs:
                      'RExDLLength',
                      'LExHLLength',
                      'RExHLLength']
-                     
-        SubjectName = vicon.GetSubjectNames()[0]
-        # get gait cycle info 
-        vgc1 = gaitcycle(vicon)
 
-        for Var in varlist:
-            # not sure what the BoolVals are, discard for now
-            NumVals, BoolVals = vicon.GetModelOutput(SubjectName, Var)
-            if not NumVals:
-                error_exit('Unable to get muscle length output variable. '+
-                            'Make sure that the appropriate model has been executed.')
-            self.Vars[Var] = np.array(NumVals)[0]
-            # normalize var to gait cycle 1
-            side = Var[0]  # L or R
-            self.Vars['Norm'+Var] = vgc1.normalize(self.Vars[Var], side)
+                         
+        # muscle length (MuscleLength.mod) variable descriptions
+        self.musclelen_varlabels = {'AdBrLength': 'AdBrLength',
+                               'AdLoLength': 'AdLoLength',
+                                'AdMaInfLength': 'AdMaInfLength',
+                                'AdMaMidLength': 'AdMaMidLength',
+                                'AdMaSupLength': 'AdMaSupLength',
+                                'BiFLLength': 'Biceps femoris length',
+                                'BiFSLength': 'BiFSLength',
+                                'ExDLLength': 'ExDLLength',
+                                'ExHLLength': 'ExHLLength',
+                                'FlDLLength': 'FlDLLength',
+                                'FlHLLength': 'FlHLLength',
+                                'GMedAntLength': 'GMedAntLength',
+                                'GMedMidLength': 'GMedMidLength',
+                                'GMedPosLength': 'GMedPosLength',
+                                'GMinAntLength': 'GMinAntLength',
+                                'GMinMidLength': 'GMinMidLength',
+                                'GMinPosLength': 'GMinPosLength',
+                                'GemeLength': 'GemeLength',
+                                'GlMaInfLength': 'GlMaInfLength',
+                                'GlMaMidLength': 'GlMaMidLength',
+                                'GlMaSupLength': 'GlMaSupLength',
+                                'GracLength': 'Gracilis length',
+                                'IliaLength': 'IliaLength',
+                                'LaGaLength': 'Lateral gastrocnemius length',
+                                'MeGaLength': 'Medial gastrocnemius length',
+                                'PELOLength': 'PELOLength',
+                                'PeBrLength': 'PeBrLength',
+                                'PeTeLength': 'PeTeLength',
+                                'PectLength': 'PectLength',
+                                'PeriLength': 'PeriLength',
+                                'PsoaLength': 'Psoas length',
+                                'QuFeLength': 'QuFeLength',
+                                'ReFeLength': 'Rectus femoris length',
+                                'SartLength': 'SartLength',
+                                'SeMeLength': 'Semimembranosus length',
+                                'SeTeLength': 'Semitendinosus length',
+                                'SoleLength': 'Soleus length',
+                                'TiAnLength': 'Tibialis anterior length',
+                                'TiPoLength': 'TiPoLength',
+                                'VaInLength': 'VaInLength',
+                                'VaLaLength': 'VaLaLength',
+                                'VaMeLength': 'VaMeLength'}
+       
+        # merge all variable dicts into one
+        self.varlabels = self.merge_dicts(self.pig_lowerbody_varlabels, self.musclelen_varlabels)
+
+        # mapping from PiG variable names to normal data variables (in normal.gcd)
+        # works with Vicon supplied .gcd (at least)
+        self.pig_lowerbody_normdict = {'AnkleAnglesX': 'DorsiPlanFlex',
+                     'AnkleAnglesZ': 'FootRotation',
+                     'AnkleMomentX': 'DorsiPlanFlexMoment',
+                     'AnklePowerZ': 'AnklePower',
+                     'FootProgressAnglesZ': 'FootProgression',
+                     'HipAnglesX': 'HipFlexExt',
+                     'HipAnglesY': 'HipAbAdduct',
+                     'HipAnglesZ': 'HipRotation',
+                     'HipMomentX': 'HipFlexExtMoment',
+                     'HipMomentY': 'HipAbAdductMoment',
+                     'HipMomentZ': 'HipRotationMoment',
+                     'HipPowerZ': 'HipPower',
+                     'KneeAnglesX': 'KneeFlexExt',
+                     'KneeAnglesY': 'KneeValgVar',
+                     'KneeAnglesZ': 'KneeRotation',
+                     'KneeMomentX': 'KneeFlexExtMoment',
+                     'KneeMomentY': 'KneeValgVarMoment',
+                     'KneeMomentZ': 'KneeRotationMoment',
+                     'KneePowerZ': 'KneePower',
+                     'PelvisAnglesX': 'PelvicTilt',
+                     'PelvisAnglesY': 'PelvicObliquity',
+                     'PelvisAnglesZ': 'PelvicRotation'}
+
+        # TODO: muscle len normal data
+        self.musclelen_normdict = {}
+                     
+        self.normdict = self.merge_dicts(self.pig_lowerbody_normdict, self.musclelen_normdict)
+      
+        # y labels for plotting
+        self.pig_lowerbody_ylabels = {'AnkleAnglesX': 'Pla     ($^\\circ$)      Dor',
+                             'AnkleAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'AnkleMomentX': 'Int dors    Nm/kg    Int plan',
+                             'AnklePowerZ': 'Abs    W/kg    Gen',
+                             'FootProgressAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'HipAnglesX': 'Ext     ($^\\circ$)      Flex',
+                             'HipAnglesY': 'Abd     ($^\\circ$)      Add',
+                             'HipAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'HipMomentX': 'Int flex    Nm/kg    Int ext',
+                             'HipMomentY': 'Int add    Nm/kg    Int abd',
+                             'HipMomentZ': 'Int flex    Nm/kg    Int ext',
+                             'HipPowerZ': 'Abs    W/kg    Gen',
+                             'KneeAnglesX': 'Ext     ($^\\circ$)      Flex',
+                             'KneeAnglesY': 'Val     ($^\\circ$)      Var',
+                             'KneeAnglesZ': 'Ext     ($^\\circ$)      Int',
+                             'KneeMomentX': 'Int flex    Nm/kg    Int ext',
+                             'KneeMomentY': 'Int var    Nm/kg    Int valg',
+                             'KneeMomentZ': 'Int flex    Nm/kg    Int ext',
+                             'KneePowerZ': 'Abs    W/kg    Gen',
+                             'PelvisAnglesX': 'Pst     ($^\\circ$)      Ant',
+                             'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
+                             'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'}
+
+        # concat all vars
+        self.ylabels = self.pig_lowerbody_ylabels
+        
+        # Vars will actually be read by read_() methods, as needed
+        self.Vars = {}
+                          
+
+    def read_musclelen(self):
+        """ Read muscle length variables produced by MuscleLengths.mod.
+        Reads into self.Vars """
+        self.read_raw(self.musclelen_read_vars)
+        
+    def read_pig_lowerbody(self):
+        """ Read the lower body Plug-in Gait model outputs. """
+        self.read_raw(self.pig_lowerbody_read_vars)
             
-            
-    def read_raw(self, source, varlist):
-        """ Read specified model output variables. Returns a dict. """
-        Vars = {}
+    def read_raw(self, varlist, xyz_components=True):
+        """ Read specified model output variables. Returns a dict. 
+        if xyz_components = True, 3d arrays will be split into x,y, and z
+        components. """
+        source = self.source
         if is_vicon_instance(source):
             vicon = source
             SubjectName = vicon.GetSubjectNames()[0]
@@ -840,7 +856,8 @@ class model_outputs:
                 NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
                 if not NumVals:
                     raise ModelVarNotFoundError
-                Vars[Var] = np.array(NumVals)
+                self.Vars[Var] = np.array(NumVals)
+
         elif is_c3dfile(source):
             c3dfile = source
             reader = btk.btkAcquisitionFileReader()
@@ -848,79 +865,25 @@ class model_outputs:
             reader.Update()
             acq = reader.GetOutput()
             for Var in varlist:
-                # TODO: needs error checking + raise ModelVarNotFound
-                Vars[Var] = np.squeeze(acq.GetPoint(Var).GetValues())
+                try:
+                    self.Vars[Var] = np.transpose(np.squeeze(acq.GetPoint(Var).GetValues()))
+                except RuntimeError:
+                    raise ModelVarNotFoundError
         else:
             raise Exception('Invalid source')
-        return Vars
+        # postprocessing
+        for Var in varlist:
+                if Var.find('Moment') > 0:
+                    # moment variables have to be divided by 1000 -
+                    # apparently stored in Newton-millimeters
+                    self.Vars[Var] /= 1000.
+                if xyz_components and self.Vars[Var].shape[0] == 3:
+                    # split 3-d arrays into x,y,z variables
+                    self.Vars[Var+'X'] = self.Vars[Var][0,:]
+                    self.Vars[Var+'Y'] = self.Vars[Var][1,:]
+                    self.Vars[Var+'Z'] = self.Vars[Var][2,:]
+
         
-        
-    def read_pig_lowerbody(self, source, gcdfile=None):
-        """ Read the lower body Plug-in Gait model outputs.
-        Variable names starting with 'R' and'L' are normalized into left and right 
-        gait cycles, respectively. gcdfile contains PiG normal data variables. 
-        Reads into self.Vars """
-        
-        # the PiG kin* vars contain X,Y,Z components per each variable,
-        # these will be separated into different variables
-        varlist = ['LHipMoment',
-              'LKneeMoment',
-              'LAnkleMoment',
-              'LHipPower',
-              'LKneePower',
-              'LAnklePower',
-              'RHipMoment',
-              'RKneeMoment',
-              'RAnkleMoment',
-              'RHipPower',
-              'RKneePower',
-              'RAnklePower',
-              'LHipAngles',
-              'LKneeAngles',
-              'LAbsAnkleAngle',
-              'LAnkleAngles',
-              'LPelvisAngles',
-              'LFootProgressAngles',
-              'RHipAngles',
-              'RKneeAngles',
-              'RAbsAnkleAngle',
-              'RAnkleAngles',
-              'RPelvisAngles',
-              'RFootProgressAngles']
-
-        vgc1 = gaitcycle()
-        vgc1.read(source)
-
-        # moment variables have to be divided by 1000 - not sure why
-        # apparently stored in Newton-millimeters!
-        if Var.find('Moment') > 0:
-            self.Vars[Var] /= 1000.
-        # pick non-normalized X,Y,Z components into separate vars
-        self.Vars[Var+'X'] = self.Vars[Var][0,:]
-        self.Vars[Var+'Y'] = self.Vars[Var][1,:]
-        self.Vars[Var+'Z'] = self.Vars[Var][2,:]
-        # normalize vars to gait cycle 1
-        side = Var[0]  # L or R
-        self.Vars['Norm'+Var+'X'] = vgc1.normalize(self.Vars[Var+'X'], side)
-        self.Vars['Norm'+Var+'Y'] = vgc1.normalize(self.Vars[Var+'Y'], side)
-        self.Vars['Norm'+Var+'Z'] = vgc1.normalize(self.Vars[Var+'Z'], side)
-
-        # read PiG normal data from given gcd file
-        if gcdfile:
-            if not os.path.isfile(gcdfile):
-                error_exit('Cannot find specified PiG normal data file')
-            f = open(gcdfile, 'r')
-            lines = f.readlines()
-            f.close()
-            pig_normaldata = {}
-            for li in lines:
-                if li[0] == '!':  # it's a variable name
-                    thisvar = li[1:li.find(' ')]  # set dict key
-                    pig_normaldata[thisvar] = list()
-                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
-                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
-            self.pig_normaldata = pig_normaldata
-
     def pig_lowerbody_varnames(self):
         """ Return list of known PiG variables. """
         return self.pig_lowerbody_varlabels.keys()

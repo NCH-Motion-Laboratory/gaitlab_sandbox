@@ -9,6 +9,7 @@ test nexusplotter c3d/btk functions
 """
 
 
+sys.path.append('C:\\Users\\HUS20664877\\Desktop\\projects\\llinna\\nexus_py\\')
 import gait_getdata
 import sys
 # these needed for Nexus 2.1
@@ -22,11 +23,18 @@ import ViconNexus
 
 
 c3dfile = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS33.c3d"
-vicon = ViconNexus.ViconNexus()
+#vicon = ViconNexus.ViconNexus()
 
 
 tfile = gait_getdata.trial(c3dfile)
-tnexus = gait_getdata.trial(vicon)
+#tnexus = gait_getdata.trial(vicon)
+
+tfile.model.read_pig_lowerbody()
+
+
+vnorm = tfile.normalize_to_cycle(tfile.model.Vars['LHipMomentX'], 1)
+
+
 
 
 sys.exit()
