@@ -258,8 +258,7 @@ class gaitplotter():
         self.trial = gait_getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
         
     def read_trial(self, vars):
-        """ Read requested trial variables; interpret variables that modify
-        the plot. """
+        """ Read requested trial variables / legend parameters etc. """
         self.vars = vars
         read_emg = False
         read_pig = False
@@ -304,16 +303,17 @@ class gaitplotter():
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
                  onesided_kinematics=False, model_linestyle='-', emg_tracecolor='black'):
-        """ Plot active trial (must call open_trial first). If a plot is already 
+        """ Plot active trial (must call open_*_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
-        cycle: which gait cycle to use
-        side: which side kinetics/kinematics to plot (autodetect from trial by default).
-        note that kinematics are two-sided by default.
+        cycle: which gait cycle to use from the trial (default=first)
+        side: which side kinetics/kinematics to plot (default=determine from trial).
+        Note that kinematics are two-sided by default (unless onesided_kinematics=True)
         maintitle: plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
+        model_linestyle: plotting style for model variables (PiG etc.)
+        emg_tracecolor: color for EMG traces
         """        
-
         if not self.trial:
             error_exit('No trial loaded')
 

@@ -185,7 +185,7 @@ class trial:
     -analog data (EMG, forceplate, etc.)
     -model variables (Plug-in Gait, muscle length, etc.)
     """
-    def __init__(self, source, side=None, emg_remapping=None, emg_auto_off=None,
+    def __init__(self, source, emg_remapping=None, emg_auto_off=None,
                  pig_normaldata_path=None):
         """ Open trial, read subject info, events etc. """
         self.lfstrikes = []
