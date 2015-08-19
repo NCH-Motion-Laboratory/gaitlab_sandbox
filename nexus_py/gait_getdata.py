@@ -6,8 +6,9 @@ Gaitplotter utility classes for reading gait data.
 
 
 NEXT:
+-remove 'Norm' model class variables; smarter side info
 -verify c3d/Nexus model reading/normalization
--adapt gait_plot to use new classes    
+
 
 TODO:
 -classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
@@ -142,7 +143,6 @@ def messagebox(message):
 
 
 
-
 class gaitcycle:
     """" Holds information about one gait cycle. Offset is the frame where
     the data begins; 1 for Vicon Nexus (which always returns whole trial) and
@@ -185,7 +185,8 @@ class trial:
     -analog data (EMG, forceplate, etc.)
     -model variables (Plug-in Gait, muscle length, etc.)
     """
-    def __init__(self, source, side=None, emg_remapping=None, emg_auto_off=None):
+    def __init__(self, source, side=None, emg_remapping=None, emg_auto_off=None,
+                 pig_normaldata_path=None):
         """ Open trial, read subject info, events etc. """
         self.lfstrikes = []
         self.rfstrikes = []
@@ -275,6 +276,7 @@ class trial:
         lfsforces = forcetot[lfsind.astype(int) + delay]
         rfsforces = forcetot[rfsind.astype(int) + delay]
         # TODO: check for double contact
+        # TODO: caller cannot interpret 'LR' yet
         kinetics = ''
         if max(lfsforces) > min_force:
             kinetics += 'L'
@@ -578,13 +580,14 @@ class model_outputs:
         x.update(dict2)
         return x
         
-    def __init__(self, source):
+    def __init__(self, source, pig_normaldata_path=None):
         """ Sets up some variables, but does not read data.
         Model data is usually stored in normalized form with variables named
         e.g. NormRHipAnglesX, but shorter variable names are used in
         label dicts etc., e.g. HipAnglesX. *_varname functions convert between
         these names. 
-        source can be either a ViconNexus instance or a c3d file. """
+        source can be either a ViconNexus instance or a c3d file.
+        pig_lowerbody_gcd specified a gcd file to read PiG lowerbody normaldata from."""
 
         self.source = source        
         
@@ -831,9 +834,26 @@ class model_outputs:
         # concat all vars
         self.ylabels = self.pig_lowerbody_ylabels
         
-        # Vars will actually be read by read_() methods, as needed
+        # Vars will be read by read_() methods, as needed
         self.Vars = {}
-                          
+        
+        # read PiG normal data from given gcd file
+        gcdfile = pig_normaldata_path
+        if gcdfile:
+            if not os.path.isfile(gcdfile):
+                # TODO: exception
+                error_exit('Cannot find specified PiG normal data file')
+            f = open(gcdfile, 'r')
+            lines = f.readlines()
+            f.close()
+            pig_normaldata = {}
+            for li in lines:
+                if li[0] == '!':  # it's a variable name
+                    thisvar = li[1:li.find(' ')]  # set dict key
+                    pig_normaldata[thisvar] = list()
+                elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
+                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
+            self.pig_normaldata = pig_normaldata
 
     def read_musclelen(self):
         """ Read muscle length variables produced by MuscleLengths.mod.
@@ -845,9 +865,9 @@ class model_outputs:
         self.read_raw(self.pig_lowerbody_read_vars)
             
     def read_raw(self, varlist, xyz_components=True):
-        """ Read specified model output variables. Returns a dict. 
-        if xyz_components = True, 3d arrays will be split into x,y, and z
-        components. """
+        """ Read specified model output variables into self.Vars.
+        If xyz_components = True, 3d arrays will be split into x,y, and z
+        components and output variables named accordingly (e.g. LHipMomentsX) """
         source = self.source
         if is_vicon_instance(source):
             vicon = source
@@ -857,7 +877,6 @@ class model_outputs:
                 if not NumVals:
                     raise ModelVarNotFoundError
                 self.Vars[Var] = np.array(NumVals)
-
         elif is_c3dfile(source):
             c3dfile = source
             reader = btk.btkAcquisitionFileReader()
@@ -903,17 +922,6 @@ class model_outputs:
         """ Is var a muscle length variable? var might be preceded with Norm and L/R """
         return var in self.musclelen_varnames() or self.unnorm_varname(var) in self.musclelen_varnames()
 
-    def unnorm_varname(self, var):
-        """ Remove Norm and 'L/R' from beginning of variable name. """
-        if var[:4] == 'Norm':
-            return var[5:]
-        else:
-            return var
-           
-    def norm_varname(self, var, side):
-        """ Create normalized variable name corresponding to var. """
-        return 'Norm'+side.upper()+var
-
     def description(self, var):
         """ Returns a more elaborate description for a model variable,
         if known. If var is normalized to a gait cycle, side will be reflected
@@ -947,7 +955,8 @@ class model_outputs:
         # unknown var
         else:
             return None
-        
+
+       
     def normaldata(self, var):
         """ Return the normal data (in the given gcd file) for 
         PiG variable var, if available.

@@ -15,8 +15,7 @@ import gait_getdata
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 # needed at least when running outside Nexus
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
-import ViconNexus
-                      
+import matplotlib.pyplot as plt
             
 
 
@@ -31,8 +30,9 @@ tfile = gait_getdata.trial(c3dfile)
 tfile.model.read_pig_lowerbody()
 
 
-vnorm = tfile.normalize_to_cycle(tfile.model.Vars['LHipMomentX'], 1)
-
+vnorm = tfile.normalize_to_cycle(tfile.model.Vars['LPelvisAnglesY'], 1)
+plt.figure()
+plt.plot(tfile.tn, vnorm)
 
 
 

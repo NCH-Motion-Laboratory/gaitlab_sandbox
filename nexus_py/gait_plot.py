@@ -249,13 +249,13 @@ class gaitplotter():
         if not gait_getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         vicon = gait_getdata.viconnexus()
-        self.trial = gait_getdata.trial(vicon)
+        self.trial = gait_getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
         
     def open_c3d_trial(self, trialpath):
         """ Open a c3d trial. """
         if not os.path.isfile(trialpath):
             error_exit('Cannot find trial: '+trialpath)
-        self.trial = gait_getdata.trial(trialpath)
+        self.trial = gait_getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
         
     def read_trial(self, vars):
         """ Read requested trial variables; interpret variables that modify
