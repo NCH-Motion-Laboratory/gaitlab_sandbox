@@ -343,15 +343,16 @@ class gaitplotter():
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
+
+        lcyc = self.trial.get_cycle('L', cycle)
+        rcyc = self.trial.get_cycle('R', cycle)
+        if not (lcyc and rcyc):
+            error_exit('Cannot get requested left/right gait cycles from data')
         
         # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:
             for k, varname_ in enumerate(self.model_plot_vars):  # varname_ is not side specific, e.g. 'HipMomentX'
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
-                lcyc = self.trial.get_cycle('L', cycle)
-                rcyc = self.trial.get_cycle('R', cycle)
-                if not (lcyc and rcyc):
-                    error_exit('Cannot get requested left/right gait cycles from data')
                 if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:  # plot both sides (L/R)
                     sides = ['L','R']
                 else:
