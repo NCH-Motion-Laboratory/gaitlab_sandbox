@@ -246,7 +246,7 @@ class trial:
         # will be read by read_vars
         # TODO: emg params
         self.emg = emg(source)
-        self.model = model_outputs(self.source)
+        self.model = model_outputs(self.source, pig_normaldata_path)
         self.kinetics = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
@@ -330,7 +330,7 @@ class trial:
                 counter += 1
             if counter == cycle:
                 return cyc.normalize(var)
-        raise Exception('No gait cycle with given context found in data!')
+        raise Exception('No gait cycle with given context and number found in data!')
 
     def emg_on_cycle(self, chname, cycle):
         """ Cut EMG channel to a given gait cycle. OBSOLETED """
@@ -574,7 +574,12 @@ class emg:
        
 
 class model_outputs:
-    """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. """
+    """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. 
+    Model variables may have a preceding L/R indicating left/right side.
+    For brevity, description dicts etc. are specified for variable names without
+    the side info (since descriptions are the same regardless of side).
+    This creates some complications, as certain methods expect variable names
+    without side and certain methods require it. """
     
     def merge_dicts(self, dict1, dict2):
         """ Merge two dicts, return result. """
@@ -843,8 +848,7 @@ class model_outputs:
         gcdfile = pig_normaldata_path
         if gcdfile:
             if not os.path.isfile(gcdfile):
-                # TODO: exception
-                error_exit('Cannot find specified PiG normal data file')
+                raise Exception('Cannot find specified PiG normal data file')
             f = open(gcdfile, 'r')
             lines = f.readlines()
             f.close()
@@ -905,8 +909,7 @@ class model_outputs:
                     self.Vars[Var+'Z'] = self.Vars[Var][2,:]
 
     def rm_side(self, varname):
-        """ Remove side info from variable name. Any variable requested
-        from the class is expected to have a preceding 'L' or 'R'. Internally
+        """ Remove side info (preceding L/R) from variable name. Internally
         some dicts use variable names without the side info. Will have to be
         modified for sideless model variables (not used so far). """
         side = varname[0].upper()
@@ -916,19 +919,19 @@ class model_outputs:
             raise Exception('Variable name expected to begin with L or R')
 
     def is_pig_lowerbody_variable(self, varname):
-        """ PiG lower body variable? """
-        return self.rm_side(varname) in self.pig_lowerbody_varnames
+        """ PiG lower body variable? Without preceding L/R """
+        return varname in self.pig_lowerbody_varnames
 
     def is_kinetic_var(self, varname):
         """ Tell whether a (PiG lowerbody) variable represents kinetics. """
-        return is_pig_lowerbody_variable(varname) and varname.find('Power') > -1 or varname.find('Moment') > -1
+        return self.is_pig_lowerbody_variable(varname) and varname.find('Power') > -1 or varname.find('Moment') > -1
         
     def is_musclelen_variable(self, varname):
-        """ Muscle length variable? """
-        return self.rm_side(varname) in self.pig_musclelen_varnames
+        """ Muscle length variable? Without preceding L/R """
+        return varname in self.musclelen_varnames
 
     def description(self, varname):
-        """ Returns a more elaborate description for a model variable,
+        """ Returns a more elaborate description for a model variable (L/R),
         if known. If var is normalized to a gait cycle, side will be reflected
         in the name. """
         varname_,side = self.rm_side(varname)
@@ -938,24 +941,21 @@ class model_outputs:
             return varname_
         
     def ylabel(self, varname):
-        """ Return y label for plotting a given variable. """
-        varname_,side = self.rm_side(varname)
-        if varname_ in self.ylabels:
-            return self.ylabels[varname_]
+        """ Return y label for plotting a given variable (without preceding L/R). """
+        if varname in self.ylabels:
+            return self.ylabels[varname]
         # use default for muscle len variable
-        elif self.is_musclelen_variable(varname_):
+        elif self.is_musclelen_variable(varname):
             return 'Length (mm)'
         else:
             return None
        
     def normaldata(self, varname):
         """ Return the normal data (in the given gcd file) for 
-        PiG variable var, if available.
+        PiG variable var (without preceding L/R)), if available.
         TODO: normal data for muscle lengths? """
-        # strip leading 'Norm' and L/R from variable name
-        varname_ = self.rm_side(varname)
-        if varname_ in self.normdict:
-            return self.pig_normaldata[self.normdict[varname_]]
+        if varname in self.normdict:
+            return self.pig_normaldata[self.normdict[varname]]
         else:
             return None
 

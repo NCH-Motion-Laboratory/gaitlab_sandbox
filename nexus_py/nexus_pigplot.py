@@ -25,7 +25,6 @@ plotvars = ['PelvisAnglesX',
            'FootProgressAnglesZ',
            'AnkleAnglesZ']
 maintitleprefix = 'Kinematics plot for '
-
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()
 nplotter.read_trial(plotvars)
@@ -42,7 +41,6 @@ plotvars = ['HipMomentX',
              'AnkleMomentX',None,None,
              'AnklePowerZ']                      
 maintitleprefix = 'Kinetics plot for '
-
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()
 nplotter.read_trial(plotvars)

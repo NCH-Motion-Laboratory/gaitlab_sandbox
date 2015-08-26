@@ -303,7 +303,7 @@ class gaitplotter():
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
                  onesided_kinematics=False, model_linestyle='-', emg_tracecolor='black'):
-        """ Plot active trial (must call open_*_trial first). If a plot is already 
+        """ Plot active trial (must call open_xxx_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
         cycle: which gait cycle to use from the trial (default=first)
@@ -318,11 +318,11 @@ class gaitplotter():
             error_exit('No trial loaded')
 
         # which side kinetics/kinematics to plot (if one-sided)
-        if not side:
-            side = self.trial.kinetics    
-        else:
+        if side:
             side = side.upper()
-       
+        else:
+            side = self.trial.kinetics           
+        
         # if plot height ratios not set, set them all equal    
         if not plotheightratios:
             self.plotheightratios = [1] * self.gridv
@@ -335,7 +335,8 @@ class gaitplotter():
         tn = np.linspace(0, 100, 101)
         # for normal data: 0,2,4...100.
         tn_2 = np.array(range(0, 101, 2))
-        
+
+        # create/switch to figure and set title        
         if self.fig:
             plt.figure(self.fig.number) 
         else:
@@ -343,29 +344,30 @@ class gaitplotter():
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
-        # handles model output vars (Plug-in Gait, muscle length, etc.)
+        # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:
-            for k, var in enumerate(self.model_plot_vars):
+            for k, varname_ in enumerate(self.model_plot_vars):  # varname_ is not side specific, e.g. 'HipMomentX'
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
-                if not self.trial.model.is_kinetic_var(var) and not onesided_kinematics:  # plot both sides (L/R)
+                if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:  # plot both sides (L/R)
                     sides = ['L','R']
                 else:
                     sides = side
-                for side_ in sides:
-                    varname = side_ + var
-                    data_gc = self.trial.normalize_to_cycle(self.trial.model.Vars[varname], cycle)
+                for side_ in sides:  # loop thru sides, normalize and plot data
+                    varname = side_ + varname_  # side-specific variable name, e.g. 'LHipMomentX'
+                    data_gc = self.trial.normalize_to_cycle(self.trial.model.Vars[varname], side_, cycle)
                     if side_ == 'L':
                         tracecolor = self.tracecolor_l
                     elif side_ == 'R':
                         tracecolor = self.tracecolor_r
                     plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
-                if self.trial.model.normaldata(var):
-                    nor = np.array(self.trial.model.normaldata(var))[:,0]
-                    nstd = np.array(self.trial.model.normaldata(var))[:,1]
+                if self.trial.model.normaldata(varname_):
+                    nor = np.array(self.trial.model.normaldata(varname_))[:,0]
+                    nstd = np.array(self.trial.model.normaldata(varname_))[:,1]
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
-                title = self.trial.model.description(var)
-                ylabel = self.trial.model.ylabel(varname)
+                # set titles and labels
+                title = self.trial.model.description(varname)
+                ylabel = self.trial.model.ylabel(varname_)
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
@@ -374,13 +376,13 @@ class gaitplotter():
                 ylim_default= ax.get_ylim()
                 # include zero line and extend y scale a bit for kin* variables
                 plt.axhline(0, color='black')  # zero line
-                if self.trial.model.is_pig_lowerbody_variable(var):
+                if self.trial.model.is_pig_lowerbody_variable(varname_):
                     if ylim_default[0] == 0:
                         plt.ylim(-10, ylim_default[1])
                     if ylim_default[1] == 0:
                         plt.ylim(ylim_default[0], 10)
                 # expand the default scale a bit for muscle length variables, but no zeroline
-                if self.trial.model.is_musclelen_variable(var):
+                if self.trial.model.is_musclelen_variable(varname_):
                     plt.ylim(ylim_default[0]-10, ylim_default[1]+10)
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
                 # add arrows indicating toe off times
@@ -395,7 +397,7 @@ class gaitplotter():
                     # these are related to plot height/width, to avoid aspect ratio effects
                     hdlength = arrlen * .33
                     hdwidth = (xmax-xmin) / 50.
-                    if not self.trial.model.is_kinetic_var(var) and not onesided_kinematics:
+                    if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:
                         plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
                         plt.arrow(rtoeoff, ymin, 0, arrlen, color=self.tracecolor_r, 
