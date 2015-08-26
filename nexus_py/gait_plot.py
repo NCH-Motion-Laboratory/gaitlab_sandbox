@@ -258,7 +258,7 @@ class gaitplotter():
         self.trial = gait_getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
         
     def read_trial(self, vars):
-        """ Read requested trial variables / legend parameters etc. """
+        """ Read requested trial variables and directives """
         self.vars = vars
         read_emg = False
         read_pig = False
@@ -288,7 +288,7 @@ class gaitplotter():
                     self.model_plot_vars.append(var)
                     self.model_plot_pos.append(i)
                 else:
-                    error_exit('Unknown variable: ' + var)
+                    error_exit('Unknown variable or plot directive: ' + var)
         if read_emg:
             self.trial.emg.read()
         if read_pig:
@@ -343,7 +343,6 @@ class gaitplotter():
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
-        
         
         # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:

@@ -313,13 +313,6 @@ class trial:
                 self.cycles.append(cycle)
         self.ncycles = len(self.cycles)
                  
-    def cut_analog_to_cycle(self, data, cycle):
-        """ Returns given analog data (should be an instance variable)
-        during the specified gait cycle (1,2,3...) """
-        if cycle > self.ncycles:
-            raise Exception("No such gait cycle in data")
-        return self.cycles[cycle-1].cut_analog_to_cycle(data)
-        
     def get_cycle(self, context, ncycle):
         """ e.g. ncycle=2 and context='L' returns 2nd left gait cycle. """
         cycles = [cycle for cycle in self.cycles if cycle.context == context]
@@ -327,15 +320,6 @@ class trial:
             return None
         else:
             return cycles[ncycle-1]
-
-    def emg_on_cycle(self, chname, cycle):
-        """ Cut EMG channel to a given gait cycle. OBSOLETED """
-        if cycle > self.ncycles:
-            raise Exception("No such gait cycle in data")
-        data = self.emg.get_logical_channel(chname)
-        return self.cycles[cycle-1].cut_analog_to_cycle(data)
-
-               
     
 class forceplate:
     """ Read and process forceplate data. source may be a c3d file or a
