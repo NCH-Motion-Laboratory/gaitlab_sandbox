@@ -29,12 +29,9 @@ tfile = gait_getdata.trial(c3dfile)
 
 tfile.model.read_pig_lowerbody()
 
-
-vnorm = tfile.normalize_to_cycle(tfile.model.Vars['LPelvisAnglesY'], 1)
+vnorm = tfile.normalize_to_cycle(tfile.model.Vars['LPelvisAnglesY'], 'L', 1)
 plt.figure()
 plt.plot(tfile.tn, vnorm)
-
-
 
 sys.exit()
 
@@ -47,9 +44,6 @@ print vgc1.rfstrikes
 print vgc2.rfstrikes
 print vgc1.lfstrikes
 print vgc2.lfstrikes
-
-
-
 
 sys.exit()
 

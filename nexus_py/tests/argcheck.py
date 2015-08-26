@@ -8,6 +8,23 @@ Created on Fri Apr 17 15:23:37 2015
 import sys
 
 
+def RetTup():
+    return 1,2
+
+class oma:
+    def funfun(self):
+        return 1
+    def __init__(self):
+        a = self.funfun()
+        print a
+        
+        
+        
+
+
+    
+
+
 class NotProcessed(Exception):
     def __init__(self, msg):
         self.msg = msg

@@ -312,7 +312,7 @@ class trial:
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
         self.ncycles = len(self.cycles)
-         
+                 
     def cut_analog_to_cycle(self, data, cycle):
         """ Returns given analog data (should be an instance variable)
         during the specified gait cycle (1,2,3...) """
@@ -321,18 +321,16 @@ class trial:
         return self.cycles[cycle-1].cut_analog_to_cycle(data)
         
     def normalize_to_cycle(self, var, context, cycle):
-        """ Returns model variable (e.g. PiG) normalized to given gait cycle
-        with given context. For example, context='L' and cycle=1 will normalize
-        to first left side gait cycle.
-        var should be an instance variable. """
+        """ Returns model variable (e.g. PiG) normalized to a gait cycle
+        with given context. var should be an instance variable. 
+        e.g. cycle=2 and context='L' normalizes to 2nd left gait cycle. """
+        counter = 0
         for cyc in self.cycles:
-            if cyc.context == context:
+            if cyc.context == context.upper():
+                counter += 1
+            if counter == cycle:
                 return cyc.normalize(var)
-        raise Exception("No such gait cycle in data")
-        # TODO: FIX    
-        if cycle > self.ncycles:
-            raise Exception("No such gait cycle in data")
-        return self.cycles[cycle-1].normalize(var)
+        raise Exception('No gait cycle with given context found in data!')
 
     def emg_on_cycle(self, chname, cycle):
         """ Cut EMG channel to a given gait cycle. OBSOLETED """
@@ -585,18 +583,14 @@ class model_outputs:
         return x
         
     def __init__(self, source, pig_normaldata_path=None):
-        """ Sets up some variables, but does not read data.
-        Model data is usually stored in normalized form with variables named
-        e.g. NormRHipAnglesX, but shorter variable names are used in
-        label dicts etc., e.g. HipAnglesX. *_varname functions convert between
-        these names. 
+        """ Sets up variables but does not read data.
         source can be either a ViconNexus instance or a c3d file.
-        pig_lowerbody_gcd specified a gcd file to read PiG lowerbody normaldata from."""
+        pig_normaldata_path: a gcd file to read PiG lowerbody normaldata from."""
 
         self.source = source        
         
-        # PiG variables to be read. these are 3d arrays that will be split
-        # into x,y,z components
+        # PiG variables to be read. These are 3d arrays that will be split
+        # into x,y,z components.
         self.pig_lowerbody_read_vars = ['LHipMoment',
               'LKneeMoment',
               'LAnkleMoment',
@@ -622,7 +616,7 @@ class model_outputs:
               'RPelvisAngles',
               'RFootProgressAngles']
 
-        # descriptive labels for variables
+        # Descriptive labels for variables. These are without leading 'L'/'R'.
         # Plug-in Gait lowerbody
         self.pig_lowerbody_varlabels = {'AnkleAnglesX': 'Ankle dorsi/plant',
                          'AnkleAnglesZ': 'Ankle rotation',
@@ -646,6 +640,8 @@ class model_outputs:
                          'PelvisAnglesX': 'Pelvic tilt',
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}
+                         
+        self.pig_lowerbody_varnames = self.pig_lowerbody_varlabels.keys()
 
         # muscle length variables to be read
         self.musclelen_read_vars = ['LGMedAntLength',
@@ -734,7 +730,7 @@ class model_outputs:
                      'RExHLLength']
 
                          
-        # muscle length (MuscleLength.mod) variable descriptions
+        # muscle length (MuscleLength.mod) variable descriptions (not complete)
         self.musclelen_varlabels = {'AdBrLength': 'AdBrLength',
                                'AdLoLength': 'AdLoLength',
                                 'AdMaInfLength': 'AdMaInfLength',
@@ -777,6 +773,8 @@ class model_outputs:
                                 'VaInLength': 'VaInLength',
                                 'VaLaLength': 'VaLaLength',
                                 'VaMeLength': 'VaMeLength'}
+        
+        self.musclelen_varnames = self.musclelen_varlabels.keys()
        
         # merge all variable dicts into one
         self.varlabels = self.merge_dicts(self.pig_lowerbody_varlabels, self.musclelen_varlabels)
@@ -906,69 +904,58 @@ class model_outputs:
                     self.Vars[Var+'Y'] = self.Vars[Var][1,:]
                     self.Vars[Var+'Z'] = self.Vars[Var][2,:]
 
-    def pig_lowerbody_varnames(self):
-        """ Return list of known PiG variables. """
-        return self.pig_lowerbody_varlabels.keys()
+    def rm_side(self, varname):
+        """ Remove side info from variable name. Any variable requested
+        from the class is expected to have a preceding 'L' or 'R'. Internally
+        some dicts use variable names without the side info. Will have to be
+        modified for sideless model variables (not used so far). """
+        side = varname[0].upper()
+        if side in ['L','R']:
+            return varname[1:],side
+        else:
+            raise Exception('Variable name expected to begin with L or R')
 
-    def is_pig_lowerbody_variable(self, var):
-        """ Is var a PiG lower body variable? var might be preceded with Norm and L/R """
-        return var in self.pig_lowerbody_varnames() or self.unnorm_varname(var) in self.pig_lowerbody_varnames()
+    def is_pig_lowerbody_variable(self, varname):
+        """ PiG lower body variable? """
+        return self.rm_side(varname) in self.pig_lowerbody_varnames
 
-    def is_kinetic_var(self, var):
-        """ Tell whether a (PiG) variable represents kinetics. """
-        return var.find('Power') > -1 or var.find('Moment') > -1
+    def is_kinetic_var(self, varname):
+        """ Tell whether a (PiG lowerbody) variable represents kinetics. """
+        return is_pig_lowerbody_variable(varname) and varname.find('Power') > -1 or varname.find('Moment') > -1
         
-    def musclelen_varnames(self):
-        """ Return list of known muscle length variables. """
-        return self.musclelen_varlabels.keys()
+    def is_musclelen_variable(self, varname):
+        """ Muscle length variable? """
+        return self.rm_side(varname) in self.pig_musclelen_varnames
 
-    def is_musclelen_variable(self, var):
-        """ Is var a muscle length variable? var might be preceded with Norm and L/R """
-        return var in self.musclelen_varnames() or self.unnorm_varname(var) in self.musclelen_varnames()
-
-    def description(self, var):
+    def description(self, varname):
         """ Returns a more elaborate description for a model variable,
         if known. If var is normalized to a gait cycle, side will be reflected
         in the name. """
-        if var[:3] == 'Norm':
-            vars = var[4:]
-            if vars[0] == 'L':
-                sidestr = ( 'L')
-                vars = vars[1:]
-            elif var[0] == 'R':
-                sidestr = ( 'R')
-                vars = vars[1:]
+        varname_,side = self.rm_side(varname)
+        if varname_ in self.varlabels:
+            return self.varlabels[varname_]+' ('+side+')'
         else:
-            vars = var
-            sidestr = ''
-        print(vars)
-        if vars in self.varlabels:
-            return self.varlabels[vars]+sidestr
-        else:
-            return var
+            return varname_
         
-    def ylabel(self, var):
+    def ylabel(self, varname):
         """ Return y label for plotting a given variable. """
-        vars = self.unnorm_varname(var)
-        # explicitly specified label?       
-        if vars in self.ylabels:
-            return self.ylabels[vars]
+        varname_,side = self.rm_side(varname)
+        if varname_ in self.ylabels:
+            return self.ylabels[varname_]
         # use default for muscle len variable
-        elif self.is_musclelen_variable(var):
+        elif self.is_musclelen_variable(varname_):
             return 'Length (mm)'
-        # unknown var
         else:
             return None
-
        
-    def normaldata(self, var):
+    def normaldata(self, varname):
         """ Return the normal data (in the given gcd file) for 
         PiG variable var, if available.
         TODO: normal data for muscle lengths? """
         # strip leading 'Norm' and L/R from variable name
-        vars = self.unnorm_varname(var)
-        if not vars in self.normdict:
-            return None
+        varname_ = self.rm_side(varname)
+        if varname_ in self.normdict:
+            return self.pig_normaldata[self.normdict[varname_]]
         else:
-            return self.pig_normaldata[self.normdict[vars]]
+            return None
 
