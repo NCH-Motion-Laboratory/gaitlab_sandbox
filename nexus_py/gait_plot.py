@@ -17,7 +17,6 @@ Rules:
 
 
 NEXT:
--adapt to new classes WIP
 
 
 TODO:
@@ -25,6 +24,7 @@ TODO:
 tests
 documentation
 add default y ranges for kine(ma)tics variables?
+plotting gait cycles other than 1 not tested
 """
 
 
@@ -421,9 +421,12 @@ class gaitplotter():
         # emg plotting
         if self.emg_plot_chs:
             for k, thisch in enumerate(self.emg_plot_chs):
-                side_this = thisch[0]
+                # normalize EMG data to side of the electrode.
+                # assumes that channel name starts with 'L' or 'R'
+                side_this = thisch[0].upper()
                 # choose EMG data normalized according to side
                 if side_this == 'L':
+                    tn_emg = self.trial.emg.
                     tn_emg = self.emg.tn_emg_l
                     emgdata = self.emg.logical_data_gc1l
                     #emg_yscale = self.emg.yscale_gc1l
@@ -461,7 +464,7 @@ class gaitplotter():
                 plt.xlabel(self.xlabel, fontsize=self.fsize_labels)
                 plt.ylabel(self.emg_ylabel, fontsize=self.fsize_labels)
                 plt.locator_params(axis = 'y', nbins = 4)
-                
+                # add toeoff arrows to EMG
                 if self.add_toeoff_markers:
                     ymin = ax.get_ylim()[0]
                     ymax = ax.get_ylim()[1]
@@ -506,7 +509,6 @@ class gaitplotter():
         
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
-        
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
