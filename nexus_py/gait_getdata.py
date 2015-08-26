@@ -6,14 +6,14 @@ Gaitplotter utility classes for reading gait data.
 
 
 NEXT:
+-need to have L/R cycles from each trial (context); L side variables are
+normalized into L cycles and R to R cycles
 -remove 'Norm' model class variables; smarter side info
 -verify c3d/Nexus model reading/normalization
-
 
 TODO:
 -classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
 dialogs if needed
-
 
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)
@@ -31,9 +31,7 @@ For Vicon Nexus data, x axis is the whole trial.
 """
 
 
-
 from __future__ import division, print_function
-
 
 from Tkinter import *
 import tkFileDialog
@@ -140,7 +138,6 @@ def messagebox(message):
     """ Custom notification handler """
     # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
-
 
 
 class gaitcycle:
@@ -314,7 +311,7 @@ class trial:
                     raise TrialNotProcessedError('Expected a single toe-off event during gait cycle')
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
-            self.ncycles = len(self.cycles)
+        self.ncycles = len(self.cycles)
          
     def cut_analog_to_cycle(self, data, cycle):
         """ Returns given analog data (should be an instance variable)
@@ -323,9 +320,16 @@ class trial:
             raise Exception("No such gait cycle in data")
         return self.cycles[cycle-1].cut_analog_to_cycle(data)
         
-    def normalize_to_cycle(self, var, cycle):
-        """ Returns model variable (e.g. PiG) normalized to given gait cycle.
+    def normalize_to_cycle(self, var, context, cycle):
+        """ Returns model variable (e.g. PiG) normalized to given gait cycle
+        with given context. For example, context='L' and cycle=1 will normalize
+        to first left side gait cycle.
         var should be an instance variable. """
+        for cyc in self.cycles:
+            if cyc.context == context:
+                return cyc.normalize(var)
+        raise Exception("No such gait cycle in data")
+        # TODO: FIX    
         if cycle > self.ncycles:
             raise Exception("No such gait cycle in data")
         return self.cycles[cycle-1].normalize(var)
