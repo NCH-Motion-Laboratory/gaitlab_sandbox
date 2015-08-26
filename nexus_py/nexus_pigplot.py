@@ -28,7 +28,7 @@ maintitleprefix = 'Kinematics plot for '
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()
 nplotter.read_trial(plotvars)
-nplotter.plot_trial(maintitleprefix=maintitleprefix)
+nplotter.plot_trial(maintitleprefix=maintitleprefix, cycle=2)
 
 plotvars = ['HipMomentX',
             'HipMomentY',

@@ -320,17 +320,13 @@ class trial:
             raise Exception("No such gait cycle in data")
         return self.cycles[cycle-1].cut_analog_to_cycle(data)
         
-    def normalize_to_cycle(self, var, context, cycle):
-        """ Returns model variable (e.g. PiG) normalized to a gait cycle
-        with given context. var should be an instance variable. 
-        e.g. cycle=2 and context='L' normalizes to 2nd left gait cycle. """
-        counter = 0
-        for cyc in self.cycles:
-            if cyc.context == context.upper():
-                counter += 1
-            if counter == cycle:
-                return cyc.normalize(var)
-        raise Exception('No gait cycle with given context and number found in data!')
+    def get_cycle(self, context, ncycle):
+        """ e.g. ncycle=2 and context='L' returns 2nd left gait cycle. """
+        cycles = [cycle for cycle in self.cycles if cycle.context == context]
+        if len(cycles) < ncycle:
+            return None
+        else:
+            return cycles[ncycle-1]
 
     def emg_on_cycle(self, chname, cycle):
         """ Cut EMG channel to a given gait cycle. OBSOLETED """

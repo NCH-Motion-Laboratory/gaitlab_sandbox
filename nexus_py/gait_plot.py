@@ -344,21 +344,28 @@ class gaitplotter():
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
+        
         # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:
             for k, varname_ in enumerate(self.model_plot_vars):  # varname_ is not side specific, e.g. 'HipMomentX'
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
+                lcyc = self.trial.get_cycle('L', cycle)
+                rcyc = self.trial.get_cycle('R', cycle)
+                if not (lcyc and rcyc):
+                    error_exit('Cannot get requested left/right gait cycles from data')
                 if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:  # plot both sides (L/R)
                     sides = ['L','R']
                 else:
                     sides = side
                 for side_ in sides:  # loop thru sides, normalize and plot data
                     varname = side_ + varname_  # side-specific variable name, e.g. 'LHipMomentX'
-                    data_gc = self.trial.normalize_to_cycle(self.trial.model.Vars[varname], side_, cycle)
                     if side_ == 'L':
                         tracecolor = self.tracecolor_l
+                        cyc = lcyc
                     elif side_ == 'R':
                         tracecolor = self.tracecolor_r
+                        cyc = rcyc
+                    data_gc = cyc.normalize(self.trial.model.Vars[varname])                        
                     plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
                 if self.trial.model.normaldata(varname_):
@@ -391,8 +398,8 @@ class gaitplotter():
                     ymax = ax.get_ylim()[1]
                     xmin = ax.get_xlim()[0]
                     xmax = ax.get_xlim()[1]
-                    ltoeoff = self.gc.ltoe1_norm
-                    rtoeoff = self.gc.rtoe1_norm
+                    ltoeoff = lcyc.toeoffn
+                    rtoeoff = rcyc.toeoffn
                     arrlen = (ymax-ymin) * self.toeoff_rel_len
                     # these are related to plot height/width, to avoid aspect ratio effects
                     hdlength = arrlen * .33
