@@ -16,12 +16,13 @@ pdftitlestr = 'EMG_'
 
 nplotter = gaitplotter(layout)
 plotvars = gaitplotter_plots.std_emg
-nplotter.open_nexus_trial(plotvars)
-trialname = nplotter.trialname
+nplotter.open_nexus_trial()
+nplotter.read_trial(plotvars)
+trialname = nplotter.trial.trialname
 maintitle = maintitleprefix + trialname
 maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
-nplotter.plot_trial(maintitle=maintitle, onesided_kinematics=True)
-nplotter.create_pdf(pdf_prefix=pdftitlestr)
+nplotter.plot_trial(maintitle=maintitle)
+#nplotter.create_pdf(pdf_prefix=pdftitlestr)
 
 nplotter.show()
 

@@ -558,7 +558,7 @@ class emg:
         tn = np.linspace(0, 100, cyc.len_smp)
         for ch in self.logical_data:
             data = self.logical_data[ch]
-            logical_data_cyc[ch] = cyc.analog_to_cycle(data)
+            logical_data_cyc[ch] = cyc.cut_analog_to_cycle(data)
         return tn, logical_data_cyc
        
 

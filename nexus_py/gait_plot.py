@@ -443,7 +443,7 @@ class gaitplotter():
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK
                     if self.emg_apply_filter:
-                        plt.plot(tn_emg, 1e3*self.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
+                        plt.plot(tn_emg, 1e3*self.trial.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
                     else:
                         plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
                 chlabel = self.emg.ch_labels[thisch]
