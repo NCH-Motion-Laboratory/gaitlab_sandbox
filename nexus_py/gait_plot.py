@@ -343,15 +343,17 @@ class gaitplotter():
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
+
+        # get info on left and right gait cycles
+        lcyc = self.trial.get_cycle('L', cycle)
+        rcyc = self.trial.get_cycle('R', cycle)
+        if not (lcyc and rcyc):
+            error_exit('Cannot get requested left/right gait cycles from data')
         
         # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:
             for k, varname_ in enumerate(self.model_plot_vars):  # varname_ is not side specific, e.g. 'HipMomentX'
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
-                lcyc = self.trial.get_cycle('L', cycle)
-                rcyc = self.trial.get_cycle('R', cycle)
-                if not (lcyc and rcyc):
-                    error_exit('Cannot get requested left/right gait cycles from data')
                 if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:  # plot both sides (L/R)
                     sides = ['L','R']
                 else:
@@ -397,23 +399,22 @@ class gaitplotter():
                     ymax = ax.get_ylim()[1]
                     xmin = ax.get_xlim()[0]
                     xmax = ax.get_xlim()[1]
-                    ltoeoff = lcyc.toeoffn
-                    rtoeoff = rcyc.toeoffn
                     arrlen = (ymax-ymin) * self.toeoff_rel_len
                     # these are related to plot height/width, to avoid aspect ratio effects
                     hdlength = arrlen * .33
                     hdwidth = (xmax-xmin) / 50.
+                    # plot both L/R toeoff arrows
                     if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:
                         plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
                         plt.arrow(rtoeoff, ymin, 0, arrlen, color=self.tracecolor_r, 
                                   head_length=hdlength, head_width=hdwidth)
                     else:  # single trace was plotted - only plot one-sided toeoff
-                        if self.trial.kinetics == 'L':
-                            toeoff = ltoeoff
+                        if side == 'L':
+                            toeoff = lcyc.toeoffn
                             arrowcolor = self.tracecolor_l
                         else:
-                            toeoff = rtoeoff
+                            toeoff = rcyc.rtoeoffn
                             arrowcolor = self.tracecolor_r
                         plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                           head_length=hdlength, head_width=hdwidth)
@@ -422,17 +423,14 @@ class gaitplotter():
         if self.emg_plot_chs:
             for k, thisch in enumerate(self.emg_plot_chs):
                 side_this = thisch[0]
-                # choose EMG data normalized according to side
+                # normalize EMG data according to side
                 if side_this == 'L':
-                    tn_emg = self.emg.tn_emg_l
-                    emgdata = self.emg.logical_data_gc1l
-                    #emg_yscale = self.emg.yscale_gc1l
+                    cyc = lcyc
                 elif side_this == 'R':
-                    tn_emg = self.emg.tn_emg_r
-                    emgdata = self.emg.logical_data_gc1r
-                    #emg_yscale = self.emg.yscale_gc1r
+                    cyc = rcyc
                 else:
                     error_exit('Unexpected EMG channel name: ', thisch)
+                tn_emg, emgdata = self.trial.emg.cut_to_cycle(cyc)
                 # at least for now, use fixed scale defined in config
                 emg_yscale = self.cfg.getval('emg_yscale')
                 ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
@@ -445,7 +443,6 @@ class gaitplotter():
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK
                     if self.emg_apply_filter:
-                        # convert emg to millivolts
                         plt.plot(tn_emg, 1e3*self.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
                     else:
                         plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
@@ -467,16 +464,14 @@ class gaitplotter():
                     ymax = ax.get_ylim()[1]
                     xmin = ax.get_xlim()[0]
                     xmax = ax.get_xlim()[1]
-                    ltoeoff = self.gc.ltoe1_norm
-                    rtoeoff = self.gc.rtoe1_norm
                     arrlen = (ymax-ymin) * self.toeoff_rel_len
                     hdlength = arrlen / 4.
                     hdwidth = (xmax-xmin) / 40.
                     if side_this == 'L':
-                        toeoff = ltoeoff
+                        toeoff = lcyc.toeoffn
                         arrowcolor = self.tracecolor_l
                     else:
-                        toeoff = rtoeoff
+                        toeoff = rcyc.toeoffn
                         arrowcolor = self.tracecolor_r
                     plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                               head_length=hdlength, head_width=hdwidth)

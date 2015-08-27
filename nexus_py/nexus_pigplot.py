@@ -2,44 +2,26 @@
 """
 Created on Tue Apr 28 11:37:51 2015
 
-Plot PiG outputs (online) from Nexus.
+Plot Plug-in Gait outputs (online) from Nexus. 
+Kinematics and kinetics on separate plots.
 
 @author: Jussi
 """
 
 
 from gait_plot import gaitplotter
+import gaitplotter_plots
 
 layout = [4,3]
 
-plotvars = ['PelvisAnglesX',
-           'PelvisAnglesY',
-           'PelvisAnglesZ',
-           'HipAnglesX',
-           'HipAnglesY',
-           'HipAnglesZ',
-           'KneeAnglesX',
-           'KneeAnglesY',
-           'KneeAnglesZ',
-           'AnkleAnglesX',
-           'FootProgressAnglesZ',
-           'AnkleAnglesZ']
+plotvars = gaitplotter_plots.std_kinematics
 maintitleprefix = 'Kinematics plot for '
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()
 nplotter.read_trial(plotvars)
-nplotter.plot_trial(maintitleprefix=maintitleprefix, cycle=2)
+nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
-plotvars = ['HipMomentX',
-            'HipMomentY',
-             'HipMomentZ',
-             'HipPowerZ',
-             'KneeMomentX',
-             'KneeMomentY',
-             'KneeMomentZ',
-             'KneePowerZ',
-             'AnkleMomentX',None,None,
-             'AnklePowerZ']                      
+plotvars = gaitplotter_plots.std_kinetics
 maintitleprefix = 'Kinetics plot for '
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()
@@ -48,4 +30,5 @@ nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
 nplotter.show()
     
+
    

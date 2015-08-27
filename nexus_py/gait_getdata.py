@@ -171,7 +171,7 @@ class gaitcycle:
 
     def cut_analog_to_cycle(self, var):
         """ Crop analog variable (EMG, forceplate, etc. ) to this
-        cycle; no interpolation """
+        cycle; no interpolation. """
         return var[self.start_smp:self.end_smp]
   
 class trial:
@@ -551,6 +551,15 @@ class emg:
                     print('map_data: multiple matching channels for: '+datach+' Choosing: '+elname)
                 self.logical_data[logch] = self.data[elname]
 
+    def cut_to_cycle(self, cyc):
+        """ Cut EMG data to a given gait cycle cyc. Also returns a time axis
+        0..100% of the same length as the EMG data. """
+        logical_data_cyc = {}
+        tn = np.linspace(0, 100, cyc.len_smp)
+        for ch in self.logical_data:
+            data = self.logical_data[ch]
+            logical_data_cyc[ch] = cyc.analog_to_cycle(data)
+        return tn, logical_data_cyc
        
 
 class model_outputs:
