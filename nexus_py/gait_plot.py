@@ -431,6 +431,7 @@ class gaitplotter():
                 else:
                     error_exit('Unexpected EMG channel name: ', thisch)
                 tn_emg, emgdata = self.trial.emg.cut_to_cycle(cyc)
+                
                 # at least for now, use fixed scale defined in config
                 emg_yscale = self.cfg.getval('emg_yscale')
                 ax = plt.subplot(self.gs[self.emg_plot_pos[k]])
