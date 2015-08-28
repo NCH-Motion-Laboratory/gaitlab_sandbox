@@ -443,13 +443,14 @@ class gaitplotter():
                 elif emgdata[thisch] == 'EMG_REUSED':
                         ax.annotate('reused', xy=(50,0), ha="center", va="center")
                 else:  # data OK
+                    print(self.trial.emg.logical_data[thisch])                
                     if self.emg_apply_filter:
                         plt.plot(tn_emg, 1e3*self.trial.emg.filt(emgdata[thisch], self.emg_passband), emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
                     else:
                         plt.plot(tn_emg, 1e3*emgdata[thisch], emg_tracecolor, alpha=self.emg_alpha, label=self.trial.trialname)
-                chlabel = self.emg.ch_labels[thisch]
+                chlabel = self.trial.emg.ch_labels[thisch]
                 # plot EMG normal bars
-                emgbar_ind = self.emg.ch_normals[thisch]
+                emgbar_ind = self.trial.emg.ch_normals[thisch]
                 for k in range(len(emgbar_ind)):
                     inds = emgbar_ind[k]
                     plt.axvspan(inds[0], inds[1], alpha=self.emg_normals_alpha, color=self.emg_normals_color)    

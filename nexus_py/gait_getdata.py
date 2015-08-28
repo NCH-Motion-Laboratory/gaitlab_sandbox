@@ -558,7 +558,10 @@ class emg:
         tn = np.linspace(0, 100, cyc.len_smp)
         for ch in self.logical_data:
             data = self.logical_data[ch]
-            logical_data_cyc[ch] = cyc.cut_analog_to_cycle(data)
+            if data == 'EMG_DISCONNECTED' or data == 'EMG_REUSED':
+                logical_data_cyc[ch] = data
+            else:
+                logical_data_cyc[ch] = cyc.cut_analog_to_cycle(data)
         return tn, logical_data_cyc
        
 
