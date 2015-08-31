@@ -9,30 +9,23 @@ Kinematics-EMG plot from Nexus.
 
  
 from gait_plot import gaitplotter
+import gaitplotter_plots
 
 layout = [8,3]
 plotheightratios = [3,2,2,3,2,2,2,3]
 pdf_prefix = 'Kinetics_EMG_'
 maintitleprefix='Kinetics-EMG plot for '
-
 nplotter = gaitplotter(layout)
 
 # need to open trial before detecting side
-nplotter.open_nexus_trial(nexusvars=None)
-side = nplotter.side
+nplotter.open_nexus_trial()
+side = nplotter.trial.kinetics_side
+plotvars = gaitplotter_plots.kinetics_emg(side)
+
 # choose EMG variables according to side
-plotvars = ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            side+'Ham', side+'Rec', side+'TibA',
-            side+'Glut',side+'Vas',side+'Per',
-            'HipMomentX','KneeMomentX','AnkleMomentX',
-            side+'Rec',side+'Ham',side+'Gas',
-            None,side+'Glut',side+'Sol',
-            None,side+'Gas',None,
-            'HipPowerZ','KneePowerZ','AnklePowerZ']
+nplotter.read_trial(plotvars)
 
-nplotter.open_nexus_trial(nexusvars=plotvars)
-
-trialname = nplotter.trialname
+trialname = nplotter.trial.trialname
 maintitle = maintitleprefix + trialname
 maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
 

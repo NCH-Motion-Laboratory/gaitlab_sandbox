@@ -247,7 +247,7 @@ class trial:
         # TODO: emg params
         self.emg = emg(source)
         self.model = model_outputs(self.source, pig_normaldata_path)
-        self.kinetics = self.kinetics_available()
+        self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
         self.scan_cycles()
@@ -874,7 +874,8 @@ class model_outputs:
                 NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
                 if not NumVals:
                     raise ModelVarNotFoundError
-                self.Vars[Var] = np.array(NumVals)
+                # remove singleton dimensions
+                self.Vars[Var] = np.squeeze(np.array(NumVals))
         elif is_c3dfile(source):
             c3dfile = source
             reader = btk.btkAcquisitionFileReader()

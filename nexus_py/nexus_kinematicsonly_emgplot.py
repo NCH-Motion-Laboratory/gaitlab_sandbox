@@ -17,22 +17,34 @@ plotheightratios = [3,2,2,2,2,2]
 pdf_prefix = 'Kinematics_EMG_'
 maintitleprefix='Kinematics-EMG plot for '
 
+side = 'L'
 nplotter = gaitplotter(layout)
-# need to open trial before detecting side
 nplotter.open_nexus_trial()
-side = nplotter.trial.kinetics
-# choose EMG variables according to side
-plotvars = gaitplotter_plots.kinetics_emg(side)
+plotvars = gaitplotter_plots.kinematics_emg(side)
+nplotter.read_trial(plotvars)
 
-nplotter.open_nexus_trial(nexusvars=plotvars)
-
-trialname = nplotter.trialname
-maintitle = maintitleprefix + trialname
+trialname = nplotter.trial.trialname
+maintitle = maintitleprefix + trialname + ' ('+side+')'
 maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
 
 nplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle)
 nplotter.create_pdf(pdf_prefix=pdf_prefix)
-
 nplotter.show()
+
+
+side = 'R'
+nplotter = gaitplotter(layout)
+nplotter.open_nexus_trial()
+plotvars = gaitplotter_plots.kinematics_emg(side)
+nplotter.read_trial(plotvars)
+
+trialname = nplotter.trial.trialname
+maintitle = maintitleprefix + trialname + ' ('+side+')'
+maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
+
+nplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle)
+nplotter.create_pdf(pdf_prefix=pdf_prefix)
+nplotter.show()
+
 
 

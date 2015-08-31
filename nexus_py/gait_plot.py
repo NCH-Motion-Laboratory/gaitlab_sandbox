@@ -321,7 +321,7 @@ class gaitplotter():
         if side:
             side = side.upper()
         else:
-            side = self.trial.kinetics           
+            side = self.trial.kinetics_side
         
         # if plot height ratios not set, set them all equal    
         if not plotheightratios:
@@ -329,7 +329,7 @@ class gaitplotter():
 
         # automatic title
         if not maintitle:
-            maintitle = maintitleprefix + self.trial.trialname + ' ('+self.trial.kinetics+')'
+            maintitle = maintitleprefix + self.trial.trialname + ' ('+self.trial.kinetics_side+')'
         
         # x variable for kinematics / kinetics: 0,1...100
         tn = np.linspace(0, 100, 101)
@@ -349,7 +349,7 @@ class gaitplotter():
         rcyc = self.trial.get_cycle('R', cycle)
         if not (lcyc and rcyc):
             error_exit('Cannot get requested left/right gait cycles from data')
-        
+
         # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:
             for k, varname_ in enumerate(self.model_plot_vars):  # varname_ is not side specific, e.g. 'HipMomentX'
@@ -366,7 +366,7 @@ class gaitplotter():
                     elif side_ == 'R':
                         tracecolor = self.tracecolor_r
                         cyc = rcyc
-                    data_gc = cyc.normalize(self.trial.model.Vars[varname])                        
+                    data_gc = cyc.normalize(self.trial.model.Vars[varname])
                     plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
                 if self.trial.model.normaldata(varname_):
@@ -405,16 +405,16 @@ class gaitplotter():
                     hdwidth = (xmax-xmin) / 50.
                     # plot both L/R toeoff arrows
                     if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:
-                        plt.arrow(ltoeoff, ymin, 0, arrlen, color=self.tracecolor_l, 
+                        plt.arrow(lcyc.toeoffn, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
-                        plt.arrow(rtoeoff, ymin, 0, arrlen, color=self.tracecolor_r, 
+                        plt.arrow(rcyc.toeoffn, ymin, 0, arrlen, color=self.tracecolor_r, 
                                   head_length=hdlength, head_width=hdwidth)
                     else:  # single trace was plotted - only plot one-sided toeoff
                         if side == 'L':
                             toeoff = lcyc.toeoffn
                             arrowcolor = self.tracecolor_l
                         else:
-                            toeoff = rcyc.rtoeoffn
+                            toeoff = rcyc.toeoffn
                             arrowcolor = self.tracecolor_r
                         plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                           head_length=hdlength, head_width=hdwidth)
@@ -513,12 +513,12 @@ class gaitplotter():
             # self.fig.set_size_inches([8.27,11.69])
             if pdf_name:
                 # user specified name into session dir
-                pdf_name = self.sessionpath + pdf_name
+                pdf_name = self.trial.sessionpath + pdf_name
             else:
                 # automatic naming by trialname
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
-                pdf_name = self.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
+                pdf_name = self.trial.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
             try:
                 with PdfPages(pdf_name) as pdf:
                     print("Writing "+pdf_name)
