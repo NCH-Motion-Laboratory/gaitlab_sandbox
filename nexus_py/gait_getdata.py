@@ -6,10 +6,7 @@ Gaitplotter utility classes for reading gait data.
 
 
 NEXT:
--need to have L/R cycles from each trial (context); L side variables are
-normalized into L cycles and R to R cycles
--remove 'Norm' model class variables; smarter side info
--verify c3d/Nexus model reading/normalization
+
 
 TODO:
 -classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
@@ -197,14 +194,14 @@ class trial:
                     elif i.GetContext() == "Left":
                         self.lfstrikes.append(i.GetFrame())
                     else:
-                        raise Exception("Unknown context")
+                        raise Exception("Unknown context on foot strike event")
                 elif i.GetLabel() == "Foot Off":
                     if i.GetContext() == "Right":
                         self.rtoeoffs.append(i.GetFrame())
                     elif i.GetContext() == "Left":
                         self.ltoeoffs.append(i.GetFrame())
                     else:
-                        raise Exception("Unknown context")
+                        raise Exception("Unknown context on foot strike event")
         elif is_vicon_instance(source):
             debug_print('trial: reading from Vicon Nexus')
             vicon = source
@@ -260,7 +257,6 @@ class trial:
         # get force data
         forcetot = self.fp.forcetot
         # foot strike frames -> analog samples
-        print('strikes and offset: ',self.lfstrikes, self.offset)
         lfsind = (np.array(self.lfstrikes) - self.offset) * self.fp.samplesperframe
         rfsind = (np.array(self.rfstrikes) - self.offset) * self.fp.samplesperframe
         delay = int(delay_ms/1000. * self.fp.sfrate)
@@ -306,8 +302,6 @@ class trial:
                 start = strikes[k]
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
-                debug_print('cycle: ', start, end)
-                debug_print('toeoffs during cycle: ',len(toeoff))
                 if len(toeoff) != 1:
                     raise GaitDataError('Expected a single toe-off event during gait cycle')
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
@@ -535,7 +529,7 @@ class emg:
                     raise GaitDataError('Cannot find channel: '+datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
-                    debug_print('map_data: multiple matching EMG channels for: '+datach+': '+matches)
+                    debug_print('map_data: multiple matching EMG channels for requested channel', datach, ':', matches)
                     debug_print('Choosing: '+elname)
                 self.logical_data[logch] = self.data[elname]
 

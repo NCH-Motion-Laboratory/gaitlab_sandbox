@@ -16,10 +16,11 @@ layout = [9,2]
 pdftitlestr = 'EMG_overlay_'
 
 plotvars = gaitplotter_plots.std_emg
-trialpath = 'C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS28.c3d'
+trialpath = 'C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS33.c3d'
 nplotter = gaitplotter(layout)
-maintitle = 'EMG plot' + '\n' + nplotter.get_emg_filter_description()
 nplotter.open_c3d_trial(trialpath)
+trialname = nplotter.trial.trialname
+maintitle = 'EMG plot for ' + trialname + '\n' + nplotter.get_emg_filter_description()
 nplotter.read_trial(plotvars)
 nplotter.plot_trial(maintitle=maintitle,
                     emg_tracecolor=emgcolors[i])
