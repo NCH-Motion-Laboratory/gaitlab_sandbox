@@ -243,12 +243,13 @@ class trial:
         self.scan_cycles()
         
     def kinetics_available(self):
-        """ See whether this trial has full kinetics for left/right side
+        """ See whether this trial has GRF info for left/right side
         (or neither, or both). Kinetics require the GRF for the corresponding
-        side, i.e. a forceplate strike. Thus look at strike event times and 
+        side, i.e. a forceplate strike. Thus look at foot strike event times and 
         determine whether (clean) forceplate contact is happening at each time.
         Currently this method is not very smart and does not work for multiple-plate
-        systems. Trials with double contact may also be misclassified. """
+        systems. Trials with double contact may also be misclassified, so data needs
+        to be properly processed. """
         # delay between foot strike event and forceplate data evaluation.
         # idea is to wait until the other foot has lifted off
         delay_ms = 150
@@ -529,8 +530,7 @@ class emg:
                     raise GaitDataError('Cannot find channel: '+datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
-                    debug_print('map_data: multiple matching EMG channels for requested channel', datach, ':', matches)
-                    debug_print('Choosing: '+elname)
+                    debug_print('map_data:', matches, '->', elname)
                 self.logical_data[logch] = self.data[elname]
 
     def cut_to_cycle(self, cyc):

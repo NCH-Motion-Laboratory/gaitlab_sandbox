@@ -22,8 +22,7 @@ nplotter.open_c3d_trial(trialpath)
 trialname = nplotter.trial.trialname
 maintitle = 'EMG plot for ' + trialname + '\n' + nplotter.get_emg_filter_description()
 nplotter.read_trial(plotvars)
-nplotter.plot_trial(maintitle=maintitle,
-                    emg_tracecolor=emgcolors[i])
+nplotter.plot_trial(maintitle=maintitle)
 
    
 nplotter.show()
