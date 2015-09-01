@@ -49,14 +49,18 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
+DEBUG = True
 
+def debug_print(*args):
+    if DEBUG:
+        print(*args)
 
 class TrialNotProcessedError(Exception):
     """ Gait trial was not processed properly """
     def __init__(self, msg):
         self.msg = msg
     def __str__(self):
-        return repr(self.chname)
+        return repr(self.msg)
 
 class ChannelNotFoundError(Exception):
     """ Analog channel not found """
@@ -67,10 +71,18 @@ class ChannelNotFoundError(Exception):
 
 class DeviceNotFoundError(Exception):
     """ Device (EMG, forceplate, etc.) not found """
-    pass
+    def __init__(self, dev):
+        self.dev = dev
+    def __str__(self):
+        return repr(self.dev)
 
 class ModelVarNotFoundError(Exception):
-    pass
+    """ Cannot find model variable """
+    def __init__(self, model):
+        self.model = model
+    def __str__(self):
+        return repr(self.model)
+
 
 class InvalidDataSourceError(Exception):
     pass
@@ -175,8 +187,7 @@ class gaitcycle:
         return var[self.start_smp:self.end_smp]
   
 class trial:
-    """
-    A gait trial. Contains:
+    """ A gait trial. Contains:
     -subject and trial info
     -gait cycles (beginning and end frames)
     -analog data (EMG, forceplate, etc.)
@@ -193,6 +204,7 @@ class trial:
         # TODO: needs to be determined from file
         self.smp_per_frame = 10
         if is_c3dfile(source):
+            debug_print('trial: reading from ', source)
             c3dfile = source
             self.trialname = os.path.basename(os.path.splitext(c3dfile)[0])
             self.sessionpath = os.path.dirname(c3dfile)
@@ -219,6 +231,7 @@ class trial:
                     else:
                         raise Exception("Unknown context")
         elif is_vicon_instance(source):
+            debug_print('trial: reading from Vicon Nexus')
             vicon = source
             subjectnames = vicon.GetSubjectNames()  
             if not subjectnames:
@@ -238,6 +251,9 @@ class trial:
             self.offset = 1  # DEBUG
         else:
             raise InvalidDataSourceError()
+        # sort events (may be in wrong temporal order, at least in c3d files)
+        for li in [self.lfstrikes,self.rfstrikes,self.ltoeoffs,self.rtoeoffs]:
+            li.sort()
         self.source = source
         self.fp = forceplate(source)
         # TODO: read from config / put as init params?
@@ -267,11 +283,14 @@ class trial:
         # get force data
         forcetot = self.fp.forcetot
         # foot strike frames -> analog samples
+        print('strikes and offset: ',self.lfstrikes, self.offset)
         lfsind = (np.array(self.lfstrikes) - self.offset) * self.fp.samplesperframe
         rfsind = (np.array(self.rfstrikes) - self.offset) * self.fp.samplesperframe
         delay = int(delay_ms/1000. * self.fp.sfrate)
-        lfsforces = forcetot[lfsind.astype(int) + delay]
-        rfsforces = forcetot[rfsind.astype(int) + delay]
+        lind = [x for x in lfsind.astype(int)+delay if x<len(forcetot)]
+        rind = [x for x in rfsind.astype(int)+delay if x<len(forcetot)]        
+        lfsforces = forcetot[lind]
+        rfsforces = forcetot[rind]
         # TODO: check for double contact
         # TODO: caller cannot interpret 'LR' yet
         kinetics = ''
@@ -289,6 +308,9 @@ class trial:
 
     def scan_cycles(self):
         """ Scan for foot strike events and create gait cycle objects. """
+        debug_print('scan_cycles:')
+        debug_print('foot strikes, l/r:', self.lfstrikes, self.rfstrikes)
+        debug_print('toeoffs, l/r: ', self.ltoeoffs, self.rtoeoffs)
         self.cycles = []
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
@@ -307,6 +329,8 @@ class trial:
                 start = strikes[k]
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
+                debug_print('cycle: ', start, end)
+                debug_print('toeoffs during cycle: ',len(toeoff))
                 if len(toeoff) != 1:
                     raise TrialNotProcessedError('Expected a single toe-off event during gait cycle')
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
@@ -378,7 +402,6 @@ class forceplate:
             raise Exception('Invalid source')
         self.forceall = np.array([self.forcex,self.forcey,self.forcez])
         self.forcetot = np.sqrt(sum(self.forceall**2,1))
-                    
 
 class emg:
     """ Read and process EMG data. """
@@ -473,7 +496,7 @@ class emg:
             if emgdevname in devnames:
                 emg_id = vicon.GetDeviceIDFromName(emgdevname)
             else:
-               raise DeviceNotFoundError()
+               raise DeviceNotFoundError('EMG')
             # DType should be 'other', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
             samplesperframe = drate / framerate
@@ -548,7 +571,8 @@ class emg:
                     raise ChannelNotFoundError(datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
-                    print('map_data: multiple matching channels for: '+datach+' Choosing: '+elname)
+                    debug_print('map_data: multiple matching EMG channels for: '+datach+': '+matches)
+                    debug_print('Choosing: '+elname)
                 self.logical_data[logch] = self.data[elname]
 
     def cut_to_cycle(self, cyc):

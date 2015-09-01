@@ -1,37 +1,30 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 28 11:25:38 2015
+Created on Tue Apr 28 11:37:51 2015
 
-EMG plot from c3d file. WIP
+single emg plot from c3d
 
 @author: Jussi
 """
 
 from gait_plot import gaitplotter
+import sys
+from gait_getdata import error_exit
+import gaitplotter_plots
 
-c3dfile = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS33.c3d"
+layout = [9,2]
+pdftitlestr = 'EMG_overlay_'
 
-layout = [8,2]
-plotvars = ['RGlut','LGlut',
-              'RHam','LHam',
-              'RRec','LRec',
-              'RVas','LVas',
-              'RTibA','LTibA',
-              'RPer','LPer',
-              'RGas','LGas',
-              'RSol','LSol']
-maintitleprefix = 'EMG plot for '
-pdftitlestr = 'EMG_'
-
+plotvars = gaitplotter_plots.std_emg
+trialpath = 'C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS28.c3d'
 nplotter = gaitplotter(layout)
-nplotter.open_c3d_trial(plotvars, c3dfile)
-trialname = nplotter.trialname
-maintitle = maintitleprefix + trialname
-maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
-nplotter.plot_trial(maintitle=maintitle, onesided_kinematics=True)
-#nplotter.create_pdf(pdf_prefix=pdftitlestr)
+maintitle = 'EMG plot' + '\n' + nplotter.get_emg_filter_description()
+nplotter.open_c3d_trial(trialpath)
+nplotter.read_trial(plotvars)
+nplotter.plot_trial(maintitle=maintitle,
+                    emg_tracecolor=emgcolors[i])
 
+   
 nplotter.show()
-
-
+#nplotter.create_pdf(pdf_name='overlay.pdf')
 

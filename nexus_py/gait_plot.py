@@ -290,9 +290,17 @@ class gaitplotter():
                 else:
                     error_exit('Unknown variable or plot directive: ' + var)
         if read_emg:
-            self.trial.emg.read()
+            try:
+                self.trial.emg.read()
+            except gait_getdata.ChannelNotFoundError as c:
+                error_exit('Cannot find requested EMG channel: ' + c.chname)
+            except gait_getdata.DeviceNotFoundError as e:
+                error_exit('Cannot find device: ', e.dev)
         if read_pig:
-            self.trial.model.read_pig_lowerbody()
+            try:
+                self.trial.model.read_pig_lowerbody()
+            except gait_getdata.ModelVarNotFoundError as m:
+                error_exit('Cannot find model variable: ', m.var)
         if read_musclelen:
             self.trial.model.read_musclelen()
                                       
