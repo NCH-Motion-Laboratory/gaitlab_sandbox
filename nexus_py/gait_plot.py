@@ -249,13 +249,19 @@ class gaitplotter():
         if not gait_getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         vicon = gait_getdata.viconnexus()
-        self.trial = gait_getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
+        try:
+            self.trial = gait_getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
+        except gait_getdata.GaitDataError as e:
+            error_exit(e.msg)
         
     def open_c3d_trial(self, trialpath):
         """ Open a c3d trial. """
         if not os.path.isfile(trialpath):
             error_exit('Cannot find trial: '+trialpath)
-        self.trial = gait_getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
+        try:
+            self.trial = gait_getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
+        except gait_getdata.GaitDataError as e:
+            error_exit(e.msg)
         
     def read_trial(self, vars):
         """ Read requested trial variables and directives """
@@ -289,20 +295,15 @@ class gaitplotter():
                     self.model_plot_pos.append(i)
                 else:
                     error_exit('Unknown variable or plot directive: ' + var)
-        if read_emg:
-            try:
-                self.trial.emg.read()
-            except gait_getdata.ChannelNotFoundError as c:
-                error_exit('Cannot find requested EMG channel: ' + c.chname)
-            except gait_getdata.DeviceNotFoundError as e:
-                error_exit('Cannot find device: ', e.dev)
-        if read_pig:
-            try:
-                self.trial.model.read_pig_lowerbody()
-            except gait_getdata.ModelVarNotFoundError as m:
-                error_exit('Cannot find model variable: ', m.var)
-        if read_musclelen:
-            self.trial.model.read_musclelen()
+        try:
+            if read_emg:
+                    self.trial.emg.read()
+            if read_pig:
+                    self.trial.model.read_pig_lowerbody()
+            if read_musclelen:
+                    self.trial.model.read_musclelen()
+        except gait_getdata.GaitDataError as e:
+             error_exit(e.msg)
                                       
     def set_fig_title(self, title):
         if self.fig:

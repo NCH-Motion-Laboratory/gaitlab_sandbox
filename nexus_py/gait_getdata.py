@@ -17,7 +17,7 @@ dialogs if needed
 
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)
-create and raise custom exceptions. Caller may catch those
+create and raise custom exception. Caller may catch those
 -for rare/unexpected errors, raise Exception with description of the error
 
 ROI on Vicon/c3d:
@@ -55,37 +55,12 @@ def debug_print(*args):
     if DEBUG:
         print(*args)
 
-class TrialNotProcessedError(Exception):
-    """ Gait trial was not processed properly """
+class GaitDataError(Exception):
+    """ Custom exception class. Stores a message. """
     def __init__(self, msg):
         self.msg = msg
     def __str__(self):
         return repr(self.msg)
-
-class ChannelNotFoundError(Exception):
-    """ Analog channel not found """
-    def __init__(self, chname):
-        self.chname = chname
-    def __str__(self):
-        return repr(self.chname)
-
-class DeviceNotFoundError(Exception):
-    """ Device (EMG, forceplate, etc.) not found """
-    def __init__(self, dev):
-        self.dev = dev
-    def __str__(self):
-        return repr(self.dev)
-
-class ModelVarNotFoundError(Exception):
-    """ Cannot find model variable """
-    def __init__(self, model):
-        self.model = model
-    def __str__(self):
-        return repr(self.model)
-
-
-class InvalidDataSourceError(Exception):
-    pass
 
 
 def viconnexus():
@@ -235,12 +210,12 @@ class trial:
             vicon = source
             subjectnames = vicon.GetSubjectNames()  
             if not subjectnames:
-                error_exit('No subject defined in Nexus')
+                raise GaitDataError('No subject defined in Nexus')
             trialname_ = vicon.GetTrialName()
             self.sessionpath = trialname_[0]
             self.trialname = trialname_[1]
             if not self.trialname:
-                error_exit('No trial loaded')
+                raise GaitDataError('No trial loaded in Nexus')
             self.subjectname = subjectnames[0]
             # get events
             self.lfstrikes = vicon.GetEvents(self.subjectname, "Left", "Foot Strike")[0]
@@ -248,9 +223,11 @@ class trial:
             self.ltoeoffs = vicon.GetEvents(self.subjectname, "Left", "Foot Off")[0]
             self.rtoeoffs = vicon.GetEvents(self.subjectname, "Right", "Foot Off")[0]
             # frame offset (start of trial data in frames)
-            self.offset = 1  # DEBUG
+            self.offset = 1
         else:
-            raise InvalidDataSourceError()
+            raise GaitDataError('Invalid data source specified')
+        if len(self.lfstrikes) < 2 or len(self.rfstrikes) <2:
+            raise GaitDataError('Too few foot strike events detected, check that data has been processed')
         # sort events (may be in wrong temporal order, at least in c3d files)
         for li in [self.lfstrikes,self.rfstrikes,self.ltoeoffs,self.rtoeoffs]:
             li.sort()
@@ -315,7 +292,7 @@ class trial:
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
             if len_s < 2:
-                raise TrialNotProcessedError("Insufficient number of foot strike events detected. "+
+                raise GaitDataError("Insufficient number of foot strike events detected. "+
                         "Check that the trial has been processed.")
             if len_s % 2:
                 strikes.pop()  # assure even number of foot strikes
@@ -332,7 +309,7 @@ class trial:
                 debug_print('cycle: ', start, end)
                 debug_print('toeoffs during cycle: ',len(toeoff))
                 if len(toeoff) != 1:
-                    raise TrialNotProcessedError('Expected a single toe-off event during gait cycle')
+                    raise GaitDataError('Expected a single toe-off event during gait cycle')
                 cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                 self.cycles.append(cycle)
         self.ncycles = len(self.cycles)
@@ -361,7 +338,7 @@ class forceplate:
             if fpdevicename in devicenames:
                 fpid = vicon.GetDeviceIDFromName(fpdevicename)
             else:
-               raise DeviceNotFoundError()
+               raise GaitDataError('Forceplate device not found')
             # DType should be 'ForcePlate', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
             self.sfrate = drate
@@ -432,7 +409,7 @@ class emg:
             data = self.logical_data[chname]
             return self.filt(data, self.passband)
         else:
-            raise ChannelNotFoundError(chname)
+            raise GaitDataError('Cannot find requested channel: '+chname)
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
@@ -496,7 +473,7 @@ class emg:
             if emgdevname in devnames:
                 emg_id = vicon.GetDeviceIDFromName(emgdevname)
             else:
-               raise DeviceNotFoundError('EMG')
+               raise GaitDataError('EMG device not found')
             # DType should be 'other', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
             samplesperframe = drate / framerate
@@ -538,7 +515,7 @@ class emg:
                         self.data[elname] = 'EMG_DISCONNECTED'
             self.datalen = len(self.data[elname])
         else:
-            raise Exception('Invalid source')
+            raise GaitDataError('Invalid data source')
         self.t = np.arange(self.datalen)/self.sfrate
         self.map_data()
         # set scales for plotting channels. Automatic scaling logic may
@@ -568,7 +545,7 @@ class emg:
                 # find unique matching physical electrode name
                 matches = [x for x in self.elnames if x.find(datach) >= 0]
                 if len(matches) == 0:
-                    raise ChannelNotFoundError(datach)
+                    raise GaitDataError('Cannot find channel: '+datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
                     debug_print('map_data: multiple matching EMG channels for: '+datach+': '+matches)
@@ -897,7 +874,7 @@ class model_outputs:
             for Var in varlist:
                 NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
                 if not NumVals:
-                    raise ModelVarNotFoundError
+                    raise GaitDataError('Cannot find model variable: ', Var)
                 # remove singleton dimensions
                 self.Vars[Var] = np.squeeze(np.array(NumVals))
         elif is_c3dfile(source):
@@ -910,9 +887,9 @@ class model_outputs:
                 try:
                     self.Vars[Var] = np.transpose(np.squeeze(acq.GetPoint(Var).GetValues()))
                 except RuntimeError:
-                    raise ModelVarNotFoundError
+                    raise GaitDataError('Cannot find model variable: ', Var)
         else:
-            raise Exception('Invalid source')
+            raise GaitDataError('Invalid data source')
         # postprocessing
         for Var in varlist:
                 if Var.find('Moment') > 0:
