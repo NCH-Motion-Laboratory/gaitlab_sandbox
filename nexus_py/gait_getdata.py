@@ -448,20 +448,7 @@ class emg:
             b, a = signal.butter(self.buttord, passbandn[1])
         yfilt = signal.filtfilt(b, a, y)        
         return yfilt
-
-    def findchs(self, str):
-        """ Return list of channels whose name contains the given 
-        string str. """
-        return [chn for chn in self.elnames if chn.find(str) > -1]
-
-    def findch(self, str):
-        """ Return name of (unique) channel containing the given 
-        string str. """
-        chlist = [chn for chn in self.elnames if chn.find(str) > -1]
-        if len(chlist) != 1:
-            error_exit('Cannot find unique channel matching '+str)
-        return chlist[0]
-        
+       
     def read(self):
         """ Read the EMG data. """
         if is_vicon_instance(self.source):
