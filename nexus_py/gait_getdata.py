@@ -151,6 +151,7 @@ class gaitcycle:
     def normalize(self, var):
         """ Normalize frames-based variable var to this cycle.
         New interpolated x axis is 0..100% of the cycle. """
+        debug_print('normalize var of dim', var.shape)
         return np.interp(self.tn, self.t, var[self.start:self.end])
 
     def cut_analog_to_cycle(self, var):
@@ -838,16 +839,21 @@ class model_outputs:
     def read_musclelen(self):
         """ Read muscle length variables produced by MuscleLengths.mod.
         Reads into self.Vars """
-        self.read_raw(self.musclelen_read_vars)
+        if is_vicon_instance(self.source):
+            self.read_raw(self.musclelen_read_vars)
+        else:
+            # scalars are apparently written into c3d files as 3rd component
+            # of a 3-d array
+            self.read_raw(self.musclelen_read_vars, components=2)
         
     def read_pig_lowerbody(self):
         """ Read the lower body Plug-in Gait model outputs. """
-        self.read_raw(self.pig_lowerbody_read_vars)
+        self.read_raw(self.pig_lowerbody_read_vars, components='split_xyz')
             
-    def read_raw(self, varlist, xyz_components=True):
+    def read_raw(self, varlist, components=None):
         """ Read specified model output variables into self.Vars.
-        If xyz_components = True, 3d arrays will be split into x,y, and z
-        components and output variables named accordingly (e.g. LHipMomentsX) """
+        From multidim arrays, components will pick the corresponding components.
+        'split_xyz' splits 3-d arrays into separate x,y,z variables. """
         source = self.source
         if is_vicon_instance(source):
             vicon = source
@@ -855,7 +861,8 @@ class model_outputs:
             for Var in varlist:
                 NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
                 if not NumVals:
-                    raise GaitDataError('Cannot find model variable: ', Var)
+                    raise GaitDataError('Cannot read model variable: '+Var+
+                    '. \nMake sure that the appropriate model has been executed.')
                 # remove singleton dimensions
                 self.Vars[Var] = np.squeeze(np.array(NumVals))
         elif is_c3dfile(source):
@@ -877,11 +884,18 @@ class model_outputs:
                     # moment variables have to be divided by 1000 -
                     # apparently stored in Newton-millimeters
                     self.Vars[Var] /= 1000.
-                if xyz_components and self.Vars[Var].shape[0] == 3:
-                    # split 3-d arrays into x,y,z variables
-                    self.Vars[Var+'X'] = self.Vars[Var][0,:]
-                    self.Vars[Var+'Y'] = self.Vars[Var][1,:]
-                    self.Vars[Var+'Z'] = self.Vars[Var][2,:]
+                debug_print('read_raw:', Var, 'has shape', self.Vars[Var].shape)
+                if components == 'split_xyz':
+                    if self.Vars[Var].shape[0] == 3:
+                        # split 3-d arrays into x,y,z variables
+                        self.Vars[Var+'X'] = self.Vars[Var][0,:]
+                        self.Vars[Var+'Y'] = self.Vars[Var][1,:]
+                        self.Vars[Var+'Z'] = self.Vars[Var][2,:]
+                    else:
+                        raise GaitDataError('XYZ split requested but array is not 3-d')
+                elif components:
+                    self.Vars[Var] = self.Vars[Var][components,:]
+                    
 
     def rm_side(self, varname):
         """ Remove side info (preceding L/R) from variable name. Internally
