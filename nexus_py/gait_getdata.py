@@ -8,9 +8,6 @@ Gaitplotter utility classes for reading gait data.
 NEXT:
 
 
-TODO:
--classes here should only raise exceptions; caller (e.g. gait_plot) puts up error
-dialogs if needed
 
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)

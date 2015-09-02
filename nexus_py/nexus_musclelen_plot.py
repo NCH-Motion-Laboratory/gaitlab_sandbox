@@ -9,8 +9,6 @@ Muscle length plot.
 
 
  
- 
- 
 from gait_plot import gaitplotter
 import gaitplotter_plots
 
