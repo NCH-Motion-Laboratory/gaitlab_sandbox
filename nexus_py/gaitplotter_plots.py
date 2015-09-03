@@ -47,6 +47,9 @@ std_emg = ['RGlut','LGlut',
               'RPer','LPer',
               'RGas','LGas',
               'RSol','LSol']
+              
+# EMG overlay - add legend
+overlay_emg = std_emg + ['emglegend',None]
 
 # Kinetics-EMG. Will return EMG channels according to the given side
 def kinetics_emg(side):

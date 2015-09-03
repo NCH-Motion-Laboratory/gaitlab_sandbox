@@ -137,13 +137,12 @@ class gaitplotter():
         else:
             return "EMG bandpass " + str(self.emg_passband[0]) + ' ... ' + str(self.emg_passband[1]) + ' Hz'
 
-    def nexus_trialselector(self):
+    def dir_trialselector(self, trialpath):
         """ Let the user choose from processed trials in the trial directory. 
         Will also show the Eclipse description for each processed trial, if 
         available. Tk checkbox dialog. """
-        trialpath = self.get_nexus_path()
-        if trialpath == '':
-            error_exit('Cannot get Nexus path. Please make sure Nexus is running, and open a trial to set the path.')
+        if not os.path.isdir(trialpath):
+            error_exit('Invalid path')
         # list of all processed trials
         proctrials = glob.glob(trialpath+'*.c3d')
         lp = len(proctrials)
