@@ -57,7 +57,6 @@ class GaitDataError(Exception):
     def __str__(self):
         return repr(self.msg)
 
-
 def viconnexus():
     """ Return a ViconNexus instance. Convenience for calling classes. """
     return ViconNexus.ViconNexus()
@@ -74,12 +73,12 @@ def is_c3dfile(obj):
         return False
 
 def get_eclipse_key(trialname, keyname):
-    """ Get the Eclipse database entry keyname for the specified trial. Specify
-    trialname with full path. """
+    """ Get the Eclipse database entry 'keyname' for the specified trial. Specify
+    trialname with full path. Return empty string for no key. """
     # remove c3d extension if present
     trialname = os.path.splitext(trialname)[0]
     if not os.path.isfile(trialname+'.c3d'):
-        raise GaitDataError('Cannot find c3d file for trial')
+        raise GaitDataError('Cannot find .c3d file for trial')
     enfname = trialname + '.Trial.enf'
     value = None
     if os.path.isfile(enfname):
@@ -87,7 +86,7 @@ def get_eclipse_key(trialname, keyname):
         eclipselines = f.read().splitlines()
         f.close()
     else:
-        return None
+        raise GaitDataError('.enf file (Eclipse) not found for trial')
     for line in eclipselines:
         eqpos = line.find('=')
         if eqpos > 0:

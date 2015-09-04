@@ -10,20 +10,24 @@ description.
 
 from gait_plot import gaitplotter
 import gait_getdata
+from gait_getdata import get_eclipse_key
 import gaitplotter_plots
 import glob
 
-def is_marked_trial(desc):
-    """ Find whether trial description has one of the defined markings. """
-    marks = ['R1','R2','R3','L1','L2','L3']
-    return any(mark in desc.upper() for mark in marks)
+def any_substr(str, substrs):
+    """ Find whether str.upper() has one of the defined substrings. """
+    if str:
+        return any(substr in str.upper() for substr in substrs)
+    else:
+        return None
 
 # get session path from Nexus
 vicon = gait_getdata.viconnexus()
 trialname_ = vicon.GetTrialName()
 sessionpath = trialname_[0]
 c3dfiles = glob.glob(sessionpath+'*.c3d')
-marked_trials = [c3d for c3d in c3dfiles if is_marked_trial(gait_getdata.get_eclipse_description(c3d))]
+marks = ['R1','R2','R3','L1','L2','L3']
+marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION')+get_eclipse_key(c3d, 'NOTES'), marks)]
 # two extra subplots to accommodate legend
 layout = [10,2]
 plotvars = gaitplotter_plots.overlay_emg

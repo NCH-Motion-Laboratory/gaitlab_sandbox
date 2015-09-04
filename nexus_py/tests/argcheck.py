@@ -17,3 +17,4 @@ color_cycle = ax._get_lines.color_cycle
 while True:
     print(next(color_cycle))
     
+trialpath = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_tuet_VS/2015_6_9_seur_tuet_VS13.c3d"
