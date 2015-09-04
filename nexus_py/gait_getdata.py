@@ -43,6 +43,7 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
+# print debug messages
 DEBUG = True
 
 def debug_print(*args):
@@ -72,15 +73,15 @@ def is_c3dfile(obj):
     except TypeError:
         return False
 
-def get_eclipse_description(trialname):
-    """ Get the Eclipse database description for the specified trial. Specify
+def get_eclipse_key(trialname, keyname):
+    """ Get the Eclipse database entry keyname for the specified trial. Specify
     trialname with full path. """
     # remove c3d extension if present
     trialname = os.path.splitext(trialname)[0]
     if not os.path.isfile(trialname+'.c3d'):
-        raise Exception('Cannot find c3d file for trial')
+        raise GaitDataError('Cannot find c3d file for trial')
     enfname = trialname + '.Trial.enf'
-    description = None
+    value = None
     if os.path.isfile(enfname):
         f = open(enfname, 'r')
         eclipselines = f.read().splitlines()
@@ -92,11 +93,11 @@ def get_eclipse_description(trialname):
         if eqpos > 0:
             key = line[:eqpos]
             val = line[eqpos+1:]
-            if key == 'DESCRIPTION':
-                description = val
+            if key == keyname:
+                value = val
     # assume utf-8 encoding for Windows text files, return Unicode object
     # could also use codecs.read with encoding=utf-8 (recommended way)
-    return unicode(description, 'utf-8')
+    return unicode(value, 'utf-8')
 
 def nexus_pid():
     """ Tries to return the PID of the running Nexus process. """

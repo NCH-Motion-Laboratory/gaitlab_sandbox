@@ -14,14 +14,14 @@ import gaitplotter_plots
 
 layout = [9,2]
 pdftitlestr = 'EMG_overlay_'
-emgcolors = ['black','blue','gray']
+emgcolors = ['black','blue','gray','red']
 plotvars = gaitplotter_plots.overlay_emg
-MAX_TRIALS = 3
+MAX_TRIALS = 4
 
 nplotter = gaitplotter(layout)
 nplotter.annotate_disconnected = False
 maintitle = 'EMG overlay plot' + '\n' + nplotter.get_emg_filter_description()
-ts = nplotter.c3d_trialselector()
+ts = nplotter.c3d_trialselector(max_trials=MAX_TRIALS, initialdir='C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test')
 chosen = ts.chosen
 
 

@@ -159,7 +159,7 @@ class gaitplotter():
             vars.append(IntVar())
             # remove path and extension from full trial name
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
-            desc = gait_getdata.get_eclipse_description(trialpath)
+            desc = gait_getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
@@ -199,9 +199,15 @@ class gaitplotter():
             nrow = self.ntrials + 1
             trialpath = tkFileDialog.askopenfilename(**self.options)
             if os.path.isfile(trialpath):
-                desc = gait_getdata.get_eclipse_description(trialpath)
+                # get Eclipse info (notes and description) for the trial
+                desc = gait_getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
+                if not desc:
+                    desc = '(no description)'
+                notes = gait_getdata.get_eclipse_key(trialpath, 'NOTES')
+                if not notes:
+                    notes = '(no notes)'
                 trial =  os.path.basename(os.path.splitext(trialpath)[0])
-                trialstr = trial+4*' '+desc
+                trialstr = trial+4*' '+desc+4*' '+notes
                 la = Label(self.master, text=trialstr)
                 la.grid(row=nrow, column=0, columnspan=2, sticky=W)
                 self.trilabels.append(la)
