@@ -525,7 +525,7 @@ class emg:
                 # find unique matching physical electrode name
                 matches = [x for x in self.elnames if x.find(datach) >= 0]
                 if len(matches) == 0:
-                    raise GaitDataError('Cannot find channel: '+datach)
+                    raise GaitDataError('Cannot find a match for requested EMG channel '+datach)
                 elname = min(matches, key=len)  # choose shortest matching name
                 if len(matches) > 1:
                     debug_print('map_data:', matches, '->', elname)

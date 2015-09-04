@@ -8,32 +8,12 @@ Created on Fri Apr 17 15:23:37 2015
 from __future__ import print_function
 
 import sys
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+color_cycle = ax._get_lines.color_cycle
 
 
-
-
-li_in = [1,2,4,6,11]
-
-ar = np.arange(10)
-
-print(ar[li_in])
-
-
-DEBUG = True
-
-def debug(*ar):
-    if DEBUG:
-        print(*ar)
-
-
-debug('koe')
+while True:
+    print(next(color_cycle))
     
-
-
-
-
-
-
-
-
-sys.exit()

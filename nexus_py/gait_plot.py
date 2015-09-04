@@ -302,7 +302,8 @@ class gaitplotter():
             if read_musclelen:
                     self.trial.model.read_musclelen()
         except gait_getdata.GaitDataError as e:
-             error_exit(e.msg)
+            msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
+            error_exit(msg)
                                       
     def set_fig_title(self, title):
         if self.fig:
@@ -510,7 +511,6 @@ class gaitplotter():
         
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
-        
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 

@@ -21,7 +21,9 @@ MAX_TRIALS = 3
 nplotter = gaitplotter(layout)
 nplotter.annotate_disconnected = False
 maintitle = 'EMG overlay plot' + '\n' + nplotter.get_emg_filter_description()
-chosen = nplotter.c3d_trialselector()
+ts = nplotter.c3d_trialselector()
+chosen = ts.chosen
+
 
 if len(chosen) > MAX_TRIALS:
     error_exit('Too many trials selected for the overlay plot!')
