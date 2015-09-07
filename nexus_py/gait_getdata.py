@@ -44,7 +44,7 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
 # print debug messages
-DEBUG = True
+DEBUG = False
 
 def debug_print(*args):
     if DEBUG:

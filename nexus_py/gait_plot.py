@@ -188,21 +188,23 @@ class gaitplotter():
             self.chosen = []
             self.master.destroy()
             
-        def delete_trial(self, ntrial):
-            print('delete trial n. ',ntrial)
-            print(self.tributtons)
-            self.tributtons[ntrial].grid_remove()
-            self.trilabels[ntrial].grid_remove()
-            self.chosen[ntrial] = None
+        def delete_trial(self, trial):
+            self.tributtons.pop(trial, None)
+            self.trilabels.pop(trial, None)            
+            self.chosen.pop(trial, None)
             self.ntrials -= 1
             if self.ntrials < self.MAX_TRIALS:
                 self.loadb.config(state='normal')
+            print(self.chosen, self.ntrials)
     
         def load_trial(self):
             nthis = len(self.chosen)  # list index (includes deleted trials)
             nrow = self.ntrials + 1
             trialpath = tkFileDialog.askopenfilename(**self.options)
-            if os.path.isfile(trialpath):
+            trial =  os.path.basename(os.path.splitext(trialpath)[0])
+            if trial in self.chosen:
+                messagebox('Trial already loaded!')
+            elif os.path.isfile(trialpath):
                 # get Eclipse info (notes and description) for the trial
                 desc = gait_getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
                 if not desc:
@@ -210,23 +212,22 @@ class gaitplotter():
                 notes = gait_getdata.get_eclipse_key(trialpath, 'NOTES')
                 if not notes:
                     notes = '(no notes)'
-                trial =  os.path.basename(os.path.splitext(trialpath)[0])
                 trialstr = trial+4*' '+desc+4*' '+notes
                 la = Label(self.master, text=trialstr)
                 la.grid(row=nrow, column=0, columnspan=2, sticky=W)
-                self.trilabels.append(la)
-                bu = Button(self.master, text='Delete', command=lambda: self.delete_trial(nthis))
+                self.trilabels[trial] == la
+                bu = Button(self.master, text='Delete', command=lambda: self.delete_trial(trial))
                 bu.grid(row=nrow, column=2)
-                self.tributtons.append(bu)
-                self.chosen.append(trialpath.encode())  # Tk returns UTF-8 names -> ASCII
+                self.tributtons[trial] = bu
+                self.chosen[trial] = trialpath.encode()  # Tk returns UTF-8 names -> ASCII
                 self.ntrials += 1                
                 if self.ntrials == self.MAX_TRIALS:
                     self.loadb.config(state='disabled')
     
         def __init__(self, max_trials=4, initialdir='C:\\'):
-            self.chosen = []
-            self.trilabels = []
-            self.tributtons = []
+            self.chosen = {}
+            self.trilabels = {}
+            self.tributtons = {}
             self.master = Tk()
             self.ntrials = 0
             self.MAX_TRIALS = max_trials
