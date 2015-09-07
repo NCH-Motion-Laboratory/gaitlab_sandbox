@@ -123,6 +123,8 @@ class gaitplotter():
         self.trial = None
         # TODO: put in config?
         self.emg_mapping = {}
+        # must be opened later
+        self.vicon = None
         
     def configwindow(self):
         """ Open a window for configuring NexusPlotter """
@@ -187,6 +189,8 @@ class gaitplotter():
             self.master.destroy()
             
         def delete_trial(self, ntrial):
+            print('delete trial n. ',ntrial)
+            print(self.tributtons)
             self.tributtons[ntrial].grid_remove()
             self.trilabels[ntrial].grid_remove()
             self.chosen[ntrial] = None
@@ -257,7 +261,7 @@ class gaitplotter():
         try:
             self.trial = gait_getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
         except gait_getdata.GaitDataError as e:
-            error_exit(e.msg)
+            error_exit('Error while opening trial from Nexus:\n'+e.msg)
         
     def open_c3d_trial(self, trialpath):
         """ Open a c3d trial. """
@@ -266,7 +270,7 @@ class gaitplotter():
         try:
             self.trial = gait_getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
         except gait_getdata.GaitDataError as e:
-            error_exit(e.msg)
+            error_exit('Error while opening '+trialpath+':\n'+e.msg)
         
     def read_trial(self, vars):
         """ Read requested trial variables and directives """
@@ -532,9 +536,8 @@ class gaitplotter():
                     pdf_prefix = 'Nexus_plot_'
                 pdf_name = self.trial.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
             try:
-                debug_print('creating: '+pdf_name)
+                debug_print('trying to create: '+pdf_name)
                 with PdfPages(pdf_name) as pdf:
-                    print("Writing "+pdf_name)
                     pdf.savefig(self.fig)
             except IOError:
                 messagebox('Error writing PDF file, check that file is not already open.')

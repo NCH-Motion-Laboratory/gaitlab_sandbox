@@ -20,7 +20,7 @@ MAX_TRIALS = 4
 
 nplotter = gaitplotter(layout)
 nplotter.annotate_disconnected = False
-maintitle = 'EMG overlay plot' + '\n' + nplotter.get_emg_filter_description()
+maintitle = 'EMG overlay plot '+'('+nplotter.get_emg_filter_description()+')'
 ts = nplotter.c3d_trialselector(max_trials=MAX_TRIALS, initialdir='C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test')
 chosen = ts.chosen
 
