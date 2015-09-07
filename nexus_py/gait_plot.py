@@ -33,7 +33,7 @@ import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 import gait_getdata
-from gait_getdata import error_exit, messagebox
+from gait_getdata import error_exit, messagebox, debug_print
 import gait_config
 import sys
 # these needed for Nexus 2.1
@@ -532,6 +532,7 @@ class gaitplotter():
                     pdf_prefix = 'Nexus_plot_'
                 pdf_name = self.trial.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
             try:
+                debug_print('creating: '+pdf_name)
                 with PdfPages(pdf_name) as pdf:
                     print("Writing "+pdf_name)
                     pdf.savefig(self.fig)
