@@ -223,6 +223,8 @@ class gaitplotter():
                 self.ntrials += 1                
                 if self.ntrials == self.MAX_TRIALS:
                     self.loadb.config(state='disabled')
+            else:
+                messagebox('Requested trial does not exist!')
     
         def __init__(self, max_trials=4, initialdir='C:\\'):
             self.trials = {}
@@ -504,7 +506,7 @@ class gaitplotter():
         line styles) and the labels are appended into lists and the legend
         is recreated when plotting each trial (the legend has no add method) """
         if self.model_legendpos or self.emg_legendpos:
-            self.legendnames.append(self.trial.trialname+4*' '+self.trial.eclipse_description)
+            self.legendnames.append(self.trial.trialname+4*' '+self.trial.eclipse_description+4*' '+self.trial.eclipse_notes)
         if self.model_legendpos:
             self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
             ax = plt.subplot(self.gs[self.model_legendpos])

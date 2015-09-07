@@ -39,7 +39,7 @@ if len(marked_trials) > MAX_TRIALS:
     gait_getdata.error_exit('Too many marked trials found, how come?')
 
 if not marked_trials:
-    gait_getdata.error_exit('Did not find any marked trials in current session directory.')
+    gait_getdata.error_exit('Did not find any marked trials (R1 etc.) in current session directory.')
     
 # two extra subplots to accommodate legend
 layout = [10,2]
