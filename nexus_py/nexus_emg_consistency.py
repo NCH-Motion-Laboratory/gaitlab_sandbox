@@ -15,7 +15,7 @@ import gaitplotter_plots
 import glob
 
 def any_substr(str, substrs):
-    """ Find whether str.upper() has one of the defined substrings. """
+    """ Find whether str.upper() contains one of substr (list). """
     if str:
         return any(substr in str.upper() for substr in substrs)
     else:
@@ -26,7 +26,7 @@ vicon = gait_getdata.viconnexus()
 trialname_ = vicon.GetTrialName()
 sessionpath = trialname_[0]
 c3dfiles = glob.glob(sessionpath+'*.c3d')
-marks = ['R1','R2','R3','L1','L2','L3']
+marks = ['R1','R3','L1','L3']
 marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION')+get_eclipse_key(c3d, 'NOTES'), marks)]
 # two extra subplots to accommodate legend
 layout = [10,2]
@@ -51,3 +51,4 @@ for i,trialpath in enumerate(marked_trials):
 
 
 
+#C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS07.c3d

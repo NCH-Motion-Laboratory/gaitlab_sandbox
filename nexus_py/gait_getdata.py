@@ -77,8 +77,9 @@ def get_eclipse_key(trialname, keyname):
     trialname with full path. Return empty string for no key. """
     # remove c3d extension if present
     trialname = os.path.splitext(trialname)[0]
+    debug_print('get eclipse key for '+trialname+'.c3d')
     if not os.path.isfile(trialname+'.c3d'):
-        raise GaitDataError('Cannot find .c3d file for trial')
+        raise GaitDataError('get_eclipse_key: cannot find .c3d file '+trialname+'.c3d')
     enfname = trialname + '.Trial.enf'
     value = None
     if os.path.isfile(enfname):
@@ -86,7 +87,7 @@ def get_eclipse_key(trialname, keyname):
         eclipselines = f.read().splitlines()
         f.close()
     else:
-        raise GaitDataError('.enf file (Eclipse) not found for trial')
+        raise GaitDataError('get_eclipse_key: .enf file (Eclipse) not found for trial '+trialname)
     for line in eclipselines:
         eqpos = line.find('=')
         if eqpos > 0:
@@ -226,6 +227,12 @@ class trial:
         # sort events (may be in wrong temporal order, at least in c3d files)
         for li in [self.lfstrikes,self.rfstrikes,self.ltoeoffs,self.rtoeoffs]:
             li.sort()
+        # get description and notes from Eclipse database
+        if not self.sessionpath[-1] == '\\':
+            self.sessionpath = self.sessionpath+('\\')
+        trialpath = self.sessionpath + self.trialname
+        self.eclipse_description = get_eclipse_key(trialpath, 'DESCRIPTION')
+        self.eclipse_notes = get_eclipse_key(trialpath, 'NOTES')        
         self.source = source
         self.fp = forceplate(source)
         # TODO: read from config / put as init params?
