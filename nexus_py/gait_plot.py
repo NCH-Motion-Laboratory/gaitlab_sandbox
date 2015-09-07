@@ -182,27 +182,27 @@ class gaitplotter():
     
         def create(self):
             self.master.destroy()
-            self.chosen = [x for x in self.chosen if x]  # rm 'None' entries
+            self.chosen = self.trials.values()
             
         def cancel(self):
             self.chosen = []
             self.master.destroy()
             
         def delete_trial(self, trial):
+            self.tributtons[trial].grid_remove()
+            self.trilabels[trial].grid_remove()
             self.tributtons.pop(trial, None)
             self.trilabels.pop(trial, None)            
-            self.chosen.pop(trial, None)
+            self.trials.pop(trial, None)
             self.ntrials -= 1
             if self.ntrials < self.MAX_TRIALS:
                 self.loadb.config(state='normal')
-            print(self.chosen, self.ntrials)
     
         def load_trial(self):
-            nthis = len(self.chosen)  # list index (includes deleted trials)
             nrow = self.ntrials + 1
-            trialpath = tkFileDialog.askopenfilename(**self.options)
+            trialpath = tkFileDialog.askopenfilename(**self.options).encode()
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
-            if trial in self.chosen:
+            if trial in self.trials:
                 messagebox('Trial already loaded!')
             elif os.path.isfile(trialpath):
                 # get Eclipse info (notes and description) for the trial
@@ -215,17 +215,18 @@ class gaitplotter():
                 trialstr = trial+4*' '+desc+4*' '+notes
                 la = Label(self.master, text=trialstr)
                 la.grid(row=nrow, column=0, columnspan=2, sticky=W)
-                self.trilabels[trial] == la
+                self.trilabels[trial] = la
                 bu = Button(self.master, text='Delete', command=lambda: self.delete_trial(trial))
                 bu.grid(row=nrow, column=2)
                 self.tributtons[trial] = bu
-                self.chosen[trial] = trialpath.encode()  # Tk returns UTF-8 names -> ASCII
+                self.trials[trial] = trialpath
                 self.ntrials += 1                
                 if self.ntrials == self.MAX_TRIALS:
                     self.loadb.config(state='disabled')
     
         def __init__(self, max_trials=4, initialdir='C:\\'):
-            self.chosen = {}
+            self.trials = {}
+            self.chosen = []
             self.trilabels = {}
             self.tributtons = {}
             self.master = Tk()
