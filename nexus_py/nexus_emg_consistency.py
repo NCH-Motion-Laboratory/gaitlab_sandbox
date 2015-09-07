@@ -21,13 +21,18 @@ def any_substr(str, substrs):
     else:
         return None
 
+MAX_TRIALS = 6
 # get session path from Nexus
 vicon = gait_getdata.viconnexus()
 trialname_ = vicon.GetTrialName()
 sessionpath = trialname_[0]
 c3dfiles = glob.glob(sessionpath+'*.c3d')
-marks = ['R1','R3','L1','L3']
-marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION')+get_eclipse_key(c3d, 'NOTES'), marks)]
+# trial notes/description must contain one of these strings
+marks = ['R1','R2','R3','L1','L2','L3']
+marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION')+' '+get_eclipse_key(c3d, 'NOTES'), marks)]
+if len(marked_trials) > MAX_TRIALS:
+    gait_getdata.error_exit('Too many marked trials found, how come?')
+    
 # two extra subplots to accommodate legend
 layout = [10,2]
 plotvars = gaitplotter_plots.overlay_emg
@@ -45,10 +50,3 @@ for i,trialpath in enumerate(marked_trials):
     nplotter.show()
 
     
-
-
-
-
-
-
-#C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS07.c3d
