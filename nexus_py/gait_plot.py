@@ -16,10 +16,6 @@ Rules:
  instead of 'NormRHipMomentX'; side is either autodetected or manually forced
 
 
-NEXT:
--adapt to new classes WIP
-
-
 TODO:
 
 tests
