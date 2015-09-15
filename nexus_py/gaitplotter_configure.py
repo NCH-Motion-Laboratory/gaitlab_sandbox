@@ -9,7 +9,7 @@ Interface to configure Gaitplotter.
 
 from gp.plot import gaitplotter
 
-gplotter = gaitplotter(None)
+gplotter = gaitplotter()
 gplotter.configwindow()
 
 

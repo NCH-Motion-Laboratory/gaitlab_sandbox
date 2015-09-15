@@ -12,13 +12,12 @@ L/R sides on separate plots.
 from gp.plot import gaitplotter
 import gp.layouts
 
-layout = [6,3]
 plotheightratios = [3,2,2,2,2,2]
 pdf_prefix = 'Kinematics_EMG_'
 maintitleprefix='Kinematics-EMG plot for '
 
 side = 'L'
-gplotter = gaitplotter(layout)
+gplotter = gaitplotter()
 gplotter.open_nexus_trial()
 plotvars = gp.layouts.kinematics_emg(side)
 gplotter.read_trial(plotvars)
@@ -33,7 +32,7 @@ gplotter.show()
 
 
 side = 'R'
-gplotter = gaitplotter(layout)
+gplotter = gaitplotter()
 gplotter.open_nexus_trial()
 plotvars = gp.layouts.kinematics_emg(side)
 gplotter.read_trial(plotvars)

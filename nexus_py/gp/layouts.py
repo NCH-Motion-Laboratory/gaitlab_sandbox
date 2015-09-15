@@ -8,71 +8,59 @@ Created on Thu Aug 27 14:16:50 2015
 """
 
 # online kinematics plot
-std_kinematics = ['PelvisAnglesX',
-           'PelvisAnglesY',
-           'PelvisAnglesZ',
-           'HipAnglesX',
-           'HipAnglesY',
-           'HipAnglesZ',
-           'KneeAnglesX',
-           'KneeAnglesY',
-           'KneeAnglesZ',
-           'AnkleAnglesX',
-           'FootProgressAnglesZ',
-           'AnkleAnglesZ']
+std_kinematics = [['PelvisAnglesX','PelvisAnglesY','PelvisAnglesZ'],
+                  ['HipAnglesX','HipAnglesY','HipAnglesZ'],
+                    ['KneeAnglesX','KneeAnglesY','KneeAnglesZ'],
+                   ['AnkleAnglesX','FootProgressAnglesZ','AnkleAnglesZ']]
 
 # online kinetics plot           
-std_kinetics = ['HipMomentX',
-            'HipMomentY',
-             'HipMomentZ',
-             'HipPowerZ',
-             'KneeMomentX',
-             'KneeMomentY',
-             'KneeMomentZ',
-             'KneePowerZ',
-             'AnkleMomentX',None,None,
-             'AnklePowerZ']                      
+std_kinetics = [['HipMomentX','HipMomentY','HipMomentZ'],
+             ['HipPowerZ','KneeMomentX','KneeMomentY'],
+             ['KneeMomentZ','KneePowerZ','AnkleMomentX'],
+             [None,None,'AnklePowerZ']]
 
 # muscle lengths
-std_musclelen = ['PsoaLength', 'GracLength', 'ReFeLength',
-            'BiFLLength', 'SeTeLength', 'SeMeLength',
-            'MeGaLength', 'LaGaLength', 'SoleLength']
+std_musclelen = [['PsoaLength', 'GracLength', 'ReFeLength'],
+            ['BiFLLength', 'SeTeLength', 'SeMeLength'],
+            ['MeGaLength', 'LaGaLength', 'SoleLength']]
 
 # EMG only
-std_emg = ['RGlut','LGlut',
-              'RHam','LHam',
-              'RRec','LRec',
-              'RVas','LVas',
-              'RTibA','LTibA',
-              'RPer','LPer',
-              'RGas','LGas',
-              'RSol','LSol']
+std_emg = [['RGlut','LGlut'],
+              ['RHam','LHam'],
+              ['RRec','LRec'],
+              ['RVas','LVas'],
+              ['RTibA','LTibA'],
+              ['RPer','LPer'],
+              ['RGas','LGas'],
+              ['RSol','LSol']]
               
 # EMG overlay - add legend
-overlay_emg = std_emg + ['emglegend',None]
+overlay_emg = list(std_emg)
+overlay_emg.append(['emglegend',None])
 
 # kinetics overlay - add legend
-overlay_kinetics = std_kinetics + ['modellegend',None]
+overlay_kinetics = list(std_kinetics)
+overlay_kinetics.append(['modellegend',None,None])
 
 # Kinetics-EMG. Will return EMG channels according to the given side
 def kinetics_emg(side):
-    return ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            side+'Ham', side+'Rec', side+'TibA',
-            side+'Glut',side+'Vas',side+'Per',
-            'HipMomentX','KneeMomentX','AnkleMomentX',
-            side+'Rec',side+'Ham',side+'Gas',
-            None,side+'Glut',side+'Sol',
-            None,side+'Gas',None,
-            'HipPowerZ','KneePowerZ','AnklePowerZ']
+    return [['HipAnglesX','KneeAnglesX','AnkleAnglesX'],
+            [side+'Ham', side+'Rec', side+'TibA'],
+            [side+'Glut',side+'Vas',side+'Per'],
+            ['HipMomentX','KneeMomentX','AnkleMomentX'],
+            [side+'Rec',side+'Ham',side+'Gas'],
+            [None,side+'Glut',side+'Sol'],
+            [None,side+'Gas',None],
+            ['HipPowerZ','KneePowerZ','AnklePowerZ']]
 
 # Kinematics-only EMG. Will return EMG channels according to the given side
 def kinematics_emg(side):
-    return ['HipAnglesX','KneeAnglesX','AnkleAnglesX',
-            side+'Ham', side+'Rec', side+'TibA',
-            side+'Glut',side+'Vas',side+'Per',
-            side+'Rec',side+'Ham',side+'Gas',
-            None,side+'Glut',side+'Sol',
-            None,side+'Gas',None]
+    return [['HipAnglesX','KneeAnglesX','AnkleAnglesX'],
+            [side+'Ham', side+'Rec', side+'TibA'],
+            [side+'Glut',side+'Vas',side+'Per'],
+            [side+'Rec',side+'Ham',side+'Gas'],
+            [None,side+'Glut',side+'Sol'],
+            [None,side+'Gas',None]]
             
 
 

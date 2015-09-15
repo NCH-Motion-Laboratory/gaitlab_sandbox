@@ -41,18 +41,18 @@ if len(marked_trials) > MAX_TRIALS:
 if not marked_trials:
     gp.getdata.error_exit('Did not find any marked trials (R1 etc.) in current session directory.')
     
-# two extra subplots to accommodate legend
-layout = [10,2]
+
 plotvars = gp.layouts.overlay_emg
 emgcolors = ['b','g','r','c','m','y','k']
 
-gplotter = gaitplotter(layout)
+gplotter = gaitplotter()
 gplotter.annotate_disconnected = False
 maintitle = 'EMG consistency plot '+'('+gplotter.get_emg_filter_description()+')'
 
 for i,trialpath in enumerate(marked_trials):
     gplotter.open_c3d_trial(trialpath)
     gplotter.read_trial(plotvars)
+    gplotter.gridv += 1  # extra row of subplots to accommodate legend
     gplotter.plot_trial(maintitle=maintitle,
                         emg_tracecolor=emgcolors[i])
     

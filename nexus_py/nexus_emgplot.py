@@ -10,11 +10,10 @@ EMG plot from Nexus.
 from gp.plot import gaitplotter
 import gp.layouts
 
-layout = [8,2]
 maintitleprefix = 'EMG plot for '
 pdftitlestr = 'EMG_'
 
-gplotter = gaitplotter(layout)
+gplotter = gaitplotter()
 plotvars = gp.layouts.std_emg
 gplotter.open_nexus_trial()
 gplotter.read_trial(plotvars)

@@ -49,7 +49,7 @@ import btk
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
-    def __init__(self, layout):
+    def __init__(self):
         # set paths
         pathprefix = 'c:/users/' + getpass.getuser()
         self.desktop = pathprefix + '/Desktop'
@@ -76,17 +76,13 @@ class gaitplotter():
         # muscle length normal data - not yet used
         self.musclelen_normaldata_path = None
 
-        # can set layout=None, if no plots are intended
-        if not layout:
-            return
-
         # (currently) non-configurable stuff
         # figure size
         #self.totalfigsize = (8.48*1.2,12*1.2) # a4
         self.totalfigsize = (14,12)
         # grid dimensions, vertical and horizontal
-        self.gridv = layout[0]
-        self.gridh = layout[1]
+        self.gridv = None
+        self.gridh = None
         # trace colors, right and left
         self.tracecolor_r = 'lawngreen'
         self.tracecolor_l = 'red'
@@ -273,8 +269,12 @@ class gaitplotter():
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
         
     def read_trial(self, vars):
-        """ Read requested trial variables and directives """
-        self.vars = vars
+        """ Read requested trial variables and directives.
+        vars is a list of lists: rows to be plotted. """
+        self.gridv = len(vars)
+        self.gridh = len(vars[0])
+        self.vars = []
+        [self.vars.extend(x) for x in vars]  # flatten 2-dim list to 1-dim
         read_emg = False
         read_pig = False
         read_musclelen = False

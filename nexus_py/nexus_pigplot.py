@@ -12,23 +12,21 @@ Kinematics and kinetics on separate plots.
 from gp.plot import gaitplotter
 import gp.layouts
 
-layout = [4,3]
-
 plotvars = gp.layouts.std_kinematics
 maintitleprefix = 'Kinematics plot for '
-nplotter = gaitplotter(layout)
-nplotter.open_nexus_trial()
-nplotter.read_trial(plotvars)
-nplotter.plot_trial(maintitleprefix=maintitleprefix)
+gplotter = gaitplotter()
+gplotter.open_nexus_trial()
+gplotter.read_trial(plotvars)
+gplotter.plot_trial(maintitleprefix=maintitleprefix)
 
 plotvars = gp.layouts.std_kinetics
 maintitleprefix = 'Kinetics plot for '
-nplotter = gaitplotter(layout)
-nplotter.open_nexus_trial()
-nplotter.read_trial(plotvars)
-nplotter.plot_trial(maintitleprefix=maintitleprefix)
+gplotter = gaitplotter()
+gplotter.open_nexus_trial()
+gplotter.read_trial(plotvars)
+gplotter.plot_trial(maintitleprefix=maintitleprefix)
 
-nplotter.show()
+gplotter.show()
     
 
    
