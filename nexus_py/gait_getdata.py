@@ -27,24 +27,24 @@ For Vicon Nexus data, x axis is the whole trial.
 
 from __future__ import division, print_function
 
-from Tkinter import *
-import tkFileDialog
+import sys
+# these needed for Nexus 2.1
+if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
+    # needed at least when running outside Nexus
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import numpy as np
 import ctypes
 from scipy import signal
-import sys
 import psutil
 import os
 import gait_defs  # lab-specific stuff
 import btk  # biomechanical toolkit for c3d reading
-# these needed for Nexus 2.1
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
-# needed at least when running outside Nexus
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 
 # print debug messages
 DEBUG = False
+
 
 def debug_print(*args):
     if DEBUG:

@@ -36,10 +36,10 @@ import gait_getdata
 from gait_getdata import error_exit, messagebox, debug_print
 import gait_config
 import sys
-# these needed for Nexus 2.1
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
-# needed at least when running outside Nexus
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
+if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
+    # needed at least when running outside Nexus
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
 import ViconNexus
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
