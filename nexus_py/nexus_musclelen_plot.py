@@ -9,23 +9,23 @@ Muscle length plot.
 
 
  
-from gait_plot import gaitplotter
-import gaitplotter_plots
+from gp.plot import gaitplotter
+import gp.layouts
 
 layout = [3,3]
 maintitleprefix='Muscle length plot for '
 pdftitlestr='muscle_length_'
 
-nplotter = gaitplotter(layout)
-plotvars = gaitplotter_plots.std_musclelen
-nplotter.open_nexus_trial()
-nplotter.read_trial(plotvars)
-trialname = nplotter.trial.trialname
+gplotter = gaitplotter(layout)
+plotvars = gp.layouts.std_musclelen
+gplotter.open_nexus_trial()
+gplotter.read_trial(plotvars)
+trialname = gplotter.trial.trialname
 maintitle = maintitleprefix + trialname
-maintitle = maintitle + '\n' + nplotter.get_emg_filter_description()
-nplotter.plot_trial(maintitle=maintitle)
-nplotter.create_pdf(pdf_prefix=pdftitlestr)
+maintitle = maintitle + '\n' + gplotter.get_emg_filter_description()
+gplotter.plot_trial(maintitle=maintitle)
+gplotter.create_pdf(pdf_prefix=pdftitlestr)
 
-nplotter.show()
+gplotter.show()
 
 

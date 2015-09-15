@@ -27,6 +27,7 @@ For Vicon Nexus data, x axis is the whole trial.
 
 from __future__ import division, print_function
 
+import gp.defs
 import sys
 # these needed for Nexus 2.1
 if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
@@ -38,7 +39,7 @@ import ctypes
 from scipy import signal
 import psutil
 import os
-import gait_defs  # lab-specific stuff
+import defs  # lab-specific stuff
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
 
@@ -413,9 +414,9 @@ class emg:
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
-        self.ch_normals = gait_defs.emg_normals
-        self.ch_names = gait_defs.emg_names
-        self.ch_labels = gait_defs.emg_labels
+        self.ch_normals = gp.defs.emg_normals
+        self.ch_names = gp.defs.emg_names
+        self.ch_labels = gp.defs.emg_labels
       
     def is_logical_channel(self, chname):
         return chname in self.ch_names

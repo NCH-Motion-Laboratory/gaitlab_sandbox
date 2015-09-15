@@ -9,9 +9,9 @@ Handles configuration for Gaitplotter.
 
 
 from Tkinter import *
-import gait_getdata
-from gait_getdata import error_exit, messagebox
-import gait_defs
+import gp.getdata
+from gp.getdata import error_exit, messagebox
+import gp.defs
 import sys
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -41,7 +41,7 @@ class Config():
         self.appdir = appdir        
         
         # get EMG electrode names and write enable/disable values
-        self.emg_names = gait_defs.emg_names
+        self.emg_names = gp.defs.emg_names
         self.emg_names.sort()
         for chname in self.emg_names:
             self.config[self.emg_enabled_key(chname)] = 'True'

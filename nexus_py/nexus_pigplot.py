@@ -9,19 +9,19 @@ Kinematics and kinetics on separate plots.
 """
 
 
-from gait_plot import gaitplotter
-import gaitplotter_plots
+from gp.plot import gaitplotter
+import gp.layouts
 
 layout = [4,3]
 
-plotvars = gaitplotter_plots.std_kinematics
+plotvars = gp.layouts.std_kinematics
 maintitleprefix = 'Kinematics plot for '
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()
 nplotter.read_trial(plotvars)
 nplotter.plot_trial(maintitleprefix=maintitleprefix)
 
-plotvars = gaitplotter_plots.std_kinetics
+plotvars = gp.layouts.std_kinetics
 maintitleprefix = 'Kinetics plot for '
 nplotter = gaitplotter(layout)
 nplotter.open_nexus_trial()

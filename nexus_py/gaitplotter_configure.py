@@ -7,9 +7,9 @@ Interface to configure Gaitplotter.
 @author: Jussi
 """
 
-from gait_plot import gaitplotter
+from gp.plot import gaitplotter
 
-nplotter = gaitplotter(None)
-nplotter.configwindow()
+gplotter = gaitplotter(None)
+gplotter.configwindow()
 
 
