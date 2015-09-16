@@ -18,20 +18,29 @@ class model:
         self.normaldata_map = dict()  # mapping from variable names to normaldata variables
         self.ylabels = dict()  # y axis labels for plotting the variables
 
-    def vars_with_side(self, vars):
+    def list_with_side(self, vars):
         """ Prepend variables in vars with 'L' and 'R', creating a new list of
         variables. Many model variables share the same name, except for leading
         'L' or 'R' that indicates side, so this simplifies creation of variable
         names. """
         return ['L'+var for var in vars]+['R'+var for var in vars]
 
+    def dict_with_side(self, dict):
+        """ Prepend dict keys with 'R' or 'L' and append (R) or (L) to corresponding
+        dict entries. """
+        di = {}
+        for key in dict:
+            di['R'+key] = dict[key]+('R')
+            di['L'+key] = dict[key]+('L')
+        return di
+    
 
 #
 # Plug-in Gait lowerbody
 #
 pig_lowerbody = model()
 
-pig_lowerbody.read_vars = pig.vars_with_side['HipMoment',
+pig_lowerbody.read_vars = pig.list_with_side['HipMoment',
       'KneeMoment',
       'AnkleMoment',
       'HipPower',
