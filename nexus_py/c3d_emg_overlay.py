@@ -14,12 +14,12 @@ import gp.layouts
 pdftitlestr = 'EMG_overlay_'
 emgcolors = ['black','blue','gray','red']
 plotvars = gp.layouts.overlay_emg
-MAX_TRIALS = 4
+MAX_TRIALS = 6
 
 gplotter = gaitplotter()
 gplotter.annotate_disconnected = False
 maintitle = 'EMG overlay plot '+'('+gplotter.get_emg_filter_description()+')'
-ts = gplotter.c3d_trialselector(max_trials=MAX_TRIALS, initialdir='C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test')
+ts = gplotter.c3d_trialselector(max_trials=MAX_TRIALS, initialdir='Z:/Userdata_Vicon_Server/')
 chosen = ts.chosen
 
 if len(chosen) > MAX_TRIALS:

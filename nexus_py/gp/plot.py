@@ -193,6 +193,8 @@ class gaitplotter():
         def load_trial(self):
             nrow = self.ntrials + 1
             trialpath = tkFileDialog.askopenfilename(**self.options).encode()
+            if not trialpath:
+                return
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
             if trial in self.trials:
                 messagebox('Trial already loaded!')
@@ -216,6 +218,7 @@ class gaitplotter():
                 if self.ntrials == self.MAX_TRIALS:
                     self.loadb.config(state='disabled')
             else:
+                # this should never happen, since file dialog checks for existence?
                 messagebox('Requested trial does not exist!')
     
         def __init__(self, max_trials=4, initialdir='C:\\'):
