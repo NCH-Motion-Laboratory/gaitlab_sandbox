@@ -3,6 +3,9 @@
 
 Gaitplotter: plot gait data using matplotlib.
 
+NEXT:
+variable title handling if multiple vars on single subplot (L/R mess)
+
 
 Rules:
 -channel type is autodetected by looking into the known names
@@ -396,7 +399,7 @@ class gaitplotter():
                     nstd = np.array(self.trial.model.normaldata(varname_))[:,1]
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 # set titles and labels
-                title = self.trial.model.description(varname)
+                title = self.trial.model.description(varname)  # title will include L/R
                 ylabel = self.trial.model.ylabel(varname_)
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
