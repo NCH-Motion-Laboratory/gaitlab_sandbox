@@ -7,6 +7,7 @@ Gait lab -specific stuff (electrode names etc.)
 @author: Jussi
 """
 
+
 # dict for electrode names and descriptions
 emg_labels = {'RHam': 'Medial hamstrings (R)',
            'RRec': 'Rectus femoris (R)',

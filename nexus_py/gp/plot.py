@@ -28,9 +28,9 @@ from Tkinter import *
 import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
-import gp.getdata
-from gp.getdata import error_exit, messagebox, debug_print
-import gp.config
+import getdata
+from getdata import error_exit, messagebox, debug_print
+import config
 import sys
 if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
     sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
@@ -56,7 +56,7 @@ class gaitplotter():
         self.appdir = self.desktop + '/NexusPlotter'
         
         # read .ini file if available
-        self.cfg = gp.config.Config(self.appdir)
+        self.cfg = config.Config(self.appdir)
         config_ok, msg = self.cfg.check()
         if not config_ok:
             error_exit('Error in configuration file, please fix or delete: ', self.configfile)
@@ -67,7 +67,7 @@ class gaitplotter():
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
         self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
-        self.emg_names = gp.getdata.emg(None).ch_names
+        self.emg_names = getdata.emg(None).ch_names
         self.emg_names.sort()
         self.emg_manual_enable={}
         for ch in self.emg_names:
@@ -153,7 +153,7 @@ class gaitplotter():
             vars.append(IntVar())
             # remove path and extension from full trial name
             trial =  os.path.basename(os.path.splitext(trialpath)[0])
-            desc = gp.getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
+            desc = getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
             Checkbutton(master, text=trial+4*" "+desc, variable=vars[i]).grid(row=i+1, columnspan=2, sticky=W)
         Button(master, text='Cancel', command=master.destroy).grid(row=lp+2, column=0, pady=4)
         Button(master, text='Create plot', command=lambda: creator_callback(master, chosen)).grid(row=lp+2, column=1, pady=4)
@@ -198,10 +198,10 @@ class gaitplotter():
                 messagebox('Trial already loaded!')
             elif os.path.isfile(trialpath):
                 # get Eclipse info (notes and description) for the trial
-                desc = gp.getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
+                desc = getdata.get_eclipse_key(trialpath, 'DESCRIPTION')
                 if not desc:
                     desc = '(no description)'
-                notes = gp.getdata.get_eclipse_key(trialpath, 'NOTES')
+                notes = getdata.get_eclipse_key(trialpath, 'NOTES')
                 if not notes:
                     notes = '(no notes)'
                 trialstr = trial+4*' '+desc+4*' '+notes
@@ -251,12 +251,12 @@ class gaitplotter():
 
     def open_nexus_trial(self):
         """ Open trial from Nexus. """
-        if not gp.getdata.nexus_pid():
+        if not getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
-        vicon = gp.getdata.viconnexus()
+        vicon = getdata.viconnexus()
         try:
-            self.trial = gp.getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
-        except gp.getdata.GaitDataError as e:
+            self.trial = getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
+        except getdata.GaitDataError as e:
             error_exit('Error while opening trial from Nexus:\n'+e.msg)
         
     def open_c3d_trial(self, trialpath):
@@ -264,8 +264,8 @@ class gaitplotter():
         if not os.path.isfile(trialpath):
             error_exit('Cannot find trial: '+trialpath)
         try:
-            self.trial = gp.getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
-        except gp.getdata.GaitDataError as e:
+            self.trial = getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
+        except getdata.GaitDataError as e:
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
         
     def read_trial(self, vars):
@@ -311,7 +311,7 @@ class gaitplotter():
                     self.trial.model.read_pig_lowerbody()
             if read_musclelen:
                     self.trial.model.read_musclelen()
-        except gp.getdata.GaitDataError as e:
+        except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
                                       

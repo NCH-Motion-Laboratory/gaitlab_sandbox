@@ -39,7 +39,6 @@ import ctypes
 from scipy import signal
 import psutil
 import os
-import defs  # lab-specific stuff
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
 
@@ -414,9 +413,9 @@ class emg:
 
     def define_emg_names(self):
         """ Defines the electrode mapping. """
-        self.ch_normals = gp.defs.emg_normals
-        self.ch_names = gp.defs.emg_names
-        self.ch_labels = gp.defs.emg_labels
+        self.ch_normals = defs.emg_normals
+        self.ch_names = defs.emg_names
+        self.ch_labels = defs.emg_labels
       
     def is_logical_channel(self, chname):
         return chname in self.ch_names
