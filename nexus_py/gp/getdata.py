@@ -43,7 +43,7 @@ import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
 
 # print debug messages
-DEBUG = False
+DEBUG = True
 
 
 def debug_print(*args):
@@ -930,6 +930,7 @@ class model_outputs:
         """ Returns a more elaborate description for a model variable (L/R),
         if known. If var is normalized to a gait cycle, side will be reflected
         in the name. """
+        debug_print('get description for: ', varname)
         varname_,side = self.rm_side(varname)
         if varname_ in self.varlabels:
             return self.varlabels[varname_]+' ('+side+')'
