@@ -26,8 +26,8 @@ For Vicon Nexus data, x axis is the whole trial.
 
 
 from __future__ import division, print_function
-/
-import gp.defs
+
+import defs
 import sys
 # these needed for Nexus 2.1
 if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
@@ -501,7 +501,10 @@ class emg:
                     self.data[elname] = np.squeeze(i.GetValues())  # rm singleton dimension
                     if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
                         self.data[elname] = 'EMG_DISCONNECTED'
-            self.datalen = len(self.data[elname])
+            if self.elnames:
+                self.datalen = len(self.data[elname])
+            else:
+                raise GaitDataError('No EMG channels found in data!')
         else:
             raise GaitDataError('Invalid data source')
         self.t = np.arange(self.datalen)/self.sfrate
