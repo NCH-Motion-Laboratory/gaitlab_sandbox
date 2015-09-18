@@ -3,6 +3,7 @@
 
 models.py - definitions for various models (PiG, muscle length, etc.)
 Defines variable names, descriptions, etc.
+For a new model, create a model() instance and fill the 
 
 @author: Jussi
 """
@@ -13,12 +14,14 @@ class model:
 
     def __init__(self):
         self.read_vars = list()  # vars to be read from data
+        # How to read multidimensional variables: 'split_xyz' splits each 
+        # variable into x,y,z components; or give a number to read the 
+        # corresponding dimension only (e.g. 0=first dim)
         self.read_strategy = None
-        self.varnames = list()   # variable names
+        self.varnames = list()   # resulting variable names
         self.varlabels = dict()  # descriptive label for each variable
-        self.normaldata_map = dict()  # mapping from variable names to normaldata variables
-        self.ylabels = dict()  # y axis labels for plotting the variables
-
+        self.normaldata_map = dict()  # mapping from variable names to .gcd normaldata variables (optional)
+        self.ylabels = dict()  # y axis labels for plotting the variables (optional)
 
     def list_with_side(self, vars):
         """ Prepend variables in vars with 'L' and 'R', creating a new list of
@@ -29,7 +32,7 @@ class model:
 
     def dict_with_side(self, dict, append_side=False):
         """ Prepend dict keys with 'R' or 'L'. If append_side,
-        also append ' (R)' or ' (L)' to every entry. """
+        also append corresponding ' (R)' or ' (L)' to every dict value. """
         di = {}
         if append_side:
             Rstr, Lstr = (' (R)',' (L)')
@@ -91,6 +94,8 @@ pig_lowerbody.varlabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Ankle d
                          'PelvisAnglesX': 'Pelvic tilt',
                          'PelvisAnglesY': 'Pelvic obliquity',
                          'PelvisAnglesZ': 'Pelvic rotation'}, append_side=True)
+
+pig_lowerbody.varnames = pig_lowerbody.varlabels.keys()
       
 pig_lowerbody.normaldata_map = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'DorsiPlanFlex',
              'AnkleAnglesZ': 'FootRotation',
@@ -139,9 +144,139 @@ pig_lowerbody.ylabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Pla     (
                          'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'})
 
 #
-# Muscle length (MuscleLength.mod)
+# Muscle length (MuscleLengthLessPoints.mod)
 #
 
+musclelen = model()
+
+musclelen.read_vars = ['LGMedAntLength',
+                     'RGMedAntLength',
+                     'LGMedMidLength',
+                     'RGMedMidLength',
+                     'LGMedPosLength',
+                     'RGMedPosLength',
+                     'LGMinAntLength',
+                     'RGMinAntLength',
+                     'LGMinMidLength',
+                     'RGMinMidLength',
+                     'LGMinPosLength',
+                     'RGMinPosLength',
+                     'LSeMeLength',
+                     'RSeMeLength',
+                     'LSeTeLength',
+                     'RSeTeLength',
+                     'LBiFLLength',
+                     'RBiFLLength',
+                     'LBiFSLength',
+                     'RBiFSLength',
+                     'LSartLength',
+                     'RSartLength',
+                     'LAdLoLength',
+                     'RAdLoLength',
+                     'LAdBrLength',
+                     'RAdBrLength',
+                     'LAdMaSupLength',
+                     'RAdMaSupLength',
+                     'LAdMaMidLength',
+                     'RAdMaMidLength',
+                     'LAdMaInfLength',
+                     'RAdMaInfLength',
+                     'LPectLength',
+                     'RPectLength',
+                     'LGracLength',
+                     'RGracLength',
+                     'LGlMaSupLength',
+                     'RGlMaSupLength',
+                     'LGlMaMidLength',
+                     'RGlMaMidLength',
+                     'LGlMaInfLength',
+                     'RGlMaInfLength',
+                     'LIliaLength',
+                     'RIliaLength',
+                     'LPsoaLength',
+                     'RPsoaLength',
+                     'LQuFeLength',
+                     'RQuFeLength',
+                     'LGemeLength',
+                     'RGemeLength',
+                     'LPeriLength',
+                     'RPeriLength',
+                     'LReFeLength',
+                     'RReFeLength',
+                     'LVaMeLength',
+                     'RVaMeLength',
+                     'LVaInLength',
+                     'RVaInLength',
+                     'LVaLaLength',
+                     'RVaLaLength',
+                     'LMeGaLength',
+                     'RMeGaLength',
+                     'LLaGaLength',
+                     'RLaGaLength',
+                     'LSoleLength',
+                     'RSoleLength',
+                     'LTiPoLength',
+                     'RTiPoLength',
+                     'LFlDLLength',
+                     'RFlDLLength',
+                     'LFlHLLength',
+                     'RFlHLLength',
+                     'LTiAnLength',
+                     'RTiAnLength',
+                     'LPeBrLength',
+                     'RPeBrLength',
+                     'LPELOLength',
+                     'RPELOLength',
+                     'LPeTeLength',
+                     'RPeTeLength',
+                     'LExDLLength',
+                     'RExDLLength',
+                     'LExHLLength',
+                     'RExHLLength']
+
+musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
+                       'AdLoLength': 'AdLoLength',
+                        'AdMaInfLength': 'AdMaInfLength',
+                        'AdMaMidLength': 'AdMaMidLength',
+                        'AdMaSupLength': 'AdMaSupLength',
+                        'BiFLLength': 'Biceps femoris length',
+                        'BiFSLength': 'BiFSLength',
+                        'ExDLLength': 'ExDLLength',
+                        'ExHLLength': 'ExHLLength',
+                        'FlDLLength': 'FlDLLength',
+                        'FlHLLength': 'FlHLLength',
+                        'GMedAntLength': 'GMedAntLength',
+                        'GMedMidLength': 'GMedMidLength',
+                        'GMedPosLength': 'GMedPosLength',
+                        'GMinAntLength': 'GMinAntLength',
+                        'GMinMidLength': 'GMinMidLength',
+                        'GMinPosLength': 'GMinPosLength',
+                        'GemeLength': 'GemeLength',
+                        'GlMaInfLength': 'GlMaInfLength',
+                        'GlMaMidLength': 'GlMaMidLength',
+                        'GlMaSupLength': 'GlMaSupLength',
+                        'GracLength': 'Gracilis length',
+                        'IliaLength': 'IliaLength',
+                        'LaGaLength': 'Lateral gastrocnemius length',
+                        'MeGaLength': 'Medial gastrocnemius length',
+                        'PELOLength': 'PELOLength',
+                        'PeBrLength': 'PeBrLength',
+                        'PeTeLength': 'PeTeLength',
+                        'PectLength': 'PectLength',
+                        'PeriLength': 'PeriLength',
+                        'PsoaLength': 'Psoas length',
+                        'QuFeLength': 'QuFeLength',
+                        'ReFeLength': 'Rectus femoris length',
+                        'SartLength': 'SartLength',
+                        'SeMeLength': 'Semimembranosus length',
+                        'SeTeLength': 'Semitendinosus length',
+                        'SoleLength': 'Soleus length',
+                        'TiAnLength': 'Tibialis anterior length',
+                        'TiPoLength': 'TiPoLength',
+                        'VaInLength': 'VaInLength',
+                        'VaLaLength': 'VaLaLength',
+                        'VaMeLength': 'VaMeLength'}, append_side=True)
+                        
 
 
 
