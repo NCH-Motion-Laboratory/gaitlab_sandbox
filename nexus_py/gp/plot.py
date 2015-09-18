@@ -327,13 +327,13 @@ class gaitplotter():
             plt.suptitle(title, fontsize=12, fontweight="bold")
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
-                 onesided_kinematics=False, model_linestyle='-', emg_tracecolor='black'):
+                 onesided=False, model_linestyle='-', emg_tracecolor='black'):
         """ Plot active trial (must call open_xxx_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
         cycle: which gait cycle to use from the trial (default=first)
         side: which side kinetics/kinematics to plot (default=determine from trial).
-        Note that kinematics are two-sided by default (unless onesided_kinematics=True)
+        Note that non-kinetics vars are two-sided by default (unless onesided=True)
         maintitle: plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         model_linestyle: plotting style for model variables (PiG etc.)
@@ -379,7 +379,9 @@ class gaitplotter():
         if self.model_plot_vars:
             for k, varname_ in enumerate(self.model_plot_vars):  # varname_ is not side specific, e.g. 'HipMomentX'
                 ax = plt.subplot(self.gs[self.model_plot_pos[k]])
-                if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:  # plot both sides (L/R)
+                # plot one side only on single subplot?
+                plot_onesided = self.trial.model.is_kinetic_var(varname_) or onesided
+                if not plot_onesided:
                     sides = ['L','R']
                 else:
                     sides = side
@@ -399,7 +401,11 @@ class gaitplotter():
                     nstd = np.array(self.trial.model.normaldata(varname_))[:,1]
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 # set titles and labels
-                title = self.trial.model.description(varname)  # title will include L/R
+                if plot_onesided:
+                    title = self.trial.model.description(varname)  # title will include L/R
+                else:
+                    # remove L/R from title since both sides were plotted
+                    title = self.trial.model.description(varname)[0:-4]
                 ylabel = self.trial.model.ylabel(varname_)
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
@@ -429,7 +435,7 @@ class gaitplotter():
                     hdlength = arrlen * .33
                     hdwidth = (xmax-xmin) / 50.
                     # plot both L/R toeoff arrows
-                    if not self.trial.model.is_kinetic_var(varname_) and not onesided_kinematics:
+                    if not plot_onesided:
                         plt.arrow(lcyc.toeoffn, ymin, 0, arrlen, color=self.tracecolor_l, 
                                   head_length=hdlength, head_width=hdwidth)
                         plt.arrow(rcyc.toeoffn, ymin, 0, arrlen, color=self.tracecolor_r, 
