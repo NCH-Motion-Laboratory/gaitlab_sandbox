@@ -933,7 +933,7 @@ class model_outputs:
         debug_print('get description for: ', varname)
         varname_,side = self.rm_side(varname)
         if varname_ in self.varlabels:
-            return self.varlabels[varname_]+' ('+side+')'
+            return self.varlabels[varname_]
         else:
             return varname_
         
