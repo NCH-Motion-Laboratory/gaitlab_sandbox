@@ -9,6 +9,8 @@ For a new model, create a model() instance and fill the
 """
 
 
+
+
 class model:
     """ A class for storing model variable data, e.g. Plug-in Gait. """    
 
@@ -17,7 +19,8 @@ class model:
         # How to read multidimensional variables: 'split_xyz' splits each 
         # variable into x,y,z components; or give a number to read the 
         # corresponding dimension only (e.g. 0=first dim)
-        self.read_strategy = None
+        self.split_xyz = False
+        self.desc = ''  # description of model
         self.varnames = list()   # resulting variable names
         self.varlabels = dict()  # descriptive label for each variable
         self.normaldata_map = dict()  # mapping from variable names to .gcd normaldata variables (optional)
@@ -46,6 +49,10 @@ class model:
 # Plug-in Gait lowerbody
 #
 pig_lowerbody = model()
+
+pig_lowerbody.desc = 'Plug-in Gait lower body'
+
+pig_lowerbody.read_strategy = 'split_xyz'
 
 pig_lowerbody.read_vars = pig_lowerbody.list_with_side(['HipMoment',
       'KneeMoment',
@@ -144,10 +151,12 @@ pig_lowerbody.ylabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Pla     (
                          'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'})
 
 #
-# Muscle length (MuscleLengthLessPoints.mod)
+# Muscle length (MuscleLength.mod)
 #
 
 musclelen = model()
+
+musclelen.desc = 'Muscle length (MuscleLength.mod)'
 
 musclelen.read_vars = ['LGMedAntLength',
                      'RGMedAntLength',
