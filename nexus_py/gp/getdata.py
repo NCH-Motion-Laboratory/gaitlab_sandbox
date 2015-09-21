@@ -43,7 +43,8 @@ import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
 
 # print debug messages
-DEBUG = True
+# may prevent scripts from working in Nexus (??)
+DEBUG = False
 
 
 def debug_print(*args):
