@@ -401,11 +401,11 @@ class gaitplotter():
                     nstd = np.array(self.trial.model.normaldata(varname_))[:,1]
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 # set titles and labels
+                # include side info if plotting single side
                 if plot_onesided:
-                    title = self.trial.model.description(varname)  # title will include L/R
+                    title = self.trial.model.description(varname) + ' ('+side+')'
                 else:
-                    # remove L/R from title since both sides were plotted
-                    title = self.trial.model.description(varname)[0:-4]
+                    title = self.trial.model.description(varname)
                 ylabel = self.trial.model.ylabel(varname_)
                 plt.title(title, fontsize=self.fsize_labels)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
