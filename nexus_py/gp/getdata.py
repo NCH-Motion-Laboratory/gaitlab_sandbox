@@ -44,7 +44,7 @@ import ViconNexus
 
 # print debug messages
 # may prevent scripts from working in Nexus (??)
-DEBUG = False
+DEBUG = True
 
 
 def debug_print(*args):
@@ -258,9 +258,9 @@ class trial:
         to be properly processed. """
         # delay between foot strike event and forceplate data evaluation.
         # idea is to wait until the other foot has lifted off
-        delay_ms = 150
+        delay_ms = 170
         # minimum force (N) to consider it a clean contact
-        min_force = 100
+        min_force = 150
         # get force data
         forcetot = self.fp.forcetot
         # foot strike frames -> analog samples
@@ -278,12 +278,12 @@ class trial:
             kinetics += 'L'
         if max(rfsforces) > min_force:
             kinetics += 'R'
-        #print('Strike frames:')
-        #print(lfsind)
-        #print(rfsind)
-        #print('Total force', delay_ms, 'ms after foot strikes:')
-        #print('Left: ', lfsforces)
-        #print('Right: ', rfsforces)
+        debug_print('Strike frames:')
+        debug_print(lfsind)
+        debug_print(rfsind)
+        debug_print('Total force', delay_ms, 'ms after foot strikes:')
+        debug_print('Left: ', lfsforces)
+        debug_print('Right: ', rfsforces)
         return kinetics
 
     def scan_cycles(self):
