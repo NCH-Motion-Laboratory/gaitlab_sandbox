@@ -80,7 +80,7 @@ def get_eclipse_key(trialname, keyname):
     trialname = os.path.splitext(trialname)[0]
     debug_print('get eclipse key for '+trialname+'.c3d')
     if not os.path.isfile(trialname+'.c3d'):
-        raise GaitDataError('get_eclipse_key: cannot find .c3d file '+trialname+'.c3d')
+        raise GaitDataError('Cannot find .c3d file '+trialname+'.c3d'+'\nMake sure that the trial was processed properly.')
     enfname = trialname + '.Trial.enf'
     value = None
     if os.path.isfile(enfname):
@@ -88,7 +88,7 @@ def get_eclipse_key(trialname, keyname):
         eclipselines = f.read().splitlines()
         f.close()
     else:
-        raise GaitDataError('get_eclipse_key: .enf file (Eclipse) not found for trial '+trialname)
+        raise GaitDataError('.enf file (Eclipse) not found for trial '+trialname)
     for line in eclipselines:
         eqpos = line.find('=')
         if eqpos > 0:
