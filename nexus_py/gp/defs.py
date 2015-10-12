@@ -7,6 +7,9 @@ Gait lab -specific stuff (electrode names etc.)
 @author: Jussi
 """
 
+# EMG device name
+emg_devname = 'Myon'
+
 
 # dict for electrode names and descriptions
 emg_labels = {'RHam': 'Medial hamstrings (R)',

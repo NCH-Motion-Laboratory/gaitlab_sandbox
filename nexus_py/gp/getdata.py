@@ -11,8 +11,8 @@ NEXT:
 
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)
-create and raise custom exception. Caller may catch those
--for rare/unexpected errors, raise Exception with description of the error
+create and raise custom exception (GaitDataError). Caller may catch those
+-for unexpected errors, raise Exception with description of the error
 
 ROI on Vicon/c3d:
 x axis for c3d variables is ROI; i.e. first frame is beginning of ROI (=offset)
@@ -207,12 +207,12 @@ class trial:
             vicon = source
             subjectnames = vicon.GetSubjectNames()  
             if not subjectnames:
-                raise GaitDataError('No subject defined in Nexus')
+                raise GaitDataError('No subject defined')
             trialname_ = vicon.GetTrialName()
             self.sessionpath = trialname_[0]
             self.trialname = trialname_[1]
             if not self.trialname:
-                raise GaitDataError('No trial loaded in Nexus')
+                raise GaitDataError('No trial loaded')
             self.subjectname = subjectnames[0]
             # get events
             self.lfstrikes = vicon.GetEvents(self.subjectname, "Left", "Foot Strike")[0]
@@ -456,18 +456,19 @@ class emg:
             vicon = self.source
             framerate = vicon.GetFrameRate()
             framecount = vicon.GetFrameCount()
-            emgdevname = 'Myon'
+            emg_devname = defs.emg_devname
             devnames = vicon.GetDeviceNames()
-            if emgdevname in devnames:
-                emg_id = vicon.GetDeviceIDFromName(emgdevname)
+            if emg_devname in devnames:
+                emg_id = vicon.GetDeviceIDFromName(emg_devname)
             else:
                raise GaitDataError('EMG device not found')
             # DType should be 'other', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(emg_id)
             samplesperframe = drate / framerate
             self.sfrate = drate        
-            # Myon should only have 1 output; if zero, EMG was not found
-            assert(len(outputids)==1)
+            # Myon should only have 1 output; if zero, EMG was not found (?)
+            if len(outputids) != 1:
+                raise GaitDataError('Expected 1 EMG output')
             outputid = outputids[0]
             # get list of channel names and IDs
             _,_,_,_,self.elnames,self.chids = vicon.GetDeviceOutputDetails(emg_id, outputid)
