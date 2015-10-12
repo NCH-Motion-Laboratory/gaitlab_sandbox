@@ -36,11 +36,10 @@ c3dfiles = glob.glob(sessionpath+'*.c3d')
 marks = ['R1','R2','R3','L1','L2','L3']
 marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION').upper()+' '+get_eclipse_key(c3d, 'NOTES').upper(), marks)]
 if len(marked_trials) > MAX_TRIALS:
-    gp.getdata.error_exit('Too many marked trials found, how come?')
+    gp.getdata.error_exit('Too many marked trials found!')
 
 if not marked_trials:
     gp.getdata.error_exit('Did not find any marked trials (R1 etc.) in current session directory.')
-    
 
 plotvars = gp.layouts.overlay_emg
 emgcolors = ['b','g','r','c','m','y','k']
@@ -52,7 +51,7 @@ maintitle = 'EMG consistency plot '+'('+gplotter.get_emg_filter_description()+')
 for i,trialpath in enumerate(marked_trials):
     gplotter.open_c3d_trial(trialpath)
     gplotter.read_trial(plotvars)
-    gplotter.gridv += 1  # extra row of subplots to accommodate legend
+    gplotter.gridv += 1  # create extra row of subplots to accommodate legend
     gplotter.plot_trial(maintitle=maintitle,
                         emg_tracecolor=emgcolors[i])
     
