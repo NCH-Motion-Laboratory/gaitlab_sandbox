@@ -861,7 +861,8 @@ class model_outputs:
             
     def read_raw(self, varlist, components=None):
         """ Read specified model output variables into self.Vars.
-        From multidim arrays, components will pick the corresponding components.
+        components will pick the corresponding components from multidim arrays
+        (zero is first component).
         'split_xyz' splits 3-d arrays into separate x,y,z variables. """
         source = self.source
         if is_vicon_instance(source):
