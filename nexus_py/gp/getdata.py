@@ -555,7 +555,22 @@ class emg:
             else:
                 logical_data_cyc[ch] = cyc.cut_analog_to_cycle(data)
         return tn, logical_data_cyc
+
+
+""" WIP: rewrite model handling 
+
+
+"""
+
+models_av = defs.allmodels
+
+
        
+
+
+
+
+
 
 class model_outputs:
     """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. 
