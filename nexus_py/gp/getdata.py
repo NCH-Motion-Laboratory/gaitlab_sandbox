@@ -258,9 +258,11 @@ class trial:
         to be properly processed. """
         # delay between foot strike event and forceplate data evaluation.
         # idea is to wait until the other foot has lifted off
-        delay_ms = 170
+        # TODO: adjust delay / min force according to subject, etc.
+        # (does not work for all subjects)
+        delay_ms = 160
         # minimum force (N) to consider it a clean contact
-        min_force = 150
+        min_force = 100
         # get force data
         forcetot = self.fp.forcetot
         # foot strike frames -> analog samples
