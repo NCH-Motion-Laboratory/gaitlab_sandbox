@@ -44,7 +44,7 @@ import ViconNexus
 
 # print debug messages
 # may prevent scripts from working in Nexus (??)
-DEBUG = False
+DEBUG = True
 
 
 def debug_print(*args):
@@ -175,6 +175,9 @@ class trial:
         # analog samples per frame
         # TODO: needs to be determined from file
         self.smp_per_frame = 10
+        # framerate (fps)
+        # TODO: read from file
+        self.framerate = 100
         if is_c3dfile(source):
             debug_print('trial: reading from ', source)
             c3dfile = source
@@ -258,9 +261,14 @@ class trial:
         to be properly processed. """
         # delay between foot strike event and forceplate data evaluation.
         # idea is to wait until the other foot has lifted off
-        delay_ms = 170
+        # duration of gait cycle (avg L/R)
+        gc_dur = (np.diff(self.lfstrikes)+np.diff(self.rfstrikes))/(2.*self.framerate)
+        # set delay as fraction of gait cycle duration         
+        delay_ms = gc_dur/8. * 1000
+        debug_print('Gait cycle duration: '+str(gc_dur)+' s')
+        debug_print('Using delay: '+str(delay_ms)+' ms')
         # minimum force (N) to consider it a clean contact
-        min_force = 150
+        min_force = 100
         # get force data
         forcetot = self.fp.forcetot
         # foot strike frames -> analog samples
@@ -278,6 +286,8 @@ class trial:
             kinetics += 'L'
         if max(rfsforces) > min_force:
             kinetics += 'R'
+        if kinetics == 'LR':
+            raise GaitDataError('Both left and right forceplate strike detected, how come?')
         debug_print('Strike frames:')
         debug_print(lfsind)
         debug_print(rfsind)
