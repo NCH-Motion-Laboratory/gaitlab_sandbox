@@ -44,7 +44,7 @@ import ViconNexus
 
 # print debug messages
 # may prevent scripts from working in Nexus (??)
-DEBUG = True
+DEBUG = False
 
 
 def debug_print(*args):
