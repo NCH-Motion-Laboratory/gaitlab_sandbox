@@ -247,9 +247,9 @@ class trial:
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
-        self.scan_cycles()
         # TODO: self.samples_per_frame = self.analograte / self.framerate
         self.smp_per_frame = 10
+        self.scan_cycles()
         
     def kinetics_available(self):
         """ See whether this trial has GRF info for left/right side
@@ -343,6 +343,7 @@ class forceplate:
         if is_vicon_instance(source):
             vicon = source
             framecount = vicon.GetFrameCount()
+            self.framerate = vicon.GetFrameRate()
             fpdevicename = 'Forceplate'
             devicenames = vicon.GetDeviceNames()
             if fpdevicename in devicenames:
