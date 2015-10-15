@@ -172,12 +172,6 @@ class trial:
         self.rfstrikes = []
         self.ltoeoffs = []
         self.rtoeoffs = []
-        # analog samples per frame
-        # TODO: needs to be determined from file
-        self.smp_per_frame = 10
-        # framerate (fps)
-        # TODO: read from file
-        self.framerate = 100
         if is_c3dfile(source):
             debug_print('trial: reading from ', source)
             c3dfile = source
@@ -189,6 +183,8 @@ class trial:
             acq = reader.GetOutput()
             # frame offset (start of trial data in frames)
             self.offset = acq.GetFirstFrame()
+            self.framerate = acq.GetPointFrequency()
+            self.analograte = acq.GetAnalogFrequency()
             #  get events
             for i in btk.Iterate(acq.GetEvents()):
                 if i.GetLabel() == "Foot Strike":
@@ -224,6 +220,8 @@ class trial:
             self.rtoeoffs = vicon.GetEvents(self.subjectname, "Right", "Foot Off")[0]
             # frame offset (start of trial data in frames)
             self.offset = 1
+            self.framerate = vicon.GetFrameRate()
+            # self.analograte = ??
         else:
             raise GaitDataError('Invalid data source specified')
         if len(self.lfstrikes) < 2 or len(self.rfstrikes) <2:
@@ -250,6 +248,8 @@ class trial:
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
         self.scan_cycles()
+        # TODO: self.samples_per_frame = self.analograte / self.framerate
+        self.smp_per_frame = 10
         
     def kinetics_available(self):
         """ See whether this trial has GRF info for left/right side
@@ -342,7 +342,6 @@ class forceplate:
         self.nplates = 1  # need to also implement reading multiple plates later
         if is_vicon_instance(source):
             vicon = source
-            framerate = vicon.GetFrameRate()
             framecount = vicon.GetFrameCount()
             fpdevicename = 'Forceplate'
             devicenames = vicon.GetDeviceNames()
@@ -353,7 +352,7 @@ class forceplate:
             # DType should be 'ForcePlate', drate is sampling rate
             dname,dtype,drate,outputids,_,_ = vicon.GetDeviceDetails(fpid)
             self.sfrate = drate
-            self.samplesperframe = drate / framerate  # fp samples per Vicon frame
+            self.samplesperframe = drate / self.framerate  # fp samples per Vicon frame
             assert(len(outputids)==3)
             # outputs should be force, moment, cop. select force
             outputid = outputids[0]
