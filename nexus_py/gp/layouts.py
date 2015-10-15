@@ -37,11 +37,11 @@ std_emg = [['RGlut','LGlut'],
 
 # kinetics + kinematics
 std_kinall = std_kinematics + std_kinetics
-std_kinall.pop()
-std_kinall.append(['modellegend',None,'AnklePowerZ'])
+# kin *overlay
+# add legend to bottom row
 overlay_kinall = list(std_kinall)
-overlay_kinall.append(['modellegend',None,None])
-
+overlay_kinall.pop()
+overlay_kinall.append(['modellegend',None,'AnklePowerZ'])
               
 # EMG overlay - add legend
 overlay_emg = list(std_emg)
