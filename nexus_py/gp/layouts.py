@@ -18,6 +18,7 @@ std_kinetics = [['HipMomentX','HipMomentY','HipMomentZ'],
              ['HipPowerZ','KneeMomentX','KneeMomentY'],
              ['KneeMomentZ','KneePowerZ','AnkleMomentX'],
              [None,None,'AnklePowerZ']]
+             
 
 # muscle lengths
 std_musclelen = [['PsoaLength', 'GracLength', 'ReFeLength'],
@@ -33,6 +34,14 @@ std_emg = [['RGlut','LGlut'],
               ['RPer','LPer'],
               ['RGas','LGas'],
               ['RSol','LSol']]
+
+# kinetics + kinematics
+std_kinall = std_kinematics + std_kinetics
+std_kinall.pop()
+std_kinall.append(['modellegend',None,'AnklePowerZ'])
+overlay_kinall = list(std_kinall)
+overlay_kinall.append(['modellegend',None,None])
+
               
 # EMG overlay - add legend
 overlay_emg = list(std_emg)

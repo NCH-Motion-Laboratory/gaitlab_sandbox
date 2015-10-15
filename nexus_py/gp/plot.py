@@ -532,6 +532,8 @@ class gaitplotter():
         
         # fix plot spacing, restrict to below title
         self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
+        #self.gs.tight_layout(self.fig, rect=[0,0,1,.95])
+        #self.gs.tight_layout(self.fig, h_pad=.01, w_pad=.01, rect=[0,0,1,.95])        
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
