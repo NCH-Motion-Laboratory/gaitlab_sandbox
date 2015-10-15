@@ -42,20 +42,16 @@ if not marked_trials:
     gp.getdata.error_exit('Did not find any marked trials (R1 etc.) in current session directory.')
 
 plotvars = gp.layouts.overlay_kinall
-emgcolors = ['b','g','r','c','m','y','k']
 
 gplotter = gaitplotter()
-gplotter.annotate_disconnected = False
 maintitle = 'Consistency plot'
 
 for i,trialpath in enumerate(marked_trials):
     gplotter.open_c3d_trial(trialpath)
     gplotter.read_trial(plotvars)
-    #gplotter.gridv += 1  # create extra row of subplots to accommodate legend
-    gplotter.plot_trial(maintitle=maintitle,
-                        emg_tracecolor=emgcolors[i])
+    gplotter.plot_trial(maintitle=maintitle)
     
 gplotter.show()
-#gplotter.create_pdf('model_consistency.pdf')
+gplotter.create_pdf('kin_consistency.pdf')
 
     
