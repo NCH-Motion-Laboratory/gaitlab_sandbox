@@ -91,8 +91,12 @@ class gaitplotter():
         self.tracecolor_l = 'red'
         # relative length of toe-off arrow (multiples of plot y height)
         self.toeoff_rel_len = .15
-        # label font size
-        self.fsize_labels=10
+        # subplot title font size
+        self.fsize_titles=10
+        # subplot label font size
+        self.fsize_labels=8
+        # subplot tick label font size
+        self.fsize_ticks=8
         # for plotting kinematics / kinetics normal data
         self.normals_alpha = .3
         self.normals_color = 'gray'
@@ -405,11 +409,14 @@ class gaitplotter():
                 if plot_onesided:
                     title = self.trial.model.description(varname) + ' ('+side+')'
                 else:
-                    title = self.trial.model.description(varname)
+                    title = self.trial.model.description(varname) + ' (LR)'
                 ylabel = self.trial.model.ylabel(varname_)
-                plt.title(title, fontsize=self.fsize_labels)
+                plt.title(title, fontsize=self.fsize_titles)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
+                # experimental - reduce label padding
+                #axcurrent = plt.gca()
+                #axcurrent.yaxis.labelpad = 0
                 # variable-specific scales
                 #plt.ylim(kinematicsymin[k], kinematicsymax[k])
                 ylim_default= ax.get_ylim()
@@ -424,6 +431,8 @@ class gaitplotter():
                 if self.trial.model.is_musclelen_variable(varname_):
                     plt.ylim(ylim_default[0]-10, ylim_default[1]+10)
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
+                # tick font size                
+                plt.tick_params(axis='both', which='major', labelsize=self.fsize_ticks)
                 # add arrows indicating toe off times
                 if self.add_toeoff_markers:
                     ymin = ax.get_ylim()[0]
@@ -486,10 +495,12 @@ class gaitplotter():
                     plt.axvspan(inds[0], inds[1], alpha=self.emg_normals_alpha, color=self.emg_normals_color)    
                 plt.ylim(-emg_yscale, emg_yscale)  # scale is in mV
                 plt.xlim(0,100)
-                plt.title(chlabel, fontsize=10)
+                plt.title(chlabel, fontsize=self.fsize_titles)
                 plt.xlabel(self.xlabel, fontsize=self.fsize_labels)
                 plt.ylabel(self.emg_ylabel, fontsize=self.fsize_labels)
                 plt.locator_params(axis = 'y', nbins = 4)
+                # tick font size                
+                plt.tick_params(axis='both', which='major', labelsize=self.fsize_ticks)
                 
                 if self.add_toeoff_markers:
                     ymin = ax.get_ylim()[0]
@@ -531,9 +542,8 @@ class gaitplotter():
             ax.legend(nothing+self.emgartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
         
         # fix plot spacing, restrict to below title
-        self.gs.tight_layout(self.fig, h_pad=.1, w_pad=.1, rect=[0,0,1,.95])
-        #self.gs.tight_layout(self.fig, rect=[0,0,1,.95])
-        #self.gs.tight_layout(self.fig, h_pad=.01, w_pad=.01, rect=[0,0,1,.95])        
+        # magic numbers that work for most cases; hspace and wspace need to be adjusted if label font sizes change, etc.
+        self.gs.update(left=.08, right=.98, top=.92, bottom=.03, hspace=.37, wspace=.22)
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
