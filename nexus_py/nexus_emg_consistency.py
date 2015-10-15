@@ -51,7 +51,6 @@ maintitle = 'EMG consistency plot '+'('+gplotter.get_emg_filter_description()+')
 for i,trialpath in enumerate(marked_trials):
     gplotter.open_c3d_trial(trialpath)
     gplotter.read_trial(plotvars)
-    gplotter.gridv += 1  # create extra row of subplots to accommodate legend
     gplotter.plot_trial(maintitle=maintitle,
                         emg_tracecolor=emgcolors[i])
     
