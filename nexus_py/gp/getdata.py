@@ -221,7 +221,14 @@ class trial:
             # frame offset (start of trial data in frames)
             self.offset = 1
             self.framerate = vicon.GetFrameRate()
-            # self.analograte = ??
+            # Get analog rate. This may not be mandatory if analog devices
+            # are not used, but currently it needs to succeed.
+            devids = vicon.GetDeviceIDs()
+            if not devids:
+                raise GaitDataError('No analog devices configured in Nexus, cannot determine analog rate')
+            else:
+                devid = devids[0]
+                _,_,self.analograte,_,_,_ = vicon.GetDeviceDetails(devid)
         else:
             raise GaitDataError('Invalid data source specified')
         if len(self.lfstrikes) < 2 or len(self.rfstrikes) <2:
@@ -248,7 +255,7 @@ class trial:
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
         # TODO: self.samples_per_frame = self.analograte / self.framerate
-        self.smp_per_frame = 10
+        self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
         
     def kinetics_available(self):
