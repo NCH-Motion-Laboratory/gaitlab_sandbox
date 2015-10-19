@@ -44,7 +44,7 @@ if not marked_trials:
 plotvars = gp.layouts.overlay_kinall
 
 gplotter = gaitplotter()
-maintitle = 'Consistency plot'
+maintitle = 'Kinematics/kinetics consistency plot'
 
 for i,trialpath in enumerate(marked_trials):
     gplotter.open_c3d_trial(trialpath)
