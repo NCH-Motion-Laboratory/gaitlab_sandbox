@@ -21,7 +21,8 @@ import ViconNexus
 import matplotlib.pyplot as plt
 from gp import getdata
 
-THRESHOLD_FALL = .2  # above minimum
+# default thresholds for event detection (portion of max. velocity)
+THRESHOLD_FALL = .2
 THRESHOLD_UP = .5
 
 vicon = ViconNexus.ViconNexus()
@@ -58,6 +59,7 @@ def get_fp_strike_and_toeoff():
     """ Return forceplate strike and toeoff frames. """
     FP_THRESHOLD = .02  # % of maximum force
     fp0 = getdata.forceplate(vicon)
+    # try to remove forceplate noise & spikes with median filter
     ftot = signal.medfilt(fp0.forcetot, 5)
     frel = ftot/ftot.max()
     # in analog frames
@@ -100,6 +102,7 @@ lfallframes = falling_zerocross(lfootctrv-thre_fall)
 lupframes = rising_zerocross(lfootctrv-thre_up)
 print(lfallframes+roi0)
 
+# update detection thresholds
 fpstrike, fptoeoff = get_fp_strike_and_toeoff()
 print('Forceplate strike:', fpstrike, 'toeoff:', fptoeoff)
 print('Relative velocities at forceplate:')
@@ -116,8 +119,6 @@ else:
     print('Strike:', THRESHOLD_FALL_NEW)
     print('Toeoff:', THRESHOLD_UP_NEW)
 
-
-
 print('Redetect right:')
 thre_fall = rfootctrv.max() * THRESHOLD_FALL_NEW
 thre_up = rfootctrv.max() * THRESHOLD_UP_NEW
@@ -131,6 +132,18 @@ lfallframes = falling_zerocross(lfootctrv-thre_fall)
 lupframes = rising_zerocross(lfootctrv-thre_up)
 print('Strike:', lfallframes+roi0, 'toeoff:', lupframes+roi0)
 
+# discrepancies with existing markers (if any)
+lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
+rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
+ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
+rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
+
+print('Originally marked:')
+print('Right:')
+print('Strike:', rfstrikes, 'toeoff:', rtoeoffs)
+print('Left:')
+print('Strike:', lfstrikes, 'toeoff:', ltoeoffs)
+
 # mark events
 for strike in rfallframes:
     vicon.CreateAnEvent(subjectname, 'Right', 'Foot Strike', strike+roi0, 0.0 )
@@ -140,6 +153,14 @@ for strike in lfallframes:
     vicon.CreateAnEvent(subjectname, 'Left', 'Foot Strike', strike+roi0, 0.0 )
 for fr in lupframes:
     vicon.CreateAnEvent(subjectname, 'Left', 'Foot Off', fr+roi0, 0.0 )
+
+
+
+
+
+
+
+
 
 
 
