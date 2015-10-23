@@ -3,6 +3,8 @@
 
 Automatically mark gait cycle events.
 
+
+
 @author: Jussi
 """
 
@@ -54,13 +56,15 @@ def roi_pos_vel_acc(marker):
     
 def get_fp_strike_and_toeoff():
     """ Return forceplate strike and toeoff frames. """
-    FP_THRESHOLD = .1  # % of maximum force
+    FP_THRESHOLD = .02  # % of maximum force
     fp0 = getdata.forceplate(vicon)
-    ftot = fp0.forcetot
+    ftot = signal.medfilt(fp0.forcetot, 5)
     frel = ftot/ftot.max()
     # in analog frames
+    # first large force increase
     fpstrike = rising_zerocross(frel-FP_THRESHOLD)[0]
-    fptoeoff = falling_zerocross(frel-FP_THRESHOLD)[0]
+    # last force decrease
+    fptoeoff = falling_zerocross(frel-FP_THRESHOLD)[-1]
     return np.round(fpstrike/fp0.samplesperframe), np.round(fptoeoff/fp0.samplesperframe)
      
 # get data for specified markers
@@ -78,17 +82,20 @@ rfootctrv = np.sqrt(np.sum(rfootctrV[:,1:3]**2,1))
 lfootctrV = (mrkdata['LHEE_V']+mrkdata['LTOE_V']+mrkdata['LANK_V'])/3.
 lfootctrv = np.sqrt(np.sum(lfootctrV[:,1:3]**2,1))
 
+# apply filter to suppress noise and spikes
+rfootctrv = signal.medfilt(rfootctrv, 3)
+lfootctrv = signal.medfilt(lfootctrv, 3)
 
 print('Initial strike autodetect right:')
-thre_fall = rfootctrv.max() * THRESHOLD_FALL + rfootctrv.min()
-thre_up = rfootctrv.max() * THRESHOLD_UP + rfootctrv.min()
+thre_fall = rfootctrv.max() * THRESHOLD_FALL
+thre_up = rfootctrv.max() * THRESHOLD_UP
 rfallframes = falling_zerocross(rfootctrv-thre_fall)
 rupframes = rising_zerocross(rfootctrv-thre_up)
 print(rfallframes+roi0)
 
 print('Initial strike autodetect left:')
-thre_fall = lfootctrv.max() * THRESHOLD_FALL + lfootctrv.min()
-thre_up = lfootctrv.max() * THRESHOLD_UP + lfootctrv.min()
+thre_fall = lfootctrv.max() * THRESHOLD_FALL
+thre_up = lfootctrv.max() * THRESHOLD_UP
 lfallframes = falling_zerocross(lfootctrv-thre_fall)
 lupframes = rising_zerocross(lfootctrv-thre_up)
 print(lfallframes+roi0)
@@ -98,29 +105,31 @@ print('Forceplate strike:', fpstrike, 'toeoff:', fptoeoff)
 print('Relative velocities at forceplate:')
 if min(abs(lfallframes-(fpstrike-roi0))) < min(abs(rfallframes-(fpstrike-roi0))):
     print('Left:')
-    print('Strike:',lfootctrv[fpstrike-roi0]/lfootctrv.max())
-    print('Toeoff:',lfootctrv[fptoeoff-roi0]/lfootctrv.max())
-    THRESHOLD_FALL = lfootctrv[fpstrike-roi0]/lfootctrv.max()
-    THRESHOLD_UP = lfootctrv[fptoeoff-roi0]/lfootctrv.max()
+    THRESHOLD_FALL_NEW = lfootctrv[fpstrike-roi0]/lfootctrv.max()
+    THRESHOLD_UP_NEW = lfootctrv[fptoeoff-roi0]/lfootctrv.max()
+    print('Strike:', THRESHOLD_FALL_NEW)
+    print('Toeoff:', THRESHOLD_UP_NEW)
 else:
     print('Right:')
-    print('Strike:',rfootctrv[fpstrike-roi0]/rfootctrv.max())
-    print('Toeoff:',rfootctrv[fptoeoff-roi0]/rfootctrv.max())
-    THRESHOLD_FALL = rfootctrv[fpstrike-roi0]/rfootctrv.max()
-    THRESHOLD_UP = rfootctrv[fptoeoff-roi0]/rfootctrv.max()
+    THRESHOLD_FALL_NEW = rfootctrv[fpstrike-roi0]/rfootctrv.max()
+    THRESHOLD_UP_NEW = rfootctrv[fptoeoff-roi0]/rfootctrv.max()
+    print('Strike:', THRESHOLD_FALL_NEW)
+    print('Toeoff:', THRESHOLD_UP_NEW)
 
-print('Redetect strike and toeoff right:')
-thre_fall = rfootctrv.max() * THRESHOLD_FALL + rfootctrv.min()
-thre_up = rfootctrv.max() * THRESHOLD_UP + rfootctrv.min()
+
+
+print('Redetect right:')
+thre_fall = rfootctrv.max() * THRESHOLD_FALL_NEW
+thre_up = rfootctrv.max() * THRESHOLD_UP_NEW
 rfallframes = falling_zerocross(rfootctrv-thre_fall)
 rupframes = rising_zerocross(rfootctrv-thre_up)
-print(rfallframes+roi0)
-print('Redetect strike and toeoff left:')
-thre_fall = lfootctrv.max() * THRESHOLD_FALL + lfootctrv.min()
-thre_up = lfootctrv.max() * THRESHOLD_UP + lfootctrv.min()
+print('Strike:', rfallframes+roi0, 'toeoff:', rupframes+roi0)
+print('Redetect left:')
+thre_fall = lfootctrv.max() * THRESHOLD_FALL_NEW
+thre_up = lfootctrv.max() * THRESHOLD_UP_NEW
 lfallframes = falling_zerocross(lfootctrv-thre_fall)
 lupframes = rising_zerocross(lfootctrv-thre_up)
-print(lfallframes+roi0)
+print('Strike:', lfallframes+roi0, 'toeoff:', lupframes+roi0)
 
 # mark events
 for strike in rfallframes:
