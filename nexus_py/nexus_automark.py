@@ -18,7 +18,8 @@ from scipy import signal
 import ViconNexus
 import matplotlib.pyplot as plt
 
-THRESHOLD = .1  # above minimum
+THRESHOLD_FALL = .1  # above minimum
+THRESHOLD_UP = .5
 
 vicon = ViconNexus.ViconNexus()
 subjectnames = vicon.GetSubjectNames()  
@@ -63,27 +64,35 @@ roi0 = roifr[0]
 print('Autodetect right:')
 # compute foot centre velocity
 footctrV = (mrkdata['RHEE_V']+mrkdata['RTOE_V']+mrkdata['RANK_V'])/3.
-footctrv = np.sqrt(np.sum(footctrV[:,1:3]**2,1))
+rfootctrv = np.sqrt(np.sum(footctrV[:,1:3]**2,1))
 # find local minima below zero
-rng = footctrv.max()-footctrv.min()
-thre = rng * THRESHOLD + footctrv.min()
-fallframes = falling_zerocross(footctrv-thre)
+rng = rfootctrv.max()-rfootctrv.min()
+thre_fall = rng * THRESHOLD_FALL + rfootctrv.min()
+thre_up = rng * THRESHOLD_UP + rfootctrv.min()
+fallframes = falling_zerocross(rfootctrv-thre_fall)
+upframes = rising_zerocross(rfootctrv-thre_up)
 print(fallframes+roi0)
 for strike in fallframes:
     vicon.CreateAnEvent(subjectname, 'Right', 'Foot Strike', strike+roi0, 0.0 )
+for fr in upframes:
+    vicon.CreateAnEvent(subjectname, 'Right', 'Foot Off', fr+roi0, 0.0 )
+
 
 print('Autodetect left:')
 # compute foot centre velocity
 footctrV = (mrkdata['LHEE_V']+mrkdata['LTOE_V']+mrkdata['LANK_V'])/3.
-footctrv = np.sqrt(np.sum(footctrV[:,1:3]**2,1))
+lfootctrv = np.sqrt(np.sum(footctrV[:,1:3]**2,1))
 # find local minima below zero
-rng = footctrv.max()-footctrv.min()
-thre = rng * THRESHOLD + footctrv.min()
-fallframes = falling_zerocross(footctrv-thre)
+rng = lfootctrv.max()-lfootctrv.min()
+thre_fall = rng * THRESHOLD_FALL + lfootctrv.min()
+thre_up = rng * THRESHOLD_UP + lfootctrv.min()
+fallframes = falling_zerocross(lfootctrv-thre_fall)
+upframes = rising_zerocross(lfootctrv-thre_up)
 print(fallframes+roi0)
 for strike in fallframes:
     vicon.CreateAnEvent(subjectname, 'Left', 'Foot Strike', strike+roi0, 0.0 )
-
+for fr in upframes:
+    vicon.CreateAnEvent(subjectname, 'Left', 'Foot Off', fr+roi0, 0.0 )
 
 
 
