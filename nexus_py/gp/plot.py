@@ -325,7 +325,8 @@ class gaitplotter():
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
         if not self.trial.kinetics_side:
-            messagebox('Note: no valid forceplate contact, will not plot kinetics')
+            pass
+            #messagebox('Note: no valid forceplate contact, will not plot kinetics')
         if self.trial.kinetics_side == 'LR':
             messagebox('Note: detected both L/R forceplate strikes, possible double contact\n')
         

@@ -265,6 +265,8 @@ class trial:
         Currently this method is not very smart and does not work for multiple-plate
         systems. Trials with double contact may also be misclassified, so data needs
         to be properly processed. """
+        
+        
         # delay between foot strike event and forceplate data evaluation.
         # idea is to wait until the other foot has lifted off
         # mean duration of gait cycle
@@ -309,15 +311,13 @@ class trial:
             if len_s < 2:
                 raise GaitDataError("Insufficient number of foot strike events detected. "+
                         "Check that the trial has been processed.")
-            if len_s % 2:
-                strikes.pop()  # assure even number of foot strikes
             if strikes == self.lfstrikes:
                 toeoffs = self.ltoeoffs
                 context = 'L'
             else:
                 toeoffs = self.rtoeoffs
                 context = 'R'
-            for k in range(0, 2, len_s):
+            for k in range(0, len_s-1):
                 start = strikes[k]
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
