@@ -254,7 +254,6 @@ class trial:
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
-        # TODO: self.samples_per_frame = self.analograte / self.framerate
         self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
         
