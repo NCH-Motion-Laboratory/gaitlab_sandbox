@@ -325,9 +325,7 @@ class gaitplotter():
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
         if self.trial.kinetics_side == 'LR':
-            messagebox('Note: detected both L/R forceplate strikes, possible double contact\n'+
-            'Using right side for kinetics')
-            self.trial.kinetics_side = 'R'
+            messagebox('Note: detected both L/R forceplate strikes, possible double contact\n')
         
                                       
     def set_fig_title(self, title):
