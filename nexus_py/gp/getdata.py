@@ -287,10 +287,10 @@ class trial:
         lfsforces = forcetot[lind]
         rfsforces = forcetot[rind]
         kinetics = ''
-        if lfsforces and max(lfsforces) > min_force:
-            kinetics += 'L'
-        if rfsforces and max(rfsforces) > min_force:
-            kinetics += 'R'
+        if lfsforces.any() and max(lfsforces) > min_force:
+                kinetics += 'L'
+        if rfsforces.any() and max(rfsforces) > min_force:
+                kinetics += 'R'
         debug_print('Strike frames:')
         debug_print(lfsind)
         debug_print(rfsind)
