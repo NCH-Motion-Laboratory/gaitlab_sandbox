@@ -294,7 +294,9 @@ class trial:
         if max(rfsforces) > min_force:
             kinetics += 'R'
         if kinetics == 'LR':
-            raise GaitDataError('Both left and right forceplate strike detected, how come?')
+            # valid with 2 or more forceplates.
+            pass
+            #raise GaitDataError('Both left and right forceplate strike detected, how come?')
         debug_print('Strike frames:')
         debug_print(lfsind)
         debug_print(rfsind)
