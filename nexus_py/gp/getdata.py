@@ -254,29 +254,29 @@ class trial:
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
-        # TODO: self.samples_per_frame = self.analograte / self.framerate
         self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
         
     def kinetics_available(self):
-        """ See whether this trial has GRF info for left/right side
-        (or neither, or both). Kinetics require the GRF for the corresponding
+        """ See whether this trial has ground reaction forces for left/right side
+        (or neither, or both). Kinetics modelling requires the GRF for the corresponding
         side, i.e. a forceplate strike. Thus look at foot strike event times and 
         determine whether (clean) forceplate contact is happening at each time.
         Currently this method is not very smart and does not work for multiple-plate
         systems. Trials with double contact may also be misclassified, so data needs
         to be properly processed. """
+        
+        
         # delay between foot strike event and forceplate data evaluation.
         # idea is to wait until the other foot has lifted off
-        # duration of gait cycle (avg L/R)
-        gc_dur = (np.diff(self.lfstrikes)+np.diff(self.rfstrikes))/(2.*self.framerate)
-        # set delay as fraction of gait cycle duration         
+        # mean duration of gait cycle
+        gc_dur = np.append(np.diff(self.lfstrikes), np.diff(self.rfstrikes)).mean()
+        # set delay as fraction of gait cycle
         delay_ms = gc_dur/8. * 1000
         debug_print('Gait cycle duration: '+str(gc_dur)+' s')
         debug_print('Using delay: '+str(delay_ms)+' ms')
         # minimum force (N) to consider it a clean contact
         min_force = 100
-        # get force data
         forcetot = self.fp.forcetot
         # foot strike frames -> analog samples
         lfsind = (np.array(self.lfstrikes) - self.offset) * self.fp.samplesperframe
@@ -286,21 +286,18 @@ class trial:
         rind = [x for x in rfsind.astype(int)+delay if x<len(forcetot)]        
         lfsforces = forcetot[lind]
         rfsforces = forcetot[rind]
-        # TODO: check for double contact
-        # TODO: caller cannot interpret 'LR' yet
         kinetics = ''
-        if max(lfsforces) > min_force:
-            kinetics += 'L'
-        if max(rfsforces) > min_force:
-            kinetics += 'R'
-        if kinetics == 'LR':
-            raise GaitDataError('Both left and right forceplate strike detected, how come?')
+        if lfsforces.any() and max(lfsforces) > min_force:
+                kinetics += 'L'
+        if rfsforces.any() and max(rfsforces) > min_force:
+                kinetics += 'R'
         debug_print('Strike frames:')
         debug_print(lfsind)
         debug_print(rfsind)
         debug_print('Total force', delay_ms, 'ms after foot strikes:')
         debug_print('Left: ', lfsforces)
         debug_print('Right: ', rfsforces)
+        debug_print('GRF available: ', kinetics)
         return kinetics
 
     def scan_cycles(self):
@@ -314,15 +311,13 @@ class trial:
             if len_s < 2:
                 raise GaitDataError("Insufficient number of foot strike events detected. "+
                         "Check that the trial has been processed.")
-            if len_s % 2:
-                strikes.pop()  # assure even number of foot strikes
             if strikes == self.lfstrikes:
                 toeoffs = self.ltoeoffs
                 context = 'L'
             else:
                 toeoffs = self.rtoeoffs
                 context = 'R'
-            for k in range(0, 2, len_s):
+            for k in range(0, len_s-1):
                 start = strikes[k]
                 end = strikes[k+1]
                 toeoff = [x for x in toeoffs if x > start and x < end]
