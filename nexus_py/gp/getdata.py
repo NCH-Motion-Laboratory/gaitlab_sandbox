@@ -324,9 +324,6 @@ class trial:
 
     def scan_cycles(self):
         """ Scan for foot strike events and create gait cycle objects. """
-        debug_print('scan_cycles:')
-        debug_print('foot strikes, l/r:', self.lfstrikes, self.rfstrikes)
-        debug_print('toeoffs, l/r: ', self.ltoeoffs, self.rtoeoffs)
         self.cycles = []
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
