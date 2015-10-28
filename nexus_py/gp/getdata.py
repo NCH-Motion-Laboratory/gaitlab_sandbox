@@ -44,7 +44,7 @@ import ViconNexus
 
 # print debug messages
 # may prevent scripts from working in Nexus (??)
-DEBUG = False
+DEBUG = True
 
 
 def debug_print(*args):
@@ -205,14 +205,20 @@ class trial:
             debug_print('trial: reading from Vicon Nexus')
             vicon = source
             subjectnames = vicon.GetSubjectNames()  
+            debug_print('subject:', subjectnames)
+            if len(subjectnames) > 1:
+                raise GaitDataError('Nexus returns multiple subjects, not sure which one to use')
             if not subjectnames:
                 raise GaitDataError('No subject defined')
+            self.subjectname = subjectnames[0]
+            self.subject = {}
+            self.subject['Name'] = self.subjectname
+            self.subject['Bodymass'] = vicon.GetSubjectParam(self.subjectname, 'Bodymass')[0]
             trialname_ = vicon.GetTrialName()
             self.sessionpath = trialname_[0]
             self.trialname = trialname_[1]
             if not self.trialname:
                 raise GaitDataError('No trial loaded')
-            self.subjectname = subjectnames[0]
             # get events
             self.lfstrikes = vicon.GetEvents(self.subjectname, "Left", "Foot Strike")[0]
             self.rfstrikes = vicon.GetEvents(self.subjectname, "Right", "Foot Strike")[0]
@@ -231,6 +237,7 @@ class trial:
                 _,_,self.analograte,_,_,_ = vicon.GetDeviceDetails(devid)
         else:
             raise GaitDataError('Invalid data source specified')
+        debug_print('Foot strikes right:', self.rfstrikes, 'left:', self.lfstrikes)
         if len(self.lfstrikes) < 2 or len(self.rfstrikes) <2:
             raise GaitDataError('Too few foot strike events detected, check that data has been processed')
         # sort events (may be in wrong temporal order, at least in c3d files)
