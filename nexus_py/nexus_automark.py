@@ -26,7 +26,8 @@ THRESHOLD_FALL = .2
 THRESHOLD_UP = .5
 # which derivative to use for analysis
 # P,V,A for marker position, velocity, acceleration
-DERIV = 'P'
+# for now, V works and A kinda works
+DERIV = 'V'
 
 vicon = ViconNexus.ViconNexus()
 subjectnames = vicon.GetSubjectNames()
