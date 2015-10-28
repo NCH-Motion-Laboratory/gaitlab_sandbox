@@ -67,7 +67,7 @@ def get_fp_strike_and_toeoff():
     fpstrike = rising_zerocross(frel-FP_THRESHOLD)[0]
     # last force decrease
     fptoeoff = falling_zerocross(frel-FP_THRESHOLD)[-1]
-    return np.round(fpstrike/fp0.samplesperframe), np.round(fptoeoff/fp0.samplesperframe)
+    return int(np.round(fpstrike/fp0.samplesperframe)), int(np.round(fptoeoff/fp0.samplesperframe))
      
 # get data for specified markers
 mrkdata = {}    
