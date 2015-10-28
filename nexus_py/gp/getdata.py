@@ -175,7 +175,7 @@ class trial:
     -analog data (EMG, forceplate, etc.)
     -model variables (Plug-in Gait, muscle length, etc.)
     """
-    def __init__(self, source, emg_remapping=None, emg_auto_off=None,
+    def __init__(self, source, emg_mapping=None, emg_auto_off=None,
                  pig_normaldata_path=None):
         """ Open trial, read subject info, events etc. """
         self.lfstrikes = []
@@ -262,11 +262,9 @@ class trial:
         self.source = source
         self.fp = forceplate(source)
         # TODO: read from config / put as init params?
-        self.emg_mapping = {}
-        self.emg_auto_off = True
         # will be read by read_vars
         # TODO: emg params
-        self.emg = emg(source)
+        self.emg = emg(source, emg_auto_off=emg_auto_off, emg_mapping=emg_mapping)
         self.model = model_outputs(self.source, pig_normaldata_path)
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
@@ -283,13 +281,13 @@ class trial:
         forcetot = signal.medfilt(self.fp.forcetot) # remove spikes
         subj_weight = self.subject['Bodymass']*9.81
         F_THRESHOLD = .1 * subj_weight  # rise threshold
-        FRISE_WINDOW = .05 * self.analograte  # max delays with respect to strike
-        FMAX_MAX_DELAY = .5 * self.analograte
+        FRISE_WINDOW = .05 * self.analograte  # specify in seconds -> analog frames
+        FMAX_MAX_DELAY = .75 * self.analograte
         fmax = max(forcetot)
         fmaxind = np.where(forcetot == fmax)[0][0]  # first maximum
-        debug_print('kinetics_available: max force:', fmax, 'at:', fmaxind)
-        # peak force is less than subject weight - no clean contact
-        if max(forcetot) < subj_weight:
+        debug_print('kinetics_available: max force:', fmax, 'at:', fmaxind, 'weight:', subj_weight)
+        # allow for inaccuracy in weight
+        if max(forcetot) < .9 * subj_weight:
             return ''
         # first rise and last fall 
         friseind = rising_zerocross(forcetot-F_THRESHOLD)[0]
@@ -415,8 +413,8 @@ class forceplate:
 class emg:
     """ Read and process EMG data. """
 
-    def __init__(self, source, emg_remapping=None, emg_auto_off=True):
-        """ emg_remapping is the replacement dict for EMG electrodes:
+    def __init__(self, source, emg_mapping=None, emg_auto_off=True):
+        """ emg_mapping is the replacement dict for EMG electrodes:
         e.g. key 'LGas'='LSol' means that data for LGas will be 
         read from the LSol electrode."""
         self.source = source
@@ -428,7 +426,7 @@ class emg:
         self.emg_auto_off = emg_auto_off
         # normal data and logical chs
         self.define_emg_names()
-        self.emg_remapping = emg_remapping
+        self.emg_mapping = emg_mapping
         self.passband = None
     
     def set_filter(self, passband):
@@ -559,8 +557,8 @@ class emg:
             if logch not in self.logical_data:
                 # check if channel should be read from some other electrode
                 # in this case, the replacement is marked as reused
-                if self.emg_remapping and logch in self.emg_remapping:
-                    datach = self.emg_remapping[logch]
+                if self.emg_mapping and logch in self.emg_mapping:
+                    datach = self.emg_mapping[logch]
                     self.logical_data[datach] = 'EMG_REUSED'
                     self.ch_labels[logch] += ' (read from ' + datach +')'
                 else:

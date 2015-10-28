@@ -265,7 +265,8 @@ class gaitplotter():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         vicon = getdata.viconnexus()
         try:
-            self.trial = getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path)
+            self.trial = getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path,
+                                       emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening trial from Nexus:\n'+e.msg)
         
@@ -274,7 +275,8 @@ class gaitplotter():
         if not os.path.isfile(trialpath):
             error_exit('Cannot find trial: '+trialpath)
         try:
-            self.trial = getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path)
+            self.trial = getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path,
+                                       emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
         
