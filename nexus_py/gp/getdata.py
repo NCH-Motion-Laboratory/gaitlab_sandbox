@@ -122,6 +122,16 @@ def messagebox(message):
     # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
 
+def rising_zerocross(x):
+    """ Return indices of rising zero crossings in sequence,
+    i.e. n where x[n] >= 0 and x[n-1] < 0 """
+    x = np.array(x)  # this should not hurt
+    return np.where(np.logical_and(x[1:] >= 0, x[:-1] < 0))[0]+1
+
+def falling_zerocross(x):
+    return rising_zerocross(-x)
+
+
 
 class gaitcycle:
     """" Holds information about one gait cycle. Offset is the frame where
@@ -269,42 +279,47 @@ class trial:
         (or neither, or both). Kinetics modelling requires the GRF for the corresponding
         side, i.e. a forceplate strike. Thus look at foot strike event times and 
         determine whether (clean) forceplate contact is happening at each time.
-        Currently this method is not very smart and does not work for multiple-plate
-        systems. Trials with double contact may also be misclassified, so data needs
-        to be properly processed. """
-        
-        
-        # delay between foot strike event and forceplate data evaluation.
-        # idea is to wait until the other foot has lifted off
-        # mean duration of gait cycle
-        gc_dur = np.append(np.diff(self.lfstrikes), np.diff(self.rfstrikes)).mean()
-        # set delay as fraction of gait cycle
-        delay_ms = gc_dur/8. * 1000
-        debug_print('Gait cycle duration: '+str(gc_dur)+' s')
-        debug_print('Using delay: '+str(delay_ms)+' ms')
-        # minimum force (N) to consider it a clean contact
-        min_force = 100
-        forcetot = self.fp.forcetot
-        # foot strike frames -> analog samples
+        """
+        forcetot = signal.medfilt(self.fp.forcetot) # remove spikes
+        subj_weight = self.subject['Bodymass']*9.81
+        F_THRESHOLD = .1 * subj_weight  # rise threshold
+        FRISE_WINDOW = .05 * self.analograte  # max delays with respect to strike
+        FMAX_MAX_DELAY = .5 * self.analograte
+        fmax = max(forcetot)
+        fmaxind = np.where(forcetot == fmax)[0][0]  # first maximum
+        debug_print('kinetics_available: max force:', fmax, 'at:', fmaxind)
+        # peak force is less than subject weight - no clean contact
+        if max(forcetot) < subj_weight:
+            return ''
+        # first rise and last fall 
+        friseind = rising_zerocross(forcetot-F_THRESHOLD)[0]
+        ffallind = falling_zerocross(forcetot-F_THRESHOLD)[-1]
+        #  for a strike to be judged as a clean contact:
+        # -1st force rise must occur around foot strike
+        # -max force must occur in a window after strike
+        kinetics = ''
         lfsind = (np.array(self.lfstrikes) - self.offset) * self.fp.samplesperframe
         rfsind = (np.array(self.rfstrikes) - self.offset) * self.fp.samplesperframe
-        delay = int(delay_ms/1000. * self.fp.sfrate)
-        lind = [x for x in lfsind.astype(int)+delay if x<len(forcetot)]
-        rind = [x for x in rfsind.astype(int)+delay if x<len(forcetot)]        
-        lfsforces = forcetot[lind]
-        rfsforces = forcetot[rind]
-        kinetics = ''
-        if lfsforces.any() and max(lfsforces) > min_force:
-                kinetics += 'L'
-        if rfsforces.any() and max(rfsforces) > min_force:
-                kinetics += 'R'
-        debug_print('Strike frames:')
-        debug_print(lfsind)
-        debug_print(rfsind)
-        debug_print('Total force', delay_ms, 'ms after foot strikes:')
-        debug_print('Left: ', lfsforces)
-        debug_print('Right: ', rfsforces)
-        debug_print('GRF available: ', kinetics)
+        for i,ind in enumerate(lfsind):
+            debug_print('kinetics_available: strike', i, 'on left')
+            debug_print('kinetics_available: dist to 1st force rise:', abs(friseind-ind))
+            debug_print('kinetics_available: delay to force max:', fmaxind-ind)
+            if abs(friseind-ind) <= FRISE_WINDOW:
+                if fmaxind-ind  <= FMAX_MAX_DELAY:
+                    debug_print('kinetics_available: judged as clean')
+                    kinetics = 'L'
+        for i,ind in enumerate(rfsind):
+            debug_print('kinetics_available: strike', i, 'on right')
+            debug_print('kinetics_available: dist to 1st force rise:', abs(friseind-ind))
+            debug_print('kinetics_available: delay to force max:', fmaxind-ind)
+            if abs(friseind-ind) <= FRISE_WINDOW:
+                if fmaxind-ind  <= FMAX_MAX_DELAY:
+                    if kinetics == '':
+                        debug_print('kinetics_available: judged as clean')
+                        kinetics = 'R'
+                    else:
+                        # should never happen
+                        raise Exception('Clean contact on both feet, how come?')
         return kinetics
 
     def scan_cycles(self):
@@ -952,7 +967,6 @@ class model_outputs:
         """ Returns a more elaborate description for a model variable (L/R),
         if known. If var is normalized to a gait cycle, side will be reflected
         in the name. """
-        debug_print('get description for: ', varname)
         varname_,side = self.rm_side(varname)
         if varname_ in self.varlabels:
             return self.varlabels[varname_]  #+' ('+side+')'
