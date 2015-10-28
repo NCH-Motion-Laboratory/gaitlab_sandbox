@@ -214,7 +214,10 @@ class trial:
                         raise Exception("Unknown context on foot strike event")
                 # get subject info
                 metadata = acq.GetMetaData()
-                #self.subject['Name'] =  metadata.FindChild("SUBJECTS").value().FindChild("MOVIE_DELAY").value().GetInfo().toDouble()
+                # don't ask
+                self.subject['Name'] =  metadata.FindChild("SUBJECTS").value().FindChild("NAMES").value().GetInfo().ToString()[0].strip()
+                self.subject['Bodymass'] =  metadata.FindChild("PROCESSING").value().FindChild("Bodymass").value().GetInfo().ToDouble()[0]
+                debug_print('Subject info read:\n', self.subject)
         elif is_vicon_instance(source):
             debug_print('trial: reading from Vicon Nexus')
             vicon = source
