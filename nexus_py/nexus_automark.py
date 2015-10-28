@@ -21,12 +21,17 @@ import ViconNexus
 import matplotlib.pyplot as plt
 from gp import getdata
 
-# default thresholds for event detection (portion of max. velocity)
+# default thresholds for event detection (portion of max. height/velocity/acc)
 THRESHOLD_FALL = .2
 THRESHOLD_UP = .5
+# which derivative to use for analysis
+# P,V,A for marker position, velocity, acceleration
+DERIV = 'P'
 
 vicon = ViconNexus.ViconNexus()
-subjectnames = vicon.GetSubjectNames()  
+subjectnames = vicon.GetSubjectNames()
+if not subjectnames:
+    raise Exception('No subject defined in Nexus')
 trialname_ = vicon.GetTrialName()
 sessionpath = trialname_[0]
 trialname = trialname_[1]
@@ -79,9 +84,9 @@ for marker in ['RHEE','RTOE','RANK','LHEE','LTOE','LANK']:
     mrkdata[marker+'_A'] = A
 roi0 = roifr[0]
 
-rfootctrV = (mrkdata['RHEE_V']+mrkdata['RTOE_V']+mrkdata['RANK_V'])/3.
+rfootctrV = (mrkdata['RHEE_'+DERIV]+mrkdata['RTOE_'+DERIV]+mrkdata['RANK_'+DERIV])/3.
 rfootctrv = np.sqrt(np.sum(rfootctrV[:,1:3]**2,1))
-lfootctrV = (mrkdata['LHEE_V']+mrkdata['LTOE_V']+mrkdata['LANK_V'])/3.
+lfootctrV = (mrkdata['LHEE_'+DERIV]+mrkdata['LTOE_'+DERIV]+mrkdata['LANK_'+DERIV])/3.
 lfootctrv = np.sqrt(np.sum(lfootctrV[:,1:3]**2,1))
 
 # apply filter to suppress noise and spikes
@@ -138,11 +143,12 @@ rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
 ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
 rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
 
-print('Originally marked:')
-print('Right:')
-print('Strike:', rfstrikes, 'toeoff:', rtoeoffs)
-print('Left:')
-print('Strike:', lfstrikes, 'toeoff:', ltoeoffs)
+if rfstrikes and lfstrikes:
+    print('Originally marked:')
+    print('Right:')
+    print('Strike:', rfstrikes, 'toeoff:', rtoeoffs)
+    print('Left:')
+    print('Strike:', lfstrikes, 'toeoff:', ltoeoffs)
 
 # mark events
 for strike in rfallframes:
