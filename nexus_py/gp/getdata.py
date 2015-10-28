@@ -132,7 +132,6 @@ def falling_zerocross(x):
     return rising_zerocross(-x)
 
 
-
 class gaitcycle:
     """" Holds information about one gait cycle. Offset is the frame where
     the data begins; 1 for Vicon Nexus (which always returns whole trial) and
@@ -182,6 +181,8 @@ class trial:
         self.rfstrikes = []
         self.ltoeoffs = []
         self.rtoeoffs = []
+        self.subject = {}
+       
         if is_c3dfile(source):
             debug_print('trial: reading from ', source)
             c3dfile = source
@@ -211,6 +212,9 @@ class trial:
                         self.ltoeoffs.append(i.GetFrame())
                     else:
                         raise Exception("Unknown context on foot strike event")
+                # get subject info
+                metadata = acq.GetMetaData()
+                #self.subject['Name'] =  metadata.FindChild("SUBJECTS").value().FindChild("MOVIE_DELAY").value().GetInfo().toDouble()
         elif is_vicon_instance(source):
             debug_print('trial: reading from Vicon Nexus')
             vicon = source
@@ -221,9 +225,8 @@ class trial:
             if not subjectnames:
                 raise GaitDataError('No subject defined')
             self.subjectname = subjectnames[0]
-            self.subject = {}
             self.subject['Name'] = self.subjectname
-            self.subject['Bodymass'] = vicon.GetSubjectParam(self.subjectname, 'Bodymass')[0]
+            self.subject['Bodymass'] = vicon.GetSubjectParam(self.subjectname, 'Bodymass')
             trialname_ = vicon.GetTrialName()
             self.sessionpath = trialname_[0]
             self.trialname = trialname_[1]
