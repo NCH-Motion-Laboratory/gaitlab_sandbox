@@ -124,14 +124,16 @@ def set_eclipse_key(enfname, keyname, oldval, newval):
             # get old key and value
             key = line[:eqpos]
             val = line[eqpos+1:]
-            if key == keyname:
-                if val == oldval:
-                    newline = key + '=' + newval
-        else:
+            if key == keyname and val == oldval:
+                newline = key + '=' + newval
+            else:  # key or val mismatch - copy line as is
+                newline = line
+        else:  # comment or section header - copy as is
             newline = line
         linesnew.append(newline)
+    debug_print('new eclipse file:', enfname)
+    debug_print(linesnew)
     with open(enfname, 'w') as f:
-        print('overwriting', enfname)
         for li in linesnew:
             f.write(li+'\n')
     
