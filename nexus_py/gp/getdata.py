@@ -42,10 +42,18 @@ import os
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
 
-# print debug messages
-# may prevent scripts from working in Nexus (??)
+# print debug messages if running under IPython
+# debug may prevent scripts from working in Nexus (??)
 DEBUG = False
-
+def run_from_ipython():
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return False
+if run_from_ipython():
+    DEBUG = True        
+        
 
 def debug_print(*args):
     if DEBUG:
