@@ -244,6 +244,8 @@ class gaitplotter():
             mainloop()  # Tk
 
     def get_nexus_path(self):
+        if not getdata.nexus_pid():
+            error_exit('Cannot get Nexus PID, Nexus not running?')
         if not self.vicon:
             self.vicon = getdata.viconnexus()
         trialname_ = self.vicon.GetTrialName()
