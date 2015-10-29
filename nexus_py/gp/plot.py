@@ -34,18 +34,11 @@ import numpy as np
 import getdata
 from getdata import error_exit, messagebox, debug_print
 import config
-import sys
-if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
-    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
-    # needed at least when running outside Nexus
-    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
-import ViconNexus
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
 import getpass
 import glob
-import btk
 
 
 
@@ -82,7 +75,7 @@ class gaitplotter():
         # (currently) non-configurable stuff
         # figure size
         #self.totalfigsize = (8.48*1.2,12*1.2) # a4
-        self.totalfigsize = (14,12)
+        self.totalfigsize = (16,13)
         # grid dimensions, vertical and horizontal
         self.gridv = None
         self.gridh = None
@@ -251,8 +244,10 @@ class gaitplotter():
             mainloop()  # Tk
 
     def get_nexus_path(self):
+        if not getdata.nexus_pid():
+            error_exit('Cannot get Nexus PID, Nexus not running?')
         if not self.vicon:
-            self.vicon = ViconNexus.ViconNexus()
+            self.vicon = getdata.viconnexus()
         trialname_ = self.vicon.GetTrialName()
         if not trialname_:
             return None
@@ -263,9 +258,9 @@ class gaitplotter():
         """ Open trial from Nexus. """
         if not getdata.nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
-        vicon = getdata.viconnexus()
+        self.vicon = getdata.viconnexus()
         try:
-            self.trial = getdata.trial(vicon, pig_normaldata_path=self.pig_normaldata_path,
+            self.trial = getdata.trial(self.vicon, pig_normaldata_path=self.pig_normaldata_path,
                                        emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening trial from Nexus:\n'+e.msg)
@@ -326,11 +321,6 @@ class gaitplotter():
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
-        if not self.trial.kinetics_side:
-            pass
-            #messagebox('Note: no valid forceplate contact, will not plot kinetics')
-        if self.trial.kinetics_side == 'LR':
-            messagebox('Note: detected both L/R forceplate strikes, possible double contact\n')
         
                                       
     def set_fig_title(self, title):

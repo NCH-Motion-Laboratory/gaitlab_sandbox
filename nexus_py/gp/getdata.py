@@ -193,13 +193,12 @@ class gaitcycle:
         self.toeoffn = round(100*((self.toeoff - self.start) / self.len))
         
     def normalize(self, var):
-        """ Normalize frames-based variable var to this cycle.
+        """ Normalize frames-based variable var to the cycle.
         New interpolated x axis is 0..100% of the cycle. """
-        debug_print('normalize var of dim', var.shape)
         return np.interp(self.tn, self.t, var[self.start:self.end])
 
     def cut_analog_to_cycle(self, var):
-        """ Crop analog variable (EMG, forceplate, etc. ) to this
+        """ Crop analog variable (EMG, forceplate, etc. ) to the
         cycle; no interpolation. """
         return var[self.start_smp:self.end_smp]
   
