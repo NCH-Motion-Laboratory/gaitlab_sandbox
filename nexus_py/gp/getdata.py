@@ -237,7 +237,13 @@ class trial:
                 raise GaitDataError('No subject defined')
             self.subjectname = subjectnames[0]
             self.subject['Name'] = self.subjectname
-            self.subject['Bodymass'] = vicon.GetSubjectParam(self.subjectname, 'Bodymass')
+            Bodymass = vicon.GetSubjectParam(self.subjectname, 'Bodymass')
+            # for unknown reasons, above method may return tuple or float, depending on
+            # whether script is run from Nexus or from IPython outside Nexus
+            if type(Bodymass) == tuple:
+                self.subject['Bodymass'] = vicon.GetSubjectParam(self.subjectname, 'Bodymass')[0]
+            else:  # hopefully float
+                self.subject['Bodymass'] = vicon.GetSubjectParam(self.subjectname, 'Bodymass')
             trialname_ = vicon.GetTrialName()
             self.sessionpath = trialname_[0]
             self.trialname = trialname_[1]
