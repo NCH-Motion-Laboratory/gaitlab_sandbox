@@ -321,11 +321,6 @@ class gaitplotter():
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
-        if not self.trial.kinetics_side:
-            pass
-            #messagebox('Note: no valid forceplate contact, will not plot kinetics')
-        if self.trial.kinetics_side == 'LR':
-            messagebox('Note: detected both L/R forceplate strikes, possible double contact\n')
         
                                       
     def set_fig_title(self, title):
