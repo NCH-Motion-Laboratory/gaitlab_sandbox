@@ -108,6 +108,34 @@ def get_eclipse_key(trialname, keyname):
     # could also use codecs.read with encoding=utf-8 (recommended way)
     return unicode(value, 'utf-8')
 
+def set_eclipse_key(enfname, keyname, oldval, newval):
+    """ Update specified Eclipse file, changing 'keyname' with 'oldval' 
+    to 'value'. """
+    # read existing entries
+    if os.path.isfile(enfname):
+        with open(enfname, 'r') as f:
+            eclipselines = f.read().splitlines()
+    else:
+        raise GaitDataError('.enf file {0} not found'.format(enfname))
+    linesnew = []
+    for line in eclipselines:
+        eqpos = line.find('=')
+        if eqpos > 0:
+            # get old key and value
+            key = line[:eqpos]
+            val = line[eqpos+1:]
+            if key == keyname:
+                if val == oldval:
+                    newline = key + '=' + newval
+        else:
+            newline = line
+        linesnew.append(newline)
+    with open(enfname, 'w') as f:
+        print('overwriting', enfname)
+        for li in linesnew:
+            f.write(li+'\n')
+    
+
 def nexus_pid():
     """ Tries to return the PID of the running Nexus process. """
     PROCNAME = "Nexus.exe"
