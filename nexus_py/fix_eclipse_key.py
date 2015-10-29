@@ -5,7 +5,7 @@ Created on Thu Oct 29 11:17:45 2015
 Utility to fix unwanted Eclipse entries.
 Fixes all enf files in current Nexus directory.
 
-Be careful
+Be careful! Overwrites files without asking anything.
 
 @author: jussi
 """
