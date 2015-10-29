@@ -16,15 +16,15 @@ import glob
 import sys
 
 KEY = 'DESCRIPTION'  # Eclipse key
-OLDVAL = 'junk'  # change keys with this value
+OLDVAL = 'unipedal right'  # change keys with this value
 NEWVAL = ''      # change into this value
 ENF_GLOB = '*Trial*enf'
 
-vicon = gp.getdata.viconnexus()
-trialname_ = vicon.GetTrialName()
-sessionpath = trialname_[0]
-print(sessionpath)
+sessionpath = 'C://some_trial_dir//'
 enffiles = glob.glob(sessionpath+ENF_GLOB)
+
+if not enffiles:
+    sys.exit('No enf files in {0}'.format(sessionpath))
 
 for enffile in enffiles:
     gp.getdata.set_eclipse_key(enffile, KEY, OLDVAL, NEWVAL)
