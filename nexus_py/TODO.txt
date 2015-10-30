@@ -1,0 +1,14 @@
+
+
+TODO
+
+
+-automark: rm events if <=2 events exist (removes forceplate automarked events), otherwise keep
+
+-video/3d with time cursor
+
+-in kin overlay, use different colors/linestyles
+
+
+
+
