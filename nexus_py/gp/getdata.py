@@ -40,6 +40,7 @@ from scipy import signal
 import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
+import glob
 import ViconNexus
 
 # print debug messages if running under IPython
@@ -136,6 +137,11 @@ def set_eclipse_key(enfname, keyname, oldval, newval):
     with open(enfname, 'w') as f:
         for li in linesnew:
             f.write(li+'\n')
+    
+def get_video_filenames(trialpath):
+    """ Get AVI files corresponding to given trial. """
+    trialpath = os.path.splitext(trialpath)[0]
+    return glob.glob(trialpath+'*avi')
     
 
 def nexus_pid():
@@ -320,6 +326,8 @@ class trial:
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
+        # get list of video files corresponding to this trial (if any)
+        self.videolist = get_video_filenames(self.sessionpath+self.trialname)
         
     def kinetics_available(self):
         """ See whether this trial has ground reaction forces for left/right side

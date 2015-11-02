@@ -7,6 +7,8 @@ Created on Thu Aug 27 14:16:50 2015
 @author: Jussi
 """
 
+import gp.defs
+
 # online kinematics plot
 std_kinematics = [['PelvisAnglesX','PelvisAnglesY','PelvisAnglesZ'],
                   ['HipAnglesX','HipAnglesY','HipAnglesZ'],
@@ -37,6 +39,19 @@ std_emg = [['RGlut','LGlut'],
 
 # kinetics + kinematics
 std_kinall = std_kinematics + std_kinetics
+
+# experimental video layout
+std_kinall_video = [['PelvisAnglesX', 'PelvisAnglesY', 'PelvisAnglesZ', 'video:'+gp.defs.video_id_front],
+ ['HipAnglesX', 'HipAnglesY', 'HipAnglesZ', None],
+ ['KneeAnglesX', 'KneeAnglesY', 'KneeAnglesZ', None],
+ ['AnkleAnglesX', 'FootProgressAnglesZ', 'AnkleAnglesZ', None],
+ ['HipMomentX', 'HipMomentY', 'HipMomentZ', 'video:'+gp.defs.video_id_side],
+ ['HipPowerZ', 'KneeMomentX', 'KneeMomentY', None],
+ ['KneeMomentZ', 'KneePowerZ', 'AnkleMomentX', None],
+ [None, None, 'AnklePowerZ', None]]
+
+
+#std_kinall_video = 
 # kin *overlay
 # add legend to bottom row
 overlay_kinall = list(std_kinall)

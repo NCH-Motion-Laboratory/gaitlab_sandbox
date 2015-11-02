@@ -274,6 +274,14 @@ class gaitplotter():
                                        emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
+
+    def var_category_id(self, varname):
+        """ Return a category descriptor for variable. Currently variables
+        can be specified as cat:id, where cat is the descriptor. """
+        cpos = varname.find(':')        
+        cat = varname[:cpos]
+        id = varname[cpos+1:]
+        return cat, id
         
     def read_trial(self, vars):
         """ Read requested trial variables and directives.
@@ -289,6 +297,9 @@ class gaitplotter():
         self.emg_plot_pos = []
         self.model_plot_vars = []
         self.model_plot_pos = []
+        self.video_vars = []
+        self.video_plot_pos = []
+
         for i, var in enumerate(self.vars):
             if var == None:  # indicates empty subplot
                 pass
@@ -309,6 +320,10 @@ class gaitplotter():
                     read_musclelen = True
                     self.model_plot_vars.append(var)
                     self.model_plot_pos.append(i)
+                elif self.var_category_id(var)[0] == 'video':
+                    id = self.var_category_id(var)[1]
+                    self.video_vars.append(id)
+                    self.video_plot_pos.append(i)
                 else:
                     error_exit('Unknown variable or plot directive: ' + var)
         try:
@@ -327,6 +342,12 @@ class gaitplotter():
         if self.fig:
             plt.figure(self.fig.number) 
             plt.suptitle(title, fontsize=12, fontweight="bold")
+            
+    def onclick(self, event):
+        """ Test matplotlib callback mechanism """
+        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
+            event.button, event.x, event.y, event.xdata, event.ydata)
+
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
                  onesided=False, model_linestyle='-', emg_tracecolor='black'):
@@ -370,12 +391,24 @@ class gaitplotter():
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
+        
+        cid = self.fig.canvas.mpl_connect('button_press_event', self.onclick)
 
         # get info on left and right gait cycles
         lcyc = self.trial.get_cycle('L', cycle)
         rcyc = self.trial.get_cycle('R', cycle)
         if not (lcyc and rcyc):
             error_exit('Cannot get requested left/right gait cycles from data')
+
+        # handle videos
+        if self.video_vars:
+            for k, varname in enumerate(self.video_vars):
+                ax = plt.subplot(self.gs[self.video_plot_pos[k]])
+                # find video file corresponding to id
+                print('finding for:', varname)
+                videofile = [fn for fn in self.trial.videolist if fn.find(varname) > 0]
+                debug_print('found video file:', videofile)
+                
 
         # handle model output vars (Plug-in Gait, muscle length, etc.)
         if self.model_plot_vars:
@@ -518,6 +551,8 @@ class gaitplotter():
                               head_length=hdlength, head_width=hdwidth)
                     plt.arrow(toeoff, ymin, 0, arrlen, color=arrowcolor, 
                               head_length=hdlength, head_width=hdwidth)
+                              
+                            
 
         """ Update the legends on each added trial. The "artists" (corresponding to 
         line styles) and the labels are appended into lists and the legend

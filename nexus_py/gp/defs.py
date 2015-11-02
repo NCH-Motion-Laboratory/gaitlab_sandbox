@@ -52,3 +52,7 @@ emg_normals = {'RGas': [[16,50]],
 emg_names = emg_labels.keys()
 
 
+# video device ids to friendly names. used in layouts.py
+video_id_front = '59875835'
+video_id_side = '64826554'
+
