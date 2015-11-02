@@ -75,7 +75,7 @@ class gaitplotter():
         # (currently) non-configurable stuff
         # figure size
         #self.totalfigsize = (8.48*1.2,12*1.2) # a4
-        self.totalfigsize = (16,13)
+        self.totalfigsize = (14,12)
         # grid dimensions, vertical and horizontal
         self.gridv = None
         self.gridh = None
