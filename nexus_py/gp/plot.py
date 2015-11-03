@@ -346,14 +346,11 @@ class gaitplotter():
         """ Update video displays to frame corresponding to clicked
         x coordinate """
         n = event.xdata
-        for k, vid_id in enumerate(self.video_vars):
-            plt.subplot(self.gs[self.video_plot_pos[k]])
-            for vid in self.trial.videos:
-                if vid.has_id(vid_id):
-                    print(n/100.)
-                    fr = vid.get_frame_relative(n/100.)
-                    #plt.figure(10+k)
-                    plt.imshow(fr)
+        for k,ax in enumerate(self.videoax):
+            print('jumping to ax', ax)
+            plt.subplot(ax)
+            fr = self.videos[k].get_frame_relative(n/100.)
+            plt.imshow(fr, aspect='auto')
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
                  onesided=False, model_linestyle='-', emg_tracecolor='black'):
@@ -406,6 +403,8 @@ class gaitplotter():
         if not (lcyc and rcyc):
             error_exit('Cannot get requested left/right gait cycles from data')
 
+        self.videoax = []
+        self.videos = []
         # handle videos
         if self.video_vars:
             for k, vid_id in enumerate(self.video_vars):
@@ -416,8 +415,10 @@ class gaitplotter():
                 print('video row:',vidposi,'column:',vidposj)
                 # video occupies 2x2 space of grid
                 ax = plt.subplot(self.gs[vidposi:vidposi+3,vidposj:vidposj+2])
+                self.videoax.append(ax)
                 for vid in self.trial.videos:
                     if vid.has_id(vid_id):
+                        self.videos.append(vid)
                         fr = vid.get_frame(1)
                         plt.imshow(fr, aspect='auto')
                 
