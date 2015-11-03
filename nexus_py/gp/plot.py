@@ -75,7 +75,7 @@ class gaitplotter():
         # (currently) non-configurable stuff
         # figure size
         #self.totalfigsize = (8.48*1.2,12*1.2) # a4
-        self.totalfigsize = (14,12)
+        self.totalfigsize = (16,12)
         # grid dimensions, vertical and horizontal
         self.gridv = None
         self.gridh = None
@@ -409,13 +409,17 @@ class gaitplotter():
         # handle videos
         if self.video_vars:
             for k, vid_id in enumerate(self.video_vars):
-                ax = plt.subplot(self.gs[self.video_plot_pos[k]])
+                # convert plot position to i,j coordinates                
+                vidpos = self.video_plot_pos[k]
+                vidposi = vidpos / self.gridh
+                vidposj = vidpos % self.gridh
+                print('video row:',vidposi,'column:',vidposj)
+                # video occupies 2x2 space of grid
+                ax = plt.subplot(self.gs[vidposi:vidposi+3,vidposj:vidposj+2])
                 for vid in self.trial.videos:
                     if vid.has_id(vid_id):
                         fr = vid.get_frame(1)
-                        #plt.figure(10+k)
-                        plt.imshow(fr)
-                        #plt.figure(self.fig.number)
+                        plt.imshow(fr, aspect='auto')
                 
 
         # handle model output vars (Plug-in Gait, muscle length, etc.)

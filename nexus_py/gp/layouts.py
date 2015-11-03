@@ -41,13 +41,13 @@ std_emg = [['RGlut','LGlut'],
 std_kinall = std_kinematics + std_kinetics
 
 # experimental video layout
-std_kinall_video = [['PelvisAnglesX', 'PelvisAnglesY', 'PelvisAnglesZ', 'video:'+gp.defs.video_id_front],
- ['HipAnglesX', 'HipAnglesY', 'HipAnglesZ', None],
- ['KneeAnglesX', 'KneeAnglesY', 'KneeAnglesZ', None],
- ['AnkleAnglesX', 'FootProgressAnglesZ', 'AnkleAnglesZ', None],
- ['HipMomentX', 'HipMomentY', 'HipMomentZ', 'video:'+gp.defs.video_id_side],
- ['HipPowerZ', 'KneeMomentX', 'KneeMomentY', None],
- ['KneeMomentZ', 'KneePowerZ', 'AnkleMomentX', None],
+std_kinall_video = [['PelvisAnglesX', 'PelvisAnglesY', 'PelvisAnglesZ', 'video:'+gp.defs.video_id_front, None],
+ ['HipAnglesX', 'HipAnglesY', 'HipAnglesZ', None, None],
+ ['KneeAnglesX', 'KneeAnglesY', 'KneeAnglesZ', None, None],
+ ['AnkleAnglesX', 'FootProgressAnglesZ', 'AnkleAnglesZ', None, None],
+ ['HipMomentX', 'HipMomentY', 'HipMomentZ', 'video:'+gp.defs.video_id_side, None],
+ ['HipPowerZ', 'KneeMomentX', 'KneeMomentY', None, None],
+ ['KneeMomentZ', 'KneePowerZ', 'AnkleMomentX', None, None],
  [None, None, 'AnklePowerZ', None]]
 
 
