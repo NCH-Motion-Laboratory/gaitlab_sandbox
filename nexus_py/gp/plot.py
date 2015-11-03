@@ -337,17 +337,23 @@ class gaitplotter():
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
         
-                                      
     def set_fig_title(self, title):
         if self.fig:
             plt.figure(self.fig.number) 
             plt.suptitle(title, fontsize=12, fontweight="bold")
             
-    def onclick(self, event):
-        """ Test matplotlib callback mechanism """
-        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
-            event.button, event.x, event.y, event.xdata, event.ydata)
-
+    def video_seek_callback(self, event):
+        """ Update video displays to frame corresponding to clicked
+        x coordinate """
+        n = event.xdata
+        for k, vid_id in enumerate(self.video_vars):
+            plt.subplot(self.gs[self.video_plot_pos[k]])
+            for vid in self.trial.videos:
+                if vid.has_id(vid_id):
+                    print(n/100.)
+                    fr = vid.get_frame_relative(n/100.)
+                    #plt.figure(10+k)
+                    plt.imshow(fr)
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
                  onesided=False, model_linestyle='-', emg_tracecolor='black'):
@@ -392,7 +398,7 @@ class gaitplotter():
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
         
-        cid = self.fig.canvas.mpl_connect('button_press_event', self.onclick)
+        cid = self.fig.canvas.mpl_connect('button_press_event', self.video_seek_callback)
 
         # get info on left and right gait cycles
         lcyc = self.trial.get_cycle('L', cycle)
@@ -402,12 +408,14 @@ class gaitplotter():
 
         # handle videos
         if self.video_vars:
-            for k, varname in enumerate(self.video_vars):
+            for k, vid_id in enumerate(self.video_vars):
                 ax = plt.subplot(self.gs[self.video_plot_pos[k]])
-                # find video file corresponding to id
-                print('finding for:', varname)
-                videofile = [fn for fn in self.trial.videolist if fn.find(varname) > 0]
-                debug_print('found video file:', videofile)
+                for vid in self.trial.videos:
+                    if vid.has_id(vid_id):
+                        fr = vid.get_frame(1)
+                        #plt.figure(10+k)
+                        plt.imshow(fr)
+                        #plt.figure(self.fig.number)
                 
 
         # handle model output vars (Plug-in Gait, muscle length, etc.)

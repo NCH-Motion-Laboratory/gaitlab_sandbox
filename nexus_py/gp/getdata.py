@@ -41,6 +41,7 @@ import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
 import glob
+import cv2
 import ViconNexus
 
 # print debug messages if running under IPython
@@ -209,6 +210,41 @@ class gaitcycle:
         """ Crop analog variable (EMG, forceplate, etc. ) to the
         cycle; no interpolation. """
         return var[self.start_smp:self.end_smp]
+        
+class video:
+    """ A video object """
+    def __init__(self, filename):
+        self.filename = filename 
+        self.id = id
+        cap = cv2.VideoCapture(filename)
+        self.frames = []
+        while True:
+            ret, frame = cap.read()
+            if ret and cap.isOpened():
+                self.frames.append(frame)
+            else:
+                break
+        self.nframes = len(self.frames)
+        debug_print('Loaded',self.nframes,'frames from',self.filename)
+        
+    def has_id(self, id):
+        """ Check for id, i.e. if filename contains a given id string """
+        return self.filename.find(id) > 0
+        
+    def get_frame(self, n):
+        """ Return nth frame of video data """
+        if n > self.nframes:
+            raise Exception('No such frame')
+        else:
+            return self.frames[n-1]
+            
+    def get_frame_relative(self, p):
+        """ Return frame that is at p% on 0..100% axis """
+        frn = int(round(p * self.nframes))
+        if frn > self.nframes:
+            return self.frames[-1]
+        else:
+            return self.frames[frn]
   
 class trial:
     """ A gait trial. Contains:
@@ -326,8 +362,15 @@ class trial:
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
-        # get list of video files corresponding to this trial (if any)
-        self.videolist = get_video_filenames(self.sessionpath+self.trialname)
+        self.load_videos()
+
+    def load_videos(self):
+        """ Load video files corresponding to this trial. """
+        videolist = get_video_filenames(self.sessionpath+self.trialname)
+        self.videos = []        
+        for vidfile in videolist:
+            vid = video(vidfile)
+            self.videos.append(vid)
         
     def kinetics_available(self):
         """ See whether this trial has ground reaction forces for left/right side

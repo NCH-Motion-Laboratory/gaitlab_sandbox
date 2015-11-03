@@ -3,9 +3,16 @@
 TODO
 
 
--automark: rm events if <=2 events exist (removes forceplate automarked events), otherwise keep
 
 -video/3d with time cursor
+    -branch interactive
+    -add video class to trial data ? 
+    -implement both click and drag (see bookmarks, matplotlib example)
+    -separate windows or subplots?
+
+
+-automark: rm events if <=2 events exist (removes forceplate automarked events), otherwise keep
+
 
 -in kin overlay, use different colors/linestyles
 
