@@ -30,9 +30,16 @@ if cap.isOpened():
 nframes = len(frames)
 print('read',nframes,'frames')
 
-fig, ax = plt.subplots()
-fig.canvas.draw()
-im = plt.imshow(frames[0])
+#fig, ax = plt.subplots()
+#fig.canvas.draw()
+#im = plt.imshow(frames[0])
+
+for fr in frames:
+     gray = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
+     cv2.imshow('frame', gray)
+     if cv2.waitKey(1) & 0xFF == ord('q'):
+         break
+sys.exit()
 
 for fr in frames:
     im.set_data(fr)
