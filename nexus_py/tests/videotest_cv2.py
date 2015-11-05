@@ -12,26 +12,36 @@ import matplotlib.pyplot as plt
 import cv2
 
 # laptop
-vidpath = "C://Users//HUS20664877//Desktop//Vicon//vicon_data//test//Verrokki6v_IN//2015_10_22_girl6v_IN//"
-# capture workstation
-vidpath = "C://Users//Vicon123//Desktop//"
+if os.getcwd().find('HUS2066'):
+    vidpath = "C://Users//HUS20664877//Desktop//Vicon//vicon_data//test//Verrokki6v_IN//2015_10_22_girl6v_IN//"
+else:
+    vidpath = "C://Users//Vicon123//Desktop//"
 vidfile = vidpath + "2015_10_22_girl6v_IN57.59875835.20151022144140.avi"
 cap = cv2.VideoCapture(vidfile)
 frames = []
 ret = True
 if cap.isOpened():
-    while ret:
+    while True:
         ret, frame = cap.read()
-        frames.append(frame)
+        if ret:        
+            frames.append(frame)
+        else:
+            break
 nframes = len(frames)
 print('read',nframes,'frames')
 
-plt.figure()
+fig, ax = plt.subplots()
+fig.canvas.draw()
 im = plt.imshow(frames[0])
 
 for fr in frames:
     im.set_data(fr)
-    plt.draw()
+    #ax.draw_artist(ax.patch)
+    ax.draw_artist(im)
+    fig.canvas.update()
+    fig.canvas.flush_events()
+    
+    
     
     
 
