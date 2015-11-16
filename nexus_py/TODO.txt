@@ -8,9 +8,13 @@ TODO
     -try to export normal data from Polygon (asked Vicon)
 
 -video/3d with time cursor
+    -video slow with Matplotlib
+    -tolerable with OpenCV
+    -try qt?
 
 -in kin overlay, use different colors/linestyles
 
-
+-automark tuning
+    -check subject FST trial 36 (fast walking)
 
 
