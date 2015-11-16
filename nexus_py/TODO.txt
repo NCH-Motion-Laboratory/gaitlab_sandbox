@@ -3,7 +3,9 @@
 TODO
 
 
--automark: rm events if <=2 events exist (removes forceplate automarked events), otherwise keep
+
+-normal data for muscle len plot
+    -try to export normal data from Polygon (asked Vicon)
 
 -video/3d with time cursor
 
