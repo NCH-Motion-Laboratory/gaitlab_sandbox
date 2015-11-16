@@ -2,8 +2,8 @@
 """
 
 Automatically mark gait cycle events.
-
-
+Based on thresholding marker of position/velocity/acceleration.
+Uses forceplate data to determine individual thresholds.
 
 @author: Jussi
 """
@@ -143,6 +143,10 @@ lfstrikes = vicon.GetEvents(subjectname, "Left", "Foot Strike")[0]
 rfstrikes = vicon.GetEvents(subjectname, "Right", "Foot Strike")[0]
 ltoeoffs = vicon.GetEvents(subjectname, "Left", "Foot Off")[0]
 rtoeoffs = vicon.GetEvents(subjectname, "Right", "Foot Off")[0]
+
+# hack: if forceplate automarked events exist, remove them
+if len(lfstrikes + rfstrikes) == 1 and len(ltoeoffs + rtoeoffs) == 1:
+    vicon.ClearAllEvents()
 
 if rfstrikes and lfstrikes:
     print('Originally marked:')
