@@ -51,11 +51,11 @@ def roi_pos_vel_acc(marker):
     """ Get position, velocity and acceleration 
     for specified marker over Nexus ROI. """
     roi = vicon.GetTrialRegionOfInterest()
-    roifr = range(roi[0],roi[1])
+    roifr = range(roi[0],roi[1]+1)
     x,y,z,_ = vicon.GetTrajectory(subjectname, marker)
-    xroi = x[roi[0]:roi[1]]
-    yroi = y[roi[0]:roi[1]]
-    zroi = z[roi[0]:roi[1]]
+    xroi = x[roifr]
+    yroi = y[roifr]
+    zroi = z[roifr]
     Proi = np.array([xroi,yroi,zroi]).transpose()
     Vroi = np.gradient(Proi)[0]
     Aroi = np.gradient(Vroi)[0]
