@@ -30,10 +30,10 @@ from __future__ import division, print_function
 import defs
 import sys
 # these needed for Nexus 2.1
-if not "C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python" in sys.path:
-    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
+if not "C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python" in sys.path:
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python")
     # needed at least when running outside Nexus
-    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
+    sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Win32")
 import numpy as np
 import ctypes
 from scipy import signal

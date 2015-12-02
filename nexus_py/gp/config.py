@@ -12,9 +12,9 @@ from Tkinter import *
 import defs
 import sys
 # these needed for Nexus 2.1
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Python")
+sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python")
 # needed at least when running outside Nexus
-sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.1\SDK\Win32")
+sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Win32")
 import os
 import ConfigParser
 from ConfigParser import SafeConfigParser
