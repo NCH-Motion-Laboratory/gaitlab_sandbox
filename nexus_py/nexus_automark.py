@@ -53,9 +53,9 @@ def roi_pos_vel_acc(marker):
     roi = vicon.GetTrialRegionOfInterest()
     roifr = range(roi[0],roi[1]+1)
     x,y,z,_ = vicon.GetTrajectory(subjectname, marker)
-    xroi = x[roifr]
-    yroi = y[roifr]
-    zroi = z[roifr]
+    xroi = np.array(x)[roifr]
+    yroi = np.array(y)[roifr]
+    zroi = np.array(z)[roifr]
     Proi = np.array([xroi,yroi,zroi]).transpose()
     Vroi = np.gradient(Proi)[0]
     Aroi = np.gradient(Vroi)[0]
