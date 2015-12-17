@@ -34,6 +34,7 @@ c3dfiles = glob.glob(sessionpath+'*.c3d')
 
 # Eclipse trial notes/description must contain one of these strings
 marks = ['R1','R2','R3','L1','L2','L3']
+
 marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION').upper()+' '+get_eclipse_key(c3d, 'NOTES').upper(), marks)]
 if len(marked_trials) > MAX_TRIALS:
     gp.getdata.error_exit('Too many marked trials found!')

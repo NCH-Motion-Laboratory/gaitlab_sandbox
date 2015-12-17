@@ -331,7 +331,7 @@ class trial:
         subj_weight = self.subject['Bodymass']*9.81
         F_THRESHOLD = .1 * subj_weight  # rise threshold
         FRISE_WINDOW = .05 * self.analograte  # specify in seconds -> analog frames
-        FMAX_MAX_DELAY = .75 * self.analograte
+        FMAX_MAX_DELAY = .85 * self.analograte
         fmax = max(forcetot)
         fmaxind = np.where(forcetot == fmax)[0][0]  # first maximum
         debug_print('kinetics_available: max force:', fmax, 'at:', fmaxind, 'weight:', subj_weight)
