@@ -26,8 +26,8 @@ trialname = gplotter.trial.trialname
 maintitle = maintitleprefix + trialname + ' ('+side+')'
 maintitle = maintitle + '\n' + gplotter.get_emg_filter_description()
 
-gplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle, onesided=True, side=side)
-gplotter.create_pdf(pdf_name=pdf_prefix+trialname+'_'+side)
+gplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle)
+gplotter.create_pdf(pdf_name=pdf_prefix+trialname+'_'+side+'.pdf')
 gplotter.show()
 
 
@@ -41,8 +41,8 @@ trialname = gplotter.trial.trialname
 maintitle = maintitleprefix + trialname + ' ('+side+')'
 maintitle = maintitle + '\n' + gplotter.get_emg_filter_description()
 
-gplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle, onesided=True, side=side)
-gplotter.create_pdf(pdf_name=pdf_prefix+trialname+'_'+side)
+gplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle)
+gplotter.create_pdf(pdf_name=pdf_prefix+trialname+'_'+side+'.pdf')
 gplotter.show()
 
 
