@@ -41,7 +41,6 @@ import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
-import subprocess
 import glob
 
 
@@ -90,12 +89,6 @@ def get_video_filenames(trialpath):
     return glob.glob(trialpath+'*avi')
 
 
-def external_play_video(vidfile):
-    """ Launch an external video player. """
-    # TODO: put into config file
-    PLAYER_CMD = "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe"
-    PLAYER_ARGS = "--input-repeat=-1"  # VLC: loop forever
-    subprocess.call([PLAYER_CMD,PLAYER_ARGS,vidfile])
   
 
 def get_eclipse_key(trialname, keyname):
@@ -338,6 +331,7 @@ class trial:
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
+        self.video_files = get_video_filenames(self.sessionpath+self.trialname)
         
     def kinetics_available(self):
         """ See whether this trial has ground reaction forces for left/right side
