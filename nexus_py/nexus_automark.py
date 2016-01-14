@@ -51,7 +51,7 @@ def roi_pos_vel_acc(marker):
     """ Get position, velocity and acceleration 
     for specified marker over Nexus ROI. """
     roi = vicon.GetTrialRegionOfInterest()
-    roifr = range(roi[0],roi[1]+1)
+    roifr = range(roi[0],roi[1])
     x,y,z,_ = vicon.GetTrajectory(subjectname, marker)
     xroi = np.array(x)[roifr]
     yroi = np.array(y)[roifr]
@@ -95,24 +95,24 @@ rfootctrv = signal.medfilt(rfootctrv, 3)
 lfootctrv = signal.medfilt(lfootctrv, 3)
 
 print('Initial strike autodetect right:')
-thre_fall = rfootctrv.max() * THRESHOLD_FALL
-thre_up = rfootctrv.max() * THRESHOLD_UP
-rfallframes = falling_zerocross(rfootctrv-thre_fall)
-rupframes = rising_zerocross(rfootctrv-thre_up)
-print(rfallframes+roi0)
+thre_fall0 = rfootctrv.max() * THRESHOLD_FALL
+thre_up0 = rfootctrv.max() * THRESHOLD_UP
+rfallframes0 = falling_zerocross(rfootctrv-thre_fall0)
+rupframes0 = rising_zerocross(rfootctrv-thre_up0)
+print(rfallframes0+roi0)
 
 print('Initial strike autodetect left:')
-thre_fall = lfootctrv.max() * THRESHOLD_FALL
-thre_up = lfootctrv.max() * THRESHOLD_UP
-lfallframes = falling_zerocross(lfootctrv-thre_fall)
-lupframes = rising_zerocross(lfootctrv-thre_up)
-print(lfallframes+roi0)
+thre_fall0 = lfootctrv.max() * THRESHOLD_FALL
+thre_up0 = lfootctrv.max() * THRESHOLD_UP
+lfallframes0 = falling_zerocross(lfootctrv-thre_fall0)
+lupframes0 = rising_zerocross(lfootctrv-thre_up0)
+print(lfallframes0+roi0)
 
 # update detection thresholds
 fpstrike, fptoeoff = get_fp_strike_and_toeoff()
 print('Forceplate strike:', fpstrike, 'toeoff:', fptoeoff)
 print('Relative velocities at forceplate:')
-if min(abs(lfallframes-(fpstrike-roi0))) < min(abs(rfallframes-(fpstrike-roi0))):
+if min(abs(lfallframes0-(fpstrike-roi0))) < min(abs(rfallframes0-(fpstrike-roi0))):
     print('Left:')
     THRESHOLD_FALL_NEW = lfootctrv[fpstrike-roi0]/lfootctrv.max()
     THRESHOLD_UP_NEW = lfootctrv[fptoeoff-roi0]/lfootctrv.max()
@@ -166,12 +166,61 @@ for fr in lupframes:
     vicon.CreateAnEvent(subjectname, 'Left', 'Foot Off', fr+roi0, 0.0 )
 
 
+rfstrikea = np.array(rfstrikes)-roi0
+rtoeoffsa = np.array(rtoeoffs)-roi0
+
+
+# create plot (NVUG 2016 presentation)
+# plot velocities w/ thresholds
+plt.figure()
+plt.plot(rfootctrv,'g',label='foot center velocity')
+# algorithm, fixed thresholds
+plt.plot(rfallframes0,rfootctrv[rfallframes0],'kD',markersize=10,label='fixed threshold')
+plt.plot(rupframes0,rfootctrv[rupframes0],'k^',markersize=10)
+# algorithm w/ fp
+plt.plot(rfallframes,rfootctrv[rfallframes],'gD',markersize=10,label='threshold from forceplate')
+plt.plot(rupframes,rfootctrv[rupframes],'g^',markersize=10)
+plt.legend(numpoints=1)
+plt.xlabel('Frame index')
+plt.ylabel('Velocity (mm/frame)')
+
+plt.figure()
+plt.plot(lfootctrv,'r')
+# algorithm w/ fp
+plt.plot(lfallframes,lfootctrv[lfallframes],'rD',markersize=10,label='fixed threshold')
+plt.plot(lupframes,lfootctrv[lupframes],'r^',markersize=10)
+# algorithm, fixed thresholds
+plt.plot(lfallframes0,lfootctrv[lfallframes0],'kD',markersize=10,label='threshold from forceplate')
+plt.plot(lupframes0,lfootctrv[lupframes0],'k^',markersize=10)
+plt.legend(numpoints=1)
+plt.xlabel('Frame index')
+plt.ylabel('Velocity (mm/frame)')
 
 
 
 
+# create plot (NVUG 2016 presentation)
+# general idea
+plt.figure()
+plt.plot(rfootctrv,'g',label='foot center velocity')
+# algorithm, fixed thresholds
+plt.plot(rfallframes0,rfootctrv[rfallframes0],'kD',markersize=10,label='foot strike')
+plt.plot(rupframes0,rfootctrv[rupframes0],'k^',markersize=10,label='toeoff')
+# algorithm w/ fp
+#plt.plot(rfallframes,rfootctrv[rfallframes],'gD',markersize=10,label='threshold from forceplate')
+#plt.plot(rupframes,rfootctrv[rupframes],'g^',markersize=10)
+plt.legend(numpoints=1, fontsize=12)
+plt.xlabel('Frame index')
+plt.ylabel('Velocity (mm/frame)')
+plt.ylim([0, 40])
+#plt.title('Threshold 20%/50% of maximum velocity')
 
 
+# human marked
+#plt.plot(rfstrikea,rfootctrv[rfstrikea],'kD',markersize=10)
+#plt.plot(rtoeoffsa,rfootctrv[rtoeoffsa],'k^',markersize=10)
+#plt.xlabel('Frame index')
+#plt.ylabel('Velocity (mm/frame)')
 
 
 

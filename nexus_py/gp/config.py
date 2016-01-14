@@ -178,7 +178,7 @@ class Config():
         # populate root window
         save = []
         thisrow = 1
-        Label(master, text="Select options for Nexus plotter:").grid(row=thisrow, columnspan=2, pady=4)
+        Label(master, text="Select options for Gait plotter:").grid(row=thisrow, columnspan=2, pady=4)
         thisrow += 1
         Checkbutton(master, text="Autodetect disconnected EMG electrodes", variable=emg_auto_off).grid(row=thisrow, pady=4, columnspan=2, sticky=W)              
         thisrow += 1
