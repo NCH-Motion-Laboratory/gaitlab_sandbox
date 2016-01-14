@@ -17,9 +17,13 @@ maintitleprefix = 'Kinematics/kinetics plot for '
 gplotter = gaitplotter()
 gplotter.open_nexus_trial()
 gplotter.read_trial(plotvars)
-gplotter.plot_trial(maintitleprefix=maintitleprefix)
 
+gplotter.external_play_video(gplotter.trial.video_files[0])
+
+gplotter.plot_trial(maintitleprefix=maintitleprefix)
 gplotter.show()
     
+
+
 
    

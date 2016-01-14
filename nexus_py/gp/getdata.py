@@ -41,6 +41,8 @@ import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
+import glob
+
 
 # print debug messages if running under IPython
 # debug may prevent scripts from working in Nexus (??)
@@ -80,6 +82,14 @@ def is_c3dfile(obj):
         return os.path.isfile(obj)
     except TypeError:
         return False
+
+def get_video_filenames(trialpath):
+    """ Get AVI files corresponding to given trial. """
+    trialpath = os.path.splitext(trialpath)[0]
+    return glob.glob(trialpath+'*avi')
+
+
+  
 
 def get_eclipse_key(trialname, keyname):
     """ Get the Eclipse database entry 'keyname' for the specified trial. Specify
@@ -168,6 +178,7 @@ def rising_zerocross(x):
 
 def falling_zerocross(x):
     return rising_zerocross(-x)
+
 
 
 class gaitcycle:
@@ -320,6 +331,7 @@ class trial:
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
         self.scan_cycles()
+        self.video_files = get_video_filenames(self.sessionpath+self.trialname)
         
     def kinetics_available(self):
         """ See whether this trial has ground reaction forces for left/right side

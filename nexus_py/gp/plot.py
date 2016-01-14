@@ -39,6 +39,7 @@ import matplotlib.gridspec as gridspec
 import os
 import getpass
 import glob
+import subprocess
 
 
 
@@ -274,6 +275,13 @@ class gaitplotter():
                                        emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
+
+    def external_play_video(self, vidfile):
+        """ Launch an external video player. """
+        # TODO: put into config file
+        PLAYER_CMD = "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe"
+        PLAYER_ARGS = "--input-repeat=-1"  # VLC: loop forever
+        subprocess.Popen([PLAYER_CMD,PLAYER_ARGS,vidfile])
         
     def read_trial(self, vars):
         """ Read requested trial variables and directives.
