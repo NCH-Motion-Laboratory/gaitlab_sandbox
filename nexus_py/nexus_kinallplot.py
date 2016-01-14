@@ -18,7 +18,9 @@ gplotter = gaitplotter()
 gplotter.open_nexus_trial()
 gplotter.read_trial(plotvars)
 
-gplotter.external_play_video(gplotter.trial.video_files[0])
+# play all video files associated with trial
+for vidfile in gplotter.trial.video_files:
+    gplotter.external_play_video(vidfile)
 
 gplotter.plot_trial(maintitleprefix=maintitleprefix)
 gplotter.show()

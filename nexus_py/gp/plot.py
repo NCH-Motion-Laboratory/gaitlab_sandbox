@@ -277,11 +277,12 @@ class gaitplotter():
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
 
     def external_play_video(self, vidfile):
-        """ Launch an external video player. """
+        """ Launch an external video player (defined in config) to play vidfiles.
+        vidfiles are given as the last argument to the command. """
         # TODO: put into config file
         PLAYER_CMD = self.cfg.getval('videoplayer_path')
-        PLAYER_ARGS = self.cfg.getval('videoplayer_opts')
-        subprocess.Popen([PLAYER_CMD,PLAYER_ARGS,vidfile])
+        PLAYER_OPTS = self.cfg.getval('videoplayer_opts')
+        subprocess.Popen([PLAYER_CMD,PLAYER_OPTS,vidfile])
         
     def read_trial(self, vars):
         """ Read requested trial variables and directives.
