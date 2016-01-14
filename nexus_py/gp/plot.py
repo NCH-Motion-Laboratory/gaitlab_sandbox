@@ -279,8 +279,8 @@ class gaitplotter():
     def external_play_video(self, vidfile):
         """ Launch an external video player. """
         # TODO: put into config file
-        PLAYER_CMD = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"
-        PLAYER_ARGS = "--input-repeat=-1"  # VLC: loop forever
+        PLAYER_CMD = self.cfg.getval('videoplayer_path')
+        PLAYER_ARGS = self.cfg.getval('videoplayer_opts')
         subprocess.Popen([PLAYER_CMD,PLAYER_ARGS,vidfile])
         
     def read_trial(self, vars):
