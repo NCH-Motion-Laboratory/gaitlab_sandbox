@@ -18,6 +18,7 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Win32")
 import os
 import ConfigParser
 from ConfigParser import SafeConfigParser
+from getdata import error_exit
 
 
 
@@ -33,6 +34,8 @@ class Config():
         self.config['emg_highpass'] = '10'
         self.config['emg_yscale'] = '0.5'
         self.config['pig_normaldata_path'] = appdir + '/Data/normal.gcd'
+        self.config['videoplayer_path'] = 'C:/Program Files/VideoLAN/VLC/vlc.exe'
+        self.config['videoplayer_opts'] = '--input-repeat=-1'
         self.config['emg_auto_off'] = 'True'
         self.config['emg_apply_filter'] = 'True'
         self.configfile = appdir + '/Config/NexusPlotter.ini'
