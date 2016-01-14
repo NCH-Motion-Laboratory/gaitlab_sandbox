@@ -41,6 +41,9 @@ import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
+import subprocess
+import glob
+
 
 # print debug messages if running under IPython
 # debug may prevent scripts from working in Nexus (??)
@@ -80,6 +83,20 @@ def is_c3dfile(obj):
         return os.path.isfile(obj)
     except TypeError:
         return False
+
+def get_video_filenames(trialpath):
+    """ Get AVI files corresponding to given trial. """
+    trialpath = os.path.splitext(trialpath)[0]
+    return glob.glob(trialpath+'*avi')
+
+
+def external_play_video(vidfile):
+    """ Launch an external video player. """
+    # TODO: put into config file
+    PLAYER_CMD = "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe"
+    PLAYER_ARGS = "--input-repeat=-1"  # VLC: loop forever
+    subprocess.call([PLAYER_CMD,PLAYER_ARGS,vidfile])
+  
 
 def get_eclipse_key(trialname, keyname):
     """ Get the Eclipse database entry 'keyname' for the specified trial. Specify
@@ -168,6 +185,7 @@ def rising_zerocross(x):
 
 def falling_zerocross(x):
     return rising_zerocross(-x)
+
 
 
 class gaitcycle:
