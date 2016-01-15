@@ -24,7 +24,7 @@ for vidfile in gplotter.trial.video_files:
 
 gplotter.plot_trial(maintitleprefix=maintitleprefix)
 gplotter.show()
-    
+gplotter.move_figure(10,30)    
 
 
 

@@ -71,9 +71,6 @@ class gaitplotter():
         # figure size
         #self.totalfigsize = (8.48*1.2,12*1.2) # a4
         self.totalfigsize = (14,12)
-        # x,y position of plot. Currently can only be set if using Qt backend.
-        self.plotx = 10
-        self.ploty = 30       
         # grid dimensions, vertical and horizontal
         self.gridv = None
         self.gridh = None
@@ -549,11 +546,12 @@ class gaitplotter():
         # magic numbers that work for most cases; hspace and wspace need to be adjusted if label font sizes change, etc.
         self.gs.update(left=.08, right=.98, top=.92, bottom=.03, hspace=.37, wspace=.22)
 
-        # if using Qt, we can force figure position
+    def move_figure(self, x,y):
+        """ Move figure upper left corner to x,y. Only works with Qt backend. """
         if 'Qt4' in pylab.get_backend():
             cman = pylab.get_current_fig_manager()
-            x,y,dx,dy = cman.window.geometry().getRect()
-            cman.window.setGeometry(self.plotx,self.ploty,dx,dy)
+            _,_,dx,dy = cman.window.geometry().getRect()
+            cman.window.setGeometry(x,y,dx,dy)
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
