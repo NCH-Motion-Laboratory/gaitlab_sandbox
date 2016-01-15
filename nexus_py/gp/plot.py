@@ -40,7 +40,7 @@ import os
 import getpass
 import glob
 import subprocess
-
+import pylab
 
 
 class gaitplotter():
@@ -77,6 +77,9 @@ class gaitplotter():
         # figure size
         #self.totalfigsize = (8.48*1.2,12*1.2) # a4
         self.totalfigsize = (14,12)
+        # x,y position of plot. Currently can only be set if using Qt backend.
+        self.plotx = 10
+        self.ploty = 30       
         # grid dimensions, vertical and horizontal
         self.gridv = None
         self.gridh = None
@@ -277,8 +280,8 @@ class gaitplotter():
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
 
     def external_play_video(self, vidfile):
-        """ Launch an external video player (defined in config) to play vidfiles.
-        vidfiles are given as the last argument to the command. """
+        """ Launch an external video player (defined in config) to play vidfile.
+        vidfile is given as the last argument to the command. """
         # TODO: put into config file
         PLAYER_CMD = self.cfg.getval('videoplayer_path')
         PLAYER_OPTS = self.cfg.getval('videoplayer_opts')
@@ -551,6 +554,12 @@ class gaitplotter():
         # fix plot spacing, restrict to below title
         # magic numbers that work for most cases; hspace and wspace need to be adjusted if label font sizes change, etc.
         self.gs.update(left=.08, right=.98, top=.92, bottom=.03, hspace=.37, wspace=.22)
+
+        # if using Qt, we can force figure position
+        if 'Qt4' in pylab.get_backend():
+            cman = pylab.get_current_fig_manager()
+            x,y,dx,dy = cman.window.geometry().getRect()
+            cman.window.setGeometry(self.plotx,self.ploty,dx,dy)
     
     def create_pdf(self, pdf_name=None, pdf_prefix=None):
         """ Make a pdf out of the created figure into the Nexus session directory. 
