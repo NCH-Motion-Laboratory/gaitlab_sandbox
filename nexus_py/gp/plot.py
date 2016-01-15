@@ -3,7 +3,7 @@
 
 Gaitplotter: plot gait data using matplotlib.
 
-NEXT:
+TODO:
 variable title handling if multiple vars on single subplot (L/R mess)
 
 
@@ -18,12 +18,6 @@ Rules:
 -vars are specified without leading 'Norm'+side prefix (e.g. 'HipMomentX'
  instead of 'NormRHipMomentX'; side is either autodetected or manually forced
 
-
-TODO:
-
-tests
-documentation
-add default y ranges for kine(ma)tics variables?
 """
 
 
@@ -50,7 +44,7 @@ class gaitplotter():
         # set paths
         pathprefix = 'c:/users/' + getpass.getuser()
         self.desktop = pathprefix + '/Desktop'
-        self.appdir = self.desktop + '/NexusPlotter'
+        self.appdir = self.desktop + '/GaitPlotter'
         
         # read .ini file if available
         self.cfg = config.Config(self.appdir)

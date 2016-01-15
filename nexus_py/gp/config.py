@@ -3,6 +3,9 @@
 Created on Fri Jul 03 12:20:36 2015
 
 Handles configuration for Gaitplotter.
+To initialize the configuration file with default values, create an instance
+of cfg = Config(appdir) and call cfg.write()
+where appdir is the root directory (e.g. user's home)
 
 @author: Jussi
 """
@@ -38,7 +41,7 @@ class Config():
         self.config['videoplayer_opts'] = '--input-repeat=-1'
         self.config['emg_auto_off'] = 'True'
         self.config['emg_apply_filter'] = 'True'
-        self.configfile = appdir + '/Config/NexusPlotter.ini'
+        self.configfile = appdir + '/Config/GaitPlotter.ini'
         self.appdir = appdir        
         
         # get EMG electrode names and write enable/disable values
