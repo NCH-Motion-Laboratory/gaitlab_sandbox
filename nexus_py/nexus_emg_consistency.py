@@ -21,7 +21,7 @@ def any_substr(str, substrs):
     else:
         return None
 
-MAX_TRIALS = 6
+MAX_TRIALS = 12
 
 if not gp.getdata.nexus_pid():
     gp.getdata.error_exit('Vicon Nexus not running')
