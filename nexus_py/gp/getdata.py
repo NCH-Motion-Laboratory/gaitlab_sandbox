@@ -520,19 +520,17 @@ class emg:
         emg_max_interference = 50  # maximum relative interference level
         broadband_bw = 30  # bandwidth of broadband signal
         powerline_freq = 50  # TODO: move into config
-        power_bw = 5  # width of power line peak detector (bandpass)
+        power_bw = 4  # width of power line peak detector (bandpass)
         nharm = 3  # number of harmonics to detect
         # detect 50 Hz harmonics
         linefreqs = (np.arange(nharm+1)+1) * powerline_freq
-        debug_print('linefreqs:', linefreqs)
-        intsig = np.zeros(y.shape)
+        debug_print('Using linefreqs:', linefreqs)
+        intvar = 0
         for f in linefreqs:
-           intsig += self.filt(y, [f-power_bw/2., f+power_bw/2.]) 
-           debug_print('variance at:',f,'is',np.var(intsig))
+           intvar += np.var(self.filt(y, [f-power_bw/2., f+power_bw/2.]))
         # broadband signal
-        bbsig = self.filt(y, [powerline_freq+10, powerline_freq+10+broadband_bw])
-        debug_print('variance of bb signal:', np.var(bbsig))        
-        intrel = np.var(intsig)/np.var(bbsig)
+        emgvar = np.var(self.filt(y, [powerline_freq+10, powerline_freq+10+broadband_bw]))
+        intrel = intvar/emgvar
         debug_print('rel. interference: ', intrel)
         return intrel < emg_max_interference
 
