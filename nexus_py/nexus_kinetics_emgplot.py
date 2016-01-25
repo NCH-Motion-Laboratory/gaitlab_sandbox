@@ -2,7 +2,7 @@
 """
 Created on Tue Apr 28 11:37:51 2015
 
-Kinematics-EMG plot from Nexus.
+Kinetics-EMG plot from Nexus.
 
 @author: Jussi
 """

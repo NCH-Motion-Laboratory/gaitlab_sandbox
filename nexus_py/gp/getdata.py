@@ -512,18 +512,28 @@ class emg:
         return chname in self.ch_names
                     
     def is_valid_emg(self, y):
-        """ Check whether channel contains valid EMG signal. """
+        """ Check whether channel contains a valid EMG signal. Usually invalid
+        signal can be identified by the presence of large powerline (harmonics)
+        compared to broadband signal. Cause is typically disconnected/badly 
+        connected electrodes. """
         # max. relative interference at 50 Hz harmonics
-        emg_max_interference = 50
+        emg_max_interference = 50  # maximum relative interference level
+        broadband_bw = 30  # bandwidth of broadband signal
+        powerline_freq = 50  # TODO: move into config
+        power_bw = 10  # width of power line peak detector (bandpass)
+        nharm = 2  # number of harmonics to detect
         # detect 50 Hz harmonics
-        int200 = self.filt(y, [195,205])
-        int50 = self.filt(y, [45,55])
-        int100 = self.filt(y, [95,105])
-        # baseline emg signal
-        emglevel = self.filt(y, [60,90])
-        intrel = np.var(int50+int100+int200)/np.var(emglevel)
-        # DEBUG
-        #print('rel. interference: ', intrel)
+        linefreqs = (np.arange(nharm+1)+1) * powerline_freq
+        debug_print('linefreqs:', linefreqs)
+        intsig = np.zeros(y.shape)
+        for f in linefreqs:
+           intsig += self.filt(y, [f-power_bw/2., f+power_bw/2.]) 
+           debug_print('variance at:',f,'is',np.var(intsig))
+        # broadband signal
+        bbsig = self.filt(y, [powerline_freq+10, powerline_freq+10+broadband_bw])
+        debug_print('variance of bb signal:', np.var(bbsig))        
+        intrel = np.var(intsig)/np.var(bbsig)
+        debug_print('rel. interference: ', intrel)
         return intrel < emg_max_interference
 
     def filt(self, y, passband):
@@ -568,6 +578,7 @@ class emg:
                 eldata, elready, elrate = vicon.GetDeviceChannel(emg_id, outputid, elid)
                 elname = self.elnames[elid-1]
                 self.data[elname] = np.array(eldata)
+                debug_print('electrode:', elname)
                 if self.emg_auto_off and not self.is_valid_emg(self.data[elname]):
                     self.data[elname] = 'EMG_DISCONNECTED'
             self.datalen = len(eldata)
