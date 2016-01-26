@@ -88,9 +88,6 @@ def get_video_filenames(trialpath):
     trialpath = os.path.splitext(trialpath)[0]
     return glob.glob(trialpath+'*avi')
 
-
-  
-
 def get_eclipse_key(trialname, keyname):
     """ Get the Eclipse database entry 'keyname' for the specified trial. Specify
     trialname with full path. Return empty string for no key. """
@@ -178,7 +175,6 @@ def rising_zerocross(x):
 
 def falling_zerocross(x):
     return rising_zerocross(-x)
-
 
 
 class gaitcycle:
@@ -494,14 +490,6 @@ class emg:
         """ Set EMG passband (in Hz). None for off. Affects get_channel. """
         self.passband = passband
         
-    def get_logical_channel(self, chname):
-        """ Get EMG channel, filtered if self.passband is set. """
-        if self.is_logical_channel(chname):
-            data = self.logical_data[chname]
-            return self.filt(data, self.passband)
-        else:
-            raise GaitDataError('Cannot find requested channel: '+chname)
-
     def define_emg_names(self):
         """ Defines the electrode mapping. """
         self.ch_normals = defs.emg_normals
@@ -517,8 +505,9 @@ class emg:
         compared to broadband signal. Cause is typically disconnected/badly 
         connected electrodes. """
         # max. relative interference at 50 Hz harmonics
-        emg_max_interference = 50  # maximum relative interference level
-        broadband_bw = 30  # bandwidth of broadband signal
+        emg_max_interference = 30  # maximum relative interference level (dB)
+        # bandwidth of broadband signal. should be less than distance between powerline harmonics
+        broadband_bw = 30
         powerline_freq = 50  # TODO: move into config
         power_bw = 4  # width of power line peak detector (bandpass)
         nharm = 3  # number of harmonics to detect
@@ -527,10 +516,10 @@ class emg:
         debug_print('Using linefreqs:', linefreqs)
         intvar = 0
         for f in linefreqs:
-           intvar += np.var(self.filt(y, [f-power_bw/2., f+power_bw/2.]))
+           intvar += np.var(self.filt(y, [f-power_bw/2., f+power_bw/2.])) / power_bw
         # broadband signal
-        emgvar = np.var(self.filt(y, [powerline_freq+10, powerline_freq+10+broadband_bw]))
-        intrel = intvar/emgvar
+        emgvar = np.var(self.filt(y, [powerline_freq+10, powerline_freq+10+broadband_bw])) / broadband_bw
+        intrel = 10*np.log10(intvar/emgvar)
         debug_print('rel. interference: ', intrel)
         return intrel < emg_max_interference
 
@@ -546,6 +535,7 @@ class emg:
         else:  # lowpass
             b, a = signal.butter(self.buttord, passbandn[1])
         yfilt = signal.filtfilt(b, a, y)        
+        #yfilt = yfilt - signal.medfilt(yfilt, 21)        
         return yfilt
        
     def read(self):
