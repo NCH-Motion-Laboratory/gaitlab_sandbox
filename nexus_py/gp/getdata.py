@@ -625,11 +625,7 @@ class emg:
 
 class model_outputs:
     """ Handles model output variables, e.g. Plug-in Gait, muscle length etc. 
-    Model variables may have a preceding L/R indicating left/right side.
-    For brevity, description dicts etc. are specified for variable names without
-    the side info (since descriptions are the same regardless of side).
-    This creates some complications, as certain methods expect variable names
-    without side and certain methods require it. """
+    Actual model data (variable names etc.) is in models.py. """
 
     def __init__(self, source):
         self.source = source
@@ -640,7 +636,7 @@ class model_outputs:
         self.ylabels = {}
         self.modeldata = {}  # read by read_model as necessary
         self.normaldata = {}  # ditto
-        # update varnames etc. for this class, unless model was previously read
+        # update varnames etc. for this class
         for model in self.models:
             self.varnames += model.varnames
             self.varlabels.update(model.varlabels)
@@ -654,7 +650,8 @@ class model_outputs:
                 return model
 
     def read_model(self, model):
-        """ Read variables of given model (instance of models.model) into self.modeldata. """
+        """ Read variables of given model (instance of models.model) and normal data
+        into self.modeldata. """
         source = self.source
         if is_vicon_instance(source):
             # read from Nexus
@@ -687,7 +684,7 @@ class model_outputs:
                     # moment variables have to be divided by 1000 -
                     # apparently stored in Newton-millimeters
                     self.modeldata[Var] /= 1000.
-                debug_print('read_raw:', Var, 'has shape', self.modeldata[Var].shape)
+                #debug_print('read_raw:', Var, 'has shape', self.modeldata[Var].shape)
                 components = model.read_strategy
                 if components == 'split_xyz':
                     if self.modeldata[Var].shape[0] == 3:
@@ -720,23 +717,13 @@ class model_outputs:
     def is_kinetic_var(self, varname):
         """ Tell whether a variable represents kinetics. Works at least for PiG variables... """
         return varname.find('Power') > -1 or varname.find('Moment') > -1
-                    
-    def rm_side(self, varname):
-        """ Remove side info (preceding L/R) from variable name. Internally
-        some dicts use variable names without the side info. Will have to be
-        modified for sideless model variables (not used so far). """
-        side = varname[0].upper()
-        if side in ['L','R']:
-            return varname[1:],side
-        else:
-            raise Exception('Variable name expected to begin with L or R')
        
     def get_normaldata(self, varname):
-        """ Return the normal data (in the given gcd file) for 
-        variable var, if available. """
+        """ Return the normal data for variable varname, if available. """
         model = self.get_model(varname)
-        if varname in self.normaldata:
-            return self.normaldata[model.normaldata_map[varname]]
+        if model and varname in model.normaldata_map:
+            normalkey = model.normaldata_map[varname]
+            return self.normaldata[normalkey]
         else:
             return None
 
