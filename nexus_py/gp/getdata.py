@@ -995,7 +995,6 @@ class model_outputs:
                 elif components:
                     self.Vars[Var] = self.Vars[Var][components,:]
                     
-
     def rm_side(self, varname):
         """ Remove side info (preceding L/R) from variable name. Internally
         some dicts use variable names without the side info. Will have to be

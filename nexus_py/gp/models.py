@@ -3,23 +3,24 @@
 
 models.py - definitions for various models (PiG, muscle length, etc.)
 Defines variable names, descriptions, etc.
-For a new model, create a model() instance and fill the 
+For a new model, create a model() instance, fill the data and append to
+allmodels list.
 
 @author: Jussi
 """
 
-
+models_available = []
 
 
 class model:
     """ A class for storing model variable data, e.g. Plug-in Gait. """    
 
     def __init__(self):
-        self.read_vars = list()  # vars to be read from data
+        self.read_vars = dict()  # vars to be read from data
         # How to read multidimensional variables: 'split_xyz' splits each 
         # variable into x,y,z components; or give a number to read the 
         # corresponding dimension only (e.g. 0=first dim)
-        self.split_xyz = False
+        self.read_strategy = False
         self.desc = ''  # description of model
         self.varnames = list()   # resulting variable names
         self.varlabels = dict()  # descriptive label for each variable
@@ -29,8 +30,7 @@ class model:
     def list_with_side(self, vars):
         """ Prepend variables in vars with 'L' and 'R', creating a new list of
         variables. Many model variables share the same name, except for leading
-        'L' or 'R' that indicates side, so this simplifies creation of variable
-        names. """
+        'L' or 'R' that indicates side. """
         return ['L'+var for var in vars]+['R'+var for var in vars]
 
     def dict_with_side(self, dict, append_side=False):
@@ -45,6 +45,7 @@ class model:
             di['R'+key] = dict[key]+Rstr
             di['L'+key] = dict[key]+Lstr
         return di
+   
 #
 # Plug-in Gait lowerbody
 #
@@ -150,6 +151,8 @@ pig_lowerbody.ylabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Pla     (
                          'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
                          'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'})
 
+models_available.append(pig_lowerbody)
+
 #
 # Muscle length (MuscleLength.mod)
 #
@@ -158,90 +161,7 @@ musclelen = model()
 
 musclelen.desc = 'Muscle length (MuscleLength.mod)'
 
-musclelen.read_vars = ['LGMedAntLength',
-                     'RGMedAntLength',
-                     'LGMedMidLength',
-                     'RGMedMidLength',
-                     'LGMedPosLength',
-                     'RGMedPosLength',
-                     'LGMinAntLength',
-                     'RGMinAntLength',
-                     'LGMinMidLength',
-                     'RGMinMidLength',
-                     'LGMinPosLength',
-                     'RGMinPosLength',
-                     'LSeMeLength',
-                     'RSeMeLength',
-                     'LSeTeLength',
-                     'RSeTeLength',
-                     'LBiFLLength',
-                     'RBiFLLength',
-                     'LBiFSLength',
-                     'RBiFSLength',
-                     'LSartLength',
-                     'RSartLength',
-                     'LAdLoLength',
-                     'RAdLoLength',
-                     'LAdBrLength',
-                     'RAdBrLength',
-                     'LAdMaSupLength',
-                     'RAdMaSupLength',
-                     'LAdMaMidLength',
-                     'RAdMaMidLength',
-                     'LAdMaInfLength',
-                     'RAdMaInfLength',
-                     'LPectLength',
-                     'RPectLength',
-                     'LGracLength',
-                     'RGracLength',
-                     'LGlMaSupLength',
-                     'RGlMaSupLength',
-                     'LGlMaMidLength',
-                     'RGlMaMidLength',
-                     'LGlMaInfLength',
-                     'RGlMaInfLength',
-                     'LIliaLength',
-                     'RIliaLength',
-                     'LPsoaLength',
-                     'RPsoaLength',
-                     'LQuFeLength',
-                     'RQuFeLength',
-                     'LGemeLength',
-                     'RGemeLength',
-                     'LPeriLength',
-                     'RPeriLength',
-                     'LReFeLength',
-                     'RReFeLength',
-                     'LVaMeLength',
-                     'RVaMeLength',
-                     'LVaInLength',
-                     'RVaInLength',
-                     'LVaLaLength',
-                     'RVaLaLength',
-                     'LMeGaLength',
-                     'RMeGaLength',
-                     'LLaGaLength',
-                     'RLaGaLength',
-                     'LSoleLength',
-                     'RSoleLength',
-                     'LTiPoLength',
-                     'RTiPoLength',
-                     'LFlDLLength',
-                     'RFlDLLength',
-                     'LFlHLLength',
-                     'RFlHLLength',
-                     'LTiAnLength',
-                     'RTiAnLength',
-                     'LPeBrLength',
-                     'RPeBrLength',
-                     'LPELOLength',
-                     'RPELOLength',
-                     'LPeTeLength',
-                     'RPeTeLength',
-                     'LExDLLength',
-                     'RExDLLength',
-                     'LExHLLength',
-                     'RExHLLength']
+musclelen.read_strategy = 0
 
 musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
                        'AdLoLength': 'AdLoLength',
@@ -285,7 +205,11 @@ musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
                         'VaInLength': 'VaInLength',
                         'VaLaLength': 'VaLaLength',
                         'VaMeLength': 'VaMeLength'}, append_side=True)
+
+musclelen.read_vars = musclelen.varlabels.keys()
+
+musclelen.varnames = musclelen.read_vars
+
+models_available.append(musclelen)
                         
-
-
 
