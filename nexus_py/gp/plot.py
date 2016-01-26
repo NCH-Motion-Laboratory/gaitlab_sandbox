@@ -384,6 +384,7 @@ class gaitplotter():
                     sides = side
                 for side_ in sides:  # loop thru sides, normalize and plot data
                     varname = side_ + varname_  # side-specific variable name, e.g. 'LHipMomentX'
+                    debug_print('Plotting:', varname)                    
                     if side_ == 'L':
                         tracecolor = self.tracecolor_l
                         cyc = lcyc
