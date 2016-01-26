@@ -4,12 +4,12 @@
 models.py - definitions for various models (PiG, muscle length, etc.)
 Defines variable names, descriptions, etc.
 For a new model, create a model() instance, fill the data and append to
-allmodels list.
+models_all.
 
 @author: Jussi
 """
 
-models_available = []
+models_all = []
 
 
 class model:
@@ -25,6 +25,7 @@ class model:
         self.varnames = list()   # resulting variable names
         self.varlabels = dict()  # descriptive label for each variable
         self.normaldata_map = dict()  # mapping from variable names to .gcd normaldata variables (optional)
+        self.normaldata_path = None  # where to find normal data
         self.ylabels = dict()  # y axis labels for plotting the variables (optional)
 
     def list_with_side(self, vars):
@@ -151,7 +152,7 @@ pig_lowerbody.ylabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Pla     (
                          'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
                          'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'})
 
-models_available.append(pig_lowerbody)
+models_all.append(pig_lowerbody)
 
 #
 # Muscle length (MuscleLength.mod)
@@ -210,6 +211,6 @@ musclelen.read_vars = musclelen.varlabels.keys()
 
 musclelen.varnames = musclelen.read_vars
 
-models_available.append(musclelen)
+models_all.append(musclelen)
                         
 
