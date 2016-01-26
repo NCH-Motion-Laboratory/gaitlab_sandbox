@@ -38,6 +38,8 @@ class model:
         self.normaldata_map = dict()  # mapping from variable names to .gcd normaldata variables (optional)
         self.normaldata_path = None  # where to find normal data
         self.ylabels = dict()  # y axis labels for plotting the variables (optional)
+        self.type = ''  # variable type, e.g. 'PiG'
+        self.was_read = False  # whether physical model data was read for this instance
 
     def list_with_side(self, vars):
         """ Prepend variables in vars with 'L' and 'R', creating a new list of
@@ -47,7 +49,8 @@ class model:
 
     def dict_with_side(self, dict, append_side=False):
         """ Prepend dict keys with 'R' or 'L'. If append_side,
-        also append corresponding ' (R)' or ' (L)' to every dict value. """
+        also append corresponding ' (R)' or ' (L)' to every dict value.
+        If include_sideless, include sideless variables also. """
         di = {}
         if append_side:
             Rstr, Lstr = (' (R)',' (L)')
@@ -64,6 +67,8 @@ class model:
 pig_lowerbody = model()
 
 pig_lowerbody.desc = 'Plug-in Gait lower body'
+
+pig_lowerbody.type = 'PiG'
 
 pig_lowerbody.read_strategy = 'split_xyz'
 
@@ -176,6 +181,8 @@ musclelen = model()
 
 musclelen.desc = 'Muscle length (MuscleLength.mod)'
 
+musclelen.type = 'musclelen'
+
 musclelen.read_strategy = 0
 
 musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
@@ -224,6 +231,10 @@ musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
 musclelen.read_vars = musclelen.varlabels.keys()
 
 musclelen.varnames = musclelen.read_vars
+
+musclelen.ylabels = {}
+for var in musclelen.varnames:
+    musclelen.ylabels[var] = 'Length (mm)'
 
 models_all.append(musclelen)
                         

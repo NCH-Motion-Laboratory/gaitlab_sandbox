@@ -15,7 +15,7 @@ Rules:
 -variables always normalized to gait cycle
 -always plot model normal data if available
 -kinetics always plotted for one side only
--vars are specified without leading 'Norm'+side prefix (e.g. 'HipMomentX'
+-vars are specified without leading side prefix (e.g. 'HipMomentX'
  instead of 'NormRHipMomentX'; side is either autodetected or manually forced
 
 """
@@ -298,8 +298,10 @@ class gaitplotter():
                     read_emg = True
                     self.emg_plot_chs.append(var)
                     self.emg_plot_pos.append(i)
-                elif var in self.trial.model.varnames:
-                    read_models.append(self.trial.model.get_model(varname))
+                elif var in self.trial.model.varnames or 'R'+var in self.trial.model.varnames:
+                    """ Model vars are specified without side (e.g. 'HipMomentX'), but the actual
+                    stored variables have a side (=leading 'R' or 'L'). This is a bit ugly. """
+                    read_models.append(self.trial.model.get_model('R'+var))
                     self.model_plot_vars.append(var)
                     self.model_plot_pos.append(i)
                 else:
@@ -309,7 +311,9 @@ class gaitplotter():
                     self.trial.emg.read()
             if read_models:
                     for model in read_models:
-                        self.trial.model.read_model(model)
+                        if not model.was_read:
+                            self.trial.model.read_model(model)
+                            model.was_read = True
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
@@ -389,17 +393,18 @@ class gaitplotter():
                     data_gc = cyc.normalize(self.trial.model.modeldata[varname])
                     plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
-                if self.trial.model.normaldata(varname_):
-                    nor = np.array(self.trial.model.normaldata(varname_))[:,0]
-                    nstd = np.array(self.trial.model.normaldata(varname_))[:,1]
+                ndata = self.trial.model.get_normaldata(varname)
+                if ndata:
+                    nor = np.array(ndata)[:,0]
+                    nstd = np.array(ndata)[:,1]
                     plt.fill_between(tn_2, nor-nstd, nor+nstd, color=self.normals_color, alpha=self.normals_alpha)
                 # set titles and labels
                 # include side info if plotting single side
                 if plot_onesided:
-                    title = self.trial.model.description(varname) + ' ('+side+')'
+                    title = self.trial.model.varlabels[varname] + ' ('+side+')'
                 else:
-                    title = self.trial.model.description(varname) + ' (LR)'
-                ylabel = self.trial.model.ylabel(varname_)
+                    title = self.trial.model.varlabels[varname] + ' (LR)'
+                ylabel = self.trial.model.ylabels[varname]
                 plt.title(title, fontsize=self.fsize_titles)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
                 plt.ylabel(ylabel, fontsize=self.fsize_labels)
@@ -411,13 +416,13 @@ class gaitplotter():
                 ylim_default= ax.get_ylim()
                 # include zero line and extend y scale a bit for kin* variables
                 plt.axhline(0, color='black')  # zero line
-                if self.trial.model.is_pig_lowerbody_variable(varname_):
+                if self.trial.model.get_model(varname).type == 'PiG':
                     if ylim_default[0] == 0:
                         plt.ylim(-10, ylim_default[1])
                     if ylim_default[1] == 0:
                         plt.ylim(ylim_default[0], 10)
                 # expand the default scale a bit for muscle length variables, but no zeroline
-                if self.trial.model.is_musclelen_variable(varname_):
+                if self.trial.model.get_model(varname).type == 'musclelen':
                     plt.ylim(ylim_default[0]-10, ylim_default[1]+10)
                 plt.locator_params(axis = 'y', nbins = 6)  # reduce number of y tick marks
                 # tick font size                
