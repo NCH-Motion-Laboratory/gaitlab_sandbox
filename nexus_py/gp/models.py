@@ -106,7 +106,7 @@ pig_lowerbody.varlabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Ankle d
                          'KneePowerZ': 'Knee power',
                          'PelvisAnglesX': 'Pelvic tilt',
                          'PelvisAnglesY': 'Pelvic obliquity',
-                         'PelvisAnglesZ': 'Pelvic rotation'}, append_side=True)
+                         'PelvisAnglesZ': 'Pelvic rotation'}, append_side=False)
 
 pig_lowerbody.varnames = pig_lowerbody.varlabels.keys()
       
@@ -214,7 +214,7 @@ musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
                         'TiPoLength': 'TiPoLength',
                         'VaInLength': 'VaInLength',
                         'VaLaLength': 'VaLaLength',
-                        'VaMeLength': 'VaMeLength'}, append_side=True)
+                        'VaMeLength': 'VaMeLength'}, append_side=False)
 
 musclelen.read_vars = musclelen.varlabels.keys()
 
