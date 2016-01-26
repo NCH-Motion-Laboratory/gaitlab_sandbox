@@ -21,7 +21,7 @@ sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Win32")
 import os
 import ConfigParser
 from ConfigParser import SafeConfigParser
-from getdata import error_exit
+from misc import error_exit
 
 
 

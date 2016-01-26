@@ -26,7 +26,8 @@ import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 import getdata
-from getdata import error_exit, messagebox, debug_print
+from misc import error_exit, messagebox, nexus_pid
+from getdata import debug_print
 import config
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
@@ -51,21 +52,16 @@ class gaitplotter():
         config_ok, msg = self.cfg.check()
         if not config_ok:
             error_exit('Error in configuration file, please fix or delete: ', self.configfile)
-
         self.emg_passband = [0,0]
         self.emg_passband[0] = self.cfg.getval('emg_highpass')
         self.emg_passband[1] = self.cfg.getval('emg_lowpass')
         self.emg_apply_filter = self.cfg.getval('emg_apply_filter')
         self.emg_auto_off = self.cfg.getval('emg_auto_off')
-        self.pig_normaldata_path = self.cfg.getval('pig_normaldata_path')
         self.emg_names = getdata.emg(None).ch_names
         self.emg_names.sort()
         self.emg_manual_enable={}
         for ch in self.emg_names:
             self.emg_manual_enable[ch] = self.cfg.emg_enabled(ch)
-
-        # muscle length normal data - not yet used
-        self.musclelen_normaldata_path = None
 
         # (currently) non-configurable stuff
         # figure size
@@ -239,7 +235,7 @@ class gaitplotter():
             mainloop()  # Tk
 
     def get_nexus_path(self):
-        if not getdata.nexus_pid():
+        if not nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         if not self.vicon:
             self.vicon = getdata.viconnexus()
@@ -251,12 +247,11 @@ class gaitplotter():
 
     def open_nexus_trial(self):
         """ Open trial from Nexus. """
-        if not getdata.nexus_pid():
+        if not nexus_pid():
             error_exit('Cannot get Nexus PID, Nexus not running?')
         self.vicon = getdata.viconnexus()
         try:
-            self.trial = getdata.trial(self.vicon, pig_normaldata_path=self.pig_normaldata_path,
-                                       emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
+            self.trial = getdata.trial(self.vicon, emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening trial from Nexus:\n'+e.msg)
         
@@ -265,8 +260,7 @@ class gaitplotter():
         if not os.path.isfile(trialpath):
             error_exit('Cannot find trial: '+trialpath)
         try:
-            self.trial = getdata.trial(trialpath, pig_normaldata_path=self.pig_normaldata_path,
-                                       emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
+            self.trial = getdata.trial(trialpath, emg_auto_off=self.emg_auto_off, emg_mapping=self.emg_mapping)
         except getdata.GaitDataError as e:
             error_exit('Error while opening '+trialpath+':\n'+e.msg)
 
@@ -286,7 +280,7 @@ class gaitplotter():
         self.vars = []
         [self.vars.extend(x) for x in vars]  # flatten 2-dim list to 1-dim
         read_emg = False
-        read_pig = False
+        read_models = []  # which models to read
         read_musclelen = False
         self.emg_plot_chs = []
         self.emg_plot_pos = []
@@ -304,12 +298,8 @@ class gaitplotter():
                     read_emg = True
                     self.emg_plot_chs.append(var)
                     self.emg_plot_pos.append(i)
-                elif self.trial.model.is_pig_lowerbody_variable(var):
-                    read_pig = True
-                    self.model_plot_vars.append(var)
-                    self.model_plot_pos.append(i)
-                elif self.trial.model.is_musclelen_variable(var):
-                    read_musclelen = True
+                elif var in self.trial.model.varnames:
+                    read_models.append(self.trial.model.get_model(varname))
                     self.model_plot_vars.append(var)
                     self.model_plot_pos.append(i)
                 else:
@@ -317,14 +307,12 @@ class gaitplotter():
         try:
             if read_emg:
                     self.trial.emg.read()
-            if read_pig:
-                    self.trial.model.read_pig_lowerbody()
-            if read_musclelen:
-                    self.trial.model.read_musclelen()
+            if read_models:
+                    for model in read_models:
+                        self.trial.model.read_model(model)
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
-        
                                       
     def set_fig_title(self, title):
         if self.fig:
@@ -398,7 +386,7 @@ class gaitplotter():
                     elif side_ == 'R':
                         tracecolor = self.tracecolor_r
                         cyc = rcyc
-                    data_gc = cyc.normalize(self.trial.model.Vars[varname])
+                    data_gc = cyc.normalize(self.trial.model.modeldata[varname])
                     plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
                 if self.trial.model.normaldata(varname_):

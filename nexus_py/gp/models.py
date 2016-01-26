@@ -9,6 +9,17 @@ models_all.
 @author: Jussi
 """
 
+import config
+import getpass
+
+# need to get normal data dirs from config
+# TODO: hardcoded dirs, also in plot.py
+pathprefix = 'c:/users/' + getpass.getuser()
+desktop = pathprefix + '/Desktop'
+appdir = desktop + '/GaitPlotter'
+cfg = config.Config(appdir)
+cfg.read()
+
 models_all = []
 
 
@@ -151,6 +162,9 @@ pig_lowerbody.ylabels = pig_lowerbody.dict_with_side({'AnkleAnglesX': 'Pla     (
                          'PelvisAnglesX': 'Pst     ($^\\circ$)      Ant',
                          'PelvisAnglesY': 'Dwn     ($^\\circ$)      Up',
                          'PelvisAnglesZ': 'Bak     ($^\\circ$)      For'})
+
+
+pig_lowerbody.normaldata_path = cfg.getval('pig_normaldata_path')
 
 models_all.append(pig_lowerbody)
 

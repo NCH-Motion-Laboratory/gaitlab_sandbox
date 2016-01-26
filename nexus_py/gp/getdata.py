@@ -143,29 +143,7 @@ def set_eclipse_key(enfname, keyname, oldval, newval):
     with open(enfname, 'w') as f:
         for li in linesnew:
             f.write(li+'\n')
-    
-
-def nexus_pid():
-    """ Tries to return the PID of the running Nexus process. """
-    PROCNAME = "Nexus.exe"
-    for proc in psutil.process_iter():
-        try:
-            if proc.name() == PROCNAME:
-                return proc.pid
-        except psutil.AccessDenied:
-            pass
-    return None
-
-def error_exit(message):
-    """ Custom error handler """
-    # graphical error dialog - Windows specific
-    ctypes.windll.user32.MessageBoxA(0, message, "Error in Nexus Python script", 0)
-    sys.exit()
-
-def messagebox(message):
-    """ Custom notification handler """
-    # graphical message dialog - Windows specific
-    ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
+   
 
 def rising_zerocross(x):
     """ Return indices of rising zero crossings in sequence,
@@ -218,8 +196,7 @@ class trial:
     -analog data (EMG, forceplate, etc.)
     -model variables (Plug-in Gait, muscle length, etc.)
     """
-    def __init__(self, source, emg_mapping=None, emg_auto_off=None,
-                 pig_normaldata_path=None):
+    def __init__(self, source, emg_mapping=None, emg_auto_off=None):
         """ Open trial, read subject info, events etc. """
         self.lfstrikes = []
         self.rfstrikes = []
@@ -321,7 +298,7 @@ class trial:
         # will be read by read_vars
         # TODO: emg params
         self.emg = emg(source, emg_auto_off=emg_auto_off, emg_mapping=emg_mapping)
-        self.model = model_outputs(self.source, pig_normaldata_path)
+        self.model = model_outputs(self.source)
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
@@ -657,14 +634,27 @@ class model_outputs:
     def __init__(self, source):
         self.source = source
         self.models = models.models_all
-        self.Vars = {}  # read by read_model as necessary
         self.varnames = []
         self.varlabels = {}
         self.normaldata_map = {}
         self.ylabels = {}
+        self.modeldata = {}  # read by read_model as necessary
+        self.normaldata = {}  # ditto
+        # update varnames etc. for this class, unless model was previously read
+        for model in self.models:
+            self.varnames.append(model.varnames)
+            self.varlabels.update(model.varlabels)
+            self.normaldata_map.update(model.normaldata_map)
+            self.ylabels.update(model.ylabels)
+
+    def get_model(self, varname):
+        """ Returns model corresponding to varname. """
+        for model in self.models:
+            if varname in model.varnames:
+                return model
 
     def read_model(self, model):
-        """ Read variables of given model (instance of models.model) into self.Vars. """
+        """ Read variables of given model (instance of models.model) into self.modeldata. """
         source = self.source
         if is_vicon_instance(source):
             # read from Nexus
@@ -676,7 +666,7 @@ class model_outputs:
                     raise GaitDataError('Cannot read model variable: '+Var+
                     '. \nMake sure that the appropriate model has been executed in Nexus.')
                 # remove singleton dimensions
-                self.Vars[Var] = np.squeeze(np.array(NumVals))
+                self.modeldata[Var] = np.squeeze(np.array(NumVals))
         elif is_c3dfile(source):
             # read from c3d            
             c3dfile = source
@@ -686,7 +676,7 @@ class model_outputs:
             acq = reader.GetOutput()
             for Var in model.read_vars:
                 try:
-                    self.Vars[Var] = np.transpose(np.squeeze(acq.GetPoint(Var).GetValues()))
+                    self.modeldata[Var] = np.transpose(np.squeeze(acq.GetPoint(Var).GetValues()))
                 except RuntimeError:
                     raise GaitDataError('Cannot find model variable in c3d file: ', Var)
         else:
@@ -696,54 +686,43 @@ class model_outputs:
                 if Var.find('Moment') > 0:
                     # moment variables have to be divided by 1000 -
                     # apparently stored in Newton-millimeters
-                    self.Vars[Var] /= 1000.
-                debug_print('read_raw:', Var, 'has shape', self.Vars[Var].shape)
+                    self.modeldata[Var] /= 1000.
+                debug_print('read_raw:', Var, 'has shape', self.modeldata[Var].shape)
                 components = model.read_strategy
                 if components == 'split_xyz':
-                    if self.Vars[Var].shape[0] == 3:
+                    if self.modeldata[Var].shape[0] == 3:
                         # split 3-d arrays into x,y,z variables
-                        self.Vars[Var+'X'] = self.Vars[Var][0,:]
-                        self.Vars[Var+'Y'] = self.Vars[Var][1,:]
-                        self.Vars[Var+'Z'] = self.Vars[Var][2,:]
+                        self.modeldata[Var+'X'] = self.modeldata[Var][0,:]
+                        self.modeldata[Var+'Y'] = self.modeldata[Var][1,:]
+                        self.modeldata[Var+'Z'] = self.modeldata[Var][2,:]
                     else:
                         raise GaitDataError('XYZ split requested but array is not 3-d')
                 elif components:
-                    self.Vars[Var] = self.Vars[Var][components,:]
-        # update varnames etc. for this class, unless model was previously read
-        if model.varnames[0] not in self.varnames:
-            self.varnames.append(model.varnames)
-            self.varlabels.update(model.varlabels)
-            self.normaldata_map.update(model.normaldata_map)
-            self.ylabels.update(model.ylabels)
-
-        
-
-
-
-
-
-
-
-
-
-        
-        
-        # read PiG normal data from given gcd file
-        gcdfile = pig_normaldata_path
+                    self.modeldata[Var] = self.modeldata[Var][components,:]
+        # read normal data if it exists. only gcd files supported for now
+        gcdfile = model.normaldata_path
         if gcdfile:
             if not os.path.isfile(gcdfile):
-                raise Exception('Cannot find specified PiG normal data file')
+                raise Exception('Cannot find specified normal data file')
             f = open(gcdfile, 'r')
             lines = f.readlines()
             f.close()
-            pig_normaldata = {}
+            normaldata = {}
             for li in lines:
                 if li[0] == '!':  # it's a variable name
                     thisvar = li[1:li.find(' ')]  # set dict key
-                    pig_normaldata[thisvar] = list()
+                    normaldata[thisvar] = list()
                 elif li[0].isdigit() or li[0] == '-':  # it's a number, so read into list
-                    pig_normaldata[thisvar].append([float(x) for x in li.split()])
-            self.pig_normaldata = pig_normaldata
+                    normaldata[thisvar].append([float(x) for x in li.split()])
+            self.normaldata.update(normaldata)
+
+
+
+
+
+
+        
+        
 
             
                     
