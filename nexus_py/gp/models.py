@@ -3,7 +3,7 @@
 
 models.py - definitions for various models (PiG, muscle length, etc.)
 Defines variable names, descriptions, etc.
-For a new model, create a model() instance, fill the data and append to
+For a new model, create a model() instance, fill in the data and append to
 models_all.
 
 @author: Jussi
@@ -12,7 +12,7 @@ models_all.
 import config
 import getpass
 
-# need to get normal data dirs from config
+# needed to get normal data dirs from config
 # TODO: hardcoded dirs, also in plot.py
 pathprefix = 'c:/users/' + getpass.getuser()
 desktop = pathprefix + '/Desktop'
@@ -41,6 +41,8 @@ class model:
         self.type = ''  # variable type, e.g. 'PiG'
         self.was_read = False  # whether physical model data was read for this instance
 
+    # convenience methods for model creation
+
     def list_with_side(self, vars):
         """ Prepend variables in vars with 'L' and 'R', creating a new list of
         variables. Many model variables share the same name, except for leading
@@ -49,8 +51,7 @@ class model:
 
     def dict_with_side(self, dict, append_side=False):
         """ Prepend dict keys with 'R' or 'L'. If append_side,
-        also append corresponding ' (R)' or ' (L)' to every dict value.
-        If include_sideless, include sideless variables also. """
+        also append corresponding ' (R)' or ' (L)' to every dict value. """
         di = {}
         if append_side:
             Rstr, Lstr = (' (R)',' (L)')
