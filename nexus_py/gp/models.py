@@ -27,7 +27,7 @@ class model:
     """ A class for storing model variable data, e.g. Plug-in Gait. """    
 
     def __init__(self):
-        self.read_vars = dict()  # vars to be read from data
+        self.read_vars = list()  # vars to be read from data
         # How to read multidimensional variables: 'split_xyz' splits each 
         # variable into x,y,z components; or give a number to read the 
         # corresponding dimension only (e.g. 0=first dim)
@@ -78,18 +78,6 @@ pig_lowerbody.read_vars = pig_lowerbody.list_with_side(['HipMoment',
       'HipPower',
       'KneePower',
       'AnklePower',
-      'HipMoment',
-      'KneeMoment',
-      'AnkleMoment',
-      'HipPower',
-      'KneePower',
-      'AnklePower',
-      'HipAngles',
-      'KneeAngles',
-      'AbsAnkleAngle',
-      'AnkleAngles',
-      'PelvisAngles',
-      'FootProgressAngles',
       'HipAngles',
       'KneeAngles',
       'AbsAnkleAngle',

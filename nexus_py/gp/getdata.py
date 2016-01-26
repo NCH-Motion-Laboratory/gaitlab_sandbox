@@ -652,12 +652,14 @@ class model_outputs:
     def read_model(self, model):
         """ Read variables of given model (instance of models.model) and normal data
         into self.modeldata. """
+        debug_print('Reading model:', model.desc)
         source = self.source
         if is_vicon_instance(source):
             # read from Nexus
             vicon = source
             SubjectName = vicon.GetSubjectNames()[0]
             for Var in model.read_vars:
+                debug_print('Getting:', Var)
                 NumVals,BoolVals = vicon.GetModelOutput(SubjectName, Var)
                 if not NumVals:
                     raise GaitDataError('Cannot read model variable: '+Var+
@@ -683,6 +685,7 @@ class model_outputs:
                 if Var.find('Moment') > 0:
                     # moment variables have to be divided by 1000 -
                     # apparently stored in Newton-millimeters
+                    debug_print('Normalizing:', Var)                    
                     self.modeldata[Var] /= 1000.
                 #debug_print('read_raw:', Var, 'has shape', self.modeldata[Var].shape)
                 components = model.read_strategy
