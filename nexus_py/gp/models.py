@@ -30,7 +30,8 @@ class model:
         self.read_vars = list()  # vars to be read from data
         # How to read multidimensional variables: 'split_xyz' splits each 
         # variable into x,y,z components; or give a number to read the 
-        # corresponding dimension only (e.g. 0=first dim)
+        # corresponding dimension only (e.g. 1=first dim). 'False' does
+        # not pick components (scalar variable)
         self.read_strategy = False
         self.desc = ''  # description of model
         self.varnames = list()   # resulting variable names
@@ -172,7 +173,7 @@ musclelen.desc = 'Muscle length (MuscleLength.mod)'
 
 musclelen.type = 'musclelen'
 
-musclelen.read_strategy = 0
+musclelen.read_strategy = False
 
 musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
                        'AdLoLength': 'AdLoLength',

@@ -699,8 +699,11 @@ class model_outputs:
                         self.modeldata[Var+'Z'] = self.modeldata[Var][2,:]
                     else:
                         raise GaitDataError('XYZ split requested but array is not 3-d')
-                elif components:
-                    self.modeldata[Var] = self.modeldata[Var][components,:]
+                elif components:  # pick specified components
+                    if self.modeldata[Var].shape[0] > 1 and self.modeldata[Var].ndim > 1:
+                        self.modeldata[Var] = self.modeldata[Var][components-1,:]
+                    else:
+                        raise GaitDataError('Cannot pick component, invalid array shape')
         # read normal data if it exists. only gcd files supported for now
         gcdfile = model.normaldata_path
         if gcdfile:
