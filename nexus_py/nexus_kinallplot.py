@@ -23,6 +23,8 @@ for vidfile in gplotter.trial.video_files:
     gplotter.external_play_video(vidfile)
 
 gplotter.plot_trial(maintitleprefix=maintitleprefix)
+
+# move figure to upper left corner to make space for videos
 gplotter.move_figure(10,30)    
 gplotter.show()
 

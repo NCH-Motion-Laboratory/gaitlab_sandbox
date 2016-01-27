@@ -29,6 +29,7 @@ from __future__ import division, print_function
 
 import defs
 import sys
+import copy
 # these needed for Nexus 2.1
 if not "C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python" in sys.path:
     sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python")
@@ -629,7 +630,8 @@ class model_outputs:
 
     def __init__(self, source):
         self.source = source
-        self.models = models.models_all
+        # local copy of models is mutable, so need a fresh copy instead of binding
+        self.models = copy.deepcopy(models.models_all)  
         self.varnames = []
         self.varlabels = {}
         self.normaldata_map = {}

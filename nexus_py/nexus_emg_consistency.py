@@ -13,6 +13,7 @@ import gp.getdata
 from gp.getdata import get_eclipse_key
 import gp.layouts
 import glob
+from gp.misc import nexus_pid, error_exit
 
 def any_substr(str, substrs):
     """ Find whether str contains one of substr (list). """
@@ -23,8 +24,8 @@ def any_substr(str, substrs):
 
 MAX_TRIALS = 12
 
-if not gp.getdata.nexus_pid():
-    gp.getdata.error_exit('Vicon Nexus not running')
+if not nexus_pid():
+    error_exit('Vicon Nexus not running')
     
 # get session path from Nexus, find processed trials
 vicon = gp.getdata.viconnexus()
@@ -36,10 +37,10 @@ c3dfiles = glob.glob(sessionpath+'*.c3d')
 marks = ['R1','R2','R3','L1','L2','L3']
 marked_trials = [c3d for c3d in c3dfiles if any_substr(get_eclipse_key(c3d, 'DESCRIPTION').upper()+' '+get_eclipse_key(c3d, 'NOTES').upper(), marks)]
 if len(marked_trials) > MAX_TRIALS:
-    gp.getdata.error_exit('Too many marked trials found!')
+    error_exit('Too many marked trials found!')
 
 if not marked_trials:
-    gp.getdata.error_exit('Did not find any marked trials (R1 etc.) in current session directory.')
+    error_exit('Did not find any marked trials (R1 etc.) in current session directory.')
 
 plotvars = gp.layouts.overlay_emg
 emgcolors = ['b','g','r','c','m','y','k']

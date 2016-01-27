@@ -280,8 +280,7 @@ class gaitplotter():
         self.vars = []
         [self.vars.extend(x) for x in vars]  # flatten 2-dim list to 1-dim
         read_emg = False
-        read_models = []  # which models to read
-        read_musclelen = False
+        read_models = []  # list of models to read
         self.emg_plot_chs = []
         self.emg_plot_pos = []
         self.model_plot_vars = []
@@ -312,8 +311,11 @@ class gaitplotter():
             if read_models:
                     for model in read_models:
                         if not model.was_read:
+                            debug_print('read_trial: reading model:', model.desc)
                             self.trial.model.read_model(model)
                             model.was_read = True
+                        else:
+                            debug_print('read_trial: model already read:', model.desc)
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
