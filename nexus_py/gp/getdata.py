@@ -654,6 +654,8 @@ class model_outputs:
     def read_model(self, model):
         """ Read variables of given model (instance of models.model) and normal data
         into self.modeldata. """
+        if not model:
+            raise GaitDataError('Cannot read empty model')
         debug_print('Reading model:', model.desc)
         source = self.source
         if is_vicon_instance(source):
@@ -680,9 +682,13 @@ class model_outputs:
                     self.modeldata[Var] = np.transpose(np.squeeze(acq.GetPoint(Var).GetValues()))
                 except RuntimeError:
                     raise GaitDataError('Cannot find model variable in c3d file: ', Var)
+                # c3d stores scalars as first dim of 3-d array
+                if model.read_strategy == 'last':
+                    debug_print(Var,'has shape:', self.modeldata[Var].shape)
+                    self.modeldata[Var] = self.modeldata[Var][2,:]
         else:
             raise GaitDataError('Invalid data source')
-        # postprocessing
+        # postprocessing for certain variables
         for Var in model.read_vars:
                 if Var.find('Moment') > 0:
                     # moment variables have to be divided by 1000 -
@@ -699,11 +705,6 @@ class model_outputs:
                         self.modeldata[Var+'Z'] = self.modeldata[Var][2,:]
                     else:
                         raise GaitDataError('XYZ split requested but array is not 3-d')
-                elif components:  # pick specified components
-                    if self.modeldata[Var].shape[0] > 1 and self.modeldata[Var].ndim > 1:
-                        self.modeldata[Var] = self.modeldata[Var][components-1,:]
-                    else:
-                        raise GaitDataError('Cannot pick component, invalid array shape')
         # read normal data if it exists. only gcd files supported for now
         gcdfile = model.normaldata_path
         if gcdfile:

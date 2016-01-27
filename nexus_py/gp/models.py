@@ -29,9 +29,9 @@ class model:
     def __init__(self):
         self.read_vars = list()  # vars to be read from data
         # How to read multidimensional variables: 'split_xyz' splits each 
-        # variable into x,y,z components; or give a number to read the 
-        # corresponding dimension only (e.g. 1=first dim). 'False' does
-        # not pick components (scalar variable)
+        # variable into x,y,z components and names them appropriately. 
+        # 'last' reads the last component only (c3d scalars are saved
+        # as last component of 3-d array (??))
         self.read_strategy = False
         self.desc = ''  # description of model
         self.varnames = list()   # resulting variable names
@@ -173,7 +173,7 @@ musclelen.desc = 'Muscle length (MuscleLength.mod)'
 
 musclelen.type = 'musclelen'
 
-musclelen.read_strategy = False
+musclelen.read_strategy = 'last'
 
 musclelen.varlabels = musclelen.dict_with_side({'AdBrLength': 'AdBrLength',
                        'AdLoLength': 'AdLoLength',

@@ -11,7 +11,8 @@ from gp.plot import gaitplotter
 import gp.layouts
 
 plotvars = gp.layouts.std_emg
-trialpath = 'C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/D0012_VS/2015_6_9_seur_VS/2015_6_9_seur_VS29.c3d'
+
+trialpath = "C:/Users/HUS20664877/Desktop/Vicon/vicon_data/test/Verrokki10v_OK/2015_10_12_boy10v_OK/2015_10_12_boy10v_OK09.c3d"
 
 gplotter = gaitplotter()
 gplotter.open_c3d_trial(trialpath)
