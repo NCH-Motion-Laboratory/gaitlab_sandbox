@@ -16,13 +16,6 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPushButton" name="btnTallenna">
-      <property name="text">
-       <string>Tallenna raportti</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -31,38 +24,92 @@
        <attribute name="title">
         <string>Potilaan tiedot</string>
        </attribute>
-       <widget class="QSpinBox" name="spinBox">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>310</x>
-          <y>190</y>
-          <width>60</width>
-          <height>27</height>
+          <x>30</x>
+          <y>70</y>
+          <width>168</width>
+          <height>154</height>
          </rect>
         </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <property name="verticalSpacing">
+          <number>10</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Potilaskoodi</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Henkilötunnus</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Potilaan nimi</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Diagnoosi</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Mittaajat</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Tutkimuksen päivämäärä</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>190</x>
-          <y>10</y>
-          <width>113</width>
-          <height>27</height>
+          <x>270</x>
+          <y>30</y>
+          <width>131</width>
+          <height>194</height>
          </rect>
         </property>
-       </widget>
-       <widget class="QLabel" name="label">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>20</y>
-          <width>171</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Tutkimuksen päivämäärä</string>
-        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="lineEdit_6"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLineEdit" name="lineEdit"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLineEdit" name="lineEdit_2"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLineEdit" name="lineEdit_3"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLineEdit" name="lineEdit_4"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLineEdit" name="lineEdit_5"/>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="tabLonkka">
@@ -84,11 +131,13 @@
        <attribute name="title">
         <string>Nilkka</string>
        </attribute>
+       <zorder>btnTallenna</zorder>
       </widget>
       <widget class="QWidget" name="tabAntrop">
        <attribute name="title">
         <string>Antrop. mitat</string>
        </attribute>
+       <zorder>groupBox</zorder>
       </widget>
       <widget class="QWidget" name="tabJalkat">
        <attribute name="title">
@@ -105,6 +154,13 @@
         <string>Tasapaino</string>
        </attribute>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnTallenna">
+      <property name="text">
+       <string>Tallenna raportti</string>
+      </property>
      </widget>
     </item>
     <item>
