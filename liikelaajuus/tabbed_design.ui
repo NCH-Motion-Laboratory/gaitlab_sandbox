@@ -36,11 +36,11 @@
              <string>Tutkimuksen päivämäärä</string>
             </property>
             <property name="buddy">
-             <cstring>lineEdit_6</cstring>
+             <cstring>lnPersonnel</cstring>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>Mittaajat</string>
@@ -76,22 +76,22 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit_2"/>
+           <widget class="QLineEdit" name="lnHetu"/>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_5"/>
+           <widget class="QLineEdit" name="lnName"/>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEdit_7"/>
+           <widget class="QLineEdit" name="lnID"/>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEdit"/>
+           <widget class="QLineEdit" name="lnDiag"/>
           </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="lineEdit_6"/>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="lnPersonnel"/>
           </item>
           <item row="0" column="1">
-           <widget class="QDateEdit" name="dateEdit"/>
+           <widget class="QLineEdit" name="lnDate"/>
           </item>
          </layout>
         </item>
@@ -140,21 +140,21 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="btnTallenna">
+     <widget class="QPushButton" name="btnReport">
       <property name="text">
        <string>Tallenna raportti</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="btnTallennaLom">
+     <widget class="QPushButton" name="btnForm">
       <property name="text">
        <string>Tallenna lomake</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="btnSulje">
+     <widget class="QPushButton" name="btnQuit">
       <property name="text">
        <string>Sulje</string>
       </property>
