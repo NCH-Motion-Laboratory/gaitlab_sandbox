@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>600</height>
+    <width>763</width>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,100 +16,618 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QPushButton" name="btnReport">
+      <property name="text">
+       <string>Tallenna raportti</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btnForm">
+      <property name="text">
+       <string>Tallenna lomake</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
         <string>Potilaan tiedot</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Tutkimuksen päivämäärä</string>
-            </property>
-            <property name="buddy">
-             <cstring>lnPersonnel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Mittaajat</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Henkilötunnus</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Potilaan nimi</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Potilaskoodi</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Diagnoosi</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lnHetu"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lnName"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lnID"/>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lnDiag"/>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLineEdit" name="lnPersonnel"/>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="lnDate"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>80</y>
+          <width>461</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Potilaan nimi</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lnDate"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Tutkimuksen päivämäärä</string>
+           </property>
+           <property name="buddy">
+            <cstring>lnPersonnel</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lnHetu"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Diagnoosi</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lnName"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Potilaskoodi</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="lnID"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Henkilötunnus</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="lnDiag"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Mittaajat</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="lnPersonnel"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
       <widget class="QWidget" name="tabLonkka">
        <attribute name="title">
         <string>Lonkka</string>
        </attribute>
+       <widget class="QWidget" name="gridLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>10</y>
+          <width>401</width>
+          <height>457</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="8" column="2">
+          <widget class="QSpinBox" name="spinBox_32"/>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLabel" name="label_78">
+           <property name="text">
+            <string>Oikea</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>-lonkka 0, polvi 90</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QSpinBox" name="spinBox_4"/>
+         </item>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="spinBox_11"/>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="label_76">
+           <property name="text">
+            <string>Vasen</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLabel" name="label_79">
+           <property name="text">
+            <string>Vasen</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>-polvi 0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2">
+          <widget class="QSpinBox" name="spinBox_31"/>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="label_17">
+           <property name="text">
+            <string>Ober test</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="4">
+          <widget class="QSpinBox" name="spinBox_40">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="2">
+          <widget class="QSpinBox" name="spinBox_39"/>
+         </item>
+         <item row="8" column="1">
+          <widget class="QSpinBox" name="spinBox_8"/>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>-polvi 90</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBox_13"/>
+         </item>
+         <item row="10" column="2">
+          <widget class="QSpinBox" name="spinBox_34"/>
+         </item>
+         <item row="13" column="2">
+          <widget class="QSpinBox" name="spinBox_37"/>
+         </item>
+         <item row="10" column="3">
+          <widget class="QSpinBox" name="spinBox_7">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="4">
+          <widget class="QSpinBox" name="spinBox_45">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Adduktio</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="1">
+          <widget class="QSpinBox" name="spinBox_3"/>
+         </item>
+         <item row="5" column="2">
+          <widget class="QSpinBox" name="spinBox_29"/>
+         </item>
+         <item row="7" column="3">
+          <widget class="QSpinBox" name="spinBox_33">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0">
+          <widget class="QLabel" name="label_55">
+           <property name="text">
+            <string>Ulkokierto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Ekstensio (Thomas)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QSpinBox" name="spinBox"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>-vapaasti</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QSpinBox" name="spinBox_30"/>
+         </item>
+         <item row="12" column="3">
+          <widget class="QSpinBox" name="spinBox_41">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="2">
+          <widget class="QSpinBox" name="spinBox_35"/>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>-lonkka 0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>-avustettuna</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="4">
+          <widget class="QSpinBox" name="spinBox_42">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLabel" name="label_77">
+           <property name="text">
+            <string>Liikelaajuus (deg)</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Abduktio</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="4">
+          <widget class="QSpinBox" name="spinBox_43">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="2">
+          <widget class="QSpinBox" name="spinBox_38"/>
+         </item>
+         <item row="12" column="2">
+          <widget class="QSpinBox" name="spinBox_36"/>
+         </item>
+         <item row="7" column="1">
+          <widget class="QSpinBox" name="spinBox_9"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Fleksio</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QSpinBox" name="spinBox_6"/>
+         </item>
+         <item row="3" column="3">
+          <widget class="QSpinBox" name="spinBox_28">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="3">
+          <widget class="QSpinBox" name="spinBox_44">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4">
+          <widget class="QSpinBox" name="spinBox_46">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <widget class="QSpinBox" name="spinBox_5"/>
+         </item>
+         <item row="3" column="2">
+          <widget class="QSpinBox" name="spinBox_27"/>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="label_18">
+           <property name="text">
+            <string>Sisäkierto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3" colspan="2">
+          <widget class="QLabel" name="label_80">
+           <property name="text">
+            <string>Voima (1-5)</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QSpinBox" name="spinBox_10"/>
+         </item>
+         <item row="13" column="1">
+          <widget class="QSpinBox" name="spinBox_2"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_75">
+           <property name="text">
+            <string>Oikea</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
       <widget class="QWidget" name="tabPolvi">
        <attribute name="title">
         <string>Polvi</string>
        </attribute>
+       <widget class="QWidget" name="gridLayoutWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>10</y>
+          <width>444</width>
+          <height>457</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="13" column="2">
+          <widget class="QSpinBox" name="spinBox_52"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_27">
+           <property name="text">
+            <string>-avustettuna</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="4">
+          <widget class="QSpinBox" name="spinBox_59">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLabel" name="label_84">
+           <property name="text">
+            <string>Liikelaajuus (deg)</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QLabel" name="label_23">
+           <property name="text">
+            <string>-vastakk. lonkka 90</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2">
+          <widget class="QSpinBox" name="spinBox_48"/>
+         </item>
+         <item row="4" column="4">
+          <widget class="QSpinBox" name="spinBox_65">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLabel" name="label_81">
+           <property name="text">
+            <string>Oikea</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QSpinBox" name="spinBox_12"/>
+         </item>
+         <item row="8" column="2">
+          <widget class="QSpinBox" name="spinBox_47"/>
+         </item>
+         <item row="4" column="3">
+          <widget class="QSpinBox" name="spinBox_63">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="4">
+          <widget class="QSpinBox" name="spinBox_60">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="2">
+          <widget class="QSpinBox" name="spinBox_62"/>
+         </item>
+         <item row="7" column="1">
+          <widget class="QSpinBox" name="spinBox_20"/>
+         </item>
+         <item row="4" column="2">
+          <widget class="QSpinBox" name="spinBox_54"/>
+         </item>
+         <item row="7" column="3">
+          <widget class="QSpinBox" name="spinBox_55">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QSpinBox" name="spinBox_15"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_25">
+           <property name="text">
+            <string>-vapaasti</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
+          <widget class="QSpinBox" name="spinBox_56"/>
+         </item>
+         <item row="12" column="3">
+          <widget class="QSpinBox" name="spinBox_57">
+           <property name="maximum">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="2">
+          <widget class="QSpinBox" name="spinBox_58"/>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="label_26">
+           <property name="text">
+            <string>Popliteakulma</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="label_21">
+           <property name="text">
+            <string>Ext. lag</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_22">
+           <property name="text">
+            <string>-selinmakuu</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="label_19">
+           <property name="text">
+            <string>-vastakk. lonkka 0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLabel" name="label_83">
+           <property name="text">
+            <string>Vasen</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinBox_14"/>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="label_82">
+           <property name="text">
+            <string>Vasen</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_20">
+           <property name="text">
+            <string>-vatsamakuu</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <widget class="QSpinBox" name="spinBox_22"/>
+         </item>
+         <item row="1" column="3" colspan="2">
+          <widget class="QLabel" name="label_85">
+           <property name="text">
+            <string>Voima (1-5)</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="spinBox_23"/>
+         </item>
+         <item row="13" column="1">
+          <widget class="QSpinBox" name="spinBox_24"/>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_28">
+           <property name="text">
+            <string>Fleksio</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_86">
+           <property name="text">
+            <string>Oikea</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_24">
+           <property name="text">
+            <string>Ekstensio</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
       <widget class="QWidget" name="tabVirheAs">
        <attribute name="title">
-        <string>Virheasennot</string>
+        <string>Luiden virheas.</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tabNilkka">
@@ -124,12 +642,12 @@
       </widget>
       <widget class="QWidget" name="tabJalkat">
        <attribute name="title">
-        <string>Jalkaterän asento</string>
+        <string>Jalkaterä</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tabSpast">
        <attribute name="title">
-        <string>Spastisiteetti</string>
+        <string>Spast.</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tabTasap">
@@ -137,20 +655,6 @@
         <string>Tasapaino</string>
        </attribute>
       </widget>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btnReport">
-      <property name="text">
-       <string>Tallenna raportti</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="btnForm">
-      <property name="text">
-       <string>Tallenna lomake</string>
-      </property>
      </widget>
     </item>
     <item>
@@ -167,7 +671,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>902</width>
+     <width>763</width>
      <height>25</height>
     </rect>
    </property>
