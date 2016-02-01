@@ -28,16 +28,19 @@ class EntryApp(QtGui.QMainWindow):
         event.accept()
             
     def make_report(self):
-        """ Make textual report using the data from the entry fields """
+        """ Make report using the input data. """
         self.gather()
         report = report_templates.movement_report(self.data)
         print(report.textual())
         
     def gather(self):
-        """ Gather all entered data into a dict. """
+        """ Gather all entered data into a dict. Dict keys will be set
+        according to input widget names. """
         for ln in self.findChildren(QtGui.QLineEdit):
             self.data[str(ln.objectName())] = str(ln.text())
-       
+        for sp in self.findChildren(QtGui.QSpinBox):
+            self.data[str(ln.objectName())] = str(ln.text())
+
     def quit(self):
         pass
         

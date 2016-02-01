@@ -6,7 +6,7 @@ Created on Fri Jan 29 10:37:47 2016
 """
 
 class movement_report():
-    """ Make a liikelaajuus (movement range) report based on given data. """
+    """ Liikelaajuus (movement range) report based on given data. """
 
     def __init__(self, data):
         self.data = data
