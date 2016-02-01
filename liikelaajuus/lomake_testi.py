@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+Liikelaajuus e-form.
+
 
 """
 
@@ -9,6 +11,7 @@ from __future__ import print_function
 from PyQt4 import QtGui, uic
 import sys
 import report_templates
+import pickle
 
 
 class EntryApp(QtGui.QMainWindow):
@@ -38,25 +41,32 @@ class EntryApp(QtGui.QMainWindow):
         """ Save form input data. """
         self.gather()
         
+        
     def gather(self):
         """ Gather all entered data into a dict. Dict keys will be set
-        according to input widget names. """
-        # these are magic values for entries not measured
+        according to input widget names (strip the two leading characters
+        that describe the widget type) """
+        # these are magic values for entries not measured (default)
         LN_NONE = ''
         SP_NONE = -181
         CB_NONE = "Ei mitattu"
         for ln in self.findChildren(QtGui.QLineEdit):
-            val = str(ln.text())
-            if val == LN_NONE:
-                val = None
-            self.data[str(ln.objectName())] = val
+            name = str(ln.objectName())
+            if name[:2] == 'ln':  # exclude spinboxes line edit objects
+                val = str(ln.text())
+                if val == LN_NONE:
+                    val = None
+                self.data[name[2:]] = val
         for sp in self.findChildren(QtGui.QSpinBox):
             val = int(sp.value())
             if val == SP_NONE:
                 val = None
-            self.data[str(sp.objectName())] = val
+            self.data[str(sp.objectName())[2:]] = val
         for cb in self.findChildren(QtGui.QComboBox):
-            pass
+            val = str(cb.currentText())
+            if val == CB_NONE:
+                val = None
+            self.data[str(cb.objectName())[2:]] = val
 
     def quit(self):
         pass
