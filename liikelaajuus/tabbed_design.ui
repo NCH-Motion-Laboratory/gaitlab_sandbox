@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>9</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -8814,7 +8814,7 @@
            </widget>
           </item>
           <item row="9" column="2">
-           <widget class="QSpinBox" name="spNilkPlantaariOik_6">
+           <widget class="QSpinBox" name="spSpastGastroOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8848,7 +8848,7 @@
            </widget>
           </item>
           <item row="8" column="2">
-           <widget class="QSpinBox" name="spNilkPlantaariOik_3">
+           <widget class="QSpinBox" name="spSpastSoleusOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8882,14 +8882,14 @@
            </widget>
           </item>
           <item row="8" column="4">
-           <widget class="QCheckBox" name="checkBox_2">
+           <widget class="QCheckBox" name="cbSpastSoleusKlonus">
             <property name="text">
              <string>Klonus</string>
             </property>
            </widget>
           </item>
           <item row="8" column="3">
-           <widget class="QSpinBox" name="spNilkPlantaariOik_4">
+           <widget class="QSpinBox" name="spSpastSoleusVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8923,7 +8923,7 @@
            </widget>
           </item>
           <item row="5" column="2">
-           <widget class="QSpinBox" name="spNilkDorsiPol0Oik_2">
+           <widget class="QSpinBox" name="spSpastHamstringitOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8957,7 +8957,7 @@
            </widget>
           </item>
           <item row="9" column="3">
-           <widget class="QSpinBox" name="spNilkPlantaariOik_5">
+           <widget class="QSpinBox" name="spSpastGastroVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8991,7 +8991,7 @@
            </widget>
           </item>
           <item row="9" column="4">
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="cbSpastGastroClonus">
             <property name="text">
              <string>Klonus</string>
             </property>
@@ -9022,7 +9022,7 @@
            </widget>
           </item>
           <item row="6" column="2">
-           <widget class="QSpinBox" name="spNilkConfusionOik_2">
+           <widget class="QSpinBox" name="spSpastRectusOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9056,7 +9056,7 @@
            </widget>
           </item>
           <item row="4" column="3">
-           <widget class="QSpinBox" name="spNilkDorsiPol90Vas_4">
+           <widget class="QSpinBox" name="spSpastAdduktoritVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9090,7 +9090,7 @@
            </widget>
           </item>
           <item row="7" column="3">
-           <widget class="QSpinBox" name="spNilkPlantaariVas_2">
+           <widget class="QSpinBox" name="spSpastTibialisVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9131,7 +9131,7 @@
            </widget>
           </item>
           <item row="4" column="6">
-           <widget class="QComboBox" name="comboBox_115">
+           <widget class="QComboBox" name="cbSpastModAAdduktoritVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9182,7 +9182,7 @@
            </widget>
           </item>
           <item row="6" column="3">
-           <widget class="QSpinBox" name="spNilkConfusionVas_2">
+           <widget class="QSpinBox" name="spSpastRectusVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9230,7 +9230,7 @@
            </widget>
           </item>
           <item row="7" column="2">
-           <widget class="QSpinBox" name="spNilkPlantaariOik_2">
+           <widget class="QSpinBox" name="spSpastTibialisOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9298,7 +9298,7 @@
            </widget>
           </item>
           <item row="4" column="2">
-           <widget class="QSpinBox" name="spNilkDorsiPol90Oik_2">
+           <widget class="QSpinBox" name="spSpastAdduktoritOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9369,7 +9369,7 @@
            </widget>
           </item>
           <item row="5" column="3">
-           <widget class="QSpinBox" name="spNilkDorsiPol0Vas_2">
+           <widget class="QSpinBox" name="spSpastHamstringitVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9403,7 +9403,7 @@
            </widget>
           </item>
           <item row="5" column="6">
-           <widget class="QComboBox" name="comboBox_116">
+           <widget class="QComboBox" name="cbSpastModAHamstringitVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9454,7 +9454,7 @@
            </widget>
           </item>
           <item row="6" column="6">
-           <widget class="QComboBox" name="comboBox_117">
+           <widget class="QComboBox" name="cbSpastModARectusVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9505,7 +9505,7 @@
            </widget>
           </item>
           <item row="7" column="6">
-           <widget class="QComboBox" name="comboBox_118">
+           <widget class="QComboBox" name="cbSpastModATibialisVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9556,7 +9556,7 @@
            </widget>
           </item>
           <item row="8" column="6">
-           <widget class="QComboBox" name="comboBox_119">
+           <widget class="QComboBox" name="cbSpastModASoleusVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9607,7 +9607,7 @@
            </widget>
           </item>
           <item row="9" column="6">
-           <widget class="QComboBox" name="comboBox_120">
+           <widget class="QComboBox" name="cbSpastModAGastroVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9658,7 +9658,7 @@
            </widget>
           </item>
           <item row="9" column="5">
-           <widget class="QComboBox" name="comboBox_121">
+           <widget class="QComboBox" name="cbSpastModAGastroOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9709,7 +9709,7 @@
            </widget>
           </item>
           <item row="8" column="5">
-           <widget class="QComboBox" name="comboBox_122">
+           <widget class="QComboBox" name="cbSpastModASoleusOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9760,7 +9760,7 @@
            </widget>
           </item>
           <item row="7" column="5">
-           <widget class="QComboBox" name="comboBox_123">
+           <widget class="QComboBox" name="cbSpastModATibialisOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9811,7 +9811,7 @@
            </widget>
           </item>
           <item row="6" column="5">
-           <widget class="QComboBox" name="comboBox_124">
+           <widget class="QComboBox" name="cbSpastModARectusOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9862,7 +9862,7 @@
            </widget>
           </item>
           <item row="5" column="5">
-           <widget class="QComboBox" name="comboBox_125">
+           <widget class="QComboBox" name="cbSpastModAHamstringitOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9913,7 +9913,7 @@
            </widget>
           </item>
           <item row="4" column="5">
-           <widget class="QComboBox" name="comboBox_126">
+           <widget class="QComboBox" name="cbSpastModAAdduktoritOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10014,7 +10014,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QTextEdit" name="textEdit_10">
+           <widget class="QTextEdit" name="cmtSpast">
             <property name="minimumSize">
              <size>
               <width>400</width>
@@ -10068,7 +10068,7 @@
            </widget>
           </item>
           <item row="3" column="2">
-           <widget class="QLineEdit" name="lnAntOikPit_2">
+           <widget class="QLineEdit" name="lnTasapOik">
             <property name="inputMask">
              <string>9999; </string>
             </property>
@@ -10078,7 +10078,7 @@
            </widget>
           </item>
           <item row="3" column="3">
-           <widget class="QLineEdit" name="lnAntVasPit_2">
+           <widget class="QLineEdit" name="lnTasapVas">
             <property name="inputMask">
              <string>9999; </string>
             </property>
@@ -10175,7 +10175,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QTextEdit" name="textEdit_11">
+           <widget class="QTextEdit" name="cmtTasap">
             <property name="minimumSize">
              <size>
               <width>400</width>
