@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -2863,7 +2863,7 @@
            </widget>
           </item>
           <item row="5" column="2">
-           <widget class="QSpinBox" name="spinBox_226">
+           <widget class="QSpinBox" name="spPolviEkstensioAvOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -2897,7 +2897,7 @@
            </widget>
           </item>
           <item row="5" column="3">
-           <widget class="QSpinBox" name="spinBox_228">
+           <widget class="QSpinBox" name="spPolviEkstensioAvVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -2969,7 +2969,7 @@
            </widget>
           </item>
           <item row="12" column="3">
-           <widget class="QSpinBox" name="spinBox_236">
+           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka90Vas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3003,7 +3003,7 @@
            </widget>
           </item>
           <item row="11" column="3">
-           <widget class="QSpinBox" name="spinBox_237">
+           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka0Vas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3037,7 +3037,7 @@
            </widget>
           </item>
           <item row="13" column="2">
-           <widget class="QSpinBox" name="spinBox_234">
+           <widget class="QSpinBox" name="spPolviExtlagOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3071,7 +3071,7 @@
            </widget>
           </item>
           <item row="13" column="3">
-           <widget class="QSpinBox" name="spinBox_233">
+           <widget class="QSpinBox" name="spPolviExtlagVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3105,7 +3105,7 @@
            </widget>
           </item>
           <item row="12" column="2">
-           <widget class="QSpinBox" name="spinBox_235">
+           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka90Oik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3139,7 +3139,7 @@
            </widget>
           </item>
           <item row="11" column="2">
-           <widget class="QSpinBox" name="spinBox_238">
+           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka0Oik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3173,7 +3173,7 @@
            </widget>
           </item>
           <item row="4" column="3">
-           <widget class="QSpinBox" name="spinBox_239">
+           <widget class="QSpinBox" name="spPolviEkstensioVapVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3207,7 +3207,7 @@
            </widget>
           </item>
           <item row="8" column="3">
-           <widget class="QSpinBox" name="spinBox_240">
+           <widget class="QSpinBox" name="spPolviFleksioVatsamakuuVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3241,7 +3241,7 @@
            </widget>
           </item>
           <item row="8" column="2">
-           <widget class="QSpinBox" name="spinBox_229">
+           <widget class="QSpinBox" name="spPolviFleksioVatsamakuuOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3275,7 +3275,7 @@
            </widget>
           </item>
           <item row="9" column="2">
-           <widget class="QSpinBox" name="spinBox_230">
+           <widget class="QSpinBox" name="spPolviFleksioSelinmakuuOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3333,7 +3333,7 @@
            </widget>
           </item>
           <item row="9" column="3">
-           <widget class="QSpinBox" name="spinBox_241">
+           <widget class="QSpinBox" name="spPolviFleksioSelinmakuuVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3367,7 +3367,7 @@
            </widget>
           </item>
           <item row="4" column="2">
-           <widget class="QSpinBox" name="spinBox_242">
+           <widget class="QSpinBox" name="spPolviEkstensioVapOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3450,7 +3450,7 @@
            </widget>
           </item>
           <item row="4" column="4">
-           <widget class="QComboBox" name="comboBox_75">
+           <widget class="QComboBox" name="cbPolviEkstensioVapOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3546,7 +3546,7 @@
            </widget>
           </item>
           <item row="4" column="5">
-           <widget class="QComboBox" name="comboBox_73">
+           <widget class="QComboBox" name="cbPolviEkstensioVapVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3642,7 +3642,7 @@
            </widget>
           </item>
           <item row="8" column="4">
-           <widget class="QComboBox" name="comboBox_78">
+           <widget class="QComboBox" name="cbPolviFleksioVatsamakuuOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3738,7 +3738,7 @@
            </widget>
           </item>
           <item row="8" column="5">
-           <widget class="QComboBox" name="comboBox_84">
+           <widget class="QComboBox" name="cbPolviFleksioVatsamakuuVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3897,7 +3897,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QTextEdit" name="textEdit_5">
+           <widget class="QTextEdit" name="cmtPolvi">
             <property name="minimumSize">
              <size>
               <width>400</width>
