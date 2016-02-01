@@ -30,16 +30,33 @@ class EntryApp(QtGui.QMainWindow):
     def make_report(self):
         """ Make report using the input data. """
         self.gather()
-        report = report_templates.movement_report(self.data)
-        print(report.textual())
+        print(self.data)
+        #report = report_templates.movement_report(self.data)
+        #print(report.textual())
+        
+    def save_all(self):
+        """ Save form input data. """
+        self.gather()
         
     def gather(self):
         """ Gather all entered data into a dict. Dict keys will be set
         according to input widget names. """
+        # these are magic values for entries not measured
+        LN_NONE = ''
+        SP_NONE = -181
+        CB_NONE = "Ei mitattu"
         for ln in self.findChildren(QtGui.QLineEdit):
-            self.data[str(ln.objectName())] = str(ln.text())
+            val = str(ln.text())
+            if val == LN_NONE:
+                val = None
+            self.data[str(ln.objectName())] = val
         for sp in self.findChildren(QtGui.QSpinBox):
-            self.data[str(ln.objectName())] = str(ln.text())
+            val = int(sp.value())
+            if val == SP_NONE:
+                val = None
+            self.data[str(sp.objectName())] = val
+        for cb in self.findChildren(QtGui.QComboBox):
+            pass
 
     def quit(self):
         pass
