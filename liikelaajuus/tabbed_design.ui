@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>9</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -10401,6 +10401,12 @@
          <layout class="QGridLayout" name="gridLayout_19">
           <item row="1" column="3">
            <widget class="QLabel" name="label_300">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Vasen</string>
             </property>
@@ -10445,6 +10451,12 @@
           </item>
           <item row="1" column="2">
            <widget class="QLabel" name="label_306">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Oikea</string>
             </property>
