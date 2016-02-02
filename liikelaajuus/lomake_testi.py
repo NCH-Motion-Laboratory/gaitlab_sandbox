@@ -13,7 +13,6 @@ excel/tabular report (?)
 
 
 """
-
 from __future__ import print_function
 
 
@@ -33,18 +32,13 @@ class EntryApp(QtGui.QMainWindow):
         # save empty form (default states for widgets)
         self.read_forms()
         self.data_empty = copy.deepcopy(self.data)
-        # these are magic values for entries not measured (default)
-        self.LN_NONE = ''
-        self.SP_NONE = -181
-        self.CB_NONE = "Ei mitattu"
-        self.TE_NONE = ''
         # link buttons
         self.btnSave.clicked.connect(self.save)
         self.btnLoad.clicked.connect(self.load)
         self.btnClear.clicked.connect(self.clear_forms)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.quit)
-        # TODO: set validators
+        # TODO: set validators for line edit objects
         
     def closeEvent(self, event):
         """ TODO: check whether user wants to exit, call event.reject() if not """
@@ -72,11 +66,11 @@ class EntryApp(QtGui.QMainWindow):
         
     def clear_forms(self):
         """ Set form data to default. """
-        self.data = copy.deepcopy(self.data_default)
+        self.data = copy.deepcopy(self.data_empty)
         self.restore_forms()
     
     def restore_forms(self):
-        """ Restore saved data into the input form. """
+        """ Restore data from dict into the input form. """
         for ln in self.findChildren(QtGui.QLineEdit):
             name = str(ln.objectName())
             if name[:2] == 'ln':  # exclude spinboxes line edit objects
