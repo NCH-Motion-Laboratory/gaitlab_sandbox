@@ -2,11 +2,9 @@
 """
 Liikelaajuus e-form.
 
-
-
 """
-from __future__ import print_function
 
+from __future__ import print_function
 
 from PyQt4 import QtGui, uic
 import sys
@@ -15,19 +13,21 @@ import report_templates
 import pickle
 import copy
 
+
 class EntryApp(QtGui.QMainWindow):
-    """ Main window of application """
+    """ Main window of application. """
     
     def __init__(self):
         super(self.__class__, self).__init__()
+        # load user interface made with designer
         uic.loadUi('tabbed_design.ui', self)
         self.data = {}
         # save empty form (default states for widgets)
         self.read_forms()
         self.data_empty = copy.deepcopy(self.data)
         # link buttons
-        self.btnSave.clicked.connect(self.save)
-        self.btnLoad.clicked.connect(self.load)
+        self.btnSave.clicked.connect(self.save_temp)
+        self.btnLoad.clicked.connect(self.load_temp)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.close)
@@ -56,15 +56,19 @@ class EntryApp(QtGui.QMainWindow):
         #if os.path.isfile(self.tmpfile):
         #    print('temp file exists! restoring...')
         #    self.load_temp()
-        self.tempfh = open(self.tmpfile, 'wb')        
+        
+    def confirm_dialog(self, msg):
+        dlg = QtGui.QMessageBox()
+        dlg.setText(msg)
+        dlg.addButton(QtGui.QPushButton('Kyllä'), QtGui.QMessageBox.YesRole)
+        dlg.addButton(QtGui.QPushButton('Ei'), QtGui.QMessageBox.NoRole)        
+        dlg.exec_()
+        return dlg.buttonRole(dlg.clickedButton())
         
     def closeEvent(self, event):
-        """ Close dialog. TODO: Finnish buttons """
+        """ Closing dialog. """
         quit_msg = 'Haluatko varmasti sulkea ohjelman?'
-        if not self.saved:
-            quit_msg = quit_msg + ' Tietoja ei ole tallennettu!'
-        reply = QtGui.QMessageBox.question(self, '', 
-                     quit_msg, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        reply = self.confirm_dialog(quit_msg)
         if reply == QtGui.QMessageBox.Yes:
             self.rm_temp()
             event.accept()
@@ -92,14 +96,16 @@ class EntryApp(QtGui.QMainWindow):
         """ Save form input data into temporary backup file. """
         if not self.saved:
             print('backup save...')
-            self.read_forms()
-            pickle.dump(self.data, self.tempfh)
-            self.saved = True
+            with open(self.tmpfile, 'wb') as f:
+                self.read_forms()
+                pickle.dump(self.data, f)
+                self.saved = True
         
     def load_temp(self):
         """ Load form input data from temporary backup file. """
-        self.data = pickle.load(self.tempfh)
-        self.restore_forms()
+        with open(self.tmpfile, 'rb') as f:
+            self.data = pickle.load(f)
+            self.restore_forms()
         
     def rm_temp(self):
         """ Remove temp file """
@@ -107,9 +113,8 @@ class EntryApp(QtGui.QMainWindow):
     def clear_forms_dialog(self):
         """ Clear dialog. """
         clear_msg = 'Haluatko varmasti tyhjentää kaikki tiedot?'
-        reply = QtGui.QMessageBox.question(self, '', clear_msg,
-                                           QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-        if reply == QtGui.QMessageBox.Yes:
+        reply = self.confirm_dialog(clear_msg)
+        if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
     
