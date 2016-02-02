@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>920</height>
+    <height>980</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -2912,10 +2912,6 @@
          </layout>
         </item>
        </layout>
-       <zorder>horizontalLayoutWidget_2</zorder>
-       <zorder>gridLayoutWidget</zorder>
-       <zorder>horizontalSpacer_7</zorder>
-       <zorder>horizontalSpacer_5</zorder>
        <zorder>verticalSpacer_2</zorder>
       </widget>
       <widget class="QWidget" name="tabPolvi">
@@ -6986,7 +6982,7 @@
           <item row="9" column="1">
            <widget class="QLabel" name="label_264">
             <property name="text">
-             <string>Paino</string>
+             <string>Paino (kg)</string>
             </property>
            </widget>
           </item>
@@ -7006,28 +7002,28 @@
           <item row="7" column="1">
            <widget class="QLabel" name="label_265">
             <property name="text">
-             <string>SIAS</string>
+             <string>SIAS (mm)</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="label_267">
             <property name="text">
-             <string>Polven leveys</string>
+             <string>Polven leveys (mm)</string>
             </property>
            </widget>
           </item>
           <item row="8" column="1">
            <widget class="QLabel" name="label_85">
             <property name="text">
-             <string>Pituus</string>
+             <string>Pituus (mm)</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
            <widget class="QLabel" name="label_268">
             <property name="text">
-             <string>Alaraajojen pituudet</string>
+             <string>Alaraajojen pituudet (mm)</string>
             </property>
            </widget>
           </item>
@@ -7047,73 +7043,76 @@
           <item row="6" column="1">
            <widget class="QLabel" name="label_262">
             <property name="text">
-             <string>Nilkan leveys</string>
+             <string>Nilkan leveys (mm)</string>
             </property>
            </widget>
           </item>
           <item row="3" column="2">
            <widget class="QLineEdit" name="lnAntropAlaraajaOik">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="cursorPosition">
+             <number>0</number>
             </property>
            </widget>
           </item>
           <item row="3" column="3">
            <widget class="QLineEdit" name="lnAntropAlaraajaVas">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="4" column="2">
            <widget class="QLineEdit" name="lnAntropPolviOik">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="4" column="3">
            <widget class="QLineEdit" name="lnAntropPolviVas">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="6" column="2">
            <widget class="QLineEdit" name="lnAntropNilkkaOik">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="7" column="2">
            <widget class="QLineEdit" name="lnAntropSIAS">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="8" column="2">
            <widget class="QLineEdit" name="lnAntropPituus">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="9" column="2">
            <widget class="QLineEdit" name="lnAntropPaino">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="6" column="3">
            <widget class="QLineEdit" name="lnAntropNilkkaVas">
             <property name="inputMask">
-             <string>9999; </string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -9091,9 +9090,6 @@
          </layout>
         </item>
        </layout>
-       <zorder>horizontalLayoutWidget_7</zorder>
-       <zorder>gridLayoutWidget_11</zorder>
-       <zorder>label_276</zorder>
        <zorder>verticalSpacer_18</zorder>
       </widget>
       <widget class="QWidget" name="tabSpast">
@@ -9179,7 +9175,7 @@
            </widget>
           </item>
           <item row="8" column="4">
-           <widget class="QCheckBox" name="cbSpastSoleusKlonus">
+           <widget class="QCheckBox" name="xbSpastSoleusKlonus">
             <property name="text">
              <string>Klonus</string>
             </property>
@@ -9288,7 +9284,7 @@
            </widget>
           </item>
           <item row="9" column="4">
-           <widget class="QCheckBox" name="cbSpastGastroClonus">
+           <widget class="QCheckBox" name="xbSpastGastroClonus">
             <property name="text">
              <string>Klonus</string>
             </property>
@@ -10415,17 +10411,17 @@
           <item row="3" column="2">
            <widget class="QLineEdit" name="lnTasapOik">
             <property name="inputMask">
-             <string>9999; </string>
+             <string> ; </string>
             </property>
             <property name="text">
-             <string/>
+             <string> </string>
             </property>
            </widget>
           </item>
           <item row="3" column="3">
            <widget class="QLineEdit" name="lnTasapVas">
             <property name="inputMask">
-             <string>9999; </string>
+             <string> ; </string>
             </property>
            </widget>
           </item>
@@ -10619,12 +10615,200 @@
      <x>0</x>
      <y>0</y>
      <width>852</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>spLonkkaFleksioVas</tabstop>
+  <tabstop>lnTiedotNimi</tabstop>
+  <tabstop>lnTiedotDiag</tabstop>
+  <tabstop>lnTiedotID</tabstop>
+  <tabstop>lnTiedotMittaajat</tabstop>
+  <tabstop>lnTiedotHetu</tabstop>
+  <tabstop>spLonkkaEkstensioAvOik</tabstop>
+  <tabstop>lnTiedotPvm</tabstop>
+  <tabstop>tab</tabstop>
+  <tabstop>spLonkkaEkstensioAvVas</tabstop>
+  <tabstop>cmtTiedot</tabstop>
+  <tabstop>spLonkkaAbduktioLonkka0Oik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkka0Vas</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Oik</tabstop>
+  <tabstop>SpLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
+  <tabstop>spLonkkaEkstensioPolvi90Oik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkka0Oik</tabstop>
+  <tabstop>spLonkkaUlkokiertoVas</tabstop>
+  <tabstop>spLonkkaSisakiertoVas</tabstop>
+  <tabstop>spLonkkaSisakiertoOik</tabstop>
+  <tabstop>spLonkkaOberOik</tabstop>
+  <tabstop>spLonkkaOberVas</tabstop>
+  <tabstop>cbLonkkaVoimaFleksioVas</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi90Vas</tabstop>
+  <tabstop>spLonkkaAdduktioVas</tabstop>
+  <tabstop>spLonkkaAdduktioOik</tabstop>
+  <tabstop>spLonkkaEkstensioVapVas</tabstop>
+  <tabstop>spLonkkaAbduktioLonkka0Vas</tabstop>
+  <tabstop>spLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
+  <tabstop>spLonkkaEkstensioVapOik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>cbLonkkaVoimaAdduktioOik</tabstop>
+  <tabstop>spLonkkaUlkokiertoOik</tabstop>
+  <tabstop>cbLonkkaVoimaAdduktioVas</tabstop>
+  <tabstop>cbLonkkaVoimaFleksioOik</tabstop>
+  <tabstop>spLonkkaEkstensioPolvi90Vas</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Vas</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi90Oik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>spLonkkaFleksioOik</tabstop>
+  <tabstop>spLonkkaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>spLonkkaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>cbLonkkaVoimaSisakiertOik</tabstop>
+  <tabstop>cbLonkkaVoimaSisakiertoVas</tabstop>
+  <tabstop>cbLonkkaVoimaUlkokiertoOik</tabstop>
+  <tabstop>cbLonkkaVoimaUlkokiertoVas</tabstop>
+  <tabstop>cmtLonkka</tabstop>
+  <tabstop>spPolviEkstensioAvOik</tabstop>
+  <tabstop>spPolviEkstensioAvVas</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka90Vas</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
+  <tabstop>spPolviExtlagOik</tabstop>
+  <tabstop>spPolviExtlagVas</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka90Oik</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
+  <tabstop>spPolviEkstensioVapVas</tabstop>
+  <tabstop>spPolviFleksioVatsamakuuVas</tabstop>
+  <tabstop>spPolviFleksioVatsamakuuOik</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
+  <tabstop>spPolviEkstensioVapOik</tabstop>
+  <tabstop>cbPolviVoimaEkstensioVapOik</tabstop>
+  <tabstop>cbPolviVoimaEkstensioVapVas</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuOik</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuVas</tabstop>
+  <tabstop>cmtPolvi</tabstop>
+  <tabstop>spVirheasBimalleoliVas</tabstop>
+  <tabstop>spVirheasJalkaEtuTakaOik</tabstop>
+  <tabstop>spVirheasPatellaAltaOik</tabstop>
+  <tabstop>spVirheasPatellaAltaVas</tabstop>
+  <tabstop>spVirheasBimalleoliOik</tabstop>
+  <tabstop>spVirheas2ndtoeVas</tabstop>
+  <tabstop>spVirheasJalkaReisiOik</tabstop>
+  <tabstop>spVirheasJalkaEtuTakaVas</tabstop>
+  <tabstop>spVirheasAnteversioOik</tabstop>
+  <tabstop>spVirheasJalkaReisiVas</tabstop>
+  <tabstop>spVirheasAnteversioVas</tabstop>
+  <tabstop>spVirheas2ndtoeOik</tabstop>
+  <tabstop>cmtVirheas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0Oik</tabstop>
+  <tabstop>cbNilkkaVoimaTibialiasAnteriorOik</tabstop>
+  <tabstop>cbNilkkaVoimaPlantaarifleksioVas</tabstop>
+  <tabstop>spNilkkaPlantaarifleksioOik</tabstop>
+  <tabstop>cbNilkkaVoimaDorsifleksioPolvi0Oik</tabstop>
+  <tabstop>cbNilkkaVoimaPlantaarifleksioOik</tabstop>
+  <tabstop>cbNilkkaVoimaConfusionVas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90Vas</tabstop>
+  <tabstop>spNilkkaPlantaarifleksioVas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90Oik</tabstop>
+  <tabstop>cbNilkkaVoimaDorsifleksioPolvi0Vas</tabstop>
+  <tabstop>cbNilkkaVoimaConfusionOik</tabstop>
+  <tabstop>cbNilkkaVoimaExtHallucisLongusOik</tabstop>
+  <tabstop>cbNilkkaVoimaFlexHallucisLongusOik</tabstop>
+  <tabstop>cbNilkkaVoimaDorsifleksioPolvi90Oik</tabstop>
+  <tabstop>cbNilkkaVoimaPeroneusOik</tabstop>
+  <tabstop>spNilkkaConfusionOik</tabstop>
+  <tabstop>spNilkkaConfusionVas</tabstop>
+  <tabstop>cbNilkkaVoimaTibialisAnteriorVas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0Vas</tabstop>
+  <tabstop>cbNilkkaVoimaDorsifleksioPolvi90Vas</tabstop>
+  <tabstop>cbNilkkaVoimaTibialisPosteriorOik</tabstop>
+  <tabstop>cbNilkkaVoimaTibialisPosteriorVas</tabstop>
+  <tabstop>cbNilkkaVoimaPeroneusVas</tabstop>
+  <tabstop>cbNilkkaVoimaExtHallucisLongusVas</tabstop>
+  <tabstop>cbNilkkaVoimaFlexHallucisLongusVas</tabstop>
+  <tabstop>cmtNilkka</tabstop>
+  <tabstop>lnAntropAlaraajaOik</tabstop>
+  <tabstop>lnAntropAlaraajaVas</tabstop>
+  <tabstop>lnAntropPolviOik</tabstop>
+  <tabstop>lnAntropPolviVas</tabstop>
+  <tabstop>lnAntropNilkkaOik</tabstop>
+  <tabstop>lnAntropSIAS</tabstop>
+  <tabstop>lnAntropPituus</tabstop>
+  <tabstop>lnAntropPaino</tabstop>
+  <tabstop>lnAntropNilkkaVas</tabstop>
+  <tabstop>cmtAntrop</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaOik</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaVas</tabstop>
+  <tabstop>cbRyhtiVoimaSelkaOik</tabstop>
+  <tabstop>cmtRyhti</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
+  <tabstop>sbJalkat1MTPojennusOik</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkat1sadeOik</tabstop>
+  <tabstop>cbJalkatHolvikaariOik</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeInversioOik</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeEversioVas</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeInversioVas</tabstop>
+  <tabstop>cbJalkatVaivaisenluuOik</tabstop>
+  <tabstop>cbJalkatSubtalarOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoVas</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatKeskiosanliikeOik</tabstop>
+  <tabstop>cbJalkatHolvikaariVas</tabstop>
+  <tabstop>cbJalkatKeskiosanliikeVas</tabstop>
+  <tabstop>cbJalkat1sadeVas</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeEversioOik</tabstop>
+  <tabstop>cbJalkatSubtalarVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1Oik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2Vas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2Oik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
+  <tabstop>sbJalkat1MTPojennusVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1Vas</tabstop>
+  <tabstop>cbJalkatColemanOik</tabstop>
+  <tabstop>cbJalkatColemanVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
+  <tabstop>cbJalkatVaivaisenluuVas</tabstop>
+  <tabstop>cmtJalkat</tabstop>
+  <tabstop>spSpastGastroOik</tabstop>
+  <tabstop>spSpastSoleusOik</tabstop>
+  <tabstop>xbSpastSoleusKlonus</tabstop>
+  <tabstop>spSpastSoleusVas</tabstop>
+  <tabstop>spSpastHamstringitOik</tabstop>
+  <tabstop>spSpastGastroVas</tabstop>
+  <tabstop>xbSpastGastroClonus</tabstop>
+  <tabstop>spSpastRectusOik</tabstop>
+  <tabstop>spSpastAdduktoritVas</tabstop>
+  <tabstop>spSpastTibialisVas</tabstop>
+  <tabstop>cbSpastModAAdduktoritVas</tabstop>
+  <tabstop>spSpastRectusVas</tabstop>
+  <tabstop>spSpastTibialisOik</tabstop>
+  <tabstop>spSpastAdduktoritOik</tabstop>
+  <tabstop>spSpastHamstringitVas</tabstop>
+  <tabstop>cbSpastModAHamstringitVas</tabstop>
+  <tabstop>cbSpastModARectusVas</tabstop>
+  <tabstop>cbSpastModATibialisVas</tabstop>
+  <tabstop>cbSpastModASoleusVas</tabstop>
+  <tabstop>cbSpastModAGastroVas</tabstop>
+  <tabstop>cbSpastModAGastroOik</tabstop>
+  <tabstop>cbSpastModASoleusOik</tabstop>
+  <tabstop>cbSpastModATibialisOik</tabstop>
+  <tabstop>cbSpastModARectusOik</tabstop>
+  <tabstop>cbSpastModAHamstringitOik</tabstop>
+  <tabstop>cbSpastModAAdduktoritOik</tabstop>
+  <tabstop>cmtSpast</tabstop>
+  <tabstop>lnTasapOik</tabstop>
+  <tabstop>lnTasapVas</tabstop>
+  <tabstop>cmtTasap</tabstop>
+  <tabstop>btnForm</tabstop>
+  <tabstop>btnReport</tabstop>
+  <tabstop>btnQuit</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
