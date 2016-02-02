@@ -2,6 +2,12 @@
 """
 Liikelaajuus e-form.
 
+TODO:
+save/restore data for backup/internal use (pickle?)
+save on tab change?
+ascii report
+excel/tabular report (?)
+
 
 """
 
@@ -37,10 +43,14 @@ class EntryApp(QtGui.QMainWindow):
         #report = report_templates.movement_report(self.data)
         #print(report.textual())
         
-    def save_all(self):
+    def save_forms(self):
         """ Save form input data. """
         self.gather()
-        
+        pickle.dump()
+    
+    def restore_forms(self):
+        """ Restore saved data into the input form. """
+        pass
         
     def gather(self):
         """ Gather all entered data into a dict. Dict keys will be set
@@ -70,7 +80,7 @@ class EntryApp(QtGui.QMainWindow):
 
     def quit(self):
         pass
-        
+      
 
 def main():
     app = QtGui.QApplication(sys.argv)
