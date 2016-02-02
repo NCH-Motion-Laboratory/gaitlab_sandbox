@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>9</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -10572,16 +10572,23 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="btnForm">
+       <widget class="QPushButton" name="btnSave">
         <property name="text">
-         <string>Tallenna lomake</string>
+         <string>Tallenna tiedot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnLoad">
+        <property name="text">
+         <string>Lataa tiedot</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="btnReport">
         <property name="text">
-         <string>Tallenna raportti</string>
+         <string>Tee raportti</string>
         </property>
        </widget>
       </item>
@@ -10805,7 +10812,7 @@
   <tabstop>lnTasapOik</tabstop>
   <tabstop>lnTasapVas</tabstop>
   <tabstop>cmtTasap</tabstop>
-  <tabstop>btnForm</tabstop>
+  <tabstop>btnSave</tabstop>
   <tabstop>btnReport</tabstop>
   <tabstop>btnQuit</tabstop>
  </tabstops>
