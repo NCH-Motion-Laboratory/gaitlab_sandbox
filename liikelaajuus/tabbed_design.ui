@@ -10586,6 +10586,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="btnClear">
+        <property name="text">
+         <string>Tyhjennä tiedot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btnReport">
         <property name="text">
          <string>Tee raportti</string>
