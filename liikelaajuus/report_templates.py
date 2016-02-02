@@ -13,13 +13,16 @@ class movement_report():
 
     def header(self):
         """ Start of report, basic data (name etc.) """
-        return """Päivämäärä: {}
-Potilaskoodi: {}
-Potilaan nimi: {}
-Henkilötunnus: {}
-Diagnoosi: {}
-Mittaajat: {}""".format(self.data['lnDate'], self.data['lnID'], self.data['lnName'], 
-                        self.data['lnHetu'], self.data['lnDiag'], self.data['lnPersonnel'])
+        return """---
+Päivämäärä: {lnTiedotPvm}
+Potilaskoodi: {lnTiedotID}
+Potilaan nimi: {lnTiedotNimi}
+Henkilötunnus: {lnTiedotHetu}
+Diagnoosi: {lnTiedotDiag}
+Mittaajat: {lnTiedotMittaajat}
+Kommentit: {cmtTiedot}
+---
+""".format(**self.data)
            
     def textual(self):
         return self.header()
