@@ -106,10 +106,10 @@ class EntryApp(QtGui.QMainWindow):
             name = str(cb.objectName())            
             cb.setCurrentIndex(cb.findText(self.data[name]))        
         for xb in self.findChildren(QtGui.QCheckBox):
-            name = xb.objectName()
+            name = str(xb.objectName())
             xb.setCheckState(self.data[name])
         for te in self.findChildren(QtGui.QTextEdit):
-            name = te.objectName()
+            name = str(te.objectName())
             te.setPlainText(self.data[name])
         
     def read_forms(self):
