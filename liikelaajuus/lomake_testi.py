@@ -38,11 +38,30 @@ class EntryApp(QtGui.QMainWindow):
         self.btnClear.clicked.connect(self.clear_forms)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.quit)
+        # whether data was saved after editing
+        self.saved = True
         # TODO: set validators for line edit objects
+        # set "not saved" state on value change of widgets
+        for sp in self.findChildren(QtGui.QSpinBox):        
+            sp.valueChanged.connect(self.set_not_saved)
+        for ln in self.findChildren(QtGui.QLineEdit):
+            ln.textChanged.connect(self.set_not_saved)
+        for cb in self.findChildren(QtGui.QComboBox):
+            cb.currentIndexChanged.connect(self.set_not_saved)
+        for te in self.findChildren(QtGui.QTextEdit):
+            cb.textChanged.connect(self.set_not_saved)
+        for xb in self.findChildren(QtGui.QComboBox):
+            xb.currentIndexChanged.connect(self.set_not_saved)
+            
+            
+        
         
     def closeEvent(self, event):
         """ TODO: check whether user wants to exit, call event.reject() if not """
-        event.accept()
+        if self.saved:
+            event.accept()
+        else:
+            pass  # TODO: dialog box
             
     def make_report(self):
         """ Make report using the input data. """
@@ -52,11 +71,16 @@ class EntryApp(QtGui.QMainWindow):
         report = report_templates.movement_report(self.data)
         print(report.textual())
         
+    def set_not_saved(self):
+        print('need to save soon!')
+        self.saved = False
+        
     def save(self):
         """ Save form input data. """
         self.read_forms()
         fh = open('save.p', 'wb')
         pickle.dump(self.data, fh)
+        self.saved = True
         
     def load(self):
         """ Load form input data. """
