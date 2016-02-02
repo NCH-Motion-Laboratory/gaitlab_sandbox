@@ -2,14 +2,6 @@
 """
 Liikelaajuus e-form.
 
-TODO:
-
-fix numeric input boxes
-save/restore data for backup/internal use (pickle?) to Temp dir?
-save into specific file + restore?
-autosave on tab change?
-ascii report
-excel/tabular report (?)
 
 
 """
@@ -18,6 +10,7 @@ from __future__ import print_function
 
 from PyQt4 import QtGui, uic
 import sys
+import os
 import report_templates
 import pickle
 import copy
@@ -35,13 +28,13 @@ class EntryApp(QtGui.QMainWindow):
         # link buttons
         self.btnSave.clicked.connect(self.save)
         self.btnLoad.clicked.connect(self.load)
-        self.btnClear.clicked.connect(self.clear_forms)
+        self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
-        self.btnQuit.clicked.connect(self.quit)
+        self.btnQuit.clicked.connect(self.close)
         # whether data was saved after editing
         self.saved = True
         # TODO: set validators for line edit objects
-        # set "not saved" state on value change of widgets
+        # enable "not saved" state whenever widget values change
         for sp in self.findChildren(QtGui.QSpinBox):        
             sp.valueChanged.connect(self.set_not_saved)
         for ln in self.findChildren(QtGui.QLineEdit):
@@ -50,18 +43,33 @@ class EntryApp(QtGui.QMainWindow):
             cb.currentIndexChanged.connect(self.set_not_saved)
         for te in self.findChildren(QtGui.QTextEdit):
             cb.textChanged.connect(self.set_not_saved)
-        for xb in self.findChildren(QtGui.QComboBox):
-            xb.currentIndexChanged.connect(self.set_not_saved)
-            
-            
-        
+        for xb in self.findChildren(QtGui.QCheckBox):
+            xb.stateChanged.connect(self.set_not_saved)
+        # save into temp file on tab change
+        self.maintab.currentChanged.connect(self.save_temp)
+        # figure out suitable tmp dir
+        if sys.platform == 'win32':
+            tmp_fldr = '/Temp'
+        else:  # Linux
+            tmp_fldr = '/tmp'
+        self.tmpfile = tmp_fldr + '/liikelaajuus_tmp.p'
+        #if os.path.isfile(self.tmpfile):
+        #    print('temp file exists! restoring...')
+        #    self.load_temp()
+        self.tempfh = open(self.tmpfile, 'wb')        
         
     def closeEvent(self, event):
-        """ TODO: check whether user wants to exit, call event.reject() if not """
-        if self.saved:
+        """ Close dialog. TODO: Finnish buttons """
+        quit_msg = 'Haluatko varmasti sulkea ohjelman?'
+        if not self.saved:
+            quit_msg = quit_msg + ' Tietoja ei ole tallennettu!'
+        reply = QtGui.QMessageBox.question(self, '', 
+                     quit_msg, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if reply == QtGui.QMessageBox.Yes:
+            self.rm_temp()
             event.accept()
         else:
-            pass  # TODO: dialog box
+            event.ignore()
             
     def make_report(self):
         """ Make report using the input data. """
@@ -72,26 +80,38 @@ class EntryApp(QtGui.QMainWindow):
         print(report.textual())
         
     def set_not_saved(self):
-        print('need to save soon!')
         self.saved = False
         
     def save(self):
-        """ Save form input data. """
-        self.read_forms()
-        fh = open('save.p', 'wb')
-        pickle.dump(self.data, fh)
-        self.saved = True
-        
+        """ Bring up save dialog. """
+
     def load(self):
-        """ Load form input data. """
-        fh = open('save.p', 'rb')
-        self.data = pickle.load(fh)
+        """ Bring up load dialog. """
+        
+    def save_temp(self):
+        """ Save form input data into temporary backup file. """
+        if not self.saved:
+            print('backup save...')
+            self.read_forms()
+            pickle.dump(self.data, self.tempfh)
+            self.saved = True
+        
+    def load_temp(self):
+        """ Load form input data from temporary backup file. """
+        self.data = pickle.load(self.tempfh)
         self.restore_forms()
         
-    def clear_forms(self):
-        """ Set form data to default. """
-        self.data = copy.deepcopy(self.data_empty)
-        self.restore_forms()
+    def rm_temp(self):
+        """ Remove temp file """
+        
+    def clear_forms_dialog(self):
+        """ Clear dialog. """
+        clear_msg = 'Haluatko varmasti tyhjentää kaikki tiedot?'
+        reply = QtGui.QMessageBox.question(self, '', clear_msg,
+                                           QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+        if reply == QtGui.QMessageBox.Yes:
+            self.data = copy.deepcopy(self.data_empty)
+            self.restore_forms()
     
     def restore_forms(self):
         """ Restore data from dict into the input form. """
@@ -133,11 +153,6 @@ class EntryApp(QtGui.QMainWindow):
         for te in self.findChildren(QtGui.QTextEdit):
             val = te.toPlainText()
             self.data[str(te.objectName())] = val
-            
-
-    def quit(self):
-        pass
-      
 
 def main():
     app = QtGui.QApplication(sys.argv)
