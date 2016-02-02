@@ -3,8 +3,11 @@
 Liikelaajuus e-form.
 
 TODO:
-save/restore data for backup/internal use (pickle?)
-save on tab change?
+
+fix numeric input boxes
+save/restore data for backup/internal use (pickle?) to Temp dir?
+save into specific file + restore?
+autosave on tab change?
 ascii report
 excel/tabular report (?)
 
@@ -30,6 +33,8 @@ class EntryApp(QtGui.QMainWindow):
         # link buttons
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.quit)
+        # TODO: set validators
+        
         
     def closeEvent(self, event):
         """ TODO: check whether user wants to exit, call event.reject() if not """
@@ -39,7 +44,9 @@ class EntryApp(QtGui.QMainWindow):
     def make_report(self):
         """ Make report using the input data. """
         self.gather()
-        print(self.data)
+        for key in self.data:
+            print(key, ':', self.data[key])
+        
         #report = report_templates.movement_report(self.data)
         #print(report.textual())
         
@@ -53,9 +60,9 @@ class EntryApp(QtGui.QMainWindow):
         pass
         
     def gather(self):
-        """ Gather all entered data into a dict. Dict keys will be set
-        according to input widget names (strip the two leading characters
-        that describe the widget type) """
+        """ Gather all entered data into a dict, converting
+        to Python types. Dict keys will be set according to 
+        input widget names. """
         # these are magic values for entries not measured (default)
         LN_NONE = ''
         SP_NONE = -181
@@ -66,17 +73,25 @@ class EntryApp(QtGui.QMainWindow):
                 val = str(ln.text())
                 if val == LN_NONE:
                     val = None
-                self.data[name[2:]] = val
+                self.data[name] = val
         for sp in self.findChildren(QtGui.QSpinBox):
             val = int(sp.value())
             if val == SP_NONE:
                 val = None
-            self.data[str(sp.objectName())[2:]] = val
+            self.data[str(sp.objectName())] = val
         for cb in self.findChildren(QtGui.QComboBox):
             val = str(cb.currentText())
             if val == CB_NONE:
                 val = None
-            self.data[str(cb.objectName())[2:]] = val
+            self.data[str(cb.objectName())] = val
+        for xb in self.findChildren(QtGui.QCheckBox):
+            val = xb.checkState()
+            if val:
+                val = True
+            else:
+                val = False
+            self.data[str(xb.objectName())] = val
+            
 
     def quit(self):
         pass
