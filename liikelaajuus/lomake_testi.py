@@ -28,13 +28,15 @@ class EntryApp(QtGui.QMainWindow):
         self.read_forms()
         self.data_empty = copy.deepcopy(self.data)
         # link buttons
-        self.btnSave.clicked.connect(self.save_temp)  #TODO: link to save/load dialog
-        self.btnLoad.clicked.connect(self.load_temp)
+        self.btnSave.clicked.connect(self.save)  #TODO: link to save/load dialog
+        self.btnLoad.clicked.connect(self.load)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.close)
-        # whether data was saved after editing
-        self.saved = True
+        # whether data was saved into temporary file after editing
+        self.tmp_saved = True
+        # whether data was saved into a patient-specific file
+        self.saved = False
         # TODO: set validators for line edit objects
         # enable "not saved" state whenever widget values change
         for sp in self.findChildren(QtGui.QSpinBox):        
@@ -50,19 +52,21 @@ class EntryApp(QtGui.QMainWindow):
         # save into temp file on tab change
         self.maintab.currentChanged.connect(self.save_temp)
         # name of temp save file
-        self.tmpfile = self.get_tmpdir() + '/liikelaajuus_tmp.p'
+        self.set_dirs()
+        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         # TODO: load tmp file if it exists
         #if os.path.isfile(self.tmpfile):
             #print('temp file exists! restoring...')
             #self.load_temp()
         
-    def get_tmpdir(self):
-        # figure out suitable tmp dir
+    def set_dirs(self):
+        """ Set dirs according to platform """
         if sys.platform == 'win32':
-            tmp_fldr = '/Temp'
+            self.tmp_fldr = '/Temp'
+            self.data_root_fldr = 'C:/'
         else:  # Linux
-            tmp_fldr = '/tmp'
-        return tmp_fldr
+            self.tmp_fldr = '/tmp'
+            self.data_root_fldr = '/'
         
     def confirm_dialog(self, msg):
         dlg = QtGui.QMessageBox()
@@ -71,6 +75,9 @@ class EntryApp(QtGui.QMainWindow):
         dlg.addButton(QtGui.QPushButton(u'Ei'), QtGui.QMessageBox.NoRole)        
         dlg.exec_()
         return dlg.buttonRole(dlg.clickedButton())
+        
+    def message_dialog(self, msg):
+        pass
         
     def closeEvent(self, event):
         """ Closing dialog. """
@@ -91,28 +98,34 @@ class EntryApp(QtGui.QMainWindow):
         print(report.text())
         
     def set_not_saved(self):
-        self.saved = False
+        self.tmp_saved = False
         
     def save(self):
-        """ Bring up save dialog. """
-
+        """ Bring up save dialog. WIP """
+        self.saved = True
+        
+    def load_file(self, fname):
+        if os.path.isfile(fname):
+            with open(fname, 'rb') as f:
+                self.data = pickle.load(f)
+                self.restore_forms()
+  
     def load(self):
-        """ Bring up load dialog. """
+        """ Bring up load dialog and load selected file. """
+        fname = QtGui.QFileDialog.getOpenFileName(self, u'Avaa tiedosto', self.data_root_fldr)
+        self.load_file(fname)
         
     def save_temp(self):
         """ Save form input data into temporary backup file. """
         if not self.saved:
-            print('backup save...')
             with open(self.tmpfile, 'wb') as f:
                 self.read_forms()
                 pickle.dump(self.data, f)
-                self.saved = True
-        
+                self.tmp_saved = True
+                
     def load_temp(self):
         """ Load form input data from temporary backup file. """
-        with open(self.tmpfile, 'rb') as f:
-            self.data = pickle.load(f)
-            self.restore_forms()
+        self.load_file(self.tmpfile)
         
     def rm_temp(self):
         """ Remove temp file """
