@@ -100,28 +100,37 @@ class EntryApp(QtGui.QMainWindow):
     def set_not_saved(self):
         self.tmp_saved = False
         
-    def save(self):
-        """ Bring up save dialog. WIP """
-        self.saved = True
         
     def load_file(self, fname):
+        """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with open(fname, 'rb') as f:
                 self.data = pickle.load(f)
                 self.restore_forms()
-  
+
+    def save_file(self, fname):
+        """ Save data into given file. """
+        with open(fname, 'wb') as f:
+            self.read_forms()
+            pickle.dump(self.data, f)
+
     def load(self):
         """ Bring up load dialog and load selected file. """
         fname = QtGui.QFileDialog.getOpenFileName(self, u'Avaa tiedosto', self.data_root_fldr)
-        self.load_file(fname)
+        if fname:
+            self.load_file(fname)
+
+    def save(self):
+        """ Bring up save dialog and save data. """
+        fname = QtGui.QFileDialog.getSaveFileName(self, u'Tallenna tiedosto', self.data_root_fldr)
+        if fname:
+            self.save_file(fname)
+            self.saved = True
         
     def save_temp(self):
         """ Save form input data into temporary backup file. """
         if not self.saved:
-            with open(self.tmpfile, 'wb') as f:
-                self.read_forms()
-                pickle.dump(self.data, f)
-                self.tmp_saved = True
+            self.save_file(self.tmpfile)
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
