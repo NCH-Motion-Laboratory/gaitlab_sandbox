@@ -88,7 +88,7 @@ class EntryApp(QtGui.QMainWindow):
         for key in self.data:
             print(key, ':', self.data[key])
         report = report_templates.movement_report(self.data)
-        print(report.textual())
+        print(report.text())
         
     def set_not_saved(self):
         self.saved = False

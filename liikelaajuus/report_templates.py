@@ -21,22 +21,21 @@ class movement_report():
                 self.data[key] == None
             if key[:2] == 'cb' and data[key] == self.CB_NONE:
                 self.data[key] == None
+        self.data['separator'] = '---'
 
-    def header(self):
-        """ Start of report, basic data (name etc.) """
-        return """---
+    def text(self):
+        """ Generate a text report (multiline string) """
+        return """{separator}
 Päivämäärä: {lnTiedotPvm}
 Potilaskoodi: {lnTiedotID}
 Potilaan nimi: {lnTiedotNimi}
 Henkilötunnus: {lnTiedotHetu}
 Diagnoosi: {lnTiedotDiag}
 Mittaajat: {lnTiedotMittaajat}
-Kommentit: {cmtTiedot}
----
+Kommentit:\n{cmtTiedot}
+{separator}
 """.format(**self.data)
            
-    def textual(self):
-        return self.header()
     
 
      
