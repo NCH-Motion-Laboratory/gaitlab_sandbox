@@ -152,7 +152,7 @@ class EntryApp(QtGui.QMainWindow):
         for ln in self.findChildren(QtGui.QLineEdit):
             name = str(ln.objectName())
             if name[:2] == 'ln':  # exclude spinboxes line edit objects
-                ln.setText(self.data[name])            
+                ln.setText(unicode(self.data[name]))
         for sp in self.findChildren(QtGui.QSpinBox):
             name = str(sp.objectName())
             sp.setValue(self.data[name])
@@ -164,7 +164,7 @@ class EntryApp(QtGui.QMainWindow):
             xb.setCheckState(self.data[name])
         for te in self.findChildren(QtGui.QTextEdit):
             name = str(te.objectName())
-            te.setPlainText(self.data[name])
+            te.setPlainText(unicode(self.data[name]))
         
     def read_forms(self):
         """ Read all entered data into a dict, converting
@@ -173,20 +173,20 @@ class EntryApp(QtGui.QMainWindow):
         for ln in self.findChildren(QtGui.QLineEdit):
             name = str(ln.objectName())
             if name[:2] == 'ln':  # exclude spinboxes line edit objects
-                val = str(ln.text())
+                val = unicode(ln.text())
                 self.data[name] = val
         for sp in self.findChildren(QtGui.QSpinBox):
             val = int(sp.value())
             self.data[str(sp.objectName())] = val
         for cb in self.findChildren(QtGui.QComboBox):
-            val = str(cb.currentText())
+            val = unicode(cb.currentText())
             self.data[str(cb.objectName())] = val
         for xb in self.findChildren(QtGui.QCheckBox):
             val = xb.checkState()
             self.data[str(xb.objectName())] = val
         for te in self.findChildren(QtGui.QTextEdit):
             val = te.toPlainText()
-            self.data[str(te.objectName())] = val
+            self.data[str(te.objectName())] = unicode(val)
 
 def main():
     app = QtGui.QApplication(sys.argv)
