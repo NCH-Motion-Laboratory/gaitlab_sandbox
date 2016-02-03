@@ -152,7 +152,7 @@ class EntryApp(QtGui.QMainWindow):
         for ln in self.findChildren(QtGui.QLineEdit):
             name = str(ln.objectName())
             if name[:2] == 'ln':  # exclude spinboxes line edit objects
-                ln.setText(unicode(self.data[name]))
+                ln.setText(self.data[name])
         for sp in self.findChildren(QtGui.QSpinBox):
             name = str(sp.objectName())
             sp.setValue(self.data[name])
@@ -164,7 +164,7 @@ class EntryApp(QtGui.QMainWindow):
             xb.setCheckState(self.data[name])
         for te in self.findChildren(QtGui.QTextEdit):
             name = str(te.objectName())
-            te.setPlainText(unicode(self.data[name]))
+            te.setPlainText(self.data[name])
         
     def read_forms(self):
         """ Read all entered data into a dict, converting
