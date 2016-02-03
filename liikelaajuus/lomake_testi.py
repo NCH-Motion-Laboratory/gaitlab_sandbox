@@ -26,7 +26,7 @@ class EntryApp(QtGui.QMainWindow):
         self.read_forms()
         self.data_empty = copy.deepcopy(self.data)
         # link buttons
-        self.btnSave.clicked.connect(self.save_temp)
+        self.btnSave.clicked.connect(self.save_temp)  #TODO: link to save/load dialog
         self.btnLoad.clicked.connect(self.load_temp)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
@@ -47,15 +47,20 @@ class EntryApp(QtGui.QMainWindow):
             xb.stateChanged.connect(self.set_not_saved)
         # save into temp file on tab change
         self.maintab.currentChanged.connect(self.save_temp)
+        # name of temp save file
+        self.tmpfile = self.get_tmpdir() + '/liikelaajuus_tmp.p'
+        # TODO: load tmp file if it exists
+        #if os.path.isfile(self.tmpfile):
+            #print('temp file exists! restoring...')
+            #self.load_temp()
+        
+    def get_tmpdir(self):
         # figure out suitable tmp dir
         if sys.platform == 'win32':
             tmp_fldr = '/Temp'
         else:  # Linux
             tmp_fldr = '/tmp'
-        self.tmpfile = tmp_fldr + '/liikelaajuus_tmp.p'
-        #if os.path.isfile(self.tmpfile):
-        #    print('temp file exists! restoring...')
-        #    self.load_temp()
+        return tmp_fldr
         
     def confirm_dialog(self, msg):
         dlg = QtGui.QMessageBox()
@@ -111,7 +116,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Remove temp file """
         
     def clear_forms_dialog(self):
-        """ Clear dialog. """
+        """ Ask whether to clear forms. """
         clear_msg = 'Haluatko varmasti tyhjentää kaikki tiedot?'
         reply = self.confirm_dialog(clear_msg)
         if reply == QtGui.QMessageBox.YesRole:
