@@ -119,7 +119,7 @@ class EntryApp(QtGui.QMainWindow):
         
     def clear_forms_dialog(self):
         """ Ask whether to clear forms. """
-        clear_msg = 'Haluatko varmasti tyhjentää kaikki tiedot?'
+        clear_msg = u'Haluatko varmasti tyhjentää kaikki tiedot?'
         reply = self.confirm_dialog(clear_msg)
         if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
