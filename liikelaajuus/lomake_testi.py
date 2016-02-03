@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Liikelaajuus e-form.
+Tabbed form for input of liikelaajuus (movement range) data.
+Tested with PyQt 4.8 and Python 2.7.
 
+@author: Jussi (jnu@iki.fi)
 """
 
 from __future__ import print_function
@@ -42,7 +44,7 @@ class EntryApp(QtGui.QMainWindow):
         for cb in self.findChildren(QtGui.QComboBox):
             cb.currentIndexChanged.connect(self.set_not_saved)
         for te in self.findChildren(QtGui.QTextEdit):
-            cb.textChanged.connect(self.set_not_saved)
+            te.textChanged.connect(self.set_not_saved)
         for xb in self.findChildren(QtGui.QCheckBox):
             xb.stateChanged.connect(self.set_not_saved)
         # save into temp file on tab change
@@ -65,16 +67,16 @@ class EntryApp(QtGui.QMainWindow):
     def confirm_dialog(self, msg):
         dlg = QtGui.QMessageBox()
         dlg.setText(msg)
-        dlg.addButton(QtGui.QPushButton('Kyllä'), QtGui.QMessageBox.YesRole)
-        dlg.addButton(QtGui.QPushButton('Ei'), QtGui.QMessageBox.NoRole)        
+        dlg.addButton(QtGui.QPushButton(u'Kyllä'), QtGui.QMessageBox.YesRole)
+        dlg.addButton(QtGui.QPushButton(u'Ei'), QtGui.QMessageBox.NoRole)        
         dlg.exec_()
         return dlg.buttonRole(dlg.clickedButton())
         
     def closeEvent(self, event):
         """ Closing dialog. """
-        quit_msg = 'Haluatko varmasti sulkea ohjelman?'
+        quit_msg = u'Haluatko varmasti sulkea ohjelman?'
         reply = self.confirm_dialog(quit_msg)
-        if reply == QtGui.QMessageBox.Yes:
+        if reply == QtGui.QMessageBox.YesRole:
             self.rm_temp()
             event.accept()
         else:
