@@ -25,7 +25,7 @@ class movement_report():
 
     def text(self):
         """ Generate a text report (multiline string) """
-        return """{separator}
+        return u"""{separator}
 Päivämäärä: {lnTiedotPvm}
 Potilaskoodi: {lnTiedotID}
 Potilaan nimi: {lnTiedotNimi}
