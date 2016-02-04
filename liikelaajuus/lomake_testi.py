@@ -92,12 +92,24 @@ class EntryApp(QtGui.QMainWindow):
     def make_report(self):
         """ Make report using the input data. """
         self.read_forms()
-        for key in self.data:
-            print(key, ':', self.data[key])
-        report = report_templates.movement_report(self.data)
-        print(report.html())
+        data_ = copy.deepcopy(self.data)
+        # translate special default (unmeasured) values to None
+        # (or use special placeholder, to exclude unused lines later? TODO)
+        self.LN_NONE = ''
+        self.SP_NONE = -181  # TODO: handle different spinboxes correctly
+        self.CB_NONE = "Ei mitattu"
+        self.TE_NONE = ''
+        for key in data_:
+            if key[:2] == 'sp' and data_[key] == self.SP_NONE:
+                data_[key] == None
+            if key[:2] == 'cb' and data_[key] == self.CB_NONE:
+                data_[key] == None
+        for key in data_:
+            print(key, ':', data_[key])
+        report = report_templates.html(data_)
+        print(report)
         with open('report_koe.html','wb') as f:
-            f.write(report.html())
+            f.write(report)
         
     def set_not_saved(self):
         self.tmp_saved = False
