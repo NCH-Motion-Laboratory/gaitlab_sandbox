@@ -55,9 +55,9 @@ class EntryApp(QtGui.QMainWindow):
         self.set_dirs()
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         # TODO: load tmp file if it exists
-        #if os.path.isfile(self.tmpfile):
-            #print('temp file exists! restoring...')
-            #self.load_temp()
+        if os.path.isfile(self.tmpfile):
+            print('temp file exists! restoring...')
+            self.load_temp()
         
     def set_dirs(self):
         """ Set dirs according to platform """
@@ -95,7 +95,9 @@ class EntryApp(QtGui.QMainWindow):
         for key in self.data:
             print(key, ':', self.data[key])
         report = report_templates.movement_report(self.data)
-        print(report.text())
+        print(report.html())
+        with open('report_koe.html','wb') as f:
+            f.write(report.html())
         
     def set_not_saved(self):
         self.tmp_saved = False
@@ -137,7 +139,7 @@ class EntryApp(QtGui.QMainWindow):
         self.load_file(self.tmpfile)
         
     def rm_temp(self):
-        """ Remove temp file """
+        """ TODO: Remove temp file.  """
         
     def clear_forms_dialog(self):
         """ Ask whether to clear forms. """
