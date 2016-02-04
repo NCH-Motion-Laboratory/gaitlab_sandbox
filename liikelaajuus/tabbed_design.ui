@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1194</width>
-    <height>980</height>
+    <height>987</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -12927,143 +12927,214 @@
   <tabstop>cmtAntrop</tabstop>
   <tabstop>spLonkkaFleksioOik</tabstop>
   <tabstop>spLonkkaFleksioVas</tabstop>
-  <tabstop>cbLonkkaVoimaFleksioOik</tabstop>
-  <tabstop>cbLonkkaVoimaFleksioVas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_6</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_6</tabstop>
   <tabstop>spLonkkaEkstensioVapOik</tabstop>
   <tabstop>spLonkkaEkstensioVapVas</tabstop>
-  <tabstop>cbLonkkaVoimaEkstensioPolvi0Oik</tabstop>
-  <tabstop>cbLonkkaVoimaEkstensioPolvi0Vas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_7</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_7</tabstop>
   <tabstop>spLonkkaEkstensioAvOik</tabstop>
   <tabstop>spLonkkaEkstensioAvVas</tabstop>
   <tabstop>spLonkkaEkstensioPolvi90Oik</tabstop>
   <tabstop>spLonkkaEkstensioPolvi90Vas</tabstop>
-  <tabstop>cbLonkkaVoimaEkstensioPolvi90Oik</tabstop>
-  <tabstop>cbLonkkaVoimaEkstensioPolvi90Vas</tabstop>
+  <tabstop>spLonkkaEkstensioPolvi90Oik_2</tabstop>
+  <tabstop>spLonkkaEkstensioPolvi90Vas_2</tabstop>
   <tabstop>SpLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
   <tabstop>spLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
   <tabstop>spLonkkaAdductorCatchOik</tabstop>
   <tabstop>spLonkkaAdductorCatchVas</tabstop>
+  <tabstop>cbLonkkaAdductorModAOik</tabstop>
+  <tabstop>cbLonkkaAdductorModAVas</tabstop>
   <tabstop>spLonkkaAbduktioLonkka0Oik</tabstop>
   <tabstop>spLonkkaAbduktioLonkka0Vas</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkka0Oik</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkka0Vas</tabstop>
   <tabstop>spLonkkaAbduktioLonkkaFleksOik</tabstop>
   <tabstop>spLonkkaAbduktioLonkkaFleksVas</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksOik</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksVas</tabstop>
   <tabstop>spLonkkaAdduktioOik</tabstop>
   <tabstop>spLonkkaAdduktioVas</tabstop>
-  <tabstop>cbLonkkaVoimaAdduktioOik</tabstop>
-  <tabstop>cbLonkkaVoimaAdduktioVas</tabstop>
+  <tabstop>cbLonkkaAdductorModAOik_2</tabstop>
+  <tabstop>cbLonkkaAdductorModAVas_2</tabstop>
   <tabstop>spLonkkaOberOik</tabstop>
   <tabstop>spLonkkaOberVas</tabstop>
+  <tabstop>spLonkkaRectusCatchOik</tabstop>
+  <tabstop>spLonkkaRectusCatchVas</tabstop>
+  <tabstop>cbLonkkaRectusModAOik</tabstop>
+  <tabstop>cbLonkkaRectusModAVas</tabstop>
   <tabstop>spLonkkaSisakiertoOik</tabstop>
   <tabstop>spLonkkaSisakiertoVas</tabstop>
-  <tabstop>cbLonkkaVoimaSisakiertOik</tabstop>
-  <tabstop>cbLonkkaVoimaSisakiertoVas</tabstop>
+  <tabstop>cbLonkkaAdductorModAOik_3</tabstop>
+  <tabstop>cbLonkkaAdductorModAVas_3</tabstop>
   <tabstop>spLonkkaUlkokiertoOik</tabstop>
   <tabstop>spLonkkaUlkokiertoVas</tabstop>
+  <tabstop>cbLonkkaAdductorModAOik_4</tabstop>
+  <tabstop>cbLonkkaAdductorModAVas_4</tabstop>
+  <tabstop>cbLonkkaVoimaFleksioOik</tabstop>
+  <tabstop>cbLonkkaVoimaFleksioVas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_2</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_2</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Oik</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Vas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_3</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_3</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Oik_2</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Vas_2</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi90Oik</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi90Vas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_4</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_4</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkka0Oik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkka0Vas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_5</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_5</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>cbLonkkaVoimaAdduktioOik</tabstop>
+  <tabstop>cbLonkkaVoimaAdduktioVas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_8</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_8</tabstop>
+  <tabstop>cbLonkkaVoimaSisakiertOik</tabstop>
+  <tabstop>cbLonkkaVoimaSisakiertoVas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_9</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_9</tabstop>
   <tabstop>cbLonkkaVoimaUlkokiertoOik</tabstop>
   <tabstop>cbLonkkaVoimaUlkokiertoVas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik_10</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas_10</tabstop>
   <tabstop>cmtLonkka</tabstop>
-  <tabstop>spVirheasBimalleoliOik</tabstop>
-  <tabstop>spVirheas2ndtoeVas</tabstop>
-  <tabstop>spVirheasJalkaReisiOik</tabstop>
-  <tabstop>spVirheasJalkaEtuTakaVas</tabstop>
-  <tabstop>spVirheasAnteversioOik</tabstop>
-  <tabstop>spVirheasJalkaReisiVas</tabstop>
-  <tabstop>spVirheasAnteversioVas</tabstop>
-  <tabstop>spVirheas2ndtoeOik</tabstop>
-  <tabstop>cmtVirheas</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi0Oik</tabstop>
-  <tabstop>cbNilkkaVoimaTibialiasAnteriorOik</tabstop>
-  <tabstop>cbNilkkaVoimaPlantaarifleksioVas</tabstop>
-  <tabstop>spNilkkaPlantaarifleksioOik</tabstop>
-  <tabstop>cbNilkkaVoimaPlantaarifleksioOik</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi90Vas</tabstop>
-  <tabstop>spNilkkaPlantaarifleksioVas</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi90Oik</tabstop>
-  <tabstop>cbNilkkaVoimaExtHallucisLongusOik</tabstop>
-  <tabstop>cbNilkkaVoimaFlexHallucisLongusOik</tabstop>
-  <tabstop>cbNilkkaVoimaPeroneusOik</tabstop>
-  <tabstop>cbNilkkaVoimaTibialisAnteriorVas</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi0Vas</tabstop>
-  <tabstop>cbNilkkaVoimaTibialisPosteriorOik</tabstop>
-  <tabstop>cbNilkkaVoimaTibialisPosteriorVas</tabstop>
-  <tabstop>cbNilkkaVoimaPeroneusVas</tabstop>
-  <tabstop>cbNilkkaVoimaExtHallucisLongusVas</tabstop>
-  <tabstop>cbNilkkaVoimaFlexHallucisLongusVas</tabstop>
-  <tabstop>cmtNilkka</tabstop>
-  <tabstop>spNilkkaSoleusCatchOik</tabstop>
-  <tabstop>maintab</tabstop>
+  <tabstop>spPolviEkstensioVapOik</tabstop>
+  <tabstop>spPolviEkstensioVapVas</tabstop>
+  <tabstop>spPolviEkstensioAvOik</tabstop>
+  <tabstop>spPolviEkstensioAvVas</tabstop>
+  <tabstop>spPolviFleksioVatsamakuuOik</tabstop>
+  <tabstop>spPolviFleksioVatsamakuuVas</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
+  <tabstop>spPolviHamstringCatchOik</tabstop>
+  <tabstop>spPolviHamstringCatchVas</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuOik_3</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuVas_3</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
   <tabstop>spPolviPopliteaVastakkLonkka90Oik</tabstop>
   <tabstop>spPolviPopliteaVastakkLonkka90Vas</tabstop>
-  <tabstop>spPolviEkstensioVapOik</tabstop>
   <tabstop>cbPolviVoimaEkstensioVapOik</tabstop>
-  <tabstop>cbPolviVoimaFleksioVatsamakuuVas</tabstop>
   <tabstop>cbPolviVoimaEkstensioVapVas</tabstop>
-  <tabstop>spVirheasPatellaAltaVas</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
-  <tabstop>cbRyhtiVoimaVatsaSuorat</tabstop>
-  <tabstop>cbRyhtiVoimaSelkaOik</tabstop>
-  <tabstop>cmtRyhti</tabstop>
-  <tabstop>sbJalkat1MTPojennusOik</tabstop>
-  <tabstop>cbJalkat1sadeOik</tabstop>
-  <tabstop>cbJalkatHolvikaariOik</tabstop>
-  <tabstop>cbJalkatTakaosanLiikeInversioOik</tabstop>
-  <tabstop>cbJalkatTakaosanLiikeEversioVas</tabstop>
-  <tabstop>cbJalkatTakaosanLiikeInversioVas</tabstop>
-  <tabstop>cbJalkatVaivaisenluuOik</tabstop>
+  <tabstop>cbPolviVoimaEkstensioVapOik_2</tabstop>
+  <tabstop>cbPolviVoimaEkstensioVapVas_2</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuOik</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuVas</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuOik_2</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuVas_2</tabstop>
+  <tabstop>cmtPolvi</tabstop>
+  <tabstop>spNilkkaSoleusCatchOik</tabstop>
+  <tabstop>spNilkkaSoleusCatchVas</tabstop>
+  <tabstop>xbNilkkaSoleusKlonus</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_4</tabstop>
+  <tabstop>cbNilkkaSoleusModAVas_2</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90Oik</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90Vas</tabstop>
+  <tabstop>spNilkkaGastroCatchOik</tabstop>
+  <tabstop>spNilkkaGastroCatchVas</tabstop>
+  <tabstop>xbNilkkaGastroClonus</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_5</tabstop>
+  <tabstop>cbNilkkaSoleusModAVas_3</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0Oik</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0Vas</tabstop>
+  <tabstop>spNilkkaPlantaarifleksioOik</tabstop>
+  <tabstop>spNilkkaPlantaarifleksioVas</tabstop>
+  <tabstop>spNilkkaConfusionOik</tabstop>
+  <tabstop>spNilkkaConfusionVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik</tabstop>
+  <tabstop>cbNilkkaSoleusModAVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_2</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_3</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_9</tabstop>
+  <tabstop>cbNilkkaVoimaPlantaarifleksioOik</tabstop>
+  <tabstop>cbNilkkaVoimaPlantaarifleksioVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_10</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_11</tabstop>
+  <tabstop>cbNilkkaVoimaTibialiasAnteriorOik</tabstop>
+  <tabstop>cbNilkkaVoimaTibialisAnteriorVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_12</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_13</tabstop>
+  <tabstop>cbNilkkaVoimaTibialisPosteriorOik</tabstop>
+  <tabstop>cbNilkkaVoimaTibialisPosteriorVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_14</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_15</tabstop>
+  <tabstop>cbNilkkaVoimaPeroneusOik</tabstop>
+  <tabstop>cbNilkkaVoimaPeroneusVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_16</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_17</tabstop>
+  <tabstop>cbNilkkaVoimaExtHallucisLongusOik</tabstop>
+  <tabstop>cbNilkkaVoimaExtHallucisLongusVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_18</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_19</tabstop>
+  <tabstop>cbNilkkaVoimaFlexHallucisLongusOik</tabstop>
+  <tabstop>cbNilkkaVoimaFlexHallucisLongusVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_20</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik_21</tabstop>
+  <tabstop>cmtNilkka</tabstop>
   <tabstop>cbJalkatSubtalarOik</tabstop>
+  <tabstop>cbJalkatSubtalarVas</tabstop>
   <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
   <tabstop>cbJalkatTakaosanAsentoVas</tabstop>
-  <tabstop>cbJalkatKeskiosanliikeOik</tabstop>
-  <tabstop>cbJalkatHolvikaariVas</tabstop>
-  <tabstop>cbJalkatKeskiosanliikeVas</tabstop>
-  <tabstop>cbJalkat1sadeVas</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioOik</tabstop>
-  <tabstop>cbJalkatSubtalarVas</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeEversioVas</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeInversioOik</tabstop>
+  <tabstop>cbJalkatTakaosanLiikeInversioVas</tabstop>
+  <tabstop>cbJalkatHolvikaariOik</tabstop>
+  <tabstop>cbJalkatHolvikaariVas</tabstop>
+  <tabstop>cbJalkatKeskiosanliikeOik</tabstop>
+  <tabstop>cbJalkatKeskiosanliikeVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1Oik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1Vas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2Oik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2Vas</tabstop>
+  <tabstop>cbJalkat1sadeOik</tabstop>
+  <tabstop>cbJalkat1sadeVas</tabstop>
+  <tabstop>sbJalkat1MTPojennusOik</tabstop>
   <tabstop>sbJalkat1MTPojennusVas</tabstop>
+  <tabstop>cbJalkatVaivaisenluuOik</tabstop>
+  <tabstop>cbJalkatVaivaisenluuOik_2</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>lineEdit_2</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
   <tabstop>cbJalkatColemanOik</tabstop>
   <tabstop>cbJalkatColemanVas</tabstop>
-  <tabstop>cbJalkatEtuosanAsento1KuormOik</tabstop>
   <tabstop>cmtJalkat</tabstop>
+  <tabstop>spVirheasAnteversioOik</tabstop>
+  <tabstop>spVirheasAnteversioVas</tabstop>
+  <tabstop>spVirheasPatellaAltaOik</tabstop>
+  <tabstop>spVirheasPatellaAltaVas</tabstop>
+  <tabstop>spVirheasJalkaReisiOik</tabstop>
+  <tabstop>spVirheasJalkaReisiVas</tabstop>
+  <tabstop>spVirheasJalkaEtuTakaOik</tabstop>
+  <tabstop>spVirheasJalkaEtuTakaVas</tabstop>
+  <tabstop>spVirheasBimalleoliOik</tabstop>
+  <tabstop>spVirheasBimalleoliVas</tabstop>
+  <tabstop>spVirheas2ndtoeOik</tabstop>
+  <tabstop>spVirheas2ndtoeVas</tabstop>
+  <tabstop>cmtVirheas</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaSuorat</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaVinotOik</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaVinotVas</tabstop>
+  <tabstop>cbRyhtiVoimaSelkaOik</tabstop>
+  <tabstop>cmtRyhti</tabstop>
   <tabstop>lnTasapOik</tabstop>
   <tabstop>lnTasapVas</tabstop>
   <tabstop>cmtTasap</tabstop>
   <tabstop>btnSave</tabstop>
-  <tabstop>btnReport</tabstop>
   <tabstop>btnQuit</tabstop>
-  <tabstop>btnLoad</tabstop>
   <tabstop>btnClear</tabstop>
-  <tabstop>cbRyhtiVoimaVatsaVinotOik</tabstop>
-  <tabstop>cbRyhtiVoimaVatsaVinotVas</tabstop>
-  <tabstop>cbPolviVoimaFleksioVatsamakuuOik</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
-  <tabstop>spPolviFleksioVatsamakuuVas</tabstop>
-  <tabstop>spPolviFleksioVatsamakuuOik</tabstop>
-  <tabstop>spPolviEkstensioAvOik</tabstop>
-  <tabstop>spPolviEkstensioAvVas</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
-  <tabstop>cmtPolvi</tabstop>
-  <tabstop>spVirheasBimalleoliVas</tabstop>
-  <tabstop>spVirheasJalkaEtuTakaOik</tabstop>
-  <tabstop>spVirheasPatellaAltaOik</tabstop>
-  <tabstop>spPolviEkstensioVapVas</tabstop>
-  <tabstop>spNilkkaSoleusCatchVas</tabstop>
-  <tabstop>cbJalkatVaivaisenluuOik_2</tabstop>
-  <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
-  <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
-  <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
-  <tabstop>cbJalkatTakaosanAsentoKuormVas</tabstop>
-  <tabstop>cbJalkatKeskiosanAsentoKuormVas</tabstop>
-  <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
-  <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
-  <tabstop>cbJalkatEtuosanAsento2Oik</tabstop>
-  <tabstop>cbJalkatEtuosanAsento2Vas</tabstop>
-  <tabstop>cbJalkatEtuosanAsento1Oik</tabstop>
-  <tabstop>cbJalkatEtuosanAsento1Vas</tabstop>
+  <tabstop>btnLoad</tabstop>
+  <tabstop>maintab</tabstop>
+  <tabstop>btnReport</tabstop>
  </tabstops>
  <resources/>
  <connections/>
