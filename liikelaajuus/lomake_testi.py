@@ -107,9 +107,10 @@ class EntryApp(QtGui.QMainWindow):
         for key in data_:
             print(key, ':', data_[key])
         report = report_templates.html(data_)
-        print(report)
+        report_html = report.make()
+        print(report_html)
         with open('report_koe.html','wb') as f:
-            f.write(report)
+            f.write(report_html)
         
     def set_not_saved(self):
         self.tmp_saved = False
