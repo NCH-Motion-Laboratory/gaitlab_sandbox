@@ -1,5 +1,23 @@
 
 
+widget naming scheme:
+type: sp/cb/xb/te/ln
+variable type clarification:
+Dist for distance meas. (Angle is default for spinboxes)
+Num for Numeric meas. (e.g. lnNum...)
+ModA / F / Sel for comboboxes (e.g. cbModA...)
+
+
+measurement / test: e.g. Peroneus, Polvi90ROM
+
+
+
+
+
+
+
+
+
 muutoksia lomakkeseen (Tuula:)
 
 patella alta: yksikkö cm, -7 - 7 cm
