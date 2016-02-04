@@ -29,6 +29,8 @@ class html():
 """
         
     def sec_tiedot(self):
+        """ TODO: parse format string; remove lines where every variable
+        is empty """
         return """
 <h2>Potilaan tiedot</h2>
 <table style="width:100%">
