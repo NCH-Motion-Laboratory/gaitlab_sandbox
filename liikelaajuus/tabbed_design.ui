@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -10555,72 +10555,72 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
-  <tabstop>spLonkkaFleksioVas</tabstop>
   <tabstop>lnTiedotNimi</tabstop>
+  <tabstop>lnTiedotPvm</tabstop>
   <tabstop>lnTiedotDiag</tabstop>
   <tabstop>lnTiedotID</tabstop>
-  <tabstop>lnTiedotMittaajat</tabstop>
   <tabstop>lnTiedotHetu</tabstop>
-  <tabstop>spLonkkaEkstensioAvOik</tabstop>
-  <tabstop>lnTiedotPvm</tabstop>
-  <tabstop>maintab</tabstop>
-  <tabstop>spLonkkaEkstensioAvVas</tabstop>
+  <tabstop>lnTiedotMittaajat</tabstop>
   <tabstop>cmtTiedot</tabstop>
-  <tabstop>spLonkkaAbduktioLonkka0Oik</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkka0Vas</tabstop>
-  <tabstop>spLonkkaEkstensioPolvi90Oik</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkka0Oik</tabstop>
-  <tabstop>spLonkkaUlkokiertoVas</tabstop>
-  <tabstop>spLonkkaSisakiertoVas</tabstop>
-  <tabstop>spLonkkaSisakiertoOik</tabstop>
-  <tabstop>spLonkkaOberOik</tabstop>
-  <tabstop>spLonkkaOberVas</tabstop>
-  <tabstop>cbLonkkaVoimaFleksioVas</tabstop>
-  <tabstop>cbLonkkaVoimaEkstensioPolvi90Vas</tabstop>
-  <tabstop>spLonkkaAdduktioVas</tabstop>
-  <tabstop>spLonkkaAdduktioOik</tabstop>
-  <tabstop>spLonkkaEkstensioVapVas</tabstop>
-  <tabstop>spLonkkaAbduktioLonkka0Vas</tabstop>
-  <tabstop>spLonkkaEkstensioVapOik</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksOik</tabstop>
-  <tabstop>cbLonkkaVoimaAdduktioOik</tabstop>
-  <tabstop>spLonkkaUlkokiertoOik</tabstop>
-  <tabstop>cbLonkkaVoimaAdduktioVas</tabstop>
+  <tabstop>lnAntropAlaraajaOik</tabstop>
+  <tabstop>lnAntropAlaraajaVas</tabstop>
+  <tabstop>lnAntropPolviOik</tabstop>
+  <tabstop>lnAntropPolviVas</tabstop>
+  <tabstop>lnAntropNilkkaOik</tabstop>
+  <tabstop>lnAntropNilkkaVas</tabstop>
+  <tabstop>lnAntropSIAS</tabstop>
+  <tabstop>lnAntropPituus</tabstop>
+  <tabstop>lnAntropPaino</tabstop>
+  <tabstop>cmtAntrop</tabstop>
+  <tabstop>spLonkkaFleksioOik</tabstop>
+  <tabstop>spLonkkaFleksioVas</tabstop>
   <tabstop>cbLonkkaVoimaFleksioOik</tabstop>
+  <tabstop>cbLonkkaVoimaFleksioVas</tabstop>
+  <tabstop>cbLonkkaFlexorModAOik</tabstop>
+  <tabstop>cbLonkkaFlexorModAVas</tabstop>
+  <tabstop>spLonkkaEkstensioVapOik</tabstop>
+  <tabstop>spLonkkaEkstensioVapVas</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Oik</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi0Vas</tabstop>
+  <tabstop>spLonkkaEkstensioAvOik</tabstop>
+  <tabstop>spLonkkaEkstensioAvVas</tabstop>
+  <tabstop>spLonkkaEkstensioPolvi90Oik</tabstop>
   <tabstop>spLonkkaEkstensioPolvi90Vas</tabstop>
   <tabstop>cbLonkkaVoimaEkstensioPolvi90Oik</tabstop>
-  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksVas</tabstop>
-  <tabstop>spLonkkaFleksioOik</tabstop>
+  <tabstop>cbLonkkaVoimaEkstensioPolvi90Vas</tabstop>
+  <tabstop>SpLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
+  <tabstop>spLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
+  <tabstop>spLonkkaAdductorCatchOik</tabstop>
+  <tabstop>spLonkkaAdductorCatchVas</tabstop>
+  <tabstop>cbLonkkaAdductorModAOik</tabstop>
+  <tabstop>cbLonkkaAdductorModAVas</tabstop>
+  <tabstop>spLonkkaAbduktioLonkka0Oik</tabstop>
+  <tabstop>spLonkkaAbduktioLonkka0Vas</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkka0Oik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkka0Vas</tabstop>
   <tabstop>spLonkkaAbduktioLonkkaFleksOik</tabstop>
   <tabstop>spLonkkaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>cbLonkkaVoimaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>spLonkkaAdduktioOik</tabstop>
+  <tabstop>spLonkkaAdduktioVas</tabstop>
+  <tabstop>cbLonkkaVoimaAdduktioOik</tabstop>
+  <tabstop>cbLonkkaVoimaAdduktioVas</tabstop>
+  <tabstop>spLonkkaOberOik</tabstop>
+  <tabstop>spLonkkaOberVas</tabstop>
+  <tabstop>spLonkkaSisakiertoOik</tabstop>
+  <tabstop>spLonkkaSisakiertoVas</tabstop>
   <tabstop>cbLonkkaVoimaSisakiertOik</tabstop>
   <tabstop>cbLonkkaVoimaSisakiertoVas</tabstop>
+  <tabstop>spLonkkaUlkokiertoOik</tabstop>
+  <tabstop>spLonkkaUlkokiertoVas</tabstop>
   <tabstop>cbLonkkaVoimaUlkokiertoOik</tabstop>
   <tabstop>cbLonkkaVoimaUlkokiertoVas</tabstop>
+  <tabstop>spLonkkaRectusCatchOik</tabstop>
+  <tabstop>spLonkkaRectusCatchVas</tabstop>
+  <tabstop>cbLonkkaRectusModAOik</tabstop>
+  <tabstop>cbLonkkaRectusModAVas</tabstop>
   <tabstop>cmtLonkka</tabstop>
-  <tabstop>spPolviEkstensioAvOik</tabstop>
-  <tabstop>spPolviEkstensioAvVas</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka90Vas</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
-  <tabstop>spPolviExtlagOik</tabstop>
-  <tabstop>spPolviExtlagVas</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka90Oik</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
-  <tabstop>spPolviEkstensioVapVas</tabstop>
-  <tabstop>spPolviFleksioVatsamakuuVas</tabstop>
-  <tabstop>spPolviFleksioVatsamakuuOik</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
-  <tabstop>spPolviEkstensioVapOik</tabstop>
-  <tabstop>cbPolviVoimaEkstensioVapOik</tabstop>
-  <tabstop>cbPolviVoimaEkstensioVapVas</tabstop>
-  <tabstop>cbPolviVoimaFleksioVatsamakuuOik</tabstop>
-  <tabstop>cbPolviVoimaFleksioVatsamakuuVas</tabstop>
-  <tabstop>cmtPolvi</tabstop>
-  <tabstop>spVirheasBimalleoliVas</tabstop>
-  <tabstop>spVirheasJalkaEtuTakaOik</tabstop>
-  <tabstop>spVirheasPatellaAltaOik</tabstop>
-  <tabstop>spVirheasPatellaAltaVas</tabstop>
   <tabstop>spVirheasBimalleoliOik</tabstop>
   <tabstop>spVirheas2ndtoeVas</tabstop>
   <tabstop>spVirheasJalkaReisiOik</tabstop>
@@ -10653,16 +10653,16 @@
   <tabstop>cbNilkkaVoimaExtHallucisLongusVas</tabstop>
   <tabstop>cbNilkkaVoimaFlexHallucisLongusVas</tabstop>
   <tabstop>cmtNilkka</tabstop>
-  <tabstop>lnAntropAlaraajaOik</tabstop>
-  <tabstop>lnAntropAlaraajaVas</tabstop>
-  <tabstop>lnAntropPolviOik</tabstop>
-  <tabstop>lnAntropPolviVas</tabstop>
-  <tabstop>lnAntropNilkkaOik</tabstop>
-  <tabstop>lnAntropSIAS</tabstop>
-  <tabstop>lnAntropPituus</tabstop>
-  <tabstop>lnAntropPaino</tabstop>
-  <tabstop>lnAntropNilkkaVas</tabstop>
-  <tabstop>cmtAntrop</tabstop>
+  <tabstop>spNilkkaSoleusCatchOik</tabstop>
+  <tabstop>maintab</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka90Oik</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka90Vas</tabstop>
+  <tabstop>spPolviEkstensioVapOik</tabstop>
+  <tabstop>cbPolviVoimaEkstensioVapOik</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuVas</tabstop>
+  <tabstop>cbPolviVoimaEkstensioVapVas</tabstop>
+  <tabstop>spVirheasPatellaAltaVas</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
   <tabstop>cbRyhtiVoimaVatsaSuorat</tabstop>
   <tabstop>cbRyhtiVoimaSelkaOik</tabstop>
   <tabstop>cmtRyhti</tabstop>
@@ -10693,6 +10693,56 @@
   <tabstop>btnSave</tabstop>
   <tabstop>btnReport</tabstop>
   <tabstop>btnQuit</tabstop>
+  <tabstop>btnLoad</tabstop>
+  <tabstop>btnClear</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaVinotOik</tabstop>
+  <tabstop>cbRyhtiVoimaVatsaVinotVas</tabstop>
+  <tabstop>spPolviHamstringCatchOik</tabstop>
+  <tabstop>spPolviHamstringCatchVas</tabstop>
+  <tabstop>cbPolviHamstringModAOik</tabstop>
+  <tabstop>cbPolviHamstringModAVas</tabstop>
+  <tabstop>cbPolviVoimaFleksioVatsamakuuOik</tabstop>
+  <tabstop>spPolviExtlagOik</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
+  <tabstop>spPolviFleksioVatsamakuuVas</tabstop>
+  <tabstop>spPolviFleksioVatsamakuuOik</tabstop>
+  <tabstop>spPolviEkstensioAvOik</tabstop>
+  <tabstop>spPolviEkstensioAvVas</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
+  <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
+  <tabstop>spPolviExtlagVas</tabstop>
+  <tabstop>cmtPolvi</tabstop>
+  <tabstop>spVirheasBimalleoliVas</tabstop>
+  <tabstop>spVirheasJalkaEtuTakaOik</tabstop>
+  <tabstop>spVirheasPatellaAltaOik</tabstop>
+  <tabstop>spNilkkaConfusionOik</tabstop>
+  <tabstop>spNilkkaConfusionVas</tabstop>
+  <tabstop>spPolviEkstensioVapVas</tabstop>
+  <tabstop>spNilkkaSoleusCatchVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik</tabstop>
+  <tabstop>cbNilkkaSoleusModAVas</tabstop>
+  <tabstop>cbNilkkaGastroModAOik</tabstop>
+  <tabstop>cbNilkkaGastroModAVas</tabstop>
+  <tabstop>spNilkkaGastroCatchOik</tabstop>
+  <tabstop>spNilkkaGastroCatchVas</tabstop>
+  <tabstop>xbNilkkaSoleusKlonus</tabstop>
+  <tabstop>xbNilkkaGastroClonus</tabstop>
+  <tabstop>spNilkkaTibialisCatchOik</tabstop>
+  <tabstop>spNilkkaTibialisCatchVas</tabstop>
+  <tabstop>cbNilkkaTibialisModAOik</tabstop>
+  <tabstop>cbNilkkaTibialisModAVas</tabstop>
+  <tabstop>cbJalkatVaivaisenluuOik_2</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2Oik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2Vas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1Oik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1Vas</tabstop>
  </tabstops>
  <resources/>
  <connections/>
