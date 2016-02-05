@@ -2,10 +2,16 @@
 """
 Created on Fri Jan 29 10:37:47 2016
 
+Create liikelaajuus report.
+
 @author: jussi
 """
 
 from pandas import DataFrame
+
+import html_templates
+
+
 
 class html():
 
@@ -19,8 +25,8 @@ class html():
             html_output.append('<p>'+li+'</p>')
         return ''.join(html_output)
         
-    def comments(self, comments):
-        """ Make comments field into HTML """
+    def format_comments(self, comments):
+        """ Make given comments field (multiline string) into HTML """
         if comments:
             return u'<h2>Kommentit</h2>'+'\n'+self.multiline_to_html(comments)
         else:
@@ -38,52 +44,12 @@ class html():
         table.append['</table>']
         return ''.join(table)
         
-    def doc_header(self):
-        return u"""
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8" /> 
-</head>
-<body>
-<h1>Kävelyanalyysi</h1>
-"""
-
-    def doc_terminator(self):
-        return u"""
-</body>
-</html>
-"""
-
-    def sec_tiedot(self):
-        return u"""
-<h2>Potilaan tiedot</h2>
-<table style="width:100%">
-  <tr>
-    <td>Potilaan nimi</td>
-    <td>{lnTiedotNimi}</td> 
-  </tr>
-  <tr>
-    <td>Potilaskoodi</td>
-    <td>{lnTiedotID}</td> 
-  </tr>
-  <tr>
-    <td>Päivämäärä</td>
-    <td>{lnTiedotPvm}</td> 
-  </tr>
-  <tr>
-    <td>Diagnoosi</td>
-    <td>{lnTiedotDiag}</td> 
-  </tr>
-  <tr>
-    <td>Henkilötunnus</td>
-    <td>{lnTiedotHetu}</td> 
-  </tr>
-  <tr>
-    <td>Mittaajat</td>
-    <td>{lnTiedotMittaajat}</td> 
-  </tr>
-</table>""".format(**self.data) + self.comments(self.data['cmtTiedot'])
+    def format_section(self, sec):
+        # format html for given section & add comments field
+        return html_templates.section[sec].format(**self.data)
+        
+        
+        + self.comments(self.data['cmt'+sec])
 
     def sec_liikelaajuudet(self):
         return u"""
@@ -101,7 +67,7 @@ class html():
         
 
     def make(self):
-        return self.doc_header() + self.sec_tiedot() + self.doc_terminator()
+        return html_templates.header + self.sec_tiedot() + self.doc_terminator()
 
     def excel(self, fn):
         """ Export report to Excel (filename fn) TODO"""

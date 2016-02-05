@@ -55,9 +55,9 @@ class EntryApp(QtGui.QMainWindow):
         self.set_dirs()
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         # TODO: load tmp file if it exists
-        #if os.path.isfile(self.tmpfile):
-         #   print('temp file exists! restoring...')
-          #  self.load_temp()
+        if os.path.isfile(self.tmpfile):
+            print('temp file exists! restoring...')
+            self.load_temp()
         
     def set_dirs(self):
         """ Set dirs according to platform """
