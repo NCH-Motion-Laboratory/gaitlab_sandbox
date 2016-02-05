@@ -102,7 +102,8 @@ class EntryApp(QtGui.QMainWindow):
         report_html = report.make()
         print(report_html)
         with open('report_koe.html','wb') as f:
-            f.write(report_html)
+            # Unicode object into utf8-encoded string
+            f.write(report_html.encode('utf-8'))
         
     def set_not_saved(self):
         self.tmp_saved = False
