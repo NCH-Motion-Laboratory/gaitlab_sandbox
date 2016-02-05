@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -6651,7 +6651,7 @@
            </widget>
           </item>
           <item row="12" column="2">
-           <widget class="QLineEdit" name="spNilkkaConfusionOik"/>
+           <widget class="QLineEdit" name="lnNilkkaConfusionOik"/>
           </item>
           <item row="8" column="6">
            <widget class="QComboBox" name="cbNilkkaSoleusModAVas_3">
@@ -6888,7 +6888,7 @@
            </widget>
           </item>
           <item row="12" column="3">
-           <widget class="QLineEdit" name="spNilkkaConfusionVas"/>
+           <widget class="QLineEdit" name="lnNilkkaConfusionVas"/>
           </item>
           <item row="7" column="11">
            <widget class="QComboBox" name="cbNilkkaSoleusModAOik_3">
@@ -12385,8 +12385,8 @@
   <tabstop>spNilkkaDorsifleksioPolvi0Vas</tabstop>
   <tabstop>spNilkkaPlantaarifleksioOik</tabstop>
   <tabstop>spNilkkaPlantaarifleksioVas</tabstop>
-  <tabstop>spNilkkaConfusionOik</tabstop>
-  <tabstop>spNilkkaConfusionVas</tabstop>
+  <tabstop>lnNilkkaConfusionOik</tabstop>
+  <tabstop>lnNilkkaConfusionVas</tabstop>
   <tabstop>cbNilkkaSoleusModAOik_2</tabstop>
   <tabstop>cbNilkkaVoimaPlantaarifleksioOik</tabstop>
   <tabstop>cbNilkkaVoimaPlantaarifleksioVas</tabstop>
