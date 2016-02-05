@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -10068,10 +10068,10 @@
            </widget>
           </item>
           <item row="22" column="2">
-           <widget class="QLineEdit" name="cbJalkatColemanOik"/>
+           <widget class="QLineEdit" name="lnColemanOik"/>
           </item>
           <item row="22" column="3">
-           <widget class="QLineEdit" name="cbJalkatColemanVas"/>
+           <widget class="QLineEdit" name="lnColemanVas"/>
           </item>
           <item row="4" column="0">
            <spacer name="horizontalSpacer_68">
@@ -12433,8 +12433,8 @@
   <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
   <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
   <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
-  <tabstop>cbJalkatColemanOik</tabstop>
-  <tabstop>cbJalkatColemanVas</tabstop>
+  <tabstop>lnColemanOik</tabstop>
+  <tabstop>lnColemanVas</tabstop>
   <tabstop>cmtJalkat</tabstop>
   <tabstop>spVirheasAnteversioOik</tabstop>
   <tabstop>spVirheasAnteversioVas</tabstop>
