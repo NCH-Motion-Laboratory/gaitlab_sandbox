@@ -11,7 +11,7 @@ from __future__ import print_function
 from PyQt4 import QtGui, uic
 import sys
 import os
-import report_templates
+import reporter
 import pickle
 import copy
 
@@ -98,7 +98,7 @@ class EntryApp(QtGui.QMainWindow):
         for key in self.data:
             if self.data[key] == self.data_empty[key]:
                 data_[key] = NOT_MEASURED
-        report = report_templates.html(data_)
+        report = reporter.html(data_)
         report_html = report.make()
         print(report_html)
         with open('report_koe.html','wb') as f:
