@@ -11,9 +11,9 @@ from __future__ import print_function
 from PyQt4 import QtGui, uic
 import sys
 import os
-import reporter
 import pickle
 import copy
+import reporter
 
 
 class EntryApp(QtGui.QMainWindow):
