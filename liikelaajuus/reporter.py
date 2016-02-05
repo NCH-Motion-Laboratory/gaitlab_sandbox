@@ -12,6 +12,9 @@ from pandas import DataFrame
 import html_templates
 
 
+class text():
+    pass
+
 
 class html():
 
@@ -34,7 +37,7 @@ class html():
 
     def html_table(self, data):
         """ Make a multicolumn html table. data is a list of rows
-        (list of lists of str) """
+        (list of lists of str). """
         table = ['<table style="width:100%">']
         for row in data:
             table.append['<tr>']
@@ -47,27 +50,10 @@ class html():
     def format_section(self, sec):
         # format html for given section & add comments field
         return html_templates.section[sec].format(**self.data)
-        
-        
-        + self.comments(self.data['cmt'+sec])
-
-    def sec_liikelaajuudet(self):
-        return u"""
-<h2>Nivelten passiiviset liikelaajuudet</h2>
-<h3>Lonkka</h3>
-<table style="width:100%">
-  <tr>
-    <td>Potilaan nimi</td>
-    <td>{lnTiedotNimi}</td> 
-  </tr>
-  <tr>"""
-    
-        
-        
-        
 
     def make(self):
-        return html_templates.header + self.sec_tiedot() + self.doc_terminator()
+        # TODO: for key in html_templates.sections...
+        return html_templates.header + self.sec_tiedot() + html_templates.footer
 
     def excel(self, fn):
         """ Export report to Excel (filename fn) TODO"""
