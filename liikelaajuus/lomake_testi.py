@@ -91,21 +91,13 @@ class EntryApp(QtGui.QMainWindow):
             
     def make_report(self):
         """ Make report using the input data. """
+        NOT_MEASURED = 'EI MITATTU'
         self.read_forms()
         data_ = copy.deepcopy(self.data)
-        # translate special default (unmeasured) values to None
-        # (or use special placeholder, to exclude unused lines later? TODO)
-        self.LN_NONE = ''
-        self.SP_NONE = -181  # TODO: handle different spinboxes correctly
-        self.CB_NONE = "Ei mitattu"
-        self.TE_NONE = ''
-        for key in data_:
-            if key[:2] == 'sp' and data_[key] == self.SP_NONE:
-                data_[key] == None
-            if key[:2] == 'cb' and data_[key] == self.CB_NONE:
-                data_[key] == None
-        for key in data_:
-            print(key, ':', data_[key])
+        # translate special default (unmeasured) values
+        for key in self.data:
+            if self.data[key] == self.data_empty[key]:
+                data_[key] = NOT_MEASURED
         report = report_templates.html(data_)
         report_html = report.make()
         print(report_html)
@@ -114,7 +106,6 @@ class EntryApp(QtGui.QMainWindow):
         
     def set_not_saved(self):
         self.tmp_saved = False
-        
         
     def load_file(self, fname):
         """ Load data from given file and restore forms. """
@@ -188,7 +179,7 @@ class EntryApp(QtGui.QMainWindow):
         for ln in self.findChildren(QtGui.QLineEdit):
             name = str(ln.objectName())
             if name[:2] == 'ln':  # exclude spinboxes line edit objects
-                val = unicode(ln.text())
+                val = unicode(ln.text()).strip()  # rm leading/trailing whitespace
                 self.data[name] = val
         for sp in self.findChildren(QtGui.QSpinBox):
             val = int(sp.value())
@@ -200,8 +191,8 @@ class EntryApp(QtGui.QMainWindow):
             val = xb.checkState()
             self.data[str(xb.objectName())] = val
         for te in self.findChildren(QtGui.QTextEdit):
-            val = te.toPlainText()
-            self.data[str(te.objectName())] = unicode(val)
+            val = unicode(te.toPlainText()).strip()
+            self.data[str(te.objectName())] = val  # rm leading/trailing whitespace
 
 def main():
     app = QtGui.QApplication(sys.argv)
