@@ -23,6 +23,37 @@ class EntryApp(QtGui.QMainWindow):
         super(self.__class__, self).__init__()
         # load user interface made with designer
         uic.loadUi('tabbed_design.ui', self)
+        # make a dict of our input widgets
+        # also install some callbacks and convenience methods
+        self.input_widgets = {}
+        for w in self.findChildren(QtGui.QWidget):        
+            wname = str(w.objectName())
+            wsave = True
+            if wname[:2] == 'sp' and w.__class__ == QtGui.QSpinBox:
+                w.valueChanged.connect(self.set_not_saved)
+                w.setVal = w.setValue
+                # lambdas need default arguments because of late binding
+                w.getVal = lambda w=w: int(w.value())
+            elif wname[:2] == 'ln' and w.__class__ == QtGui.QLineEdit:
+                w.textChanged.connect(self.set_not_saved)
+                w.setVal = w.setText
+                w.getVal = lambda w=w: unicode(w.text()).strip()
+            elif wname[:2] == 'cb' and w.__class__ == QtGui.QComboBox:
+                w.currentIndexChanged.connect(self.set_not_saved)
+                w.setVal = lambda str, w=w: w.setCurrentIndex(w.findText(str))
+                w.getVal = lambda w=w: unicode(w.currentText())
+            elif wname[:2] == 'te':
+                w.textChanged.connect(self.set_not_saved)
+                w.setVal = w.setPlainText
+                w.getVal = lambda w=w: unicode(w.toPlainText()).strip()
+            elif wname[:2] == 'xb':
+                w.stateChanged.connect(self.set_not_saved)
+                w.setVal = w.setCheckState
+                w.getVal = lambda w=w: int(w.checkState())
+            else:
+                wsave = False
+            if wsave:
+                self.input_widgets[wname] = w
         self.data = {}
         # save empty form (default states for widgets)
         self.read_forms()
@@ -38,17 +69,10 @@ class EntryApp(QtGui.QMainWindow):
         # whether data was saved into a patient-specific file
         self.saved = False
         # TODO: set validators for line edit objects
-        # enable "not saved" state whenever widget values change
-        for sp in self.findChildren(QtGui.QSpinBox):        
-            sp.valueChanged.connect(self.set_not_saved)
-        for ln in self.findChildren(QtGui.QLineEdit):
-            ln.textChanged.connect(self.set_not_saved)
-        for cb in self.findChildren(QtGui.QComboBox):
-            cb.currentIndexChanged.connect(self.set_not_saved)
-        for te in self.findChildren(QtGui.QTextEdit):
-            te.textChanged.connect(self.set_not_saved)
-        for xb in self.findChildren(QtGui.QCheckBox):
-            xb.stateChanged.connect(self.set_not_saved)
+        
+        # make a dict of our input widgets, and install some callbacks
+        # also define convenience getval and setval according to widget type
+
         # save into temp file on tab change
         self.maintab.currentChanged.connect(self.save_temp)
         # name of temp save file
@@ -154,7 +178,7 @@ class EntryApp(QtGui.QMainWindow):
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
     
-    def restore_forms(self):
+    def restore_forms_(self):
         """ Restore data from dict into the input form. """
         for ln in self.findChildren(QtGui.QLineEdit):
             name = str(ln.objectName())
@@ -172,28 +196,15 @@ class EntryApp(QtGui.QMainWindow):
         for te in self.findChildren(QtGui.QTextEdit):
             name = str(te.objectName())
             te.setPlainText(self.data[name])
-        
+
+    def restore_forms(self):
+        for wname in self.input_widgets:
+            self.input_widgets[wname].setVal(self.data[wname])
+            
     def read_forms(self):
-        """ Read all entered data into a dict, converting
-        to Python types. Dict keys will be set according to 
-        input widget names. """
-        for ln in self.findChildren(QtGui.QLineEdit):
-            name = str(ln.objectName())
-            if name[:2] == 'ln':  # exclude spinboxes line edit objects
-                val = unicode(ln.text()).strip()  # rm leading/trailing whitespace
-                self.data[name] = val
-        for sp in self.findChildren(QtGui.QSpinBox):
-            val = int(sp.value())
-            self.data[str(sp.objectName())] = val
-        for cb in self.findChildren(QtGui.QComboBox):
-            val = unicode(cb.currentText())
-            self.data[str(cb.objectName())] = val
-        for xb in self.findChildren(QtGui.QCheckBox):
-            val = xb.checkState()
-            self.data[str(xb.objectName())] = val
-        for te in self.findChildren(QtGui.QTextEdit):
-            val = unicode(te.toPlainText()).strip()
-            self.data[str(te.objectName())] = val  # rm leading/trailing whitespace
+        for wname in self.input_widgets:
+            self.data[wname] = self.input_widgets[wname].getVal()
+        
 
 def main():
     app = QtGui.QApplication(sys.argv)
