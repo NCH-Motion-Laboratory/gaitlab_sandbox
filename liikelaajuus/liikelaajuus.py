@@ -26,27 +26,33 @@ class EntryApp(QtGui.QMainWindow):
         # make a dict of our input widgets
         # also install some callbacks and convenience methods
         self.input_widgets = {}
-        for w in self.findChildren(QtGui.QWidget):        
+        for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
+            print(wname,'\t\t\t', w.__class__)
             wsave = True
-            if wname[:2] == 'sp' and w.__class__ == QtGui.QSpinBox:
+            if wname[:2] == 'sp':
+                assert(w.__class__ == QtGui.QSpinBox)
                 w.valueChanged.connect(self.set_not_saved)
                 w.setVal = w.setValue
                 # lambdas need default arguments because of late binding
                 w.getVal = lambda w=w: int(w.value())
-            elif wname[:2] == 'ln' and w.__class__ == QtGui.QLineEdit:
+            elif wname[:2] == 'ln':
+                assert(w.__class__ == QtGui.QLineEdit)
                 w.textChanged.connect(self.set_not_saved)
                 w.setVal = w.setText
                 w.getVal = lambda w=w: unicode(w.text()).strip()
-            elif wname[:2] == 'cb' and w.__class__ == QtGui.QComboBox:
+            elif wname[:2] == 'cb':
+                assert(w.__class__ == QtGui.QComboBox)
                 w.currentIndexChanged.connect(self.set_not_saved)
                 w.setVal = lambda str, w=w: w.setCurrentIndex(w.findText(str))
                 w.getVal = lambda w=w: unicode(w.currentText())
-            elif wname[:2] == 'te':
+            elif wname[:3] == 'cmt':
+                assert(w.__class__ == QtGui.QTextEdit)
                 w.textChanged.connect(self.set_not_saved)
                 w.setVal = w.setPlainText
                 w.getVal = lambda w=w: unicode(w.toPlainText()).strip()
             elif wname[:2] == 'xb':
+                assert(w.__class__ == QtGui.QCheckBox)
                 w.stateChanged.connect(self.set_not_saved)
                 w.setVal = w.setCheckState
                 w.getVal = lambda w=w: int(w.checkState())
@@ -79,9 +85,9 @@ class EntryApp(QtGui.QMainWindow):
         self.set_dirs()
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         # TODO: load tmp file if it exists
-        if os.path.isfile(self.tmpfile):
-            print('temp file exists! restoring...')
-            self.load_temp()
+        #if os.path.isfile(self.tmpfile):
+         #   print('temp file exists! restoring...')
+          #  self.load_temp()
         
     def set_dirs(self):
         """ Set dirs according to platform """
@@ -178,25 +184,6 @@ class EntryApp(QtGui.QMainWindow):
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
     
-    def restore_forms_(self):
-        """ Restore data from dict into the input form. """
-        for ln in self.findChildren(QtGui.QLineEdit):
-            name = str(ln.objectName())
-            if name[:2] == 'ln':  # exclude spinboxes line edit objects
-                ln.setText(self.data[name])
-        for sp in self.findChildren(QtGui.QSpinBox):
-            name = str(sp.objectName())
-            sp.setValue(self.data[name])
-        for cb in self.findChildren(QtGui.QComboBox):
-            name = str(cb.objectName())            
-            cb.setCurrentIndex(cb.findText(self.data[name]))        
-        for xb in self.findChildren(QtGui.QCheckBox):
-            name = str(xb.objectName())
-            xb.setCheckState(self.data[name])
-        for te in self.findChildren(QtGui.QTextEdit):
-            name = str(te.objectName())
-            te.setPlainText(self.data[name])
-
     def restore_forms(self):
         for wname in self.input_widgets:
             self.input_widgets[wname].setVal(self.data[wname])
@@ -204,7 +191,6 @@ class EntryApp(QtGui.QMainWindow):
     def read_forms(self):
         for wname in self.input_widgets:
             self.data[wname] = self.input_widgets[wname].getVal()
-        
 
 def main():
     app = QtGui.QApplication(sys.argv)
