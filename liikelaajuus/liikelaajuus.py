@@ -8,7 +8,7 @@ Tested with PyQt 4.8 and Python 2.7.
 
 from __future__ import print_function
 
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui, uic, QtCore
 import sys
 import os
 import pickle
@@ -23,8 +23,29 @@ class EntryApp(QtGui.QMainWindow):
         super(self.__class__, self).__init__()
         # load user interface made with designer
         uic.loadUi('tabbed_design.ui', self)
-        # make a dict of our input widgets
-        # also install some callbacks and convenience methods
+        self.init_widgets()
+        self.data = {}
+        # save empty form (default states for widgets)
+        self.read_forms()
+        self.data_empty = copy.deepcopy(self.data)
+        # whether data was saved into temporary file after editing
+        self.tmp_saved = True
+        # whether data was saved into a patient-specific file
+        self.saved = False
+        # name of temp save file
+        self.set_dirs()
+        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
+        # TODO: load tmp file if it exists
+        #if os.path.isfile(self.tmpfile):
+         #   print('temp file exists! restoring...')
+         #  self.load_temp()
+        # TODO: set locale and options if needed
+        #loc = QtCore.QLocale()
+        #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
+        
+    def init_widgets(self):
+        """ Make a dict of our input widgets and install some callbacks and 
+        convenience methods etc. """
         self.input_widgets = {}
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
@@ -60,34 +81,23 @@ class EntryApp(QtGui.QMainWindow):
                 wsave = False
             if wsave:
                 self.input_widgets[wname] = w
-        self.data = {}
-        # save empty form (default states for widgets)
-        self.read_forms()
-        self.data_empty = copy.deepcopy(self.data)
         # link buttons
         self.btnSave.clicked.connect(self.save)  #TODO: link to save/load dialog
         self.btnLoad.clicked.connect(self.load)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.close)
-        # whether data was saved into temporary file after editing
-        self.tmp_saved = True
-        # whether data was saved into a patient-specific file
-        self.saved = False
-        # TODO: set validators for line edit objects
-        
-        # make a dict of our input widgets, and install some callbacks
-        # also define convenience getval and setval according to widget type
-
         # save into temp file on tab change
         self.maintab.currentChanged.connect(self.save_temp)
-        # name of temp save file
-        self.set_dirs()
-        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
-        # TODO: load tmp file if it exists
-        #if os.path.isfile(self.tmpfile):
-         #   print('temp file exists! restoring...')
-          #  self.load_temp()
+        # set validators for line input objects that take a number
+        dblPosValidator = QtGui.QDoubleValidator()  # positive double
+        dblPosValidator.setDecimals(1)
+        dblPosValidator.setBottom(0)
+        dblPosValidator.setNotation(dblPosValidator.StandardNotation)
+        for w in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
+                  'lnAntropPolviVas','lnAntropNilkkaOik','lnAntropNilkkaVas',
+                  'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
+            self.__dict__[w].setValidator(dblPosValidator)
         
     def set_dirs(self):
         """ Set dirs according to platform """
