@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tabbed form for input of liikelaajuus (movement range) data.
+Tabbed form for input of liikelaajuus data.
 Tested with PyQt 4.8 and Python 2.7.
 
 @author: Jussi (jnu@iki.fi)
@@ -13,7 +13,7 @@ import sys
 import os
 import pickle
 import copy
-import reporter
+import ll_reporter
 import ll_msgs
 
 
@@ -43,7 +43,7 @@ class EntryApp(QtGui.QMainWindow):
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
-        self.message_dialog(ll_msgs.temp_found)            
+        self.page_change()
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -159,7 +159,7 @@ class EntryApp(QtGui.QMainWindow):
             if self.data[key] == self.data_empty[key]:
                 data_[key] = NOT_MEASURED
                 
-        report = reporter.html(data_)
+        report = ll_reporter.html(data_)
         report_html = report.make()
         print(report_html)
         with open('report_koe.html','wb') as f:
