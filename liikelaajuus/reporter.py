@@ -10,13 +10,23 @@ Create liikelaajuus report.
 from pandas import DataFrame
 
 import html_templates
+#import text_templates
 
 
 class text():
+    """ Make a text (utf-8) report. """
+
+    def __init__(self, data):
+        self.data = data
+        
+    de
+
     pass
 
 
 class html():
+    
+    """ Make an html report. """
 
     def __init__(self, data):
         self.data = data

@@ -89,7 +89,7 @@ class EntryApp(QtGui.QMainWindow):
         self.btnQuit.clicked.connect(self.close)
         # save into temp file on tab change
         self.maintab.currentChanged.connect(self.save_temp)
-        # set validators for line input objects that take a number
+        # set validators for line input widgets that take a number
         dblPosValidator = QtGui.QDoubleValidator()  # positive double
         dblPosValidator.setDecimals(1)
         dblPosValidator.setBottom(0)
