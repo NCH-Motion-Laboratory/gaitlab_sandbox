@@ -14,6 +14,7 @@ import os
 import pickle
 import copy
 import reporter
+from collections import namedtuple
 
 
 class EntryApp(QtGui.QMainWindow):
@@ -36,12 +37,13 @@ class EntryApp(QtGui.QMainWindow):
         self.set_dirs()
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         # TODO: load tmp file if it exists
-        #if os.path.isfile(self.tmpfile):
-         #   print('temp file exists! restoring...')
-         #  self.load_temp()
+        if os.path.isfile(self.tmpfile):
+            self.message_dialog(u'Väliaikainen tallennustiedosto löytyi. Ohjelmaa ei ehkä suljettu oikein. Yritetään ladata tiedosto.')            
+            self.load_temp()
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
+
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -91,6 +93,7 @@ class EntryApp(QtGui.QMainWindow):
         self.maintab.currentChanged.connect(self.page_change)
         # set validators for line input widgets that take a number
         dblPosValidator = QtGui.QDoubleValidator()  # positive double
+        # 1 decimals, positive value, no scientific notation
         dblPosValidator.setDecimals(1)
         dblPosValidator.setBottom(0)
         dblPosValidator.setNotation(dblPosValidator.StandardNotation)
@@ -129,7 +132,10 @@ class EntryApp(QtGui.QMainWindow):
         return dlg.buttonRole(dlg.clickedButton())
         
     def message_dialog(self, msg):
-        pass
+        dlg = QtGui.QMessageBox()
+        dlg.setText(msg)
+        dlg.addButton(QtGui.QPushButton(u'Ok'), QtGui.QMessageBox.YesRole)        
+        dlg.exec_()
         
     def closeEvent(self, event):
         """ Closing dialog. """
@@ -208,6 +214,8 @@ class EntryApp(QtGui.QMainWindow):
         
     def rm_temp(self):
         """ TODO: Remove temp file.  """
+        if os.path.isfile(self.tmpfile):
+            os.remove(self.tmpfile)
         
     def clear_forms_dialog(self):
         """ Ask whether to clear forms. """
