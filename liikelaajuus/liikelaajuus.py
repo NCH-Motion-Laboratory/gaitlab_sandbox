@@ -14,7 +14,7 @@ import os
 import pickle
 import copy
 import reporter
-from collections import namedtuple
+import ll_msgs
 
 
 class EntryApp(QtGui.QMainWindow):
@@ -38,12 +38,12 @@ class EntryApp(QtGui.QMainWindow):
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         # TODO: load tmp file if it exists
         if os.path.isfile(self.tmpfile):
-            self.message_dialog(u'Väliaikainen tallennustiedosto löytyi. Ohjelmaa ei ehkä suljettu oikein. Yritetään ladata tiedosto.')            
+            self.message_dialog(ll_msgs.temp_found)            
             self.load_temp()
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
-
+        self.message_dialog(ll_msgs.temp_found)            
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -126,21 +126,22 @@ class EntryApp(QtGui.QMainWindow):
     def confirm_dialog(self, msg):
         dlg = QtGui.QMessageBox()
         dlg.setText(msg)
-        dlg.addButton(QtGui.QPushButton(u'Kyllä'), QtGui.QMessageBox.YesRole)
-        dlg.addButton(QtGui.QPushButton(u'Ei'), QtGui.QMessageBox.NoRole)        
+        dlg.setWindowTitle(ll_msgs.message_title)
+        dlg.addButton(QtGui.QPushButton(ll_msgs.yes_button), QtGui.QMessageBox.YesRole)
+        dlg.addButton(QtGui.QPushButton(ll_msgs.no_button), QtGui.QMessageBox.NoRole)        
         dlg.exec_()
         return dlg.buttonRole(dlg.clickedButton())
         
     def message_dialog(self, msg):
         dlg = QtGui.QMessageBox()
+        dlg.setWindowTitle(ll_msgs.message_title)
         dlg.setText(msg)
-        dlg.addButton(QtGui.QPushButton(u'Ok'), QtGui.QMessageBox.YesRole)        
+        dlg.addButton(QtGui.QPushButton(ll_msgs.ok_button), QtGui.QMessageBox.YesRole)        
         dlg.exec_()
         
     def closeEvent(self, event):
         """ Closing dialog. """
-        quit_msg = u'Haluatko varmasti sulkea ohjelman?'
-        reply = self.confirm_dialog(quit_msg)
+        reply = self.confirm_dialog(ll_msgs.quit_)
         if reply == QtGui.QMessageBox.YesRole:
             self.rm_temp()
             event.accept()
@@ -183,13 +184,13 @@ class EntryApp(QtGui.QMainWindow):
 
     def load(self):
         """ Bring up load dialog and load selected file. """
-        fname = QtGui.QFileDialog.getOpenFileName(self, u'Avaa tiedosto', self.data_root_fldr)
+        fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr)
         if fname:
             self.load_file(fname)
 
     def save(self):
         """ Bring up save dialog and save data. """
-        fname = QtGui.QFileDialog.getSaveFileName(self, u'Tallenna tiedosto', self.data_root_fldr)
+        fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
         if fname:
             self.save_file(fname)
             self.saved = True
@@ -219,8 +220,7 @@ class EntryApp(QtGui.QMainWindow):
         
     def clear_forms_dialog(self):
         """ Ask whether to clear forms. """
-        clear_msg = u'Haluatko varmasti tyhjentää kaikki tiedot?'
-        reply = self.confirm_dialog(clear_msg)
+        reply = self.confirm_dialog(ll_msgs.clear)
         if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
