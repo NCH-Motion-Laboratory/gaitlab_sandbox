@@ -19,10 +19,6 @@ class text():
     def __init__(self, data):
         self.data = data
         
-    de
-
-    pass
-
 
 class html():
     
