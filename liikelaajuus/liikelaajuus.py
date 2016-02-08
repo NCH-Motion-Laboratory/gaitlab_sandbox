@@ -88,7 +88,7 @@ class EntryApp(QtGui.QMainWindow):
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.close)
         # save into temp file on tab change
-        self.maintab.currentChanged.connect(self.save_temp)
+        self.maintab.currentChanged.connect(self.page_change)
         # set validators for line input widgets that take a number
         dblPosValidator = QtGui.QDoubleValidator()  # positive double
         dblPosValidator.setDecimals(1)
@@ -98,6 +98,18 @@ class EntryApp(QtGui.QMainWindow):
                   'lnAntropPolviVas','lnAntropNilkkaOik','lnAntropNilkkaVas',
                   'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
             self.__dict__[w].setValidator(dblPosValidator)
+        """ First widget of each page. This is used to do focus/selectall on the 1st widget
+        on page change. Only for spinbox / lineedit widgets. """
+        self.firstwidget = {}
+        self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
+        self.firstwidget[self.tabAntrop] = self.lnAntropAlaraajaOik
+        self.firstwidget[self.tabLonkka] = self.spFleksioOik
+        self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
+        self.firstwidget[self.tabPolvi] = self.spPolviEkstensioVapOik
+        #self.firstwidget[self.tabJalkat] = self.cbJalkatSubtalarOik
+        self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
+        #self.firstwidget[self.tabRyhti] = self.cbRyhtiVoimaVatsaSuorat
+        self.firstwidget[self.tabTasap] = self.lnTasapOik
         
     def set_dirs(self):
         """ Set dirs according to platform """
@@ -175,6 +187,15 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             self.save_file(fname)
             self.saved = True
+            
+    def page_change(self):
+        """ Method called whenever page (tab) changes """
+        self.save_temp()
+        newpage = self.maintab.currentWidget()
+        # focus / selectAll on 1st widget of new tab
+        if newpage in self.firstwidget:
+            self.firstwidget[newpage].selectAll()
+            self.firstwidget[newpage].setFocus()
         
     def save_temp(self):
         """ Save form input data into temporary backup file. """
