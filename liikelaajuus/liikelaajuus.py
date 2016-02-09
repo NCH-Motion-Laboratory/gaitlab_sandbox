@@ -39,6 +39,8 @@ class EntryApp(QtGui.QMainWindow):
         # name of temp save file
         self.set_dirs()
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
+        # special placeholder text for unmeasured variables
+        self.not_measured_text = 'Ei mitattu'
         # TODO: load tmp file if it exists
         if os.path.isfile(self.tmpfile):
             self.message_dialog(ll_msgs.temp_found)            
@@ -46,6 +48,8 @@ class EntryApp(QtGui.QMainWindow):
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
+        # special text written out for non-measured variables
+
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -61,13 +65,14 @@ class EntryApp(QtGui.QMainWindow):
                 w.setVal = w.setValue
                 # lambdas need default arguments because of late binding
                 w.getVal = lambda w=w: int(w.value())
+                w.notMeasured = w.minimum()
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
                 w.textChanged.connect(self.set_not_saved)
                 w.setVal = w.setText
-                # getter methods convert the data instantly to unicode.
+                # Getter methods convert the data instantly to unicode.
                 # This is to avoid performing conversions later (when saving etc.)
-                # Qt setter functions can take unicode without type conversions.
+                # Qt setter methods can take unicode without type conversions.
                 w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':
                 assert(w.__class__ == QtGui.QComboBox)
@@ -176,14 +181,28 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with io.open(fname, 'r', encoding='utf-8') as f:
-                self.data = json.load(f)
-                self.restore_forms()
+                data_ = json.load(f)
+            # the 'not measured' placeholder text is converted to the appropriate
+            # spinbox value
+            for wname in self.input_widgets:
+                print(wname,data_[wname])
+                if wname[:2] == 'sp' and data_[wname] == self.not_measured_text:
+                    data_[wname] = self.input_widgets[wname].notMeasured
+            self.data = data_
+            self.restore_forms()
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
+        self.read_forms()
+        data_ = copy.deepcopy(self.data)
+        # Spinbox widgets have a special "not measured" value
+        # (minimum of the spinbox) which should be explicitly written out,
+        # to keep the file human-readable
+        for wname in self.input_widgets:
+            if wname[:2] == 'sp' and data_[wname] == self.input_widgets[wname].notMeasured:
+                data_[wname] = self.not_measured_text
         with io.open(fname, 'w', encoding='utf-8') as f:
-            self.read_forms()
-            f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
+            f.write(unicode(json.dumps(data_, ensure_ascii=False)))
 
     def load(self):
         """ Bring up load dialog and load selected file. """
