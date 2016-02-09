@@ -11,7 +11,7 @@ from __future__ import print_function
 from PyQt4 import QtGui, uic, QtCore
 import sys
 import os
-import pickle
+import cPickle
 import copy
 import reporter
 import ll_msgs
@@ -172,14 +172,14 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with open(fname, 'rb') as f:
-                self.data = pickle.load(f)
+                self.data = cPickle.load(f)
                 self.restore_forms()
 
     def save_file(self, fname):
         """ Save data into given file. """
         with open(fname, 'wb') as f:
             self.read_forms()
-            pickle.dump(self.data, f)
+            cPickle.dump(self.data, f)
 
     def load(self):
         """ Bring up load dialog and load selected file. """
