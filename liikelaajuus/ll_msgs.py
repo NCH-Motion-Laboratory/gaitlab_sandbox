@@ -15,5 +15,8 @@ message_title = u'Liikelaajuus'
 yes_button = u'Kyllä'
 no_button = u'Ei'
 ok_button = u'Ok'
+cannot_open = u'Tiedostoa ei voi lukea: '
+cannot_open_tmp = u'Väliaikaistiedostoa ei voi lukea. Poistetaan tiedosto.'
+
 
 

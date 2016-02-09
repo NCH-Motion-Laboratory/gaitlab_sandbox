@@ -43,7 +43,6 @@ class EntryApp(QtGui.QMainWindow):
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
-        self.message_dialog(ll_msgs.temp_found)            
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -186,7 +185,10 @@ class EntryApp(QtGui.QMainWindow):
         """ Bring up load dialog and load selected file. """
         fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr)
         if fname:
-            self.load_file(fname)
+            try:
+                self.load_file(fname)
+            except (SystemError, IndexError):
+                self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
         """ Bring up save dialog and save data. """
@@ -211,7 +213,11 @@ class EntryApp(QtGui.QMainWindow):
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
-        self.load_file(self.tmpfile)
+        try:
+            self.load_file(self.tmpfile)
+        except (SystemError, IndexError):
+            self.message_dialog(ll_msgs.cannot_open_tmp)
+            self.rm_temp()
         
     def rm_temp(self):
         """ TODO: Remove temp file.  """
