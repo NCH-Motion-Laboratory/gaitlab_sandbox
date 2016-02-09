@@ -10,6 +10,7 @@ from __future__ import print_function
 
 from PyQt4 import QtGui, uic, QtCore
 import sys
+import io
 import os
 import cPickle
 import json
@@ -64,6 +65,9 @@ class EntryApp(QtGui.QMainWindow):
                 assert(w.__class__ == QtGui.QLineEdit)
                 w.textChanged.connect(self.set_not_saved)
                 w.setVal = w.setText
+                # getter methods convert the data instantly to unicode.
+                # This is to avoid performing conversions later (when saving etc.)
+                # Qt setter functions can take unicode without type conversions.
                 w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':
                 assert(w.__class__ == QtGui.QComboBox)
@@ -171,15 +175,15 @@ class EntryApp(QtGui.QMainWindow):
     def load_file(self, fname):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
-            with open(fname, 'rb') as f:
+            with io.open(fname, 'r', encoding='utf-8') as f:
                 self.data = json.load(f)
                 self.restore_forms()
 
     def save_file(self, fname):
-        """ Save data into given file. """
-        with open(fname, 'wb') as f:
+        """ Save data into given file in utf-8 encoding. """
+        with io.open(fname, 'w', encoding='utf-8') as f:
             self.read_forms()
-            json.dump(self.data, f)
+            f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
     def load(self):
         """ Bring up load dialog and load selected file. """
