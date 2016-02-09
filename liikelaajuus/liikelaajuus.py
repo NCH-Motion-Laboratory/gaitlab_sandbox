@@ -59,27 +59,27 @@ class EntryApp(QtGui.QMainWindow):
                 w.valueChanged.connect(self.set_not_saved)
                 w.setVal = w.setValue
                 # lambdas need default arguments because of late binding
-                w.getVal = lambda w=w: w.value()
+                w.getVal = lambda w=w: int(w.value())
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
                 w.textChanged.connect(self.set_not_saved)
                 w.setVal = w.setText
-                w.getVal = lambda w=w: w.text()
+                w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':
                 assert(w.__class__ == QtGui.QComboBox)
                 w.currentIndexChanged.connect(self.set_not_saved)
                 w.setVal = lambda str, w=w: w.setCurrentIndex(w.findText(str))
-                w.getVal = lambda w=w: w.currentText()
+                w.getVal = lambda w=w: unicode(w.currentText())
             elif wname[:3] == 'cmt':
                 assert(w.__class__ == QtGui.QTextEdit)
                 w.textChanged.connect(self.set_not_saved)
                 w.setVal = w.setPlainText
-                w.getVal = lambda w=w: w.toPlainText()
+                w.getVal = lambda w=w: unicode(w.toPlainText()).strip()
             elif wname[:2] == 'xb':
                 assert(w.__class__ == QtGui.QCheckBox)
                 w.stateChanged.connect(self.set_not_saved)
                 w.setVal = w.setCheckState
-                w.getVal = lambda w=w: w.checkState()
+                w.getVal = lambda w=w: int(w.checkState())
             else:
                 wsave = False
             if wsave:
@@ -150,8 +150,7 @@ class EntryApp(QtGui.QMainWindow):
             event.ignore()
             
     def make_report(self):
-        """ Make report using the input data.
-        TODO: typecast to unicode/int here """
+        """ Make report using the input data. """
         NOT_MEASURED = 'EI MITATTU'
         self.read_forms()
         data_ = copy.deepcopy(self.data)
