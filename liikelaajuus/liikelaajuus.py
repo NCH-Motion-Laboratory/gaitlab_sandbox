@@ -172,14 +172,14 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with open(fname, 'rb') as f:
-                self.data = cPickle.load(f)
+                self.data = json.load(f)
                 self.restore_forms()
 
     def save_file(self, fname):
         """ Save data into given file. """
         with open(fname, 'wb') as f:
             self.read_forms()
-            cPickle.dump(self.data, f)
+            json.dump(self.data, f)
 
     def load(self):
         """ Bring up load dialog and load selected file. """
