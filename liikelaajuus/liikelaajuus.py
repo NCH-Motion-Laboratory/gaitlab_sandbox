@@ -12,9 +12,11 @@ from PyQt4 import QtGui, uic, QtCore
 import sys
 import os
 import cPickle
+import json
 import copy
 import reporter
 import ll_msgs
+
 
 
 class EntryApp(QtGui.QMainWindow):
@@ -157,7 +159,6 @@ class EntryApp(QtGui.QMainWindow):
         for key in self.data:
             if self.data[key] == self.data_empty[key]:
                 data_[key] = NOT_MEASURED
-                
         report = reporter.html(data_)
         report_html = report.make()
         print(report_html)
@@ -187,7 +188,7 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             try:
                 self.load_file(fname)
-            except (SystemError, IndexError, EOFError, KeyError):
+            except (AttributeError, SystemError, IndexError, ImportError, EOFError, KeyError, cPickle.UnpicklingError):
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
