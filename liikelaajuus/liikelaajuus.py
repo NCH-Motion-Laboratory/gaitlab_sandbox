@@ -187,7 +187,7 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             try:
                 self.load_file(fname)
-            except (SystemError, IndexError):
+            except (SystemError, IndexError, EOFError, KeyError):
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
@@ -215,7 +215,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Load form input data from temporary backup file. """
         try:
             self.load_file(self.tmpfile)
-        except (SystemError, IndexError):
+        except (SystemError, IndexError, EOFError, KeyError):
             self.message_dialog(ll_msgs.cannot_open_tmp)
             self.rm_temp()
         
