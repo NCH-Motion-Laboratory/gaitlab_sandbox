@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tabbed form for input of liikelaajuus data.
+Tabbed form for input of liikelaajuus (movement range) data.
 Tested with PyQt 4.8 and Python 2.7.
 
 @author: Jussi (jnu@iki.fi)
@@ -11,9 +11,9 @@ from __future__ import print_function
 from PyQt4 import QtGui, uic, QtCore
 import sys
 import os
-import pickle
+import cPickle
 import copy
-import ll_reporter
+import reporter
 import ll_msgs
 
 
@@ -43,7 +43,6 @@ class EntryApp(QtGui.QMainWindow):
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
-        self.page_change()
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -159,7 +158,7 @@ class EntryApp(QtGui.QMainWindow):
             if self.data[key] == self.data_empty[key]:
                 data_[key] = NOT_MEASURED
                 
-        report = ll_reporter.html(data_)
+        report = reporter.html(data_)
         report_html = report.make()
         print(report_html)
         with open('report_koe.html','wb') as f:
@@ -173,20 +172,23 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with open(fname, 'rb') as f:
-                self.data = pickle.load(f)
+                self.data = cPickle.load(f)
                 self.restore_forms()
 
     def save_file(self, fname):
         """ Save data into given file. """
         with open(fname, 'wb') as f:
             self.read_forms()
-            pickle.dump(self.data, f)
+            cPickle.dump(self.data, f)
 
     def load(self):
         """ Bring up load dialog and load selected file. """
         fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr)
         if fname:
-            self.load_file(fname)
+            try:
+                self.load_file(fname)
+            except (SystemError, IndexError, EOFError, KeyError):
+                self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
         """ Bring up save dialog and save data. """
@@ -211,7 +213,11 @@ class EntryApp(QtGui.QMainWindow):
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
-        self.load_file(self.tmpfile)
+        try:
+            self.load_file(self.tmpfile)
+        except (SystemError, IndexError, EOFError, KeyError):
+            self.message_dialog(ll_msgs.cannot_open_tmp)
+            self.rm_temp()
         
     def rm_temp(self):
         """ TODO: Remove temp file.  """
