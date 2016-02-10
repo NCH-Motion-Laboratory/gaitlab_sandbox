@@ -55,7 +55,7 @@ class EntryApp(QtGui.QMainWindow):
         else:  # Linux
             self.tmp_fldr = '/tmp'
             self.data_root_fldr = '/'
-        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
+        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.json'
         # exceptions that might be generated when parsing json file
         self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
         
@@ -116,8 +116,8 @@ class EntryApp(QtGui.QMainWindow):
             if wsave:
                 self.input_widgets[wname] = w
         # link buttons
-        self.btnSave.clicked.connect(self.save)
-        self.btnLoad.clicked.connect(self.load)
+        self.btnSave.clicked.connect(self.save_dialog)
+        self.btnLoad.clicked.connect(self.load_dialog)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.close)
@@ -146,9 +146,8 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
         #self.firstwidget[self.tabRyhti] = self.cbRyhtiVoimaVatsaSuorat
         self.firstwidget[self.tabTasap] = self.lnTasapOik
-        #self.statusbar.init()
-        
-        
+        self.total_widgets = len(self.input_widgets)
+        self.statusbar.showMessage(ll_msgs.ready.format(n=self.total_widgets))
      
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
@@ -215,7 +214,7 @@ class EntryApp(QtGui.QMainWindow):
         with io.open(fname, 'w', encoding='utf-8') as f:
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
-    def load(self):
+    def load_dialog(self):
         """ Bring up load dialog and load selected file. """
         fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr)
         if fname:
@@ -224,7 +223,7 @@ class EntryApp(QtGui.QMainWindow):
             except self.json_load_exceptions:
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
-    def save(self):
+    def save_dialog(self):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
         if fname:
@@ -246,6 +245,8 @@ class EntryApp(QtGui.QMainWindow):
     def save_temp(self):
         """ Save form input data into temporary backup file. """
         self.save_file(self.tmpfile)
+        self.statusbar.showMessage(ll_msgs.status_temp_saved+self.tmpfile)
+
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """

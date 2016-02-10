@@ -19,8 +19,9 @@ ok_button = u'Ok'
 cannot_open = u'Tiedostoa ei voi lukea: '
 cannot_save = u'Tiedostoa ei voi tallentaa: '
 cannot_open_tmp = u'Väliaikaistiedostoa ei voi lukea. Tarkista tiedoston sisältö.'
-
+ready = u'Valmis, {n} syötekenttää käytössä.'
 status_cleared = u'Kaikki lomakkeet tyhjennetty.'
 status_loaded = u'Ladattu tiedosto: '
 status_saved = u'Tallennettu tiedosto: '
+status_temp_saved = u'Tallennettu väliaikaistiedosto: '
 
