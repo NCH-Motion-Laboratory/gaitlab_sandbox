@@ -7,7 +7,7 @@ Create liikelaajuus report.
 @author: jussi
 """
 
-from pandas import DataFrame
+#from pandas import DataFrame
 
 import html_templates
 #import text_templates
