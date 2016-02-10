@@ -97,6 +97,9 @@ class EntryApp(QtGui.QMainWindow):
                 w.setCheckState(0)
             else:
                 raise Exception('Unexpected checkbox entry value')
+
+	# TODO: pass w to values_changed and read only the changed
+	# widget value into self.data
             
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
