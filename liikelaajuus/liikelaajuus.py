@@ -34,6 +34,8 @@ class EntryApp(QtGui.QMainWindow):
         self.data_empty = copy.deepcopy(self.data)
         # whether data was saved into temporary file after editing
         self.tmp_saved = True
+        # whether to save on data change
+        self.save_to_tmp = True
         # whether data was saved into a patient-specific file
         self.saved = False
         # load tmp file if it exists
@@ -69,7 +71,6 @@ class EntryApp(QtGui.QMainWindow):
                 return mintext
             else:
                 return val
-
         def spinbox_setval(w, val, mintext):
             if val == mintext:
                 w.setValue(w.minimum())
@@ -82,13 +83,13 @@ class EntryApp(QtGui.QMainWindow):
             wsave = True
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox)
-                w.valueChanged.connect(self.set_not_saved)
+                w.valueChanged.connect(self.values_changed)
                 # lambdas need default arguments because of late binding
                 w.setVal = lambda val, w=w: spinbox_setval(w, val, self.not_measured_text)
                 w.getVal = lambda w=w: spinbox_getval(w, self.not_measured_text)
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
-                w.textChanged.connect(self.set_not_saved)
+                w.textChanged.connect(self.values_changed)
                 w.setVal = w.setText
                 # Getter methods convert the data instantly to unicode.
                 # This is to avoid performing conversions later (when saving etc.)
@@ -96,17 +97,17 @@ class EntryApp(QtGui.QMainWindow):
                 w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':
                 assert(w.__class__ == QtGui.QComboBox)
-                w.currentIndexChanged.connect(self.set_not_saved)
+                w.currentIndexChanged.connect(self.values_changed)
                 w.setVal = lambda str, w=w: w.setCurrentIndex(w.findText(str))
                 w.getVal = lambda w=w: unicode(w.currentText())
             elif wname[:3] == 'cmt':
                 assert(w.__class__ == QtGui.QTextEdit)
-                w.textChanged.connect(self.set_not_saved)
+                w.textChanged.connect(self.values_changed)
                 w.setVal = w.setPlainText
                 w.getVal = lambda w=w: unicode(w.toPlainText()).strip()
             elif wname[:2] == 'xb':
                 assert(w.__class__ == QtGui.QCheckBox)
-                w.stateChanged.connect(self.set_not_saved)
+                w.stateChanged.connect(self.values_changed)
                 w.setVal = w.setCheckState
                 w.getVal = lambda w=w: int(w.checkState())
             else:
@@ -185,8 +186,9 @@ class EntryApp(QtGui.QMainWindow):
             # Unicode object into utf8-encoded string
             f.write(report_html.encode('utf-8'))
         
-    def set_not_saved(self):
-        self.tmp_saved = False
+    def values_changed(self):
+        if self.save_to_tmp:
+            self.save_temp()
         
     def load_file(self, fname):
         """ Load data from given file and restore forms. """
@@ -230,8 +232,7 @@ class EntryApp(QtGui.QMainWindow):
         
     def save_temp(self):
         """ Save form input data into temporary backup file. """
-        if not self.saved:
-            self.save_file(self.tmpfile)
+        self.save_file(self.tmpfile)
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
@@ -242,22 +243,27 @@ class EntryApp(QtGui.QMainWindow):
             self.rm_temp()
         
     def rm_temp(self):
-        """ TODO: Remove temp file.  """
+        """ Remove temp file.  """
         if os.path.isfile(self.tmpfile):
             os.remove(self.tmpfile)
         
     def clear_forms_dialog(self):
-        """ Ask whether to clear forms. """
+        """ Ask whether to clear forms. If yes, set widget inputs to default values. """
         reply = self.confirm_dialog(ll_msgs.clear)
         if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
     
     def restore_forms(self):
+        """ Restore widget input values from self.data """
+        # don't make backup saves while widgets are being restored
+        self.save_to_tmp = False
         for wname in self.input_widgets:
             self.input_widgets[wname].setVal(self.data[wname])
+        self.save_to_tmp = True
             
     def read_forms(self):
+        """ Read self.data from widget inputs """
         for wname in self.input_widgets:
             self.data[wname] = self.input_widgets[wname].getVal()
 
