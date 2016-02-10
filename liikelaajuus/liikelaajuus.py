@@ -136,7 +136,8 @@ class EntryApp(QtGui.QMainWindow):
                   'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
             self.input_widgets[wname].setValidator(dblPosValidator)
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
-        on page change. Only for spinbox / lineedit widgets. """
+        on page change so that data can be entered immediately. Only needed for 
+        spinbox / lineedit widgets. """
         self.firstwidget = {}
         # TODO: check/fix
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
@@ -144,9 +145,7 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabLonkka] = self.spLonkkaFleksioOik
         self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
         self.firstwidget[self.tabPolvi] = self.spPolviEkstensioVapOik
-        self.firstwidget[self.tabJalkat] = self.cbJalkatSubtalarOik
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
-        self.firstwidget[self.tabRyhti] = self.cbRyhtiVoimaVatsaSuorat
         self.firstwidget[self.tabTasap] = self.lnTasapOik
         self.total_widgets = len(self.input_widgets)
         self.statusbar.showMessage(ll_msgs.ready.format(n=self.total_widgets))
