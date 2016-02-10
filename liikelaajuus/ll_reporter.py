@@ -14,11 +14,15 @@ import html_templates
 
 
 class text():
-    """ Make a text (utf-8) report. """
-
+    """ Make a text report. """
     def __init__(self, data):
         self.data = data
         
+    def make(self):
+        li = []
+        for key in sorted(self.data):
+            li.append(key+':'+unicode(self.data[key])+'\n')
+        return u''.join(li)
 
 class html():
     

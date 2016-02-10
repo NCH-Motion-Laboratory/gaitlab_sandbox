@@ -15,7 +15,7 @@ import io
 import os
 import json
 import copy
-import reporter
+import ll_reporter
 import ll_msgs
 
 
@@ -47,7 +47,9 @@ class EntryApp(QtGui.QMainWindow):
         # special text written out for non-measured variables
 
     def set_constants(self):
-        self.not_measured_text = 'Ei mitattu'
+        self.not_measured_text = u'Ei mitattu'
+        self.checkbox_yestext = u'Kyllä'
+        self.checkbox_notext = u'Ei'
         # Set dirs according to platform
         if sys.platform == 'win32':
             self.tmp_fldr = '/Temp'
@@ -72,11 +74,29 @@ class EntryApp(QtGui.QMainWindow):
                 return mintext
             else:
                 return val
+                
         def spinbox_setval(w, val, mintext):
             if val == mintext:
                 w.setValue(w.minimum())
             else:
                 w.setValue(val)
+                
+        def checkbox_getval(w, yestext, notext):
+            val = int(w.checkState())
+            if val == 0:
+                return notext
+            elif val == 2:
+                return yestext
+            else:
+                raise Exception('Unexpected checkbox value')
+                
+        def checkbox_setval(w, val, yestext, notext):
+            if val == yestext:
+                w.setCheckState(2)
+            elif val == notext:
+                w.setCheckState(0)
+            else:
+                raise Exception('Unexpected checkbox entry value')
             
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
@@ -109,8 +129,8 @@ class EntryApp(QtGui.QMainWindow):
             elif wname[:2] == 'xb':
                 assert(w.__class__ == QtGui.QCheckBox)
                 w.stateChanged.connect(self.values_changed)
-                w.setVal = w.setCheckState
-                w.getVal = lambda w=w: int(w.checkState())
+                w.setVal = lambda val, w=w: checkbox_setval(w, val, self.checkbox_yestext, self.checkbox_notext)
+                w.getVal = lambda w=w: checkbox_getval(w, self.checkbox_yestext, self.checkbox_notext)
             else:
                 wsave = False
             if wsave:
@@ -183,19 +203,11 @@ class EntryApp(QtGui.QMainWindow):
             
     def make_report(self):
         """ Make report using the input data. """
-        NOT_MEASURED = 'EI MITATTU'
         self.read_forms()
-        data_ = copy.deepcopy(self.data)
-        # translate special default (unmeasured) values
-        for key in self.data:
-            if self.data[key] == self.data_empty[key]:
-                data_[key] = NOT_MEASURED
-        report = reporter.html(data_)
-        report_html = report.make()
-        print(report_html)
-        with open('report_koe.html','wb') as f:
-            # Unicode object into utf8-encoded string
-            f.write(report_html.encode('utf-8'))
+        report = ll_reporter.text(self.data)
+        report_txt = report.make()
+        with io.open('report_koe.txt','w',encoding='utf-8') as f:
+            f.write(report_txt)
         
     def values_changed(self):
         self.saved_to_file = False
