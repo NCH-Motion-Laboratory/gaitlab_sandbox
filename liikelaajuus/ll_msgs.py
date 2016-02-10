@@ -7,7 +7,8 @@ Created on Mon Feb 08 15:15:03 2016
 
 
 temp_found = u'Väliaikainen tallennustiedosto löytyi. Ohjelmaa ei ehkä suljettu oikein. Yritetään ladata tiedosto.'
-clear = u'Haluatko varmasti tyhjentää kaikki tiedot?'
+clear = u'Haluatko varmasti tyhjentää kaikkien lomakkeiden tiedot?'
+clear_not_saved = u'Tietoja ei ole tallennettu! Haluatko varmasti tyhjentää kaikkien lomakkeiden tiedot?'
 quit_ = u'Haluatko varmasti sulkea ohjelman?'
 quit_not_saved = u'Tietoja ei ole tallennettu! Haluatko varmasti sulkea ohjelman?'
 open_title = u'Avaa tiedosto'
@@ -21,7 +22,7 @@ cannot_save = u'Tiedostoa ei voi tallentaa: '
 cannot_open_tmp = u'Väliaikaistiedostoa ei voi lukea. Tarkista tiedoston sisältö.'
 ready = u'Valmis, {n} syötekenttää käytössä.'
 status_cleared = u'Kaikki lomakkeet tyhjennetty.'
-status_loaded = u'Ladattu tiedosto: '
+status_loaded = u'Ladattu tiedosto: {filename}, {n} arvoa kirjattu.'
 status_saved = u'Tallennettu tiedosto: '
-status_temp_saved = u'Tallennettu väliaikaistiedosto: '
+status_value_change = u'{n} arvoa kirjattu. Väliaikaistiedosto: {tmpfile}'
 

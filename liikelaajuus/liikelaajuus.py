@@ -115,6 +115,8 @@ class EntryApp(QtGui.QMainWindow):
                 wsave = False
             if wsave:
                 self.input_widgets[wname] = w
+                # specified whether input value is 'mandatory' or not
+                w.important = False
         # link buttons
         self.btnSave.clicked.connect(self.save_dialog)
         self.btnLoad.clicked.connect(self.load_dialog)
@@ -148,6 +150,7 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabTasap] = self.lnTasapOik
         self.total_widgets = len(self.input_widgets)
         self.statusbar.showMessage(ll_msgs.ready.format(n=self.total_widgets))
+        # TODO: set 'important' widgets (mandatory values) .important = True
      
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
@@ -206,7 +209,7 @@ class EntryApp(QtGui.QMainWindow):
             with io.open(fname, 'r', encoding='utf-8') as f:
                 self.data = json.load(f)
             self.restore_forms()
-            self.statusbar.showMessage(ll_msgs.status_loaded+fname)
+            self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
@@ -233,6 +236,10 @@ class EntryApp(QtGui.QMainWindow):
                 self.statusbar.showMessage(ll_msgs.status_saved+fname)
             except (IOError):
                 self.message_dialog(ll_msgs.cannot_save+fname)
+                
+    def n_modified(self):
+        """ Count modified values. """
+        return len([x for x in self.data if self.data[x] != self.data_empty[x]])
             
     def page_change(self):
         """ Method called whenever page (tab) changes """
@@ -245,8 +252,7 @@ class EntryApp(QtGui.QMainWindow):
     def save_temp(self):
         """ Save form input data into temporary backup file. """
         self.save_file(self.tmpfile)
-        self.statusbar.showMessage(ll_msgs.status_temp_saved+self.tmpfile)
-
+        self.statusbar.showMessage(ll_msgs.status_value_change.format(n=self.n_modified(), tmpfile=self.tmpfile))
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
@@ -262,7 +268,10 @@ class EntryApp(QtGui.QMainWindow):
         
     def clear_forms_dialog(self):
         """ Ask whether to clear forms. If yes, set widget inputs to default values. """
-        reply = self.confirm_dialog(ll_msgs.clear)
+        if self.saved_to_file:
+            reply = self.confirm_dialog(ll_msgs.clear)
+        else:
+            reply = self.confirm_dialog(ll_msgs.clear_not_saved)
         if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
