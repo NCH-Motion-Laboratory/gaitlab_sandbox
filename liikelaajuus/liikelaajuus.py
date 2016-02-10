@@ -56,6 +56,8 @@ class EntryApp(QtGui.QMainWindow):
             self.tmp_fldr = '/tmp'
             self.data_root_fldr = '/'
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
+        # exceptions that might be generated when parsing json file
+        self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -134,6 +136,7 @@ class EntryApp(QtGui.QMainWindow):
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
         on page change. Only for spinbox / lineedit widgets. """
         self.firstwidget = {}
+        # TODO: check/fix
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
         self.firstwidget[self.tabAntrop] = self.lnAntropAlaraajaOik
         self.firstwidget[self.tabLonkka] = self.spLonkkaFleksioCatchOik
@@ -143,8 +146,12 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
         #self.firstwidget[self.tabRyhti] = self.cbRyhtiVoimaVatsaSuorat
         self.firstwidget[self.tabTasap] = self.lnTasapOik
+        #self.statusbar.init()
+        
+        
      
     def confirm_dialog(self, msg):
+        """ Show yes/no dialog """
         dlg = QtGui.QMessageBox()
         dlg.setText(msg)
         dlg.setWindowTitle(ll_msgs.message_title)
@@ -154,6 +161,7 @@ class EntryApp(QtGui.QMainWindow):
         return dlg.buttonRole(dlg.clickedButton())
         
     def message_dialog(self, msg):
+        """ Show message with an 'OK' button """
         dlg = QtGui.QMessageBox()
         dlg.setWindowTitle(ll_msgs.message_title)
         dlg.setText(msg)
@@ -161,8 +169,11 @@ class EntryApp(QtGui.QMainWindow):
         dlg.exec_()
         
     def closeEvent(self, event):
-        """ Closing dialog. """
-        reply = self.confirm_dialog(ll_msgs.quit_)
+        """ Confirm and close application. """
+        if not self.saved_to_file:
+            reply = self.confirm_dialog(ll_msgs.quit_not_saved)
+        else:
+            reply = self.confirm_dialog(ll_msgs.quit_)
         if reply == QtGui.QMessageBox.YesRole:
             self.rm_temp()
             event.accept()
@@ -196,6 +207,7 @@ class EntryApp(QtGui.QMainWindow):
             with io.open(fname, 'r', encoding='utf-8') as f:
                 self.data = json.load(f)
             self.restore_forms()
+            self.statusbar.showMessage(ll_msgs.status_loaded+fname)
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
@@ -209,17 +221,19 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             try:
                 self.load_file(fname)
-                # TODO: JSON exceptions
-            except (AttributeError, SystemError, IndexError, ImportError, EOFError, KeyError):
+            except self.json_load_exceptions:
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
         if fname:
-            # TODO: JSON exceptions
-            self.save_file(fname)
-            self.saved_to_file = True
+            try:
+                self.save_file(fname)
+                self.saved_to_file = True
+                self.statusbar.showMessage(ll_msgs.status_saved+fname)
+            except (IOError):
+                self.message_dialog(ll_msgs.cannot_save+fname)
             
     def page_change(self):
         """ Method called whenever page (tab) changes """
@@ -237,7 +251,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Load form input data from temporary backup file. """
         try:
             self.load_file(self.tmpfile)
-        except (SystemError, IndexError, EOFError, KeyError):
+        except self.json_load_exceptions:
             self.message_dialog(ll_msgs.cannot_open_tmp)
         
     def rm_temp(self):
@@ -251,6 +265,7 @@ class EntryApp(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
+            self.statusbar.showMessage(ll_msgs.status_cleared)
     
     def restore_forms(self):
         """ Restore widget input values from self.data """
