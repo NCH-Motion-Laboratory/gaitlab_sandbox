@@ -26,6 +26,7 @@ class EntryApp(QtGui.QMainWindow):
         super(self.__class__, self).__init__()
         # load user interface made with designer
         uic.loadUi('tabbed_design.ui', self)
+        self.set_constants()
         self.init_widgets()
         self.data = {}
         # save empty form (default states for widgets)
@@ -35,12 +36,7 @@ class EntryApp(QtGui.QMainWindow):
         self.tmp_saved = True
         # whether data was saved into a patient-specific file
         self.saved = False
-        # name of temp save file
-        self.set_dirs()
-        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
-        # special placeholder text for unmeasured variables
-        self.not_measured_text = 'Ei mitattu'
-        # TODO: load tmp file if it exists
+        # load tmp file if it exists
         if os.path.isfile(self.tmpfile):
             self.message_dialog(ll_msgs.temp_found)            
             self.load_temp()
@@ -49,11 +45,37 @@ class EntryApp(QtGui.QMainWindow):
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
         # special text written out for non-measured variables
 
+    def set_constants(self):
+        self.not_measured_text = 'Ei mitattu'
+        # Set dirs according to platform
+        if sys.platform == 'win32':
+            self.tmp_fldr = '/Temp'
+            self.data_root_fldr = 'C:/'
+        else:  # Linux
+            self.tmp_fldr = '/tmp'
+            self.data_root_fldr = '/'
+        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
         convenience methods etc. """
         self.input_widgets = {}
+
+        """ Spinbox minimum value is used to indicate "not measured".
+        Therefore special getter and setter methods are required. """
+        def spinbox_getval(w, mintext):
+            val = int(w.value())
+            if val == w.minimum():
+                return mintext
+            else:
+                return val
+
+        def spinbox_setval(w, val, mintext):
+            if val == mintext:
+                w.setValue(w.minimum())
+            else:
+                w.setValue(val)
+            
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
             print(wname,'\t\t\t', w.__class__)
@@ -61,10 +83,9 @@ class EntryApp(QtGui.QMainWindow):
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox)
                 w.valueChanged.connect(self.set_not_saved)
-                w.setVal = w.setValue
                 # lambdas need default arguments because of late binding
-                w.getVal = lambda w=w: int(w.value())
-                w.notMeasured = w.minimum()
+                w.setVal = lambda val, w=w: spinbox_setval(w, val, self.not_measured_text)
+                w.getVal = lambda w=w: spinbox_getval(w, self.not_measured_text)
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
                 w.textChanged.connect(self.set_not_saved)
@@ -122,16 +143,7 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
         #self.firstwidget[self.tabRyhti] = self.cbRyhtiVoimaVatsaSuorat
         self.firstwidget[self.tabTasap] = self.lnTasapOik
-        
-    def set_dirs(self):
-        """ Set dirs according to platform """
-        if sys.platform == 'win32':
-            self.tmp_fldr = '/Temp'
-            self.data_root_fldr = 'C:/'
-        else:  # Linux
-            self.tmp_fldr = '/tmp'
-            self.data_root_fldr = '/'
-        
+     
     def confirm_dialog(self, msg):
         dlg = QtGui.QMessageBox()
         dlg.setText(msg)
@@ -180,28 +192,14 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with io.open(fname, 'r', encoding='utf-8') as f:
-                data_ = json.load(f)
-            # the 'not measured' placeholder text is converted to the appropriate
-            # spinbox value
-            for wname in self.input_widgets:
-                print(wname,data_[wname])
-                if wname[:2] == 'sp' and data_[wname] == self.not_measured_text:
-                    data_[wname] = self.input_widgets[wname].notMeasured
-            self.data = data_
+                self.data = json.load(f)
             self.restore_forms()
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
         self.read_forms()
-        data_ = copy.deepcopy(self.data)
-        # Spinbox widgets have a special "not measured" value
-        # (minimum of the spinbox) which should be explicitly written out,
-        # to keep the file human-readable
-        for wname in self.input_widgets:
-            if wname[:2] == 'sp' and data_[wname] == self.input_widgets[wname].notMeasured:
-                data_[wname] = self.not_measured_text
         with io.open(fname, 'w', encoding='utf-8') as f:
-            f.write(unicode(json.dumps(data_, ensure_ascii=False)))
+            f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
     def load(self):
         """ Bring up load dialog and load selected file. """
