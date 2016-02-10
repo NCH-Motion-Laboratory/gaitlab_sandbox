@@ -3,6 +3,7 @@
 Tabbed form for input of liikelaajuus (movement range) data.
 Tested with PyQt 4.8 and Python 2.7.
 
+
 @author: Jussi (jnu@iki.fi)
 """
 
@@ -32,12 +33,10 @@ class EntryApp(QtGui.QMainWindow):
         # save empty form (default states for widgets)
         self.read_forms()
         self.data_empty = copy.deepcopy(self.data)
-        # whether data was saved into temporary file after editing
-        self.tmp_saved = True
-        # whether to save on data change
+        # whether to save to temp file whenever input widget data changes
         self.save_to_tmp = True
         # whether data was saved into a patient-specific file
-        self.saved = False
+        self.saved_to_file = False
         # load tmp file if it exists
         if os.path.isfile(self.tmpfile):
             self.message_dialog(ll_msgs.temp_found)            
@@ -79,7 +78,7 @@ class EntryApp(QtGui.QMainWindow):
             
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
-            print(wname,'\t\t\t', w.__class__)
+            #print(wname,'\t\t\t', w.__class__)
             wsave = True
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox)
@@ -115,7 +114,7 @@ class EntryApp(QtGui.QMainWindow):
             if wsave:
                 self.input_widgets[wname] = w
         # link buttons
-        self.btnSave.clicked.connect(self.save)  #TODO: link to save/load dialog
+        self.btnSave.clicked.connect(self.save)
         self.btnLoad.clicked.connect(self.load)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
@@ -187,6 +186,7 @@ class EntryApp(QtGui.QMainWindow):
             f.write(report_html.encode('utf-8'))
         
     def values_changed(self):
+        self.saved_to_file = False
         if self.save_to_tmp:
             self.save_temp()
         
@@ -219,11 +219,10 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             # TODO: JSON exceptions
             self.save_file(fname)
-            self.saved = True
+            self.saved_to_file = True
             
     def page_change(self):
         """ Method called whenever page (tab) changes """
-        self.save_temp()
         newpage = self.maintab.currentWidget()
         # focus / selectAll on 1st widget of new tab
         if newpage in self.firstwidget:
@@ -240,7 +239,6 @@ class EntryApp(QtGui.QMainWindow):
             self.load_file(self.tmpfile)
         except (SystemError, IndexError, EOFError, KeyError):
             self.message_dialog(ll_msgs.cannot_open_tmp)
-            self.rm_temp()
         
     def rm_temp(self):
         """ Remove temp file.  """
