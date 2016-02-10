@@ -3,6 +3,7 @@
 Tabbed form for input of liikelaajuus (movement range) data.
 Tested with PyQt 4.8 and Python 2.7.
 
+
 @author: Jussi (jnu@iki.fi)
 """
 
@@ -12,7 +13,6 @@ from PyQt4 import QtGui, uic, QtCore
 import sys
 import io
 import os
-import cPickle
 import json
 import copy
 import reporter
@@ -27,61 +27,88 @@ class EntryApp(QtGui.QMainWindow):
         super(self.__class__, self).__init__()
         # load user interface made with designer
         uic.loadUi('tabbed_design.ui', self)
+        self.set_constants()
         self.init_widgets()
         self.data = {}
         # save empty form (default states for widgets)
         self.read_forms()
         self.data_empty = copy.deepcopy(self.data)
-        # whether data was saved into temporary file after editing
-        self.tmp_saved = True
+        # whether to save to temp file whenever input widget data changes
+        self.save_to_tmp = True
         # whether data was saved into a patient-specific file
-        self.saved = False
-        # name of temp save file
-        self.set_dirs()
-        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
-        # TODO: load tmp file if it exists
+        self.saved_to_file = False
+        # load tmp file if it exists
         if os.path.isfile(self.tmpfile):
             self.message_dialog(ll_msgs.temp_found)            
             self.load_temp()
         # TODO: set locale and options if needed
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
+        # special text written out for non-measured variables
+
+    def set_constants(self):
+        self.not_measured_text = 'Ei mitattu'
+        # Set dirs according to platform
+        if sys.platform == 'win32':
+            self.tmp_fldr = '/Temp'
+            self.data_root_fldr = 'C:/'
+        else:  # Linux
+            self.tmp_fldr = '/tmp'
+            self.data_root_fldr = '/'
+        self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.p'
+        # exceptions that might be generated when parsing json file
+        self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
         convenience methods etc. """
         self.input_widgets = {}
+
+        """ Spinbox minimum value is used to indicate "not measured".
+        Therefore special getter and setter methods are required. """
+        def spinbox_getval(w, mintext):
+            val = int(w.value())
+            if val == w.minimum():
+                return mintext
+            else:
+                return val
+        def spinbox_setval(w, val, mintext):
+            if val == mintext:
+                w.setValue(w.minimum())
+            else:
+                w.setValue(val)
+            
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
-            print(wname,'\t\t\t', w.__class__)
+            #print(wname,'\t\t\t', w.__class__)
             wsave = True
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox)
-                w.valueChanged.connect(self.set_not_saved)
-                w.setVal = w.setValue
+                w.valueChanged.connect(self.values_changed)
                 # lambdas need default arguments because of late binding
-                w.getVal = lambda w=w: int(w.value())
+                w.setVal = lambda val, w=w: spinbox_setval(w, val, self.not_measured_text)
+                w.getVal = lambda w=w: spinbox_getval(w, self.not_measured_text)
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
-                w.textChanged.connect(self.set_not_saved)
+                w.textChanged.connect(self.values_changed)
                 w.setVal = w.setText
-                # getter methods convert the data instantly to unicode.
+                # Getter methods convert the data instantly to unicode.
                 # This is to avoid performing conversions later (when saving etc.)
-                # Qt setter functions can take unicode without type conversions.
+                # Qt setter methods can take unicode without type conversions.
                 w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':
                 assert(w.__class__ == QtGui.QComboBox)
-                w.currentIndexChanged.connect(self.set_not_saved)
+                w.currentIndexChanged.connect(self.values_changed)
                 w.setVal = lambda str, w=w: w.setCurrentIndex(w.findText(str))
                 w.getVal = lambda w=w: unicode(w.currentText())
             elif wname[:3] == 'cmt':
                 assert(w.__class__ == QtGui.QTextEdit)
-                w.textChanged.connect(self.set_not_saved)
+                w.textChanged.connect(self.values_changed)
                 w.setVal = w.setPlainText
                 w.getVal = lambda w=w: unicode(w.toPlainText()).strip()
             elif wname[:2] == 'xb':
                 assert(w.__class__ == QtGui.QCheckBox)
-                w.stateChanged.connect(self.set_not_saved)
+                w.stateChanged.connect(self.values_changed)
                 w.setVal = w.setCheckState
                 w.getVal = lambda w=w: int(w.checkState())
             else:
@@ -89,7 +116,7 @@ class EntryApp(QtGui.QMainWindow):
             if wsave:
                 self.input_widgets[wname] = w
         # link buttons
-        self.btnSave.clicked.connect(self.save)  #TODO: link to save/load dialog
+        self.btnSave.clicked.connect(self.save)
         self.btnLoad.clicked.connect(self.load)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
@@ -102,13 +129,14 @@ class EntryApp(QtGui.QMainWindow):
         dblPosValidator.setDecimals(1)
         dblPosValidator.setBottom(0)
         dblPosValidator.setNotation(dblPosValidator.StandardNotation)
-        for w in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
+        for wname in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
                   'lnAntropPolviVas','lnAntropNilkkaOik','lnAntropNilkkaVas',
                   'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
-            self.__dict__[w].setValidator(dblPosValidator)
+            self.input_widgets[wname].setValidator(dblPosValidator)
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
         on page change. Only for spinbox / lineedit widgets. """
         self.firstwidget = {}
+        # TODO: check/fix
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
         self.firstwidget[self.tabAntrop] = self.lnAntropAlaraajaOik
         self.firstwidget[self.tabLonkka] = self.spLonkkaFleksioCatchOik
@@ -118,17 +146,12 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
         #self.firstwidget[self.tabRyhti] = self.cbRyhtiVoimaVatsaSuorat
         self.firstwidget[self.tabTasap] = self.lnTasapOik
+        #self.statusbar.init()
         
-    def set_dirs(self):
-        """ Set dirs according to platform """
-        if sys.platform == 'win32':
-            self.tmp_fldr = '/Temp'
-            self.data_root_fldr = 'C:/'
-        else:  # Linux
-            self.tmp_fldr = '/tmp'
-            self.data_root_fldr = '/'
         
+     
     def confirm_dialog(self, msg):
+        """ Show yes/no dialog """
         dlg = QtGui.QMessageBox()
         dlg.setText(msg)
         dlg.setWindowTitle(ll_msgs.message_title)
@@ -138,6 +161,7 @@ class EntryApp(QtGui.QMainWindow):
         return dlg.buttonRole(dlg.clickedButton())
         
     def message_dialog(self, msg):
+        """ Show message with an 'OK' button """
         dlg = QtGui.QMessageBox()
         dlg.setWindowTitle(ll_msgs.message_title)
         dlg.setText(msg)
@@ -145,8 +169,11 @@ class EntryApp(QtGui.QMainWindow):
         dlg.exec_()
         
     def closeEvent(self, event):
-        """ Closing dialog. """
-        reply = self.confirm_dialog(ll_msgs.quit_)
+        """ Confirm and close application. """
+        if not self.saved_to_file:
+            reply = self.confirm_dialog(ll_msgs.quit_not_saved)
+        else:
+            reply = self.confirm_dialog(ll_msgs.quit_)
         if reply == QtGui.QMessageBox.YesRole:
             self.rm_temp()
             event.accept()
@@ -169,20 +196,23 @@ class EntryApp(QtGui.QMainWindow):
             # Unicode object into utf8-encoded string
             f.write(report_html.encode('utf-8'))
         
-    def set_not_saved(self):
-        self.tmp_saved = False
+    def values_changed(self):
+        self.saved_to_file = False
+        if self.save_to_tmp:
+            self.save_temp()
         
     def load_file(self, fname):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with io.open(fname, 'r', encoding='utf-8') as f:
                 self.data = json.load(f)
-                self.restore_forms()
+            self.restore_forms()
+            self.statusbar.showMessage(ll_msgs.status_loaded+fname)
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
+        self.read_forms()
         with io.open(fname, 'w', encoding='utf-8') as f:
-            self.read_forms()
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
     def load(self):
@@ -191,19 +221,22 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             try:
                 self.load_file(fname)
-            except (AttributeError, SystemError, IndexError, ImportError, EOFError, KeyError, cPickle.UnpicklingError):
+            except self.json_load_exceptions:
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
         if fname:
-            self.save_file(fname)
-            self.saved = True
+            try:
+                self.save_file(fname)
+                self.saved_to_file = True
+                self.statusbar.showMessage(ll_msgs.status_saved+fname)
+            except (IOError):
+                self.message_dialog(ll_msgs.cannot_save+fname)
             
     def page_change(self):
         """ Method called whenever page (tab) changes """
-        self.save_temp()
         newpage = self.maintab.currentWidget()
         # focus / selectAll on 1st widget of new tab
         if newpage in self.firstwidget:
@@ -212,34 +245,38 @@ class EntryApp(QtGui.QMainWindow):
         
     def save_temp(self):
         """ Save form input data into temporary backup file. """
-        if not self.saved:
-            self.save_file(self.tmpfile)
+        self.save_file(self.tmpfile)
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
         try:
             self.load_file(self.tmpfile)
-        except (SystemError, IndexError, EOFError, KeyError):
+        except self.json_load_exceptions:
             self.message_dialog(ll_msgs.cannot_open_tmp)
-            self.rm_temp()
         
     def rm_temp(self):
-        """ TODO: Remove temp file.  """
+        """ Remove temp file.  """
         if os.path.isfile(self.tmpfile):
             os.remove(self.tmpfile)
         
     def clear_forms_dialog(self):
-        """ Ask whether to clear forms. """
+        """ Ask whether to clear forms. If yes, set widget inputs to default values. """
         reply = self.confirm_dialog(ll_msgs.clear)
         if reply == QtGui.QMessageBox.YesRole:
             self.data = copy.deepcopy(self.data_empty)
             self.restore_forms()
+            self.statusbar.showMessage(ll_msgs.status_cleared)
     
     def restore_forms(self):
+        """ Restore widget input values from self.data """
+        # don't make backup saves while widgets are being restored
+        self.save_to_tmp = False
         for wname in self.input_widgets:
             self.input_widgets[wname].setVal(self.data[wname])
+        self.save_to_tmp = True
             
     def read_forms(self):
+        """ Read self.data from widget inputs """
         for wname in self.input_widgets:
             self.data[wname] = self.input_widgets[wname].getVal()
 
