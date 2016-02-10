@@ -93,7 +93,7 @@ class EntryApp(QtGui.QMainWindow):
                 w.textChanged.connect(self.values_changed)
                 w.setVal = w.setText
                 # Getter methods convert the data instantly to unicode.
-                # This is to avoid performing conversions later (when saving etc.)
+                # This is to avoid performing conversions on reporting, saving etc.
                 # Qt setter methods can take unicode without type conversions.
                 w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':

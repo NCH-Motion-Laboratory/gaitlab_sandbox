@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1194</width>
-    <height>988</height>
+    <height>1011</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -4936,7 +4936,7 @@
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="4" column="9">
-           <widget class="QComboBox" name="cbPolviVoimaEkstensioVapOik_3">
+           <widget class="QComboBox" name="cbPolviEkstensioVapSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -5490,7 +5490,7 @@
            </widget>
           </item>
           <item row="4" column="6">
-           <widget class="QComboBox" name="cbPolviVoimaEkstensioVapOik">
+           <widget class="QComboBox" name="cbPolviEkstensioVapVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -5586,7 +5586,7 @@
            </widget>
           </item>
           <item row="4" column="7">
-           <widget class="QComboBox" name="cbPolviVoimaEkstensioVapVas">
+           <widget class="QComboBox" name="cbPolviEkstensioVapVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -5695,7 +5695,7 @@
            </spacer>
           </item>
           <item row="4" column="8">
-           <widget class="QComboBox" name="cbPolviVoimaEkstensioVapOik_2">
+           <widget class="QComboBox" name="cbPolviEkstensioVapSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -5798,7 +5798,7 @@
            </widget>
           </item>
           <item row="9" column="4">
-           <widget class="QComboBox" name="cbPolviVoimaFleksioVatsamakuuOik_3">
+           <widget class="QComboBox" name="cbPolviHamstringModAOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -5909,7 +5909,7 @@
            </widget>
           </item>
           <item row="9" column="5">
-           <widget class="QComboBox" name="cbPolviVoimaFleksioVatsamakuuOik_4">
+           <widget class="QComboBox" name="cbPolviHamstringModAVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6094,7 +6094,7 @@
            </widget>
           </item>
           <item row="15" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaTibialiasAnteriorOik">
+           <widget class="QComboBox" name="cbNilkkaTibialiasAnteriorVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6190,7 +6190,7 @@
            </widget>
           </item>
           <item row="15" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaTibialisAnteriorVas">
+           <widget class="QComboBox" name="cbNilkkaTibialisAnteriorVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6286,7 +6286,7 @@
            </widget>
           </item>
           <item row="10" column="2">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0Oik">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0PROMOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6505,7 +6505,7 @@
            </widget>
           </item>
           <item row="7" column="3">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90Vas">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90PROMVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6573,7 +6573,7 @@
            </widget>
           </item>
           <item row="7" column="2">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90Oik">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90PROMOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6607,7 +6607,7 @@
            </widget>
           </item>
           <item row="18" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaExtHallucisLongusOik">
+           <widget class="QComboBox" name="cbNilkkaExtHallucisLongusVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6703,7 +6703,7 @@
            </widget>
           </item>
           <item row="19" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaFlexHallucisLongusOik">
+           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6799,7 +6799,7 @@
            </widget>
           </item>
           <item row="17" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaPeroneusOik">
+           <widget class="QComboBox" name="cbNilkkaPeroneusVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6895,7 +6895,7 @@
            </widget>
           </item>
           <item row="16" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaTibialisPosteriorVas">
+           <widget class="QComboBox" name="cbNilkkaTibialisPosteriorVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6991,7 +6991,7 @@
            </widget>
           </item>
           <item row="10" column="3">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0Vas">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0PROMVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7025,7 +7025,7 @@
            </widget>
           </item>
           <item row="16" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaTibialisPosteriorOik">
+           <widget class="QComboBox" name="cbNilkkaTibialisPosteriorVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7121,7 +7121,7 @@
            </widget>
           </item>
           <item row="17" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaPeroneusVas">
+           <widget class="QComboBox" name="cbNilkkaPeroneusVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7217,7 +7217,7 @@
            </widget>
           </item>
           <item row="18" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaExtHallucisLongusVas">
+           <widget class="QComboBox" name="cbNilkkaExtHallucisLongusVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7313,7 +7313,7 @@
            </widget>
           </item>
           <item row="19" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaFlexHallucisLongusVas">
+           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7517,7 +7517,7 @@
            </widget>
           </item>
           <item row="4" column="5">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_4">
+           <widget class="QComboBox" name="cbNilkkaSoleusModAOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7676,7 +7676,7 @@
            </widget>
           </item>
           <item row="4" column="6">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAVas_2">
+           <widget class="QComboBox" name="cbNilkkaSoleusModAVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7760,7 +7760,7 @@
            </widget>
           </item>
           <item row="9" column="5">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_5">
+           <widget class="QComboBox" name="cbNilkkaGastroModAOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7855,7 +7855,7 @@
            <widget class="QLineEdit" name="lnNilkkaConfusionVas"/>
           </item>
           <item row="15" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_9">
+           <widget class="QComboBox" name="cbNilkkaTibialisAnteriorSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7891,7 +7891,7 @@
            </widget>
           </item>
           <item row="15" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_10">
+           <widget class="QComboBox" name="cbNilkkaTibalisAnteriorSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7927,7 +7927,7 @@
            </widget>
           </item>
           <item row="16" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_11">
+           <widget class="QComboBox" name="cbNilkkaTibialisPosteriorSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7963,7 +7963,7 @@
            </widget>
           </item>
           <item row="16" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_12">
+           <widget class="QComboBox" name="cbNilkkaTibialisPosteriorSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7999,7 +7999,7 @@
            </widget>
           </item>
           <item row="17" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_13">
+           <widget class="QComboBox" name="cbNilkkaPeroneusSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8035,7 +8035,7 @@
            </widget>
           </item>
           <item row="17" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_14">
+           <widget class="QComboBox" name="cbNilkkaPeroneusSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8071,7 +8071,7 @@
            </widget>
           </item>
           <item row="18" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_15">
+           <widget class="QComboBox" name="cbNilkkaExtHallucisLongusSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8107,7 +8107,7 @@
            </widget>
           </item>
           <item row="18" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_16">
+           <widget class="QComboBox" name="cbNilkkaExtHallucisLongusSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8143,7 +8143,7 @@
            </widget>
           </item>
           <item row="19" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_17">
+           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusSelVas_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8179,7 +8179,7 @@
            </widget>
           </item>
           <item row="19" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_18">
+           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8247,7 +8247,7 @@
            </widget>
           </item>
           <item row="8" column="3">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90Vas_2">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90AROMVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8281,7 +8281,7 @@
            </widget>
           </item>
           <item row="8" column="2">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90Oik_2">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90AROMOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8315,7 +8315,7 @@
            </widget>
           </item>
           <item row="11" column="3">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0Vas_2">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0AROMVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8361,7 +8361,7 @@
            </widget>
           </item>
           <item row="11" column="2">
-           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0Oik_2">
+           <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0AROMOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8407,7 +8407,7 @@
            </widget>
           </item>
           <item row="4" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaPlantaarifleksioOik_2">
+           <widget class="QComboBox" name="cbNilkkaSoleusVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8503,7 +8503,7 @@
            </widget>
           </item>
           <item row="4" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaPlantaarifleksioVas_2">
+           <widget class="QComboBox" name="cbNilkkaSoleusVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8599,7 +8599,7 @@
            </widget>
           </item>
           <item row="4" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_19">
+           <widget class="QComboBox" name="cbNilkkaSoleusSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8635,7 +8635,7 @@
            </widget>
           </item>
           <item row="4" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_20">
+           <widget class="QComboBox" name="cbNilkkaSoleusSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8671,7 +8671,7 @@
            </widget>
           </item>
           <item row="9" column="8">
-           <widget class="QComboBox" name="cbNilkkaVoimaPlantaarifleksioOik">
+           <widget class="QComboBox" name="cbNilkkaGastroVoimaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8767,7 +8767,7 @@
            </widget>
           </item>
           <item row="9" column="9">
-           <widget class="QComboBox" name="cbNilkkaVoimaPlantaarifleksioVas">
+           <widget class="QComboBox" name="cbNilkkaGastroVoimaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8863,7 +8863,7 @@
            </widget>
           </item>
           <item row="9" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_8">
+           <widget class="QComboBox" name="cbNilkkaGastroSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -8899,7 +8899,7 @@
            </widget>
           </item>
           <item row="9" column="11">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAOik_7">
+           <widget class="QComboBox" name="cbNilkkaGastroSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -9766,10 +9766,10 @@
            </widget>
           </item>
           <item row="22" column="2">
-           <widget class="QLineEdit" name="lnColemanOik"/>
+           <widget class="QLineEdit" name="lnJalkatColemanOik"/>
           </item>
           <item row="22" column="3">
-           <widget class="QLineEdit" name="lnColemanVas"/>
+           <widget class="QLineEdit" name="lnJalkatColemanVas"/>
           </item>
           <item row="4" column="0">
            <spacer name="horizontalSpacer_68">
@@ -9854,7 +9854,7 @@
            </widget>
           </item>
           <item row="15" column="3">
-           <widget class="QComboBox" name="cbJalkatVaivaisenluuOik_2">
+           <widget class="QComboBox" name="cbJalkatVaivaisenluuVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10462,13 +10462,13 @@
            </widget>
           </item>
           <item row="16" column="2">
-           <widget class="QLineEdit" name="lineEdit"/>
+           <widget class="QLineEdit" name="lnKovettumatOik"/>
           </item>
           <item row="16" column="3">
-           <widget class="QLineEdit" name="lineEdit_2"/>
+           <widget class="QLineEdit" name="lnKovettumatVas"/>
           </item>
           <item row="5" column="2">
-           <widget class="QComboBox" name="cbJalkatEtuosanAsento1Oik_2">
+           <widget class="QComboBox" name="cbJalkatTakaosanAsentoOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10524,7 +10524,7 @@
            </widget>
           </item>
           <item row="5" column="3">
-           <widget class="QComboBox" name="cbJalkatEtuosanAsento1Vas_2">
+           <widget class="QComboBox" name="cbJalkatTakaosanAsentoVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10726,7 +10726,7 @@
            </widget>
           </item>
           <item row="7" column="2">
-           <widget class="QSpinBox" name="spVirheasJalkaEtuTakaOik">
+           <widget class="QSpinBox" name="spVirheasJalkateraEtuTakaOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10943,7 +10943,7 @@
            </widget>
           </item>
           <item row="7" column="3">
-           <widget class="QSpinBox" name="spVirheasJalkaEtuTakaVas">
+           <widget class="QSpinBox" name="spVirheasJalkateraEtuTakaVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -12072,7 +12072,7 @@
      <x>0</x>
      <y>0</y>
      <width>1194</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>
@@ -12181,71 +12181,71 @@
   <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
   <tabstop>spPolviHamstringCatchOik</tabstop>
   <tabstop>spPolviHamstringCatchVas</tabstop>
-  <tabstop>cbPolviVoimaFleksioVatsamakuuOik_3</tabstop>
-  <tabstop>cbPolviVoimaFleksioVatsamakuuOik_4</tabstop>
+  <tabstop>cbPolviHamstringModAOik</tabstop>
+  <tabstop>cbPolviHamstringModAVas</tabstop>
   <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
   <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
   <tabstop>spPolviPopliteaVastakkLonkka90Oik</tabstop>
   <tabstop>spPolviPopliteaVastakkLonkka90Vas</tabstop>
-  <tabstop>cbPolviVoimaEkstensioVapOik</tabstop>
-  <tabstop>cbPolviVoimaEkstensioVapVas</tabstop>
-  <tabstop>cbPolviVoimaEkstensioVapOik_2</tabstop>
-  <tabstop>cbPolviVoimaEkstensioVapOik_3</tabstop>
+  <tabstop>cbPolviEkstensioVapVoimaOik</tabstop>
+  <tabstop>cbPolviEkstensioVapVoimaVas</tabstop>
+  <tabstop>cbPolviEkstensioVapSelOik</tabstop>
+  <tabstop>cbPolviEkstensioVapSelVas</tabstop>
   <tabstop>cmtPolvi</tabstop>
   <tabstop>spNilkkaSoleusCatchOik</tabstop>
   <tabstop>spNilkkaSoleusCatchVas</tabstop>
   <tabstop>xbNilkkaSoleusKlonus</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_4</tabstop>
-  <tabstop>cbNilkkaSoleusModAVas_2</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi90Oik</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi90Vas</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi90Oik_2</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi90Vas_2</tabstop>
+  <tabstop>cbNilkkaSoleusModAOik</tabstop>
+  <tabstop>cbNilkkaSoleusModAVas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90PROMOik</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90PROMVas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90AROMOik</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi90AROMVas</tabstop>
   <tabstop>spNilkkaGastroCatchOik</tabstop>
   <tabstop>spNilkkaGastroCatchVas</tabstop>
   <tabstop>xbNilkkaGastroClonus</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_5</tabstop>
+  <tabstop>cbNilkkaGastroModAOik</tabstop>
   <tabstop>cbNilkkaSoleusModAVas_3</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi0Oik</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi0Vas</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi0Oik_2</tabstop>
-  <tabstop>spNilkkaDorsifleksioPolvi0Vas_2</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0PROMOik</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0PROMVas</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0AROMOik</tabstop>
+  <tabstop>spNilkkaDorsifleksioPolvi0AROMVas</tabstop>
   <tabstop>spNilkkaPlantaarifleksioOik</tabstop>
   <tabstop>spNilkkaPlantaarifleksioVas</tabstop>
   <tabstop>lnNilkkaConfusionOik</tabstop>
   <tabstop>lnNilkkaConfusionVas</tabstop>
-  <tabstop>cbNilkkaVoimaPlantaarifleksioOik_2</tabstop>
-  <tabstop>cbNilkkaVoimaPlantaarifleksioVas_2</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_19</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_20</tabstop>
-  <tabstop>cbNilkkaVoimaPlantaarifleksioOik</tabstop>
-  <tabstop>cbNilkkaVoimaPlantaarifleksioVas</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_8</tabstop>
+  <tabstop>cbNilkkaSoleusVoimaOik</tabstop>
+  <tabstop>cbNilkkaSoleusVoimaVas</tabstop>
+  <tabstop>cbNilkkaSoleusSelOik</tabstop>
+  <tabstop>cbNilkkaSoleusSelVas</tabstop>
+  <tabstop>cbNilkkaGastroVoimaOik</tabstop>
+  <tabstop>cbNilkkaGastroVoimaVas</tabstop>
+  <tabstop>cbNilkkaGastroSelOik</tabstop>
   <tabstop>btnSave</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_7</tabstop>
-  <tabstop>cbNilkkaVoimaTibialiasAnteriorOik</tabstop>
-  <tabstop>cbNilkkaVoimaTibialisAnteriorVas</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_10</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_9</tabstop>
-  <tabstop>cbNilkkaVoimaTibialisPosteriorOik</tabstop>
-  <tabstop>cbNilkkaVoimaTibialisPosteriorVas</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_12</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_11</tabstop>
-  <tabstop>cbNilkkaVoimaPeroneusOik</tabstop>
-  <tabstop>cbNilkkaVoimaPeroneusVas</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_14</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_13</tabstop>
-  <tabstop>cbNilkkaVoimaExtHallucisLongusOik</tabstop>
-  <tabstop>cbNilkkaVoimaExtHallucisLongusVas</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_16</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_15</tabstop>
-  <tabstop>cbNilkkaVoimaFlexHallucisLongusOik</tabstop>
-  <tabstop>cbNilkkaVoimaFlexHallucisLongusVas</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_18</tabstop>
-  <tabstop>cbNilkkaSoleusModAOik_17</tabstop>
+  <tabstop>cbNilkkaGastroSelVas</tabstop>
+  <tabstop>cbNilkkaTibialiasAnteriorVoimaOik</tabstop>
+  <tabstop>cbNilkkaTibialisAnteriorVoimaVas</tabstop>
+  <tabstop>cbNilkkaTibalisAnteriorSelOik</tabstop>
+  <tabstop>cbNilkkaTibialisAnteriorSelVas</tabstop>
+  <tabstop>cbNilkkaTibialisPosteriorVoimaOik</tabstop>
+  <tabstop>cbNilkkaTibialisPosteriorVoimaVas</tabstop>
+  <tabstop>cbNilkkaTibialisPosteriorSelOik</tabstop>
+  <tabstop>cbNilkkaTibialisPosteriorSelVas</tabstop>
+  <tabstop>cbNilkkaPeroneusVoimaOik</tabstop>
+  <tabstop>cbNilkkaPeroneusVoimaVas</tabstop>
+  <tabstop>cbNilkkaPeroneusSelOik</tabstop>
+  <tabstop>cbNilkkaPeroneusSelVas</tabstop>
+  <tabstop>cbNilkkaExtHallucisLongusVoimaOik</tabstop>
+  <tabstop>cbNilkkaExtHallucisLongusVoimaVas</tabstop>
+  <tabstop>cbNilkkaExtHallucisLongusSelOik</tabstop>
+  <tabstop>cbNilkkaExtHallucisLongusSelVas</tabstop>
+  <tabstop>cbNilkkaFlexHallucisLongusVoimaOik</tabstop>
+  <tabstop>cbNilkkaFlexHallucisLongusVoimaVas</tabstop>
+  <tabstop>cbNilkkaFlexHallucisLongusSelVas</tabstop>
+  <tabstop>cbNilkkaFlexHallucisLongusSelVas_2</tabstop>
   <tabstop>cmtNilkka</tabstop>
   <tabstop>cbJalkatSubtalarOik</tabstop>
-  <tabstop>cbJalkatEtuosanAsento1Oik_2</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioOik</tabstop>
   <tabstop>cbJalkatTakaosanLiikeInversioOik</tabstop>
   <tabstop>cbJalkatHolvikaariOik</tabstop>
@@ -12255,9 +12255,9 @@
   <tabstop>cbJalkat1sadeOik</tabstop>
   <tabstop>sbJalkat1MTPojennusOik</tabstop>
   <tabstop>cbJalkatVaivaisenluuOik</tabstop>
-  <tabstop>lineEdit</tabstop>
+  <tabstop>lnKovettumatOik</tabstop>
   <tabstop>cbJalkatSubtalarVas</tabstop>
-  <tabstop>cbJalkatEtuosanAsento1Vas_2</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoVas</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioVas</tabstop>
   <tabstop>cbJalkatTakaosanLiikeInversioVas</tabstop>
   <tabstop>cbJalkatHolvikaariVas</tabstop>
@@ -12266,18 +12266,18 @@
   <tabstop>cbJalkatEtuosanAsento2Vas</tabstop>
   <tabstop>cbJalkat1sadeVas</tabstop>
   <tabstop>sbJalkat1MTPojennusVas</tabstop>
-  <tabstop>cbJalkatVaivaisenluuOik_2</tabstop>
-  <tabstop>lineEdit_2</tabstop>
+  <tabstop>cbJalkatVaivaisenluuVas</tabstop>
+  <tabstop>lnKovettumatVas</tabstop>
   <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
   <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
   <tabstop>cbJalkatEtuosanAsento1KuormOik</tabstop>
   <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
-  <tabstop>lnColemanOik</tabstop>
+  <tabstop>lnJalkatColemanOik</tabstop>
   <tabstop>cbJalkatTakaosanAsentoKuormVas</tabstop>
   <tabstop>cbJalkatKeskiosanAsentoKuormVas</tabstop>
   <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
   <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
-  <tabstop>lnColemanVas</tabstop>
+  <tabstop>lnJalkatColemanVas</tabstop>
   <tabstop>cmtJalkat</tabstop>
   <tabstop>spVirheasAnteversioOik</tabstop>
   <tabstop>spVirheasAnteversioVas</tabstop>
@@ -12285,8 +12285,8 @@
   <tabstop>spVirheasPatellaAltaVas</tabstop>
   <tabstop>spVirheasJalkaReisiOik</tabstop>
   <tabstop>spVirheasJalkaReisiVas</tabstop>
-  <tabstop>spVirheasJalkaEtuTakaOik</tabstop>
-  <tabstop>spVirheasJalkaEtuTakaVas</tabstop>
+  <tabstop>spVirheasJalkateraEtuTakaOik</tabstop>
+  <tabstop>spVirheasJalkateraEtuTakaVas</tabstop>
   <tabstop>spVirheasBimalleoliOik</tabstop>
   <tabstop>spVirheasBimalleoliVas</tabstop>
   <tabstop>spVirheas2ndtoeOik</tabstop>
