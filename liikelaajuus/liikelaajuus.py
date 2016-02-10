@@ -12,7 +12,6 @@ from PyQt4 import QtGui, uic, QtCore
 import sys
 import io
 import os
-import cPickle
 import json
 import copy
 import reporter
@@ -107,10 +106,10 @@ class EntryApp(QtGui.QMainWindow):
         dblPosValidator.setDecimals(1)
         dblPosValidator.setBottom(0)
         dblPosValidator.setNotation(dblPosValidator.StandardNotation)
-        for w in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
+        for wname in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
                   'lnAntropPolviVas','lnAntropNilkkaOik','lnAntropNilkkaVas',
                   'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
-            self.__dict__[w].setValidator(dblPosValidator)
+            self.input_widgets[wname].setValidator(dblPosValidator)
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
         on page change. Only for spinbox / lineedit widgets. """
         self.firstwidget = {}
@@ -210,13 +209,15 @@ class EntryApp(QtGui.QMainWindow):
         if fname:
             try:
                 self.load_file(fname)
-            except (AttributeError, SystemError, IndexError, ImportError, EOFError, KeyError, cPickle.UnpicklingError):
+                # TODO: JSON exceptions
+            except (AttributeError, SystemError, IndexError, ImportError, EOFError, KeyError):
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save(self):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
         if fname:
+            # TODO: JSON exceptions
             self.save_file(fname)
             self.saved = True
             
