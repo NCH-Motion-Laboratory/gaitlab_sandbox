@@ -3,7 +3,10 @@
 Tabbed form for input of liikelaajuus (movement range) data.
 Tested with PyQt 4.8 and Python 2.7.
 
+
 TODO:
+
+lisää 4- voimalaatikkoihin
 handle missing/extra items on json save/load
 add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
 -or degs to free text fields
@@ -14,6 +17,7 @@ don't update whole dict on value change event
 
 @author: Jussi (jnu@iki.fi)
 """
+
 
 from __future__ import print_function
 
@@ -231,7 +235,9 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with io.open(fname, 'r', encoding='utf-8') as f:
-                self.data = json.load(f)
+                data_ = json.load(f)
+            # TODO: compare keys to existing data dict
+            self.data = data_
             self.restore_forms()
             self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
 
