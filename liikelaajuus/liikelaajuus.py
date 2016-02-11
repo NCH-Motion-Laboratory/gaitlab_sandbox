@@ -6,12 +6,14 @@ Tested with PyQt 4.8 and Python 2.7.
 
 TODO:
 
-spinboxit -> tekstibokseiksi
-
+spinboxit -> tekstibokseiksi ?
+ 
 tab order (lonkka) -> oik. puoli eka ext. lag asti
 
-
 lisää 4- voimalaatikkoihin
+
+rm widget type from saved items? useful if need to change widget types...
+
 handle missing/extra items on json save/load
 add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
 -or degs to free text fields
