@@ -6,6 +6,11 @@ Tested with PyQt 4.8 and Python 2.7.
 
 TODO:
 
+spinboxit -> tekstibokseiksi
+
+tab order (lonkka) -> oik. puoli eka ext. lag asti
+
+
 lisää 4- voimalaatikkoihin
 handle missing/extra items on json save/load
 add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
