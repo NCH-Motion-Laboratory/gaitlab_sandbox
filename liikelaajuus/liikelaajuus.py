@@ -5,10 +5,11 @@ Tested with PyQt 4.8 and Python 2.7.
 
 TODO:
 handle missing/extra items on json save/load
-don't update whole dict on value change event
-add 'none' option for catch (not measured/no catch/catch in degrees)
+add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
 -or degs to free text fields
 make main window smaller (comment box?)
+line inputs that take a number -> spinboxes?
+don't update whole dict on value change event
 
 
 @author: Jussi (jnu@iki.fi)
@@ -66,6 +67,7 @@ class EntryApp(QtGui.QMainWindow):
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.json'
         # exceptions that might be generated when parsing json file
         self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
+        self.json_filter = u'JSON files (*.json)'
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -154,7 +156,7 @@ class EntryApp(QtGui.QMainWindow):
         self.btnQuit.clicked.connect(self.close)
         # save into temp file on tab change
         self.maintab.currentChanged.connect(self.page_change)
-        # set validators for line input widgets that take a number
+        # set validators for line input widgets that only take a number
         dblPosValidator = QtGui.QDoubleValidator()  # positive double
         # 1 decimals, positive value, no scientific notation
         dblPosValidator.setDecimals(1)
@@ -242,7 +244,7 @@ class EntryApp(QtGui.QMainWindow):
     def load_dialog(self):
         """ Bring up load dialog and load selected file. """
         fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr,
-                                                  'JSON files (*.json)')
+                                                  self.json_filter)
         if fname:
             fname = unicode(fname)
             try:
@@ -253,7 +255,7 @@ class EntryApp(QtGui.QMainWindow):
     def save_dialog(self):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr,
-                                                  'JSON files (*.json)')
+                                                  self.json_filter)
         if fname:
             fname = unicode(fname)
             try:
