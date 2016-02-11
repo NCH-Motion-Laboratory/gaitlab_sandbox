@@ -235,6 +235,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Bring up load dialog and load selected file. """
         fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr)
         if fname:
+            fname = unicode(fname)
             try:
                 self.load_file(fname)
             except self.json_load_exceptions:
@@ -244,6 +245,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
         if fname:
+            fname = unicode(fname)
             try:
                 self.save_file(fname)
                 self.saved_to_file = True
