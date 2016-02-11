@@ -25,4 +25,4 @@ status_cleared = u'Kaikki lomakkeet tyhjennetty.'
 status_loaded = u'Ladattu tiedosto: {filename}, {n} arvoa kirjattu.'
 status_saved = u'Tallennettu tiedosto: '
 status_value_change = u'{n} arvoa kirjattu. Väliaikaistiedosto: {tmpfile}'
-
+wrote_report = u'Raportti tallennettu tiedostoon {filename}'

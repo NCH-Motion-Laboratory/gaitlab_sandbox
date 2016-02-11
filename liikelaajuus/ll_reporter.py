@@ -13,18 +13,9 @@ import html_templates
 #import text_templates
 
 
-class text():
-    """ Make a text report. """
-    def __init__(self, data):
-        self.data = data
         
-    def make(self):
-        li = []
-        for key in sorted(self.data):
-            li.append(key+':'+unicode(self.data[key])+'\n')
-        return u''.join(li)
 
-class html():
+class report():
     
     """ Make an html report. """
 
@@ -61,9 +52,15 @@ class html():
         # format html for given section & add comments field
         return html_templates.section[sec].format(**self.data)
 
-    def make(self):
+    def make_html(self):
         # TODO: for key in html_templates.sections...
         return html_templates.header + self.sec_tiedot() + html_templates.footer
+
+    def make_text_list(self):
+        li = []
+        for key in sorted(self.data):
+            li.append(key+':'+unicode(self.data[key])+'\n')
+        return u''.join(li)
 
     def excel(self, fn):
         """ Export report to Excel (filename fn) TODO"""

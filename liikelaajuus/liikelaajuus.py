@@ -8,6 +8,8 @@ handle missing/extra items on json save/load
 don't update whole dict on value change event
 add 'none' option for catch (not measured/no catch/catch in degrees)
 make main window smaller (comment box?)
+json extension for load/save dialogs
+
 
 
 @author: Jussi (jnu@iki.fi)
@@ -213,10 +215,12 @@ class EntryApp(QtGui.QMainWindow):
     def make_report(self):
         """ Make report using the input data. """
         self.read_forms()
-        report = ll_reporter.text(self.data)
-        report_txt = report.make()
-        with io.open('report_koe.txt','w',encoding='utf-8') as f:
+        report = ll_reporter.report(self.data)
+        report_txt = report.make_text_list()
+        fname = 'report_koe.txt'
+        with io.open(fname,'w',encoding='utf-8') as f:
             f.write(report_txt)
+        self.statusbar.showMessage(ll_msgs.wrote_report.format(filename=fname))
         
     def values_changed(self):
         self.saved_to_file = False
