@@ -7,9 +7,8 @@ TODO:
 handle missing/extra items on json save/load
 don't update whole dict on value change event
 add 'none' option for catch (not measured/no catch/catch in degrees)
+-or degs to free text fields
 make main window smaller (comment box?)
-json extension for load/save dialogs
-
 
 
 @author: Jussi (jnu@iki.fi)
@@ -22,7 +21,6 @@ import sys
 import io
 import os
 import json
-import copy
 import ll_reporter
 import ll_msgs
 
@@ -40,7 +38,7 @@ class EntryApp(QtGui.QMainWindow):
         self.data = {}
         # save empty form (default states for widgets)
         self.read_forms()
-        self.data_empty = copy.deepcopy(self.data)
+        self.data_empty = self.data.copy()
         # whether to save to temp file whenever input widget data changes
         self.save_to_tmp = True
         # whether data was saved into a patient-specific file
@@ -301,7 +299,7 @@ class EntryApp(QtGui.QMainWindow):
         else:
             reply = self.confirm_dialog(ll_msgs.clear_not_saved)
         if reply == QtGui.QMessageBox.YesRole:
-            self.data = copy.deepcopy(self.data_empty)
+            self.data = self.data_empty.copy()
             self.restore_forms()
             self.statusbar.showMessage(ll_msgs.status_cleared)
     
