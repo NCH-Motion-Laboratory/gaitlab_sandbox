@@ -243,7 +243,8 @@ class EntryApp(QtGui.QMainWindow):
 
     def load_dialog(self):
         """ Bring up load dialog and load selected file. """
-        fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr)
+        fname = QtGui.QFileDialog.getOpenFileName(self, ll_msgs.open_title, self.data_root_fldr,
+                                                  'JSON files (*.json)')
         if fname:
             fname = unicode(fname)
             try:
@@ -253,7 +254,8 @@ class EntryApp(QtGui.QMainWindow):
 
     def save_dialog(self):
         """ Bring up save dialog and save data. """
-        fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr)
+        fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr,
+                                                  'JSON files (*.json)')
         if fname:
             fname = unicode(fname)
             try:
