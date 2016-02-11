@@ -3,6 +3,12 @@
 Tabbed form for input of liikelaajuus (movement range) data.
 Tested with PyQt 4.8 and Python 2.7.
 
+TODO:
+handle missing/extra items on json save/load
+don't update whole dict on value change event
+add 'none' option for catch (not measured/no catch/catch in degrees)
+make main window smaller (comment box?)
+
 
 @author: Jussi (jnu@iki.fi)
 """
