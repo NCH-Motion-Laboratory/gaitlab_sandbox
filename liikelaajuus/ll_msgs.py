@@ -26,3 +26,7 @@ status_loaded = u'Ladattu tiedosto: {filename}, {n} arvoa kirjattu.'
 status_saved = u'Tallennettu tiedosto: '
 status_value_change = u'{n} arvoa kirjattu. Väliaikaistiedosto: {tmpfile}'
 wrote_report = u'Raportti tallennettu tiedostoon {filename}'
+keyerror_msg = u'Virhe ladattaessa muuttujia:\n'
+keys_not_found = u'Seuraavia muuttujia ei löytynyt tiedostosta: {keys} \n'
+keys_extra = u'Seuraavat muuttujat ovat tuntemattomia: {keys} \n'
+

@@ -242,11 +242,26 @@ class EntryApp(QtGui.QMainWindow):
         """ Load data from given file and restore forms. """
         if os.path.isfile(fname):
             with io.open(fname, 'r', encoding='utf-8') as f:
-                data_ = json.load(f)
-            # TODO: compare keys to existing data dict
-            self.data = data_
-            self.restore_forms()
-            self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
+                data_loaded = json.load(f)
+            keys, loaded_keys = set(self.data), set(data_loaded)
+            if not keys == loaded_keys:  # keys mismatch
+                self.keyerror_dialog(keys, loaded_keys)
+            else:
+                self.data = data_loaded
+                self.restore_forms()
+                self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
+
+    def keyerror_dialog(self, origkeys, newkeys):
+        """ Report missing / extra keys. """
+        cmnkeys = origkeys.intersection(newkeys)
+        extra_in_new = newkeys - cmnkeys
+        not_in_new = origkeys - cmnkeys
+        li = [ll_msgs.keyerror_msg]
+        if extra_in_new:
+            li.append(ll_msgs.keys_extra.format(keys=', '.join(extra_in_new)))
+        if not_in_new:
+            li.append(ll_msgs.keys_not_found.format(keys=', '.join(not_in_new)))
+        self.message_dialog(''.join(li))
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
