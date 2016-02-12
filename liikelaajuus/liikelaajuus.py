@@ -14,7 +14,6 @@ lisää 4- voimalaatikkoihin
 
 rm widget type from saved items? useful if need to change widget types...
 
-handle missing/extra items on json save/load
 add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
 -or degs to free text fields
 make main window smaller (comment box?)
@@ -192,6 +191,16 @@ class EntryApp(QtGui.QMainWindow):
         self.total_widgets = len(self.input_widgets)
         self.statusbar.showMessage(ll_msgs.ready.format(n=self.total_widgets))
         # TODO: set 'important' widgets (mandatory values) .important = True
+        """ Set up widget -> varname translation dict. Currently variable names
+        are derived by removing 2 first characters from widget names (except
+        for comment box variables cmt* which are identical with widget names). """
+        self.widget_to_var = {}
+        for wname in self.input_widgets:
+            if wname[:3] == 'cmt':
+                varname = wname
+            else:
+                varname = wname[2:]
+            self.widget_to_var[wname] = varname
      
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
@@ -252,7 +261,7 @@ class EntryApp(QtGui.QMainWindow):
                 self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
 
     def keyerror_dialog(self, origkeys, newkeys):
-        """ Report missing / extra keys. """
+        """ Report missing / extra keys to user. """
         cmnkeys = origkeys.intersection(newkeys)
         extra_in_new = newkeys - cmnkeys
         not_in_new = origkeys - cmnkeys
@@ -338,13 +347,13 @@ class EntryApp(QtGui.QMainWindow):
         # don't make backup saves while widgets are being restored
         self.save_to_tmp = False
         for wname in self.input_widgets:
-            self.input_widgets[wname].setVal(self.data[wname])
+            self.input_widgets[wname].setVal(self.data[self.widget_to_var[wname]])
         self.save_to_tmp = True
             
     def read_forms(self):
         """ Read self.data from widget inputs """
         for wname in self.input_widgets:
-            self.data[wname] = self.input_widgets[wname].getVal()
+            self.data[self.widget_to_var[wname]] = self.input_widgets[wname].getVal()
 
 def main():
     app = QtGui.QApplication(sys.argv)
