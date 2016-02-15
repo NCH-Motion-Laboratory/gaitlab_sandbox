@@ -8,14 +8,13 @@ TODO:
 
 spinboxit -> tekstibokseiksi ?
  
-tab order (lonkka) -> oik. puoli eka ext. lag asti
-
-rm widget type from saved items? useful if need to change widget types...
-
 add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
 -or degs to free text fields
+
 make main window smaller (comment box?)
+
 line inputs that take a number -> spinboxes?
+
 don't update whole dict on value change event
 
 
