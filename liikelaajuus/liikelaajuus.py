@@ -15,8 +15,6 @@ make main window smaller (comment box?)
 
 line inputs that take a number -> spinboxes?
 
-don't update whole dict on value change event
-
 
 @author: Jussi (jnu@iki.fi)
 """
@@ -125,7 +123,7 @@ class EntryApp(QtGui.QMainWindow):
                 assert(w.__class__ == QtGui.QSpinBox)
                 # -lambdas need default arguments because of late binding
                 # -lambda expression needs to consume unused 'new value' argument,
-                # therefore two parameters
+                # therefore two parameters (except for QTextEdit...)
                 w.valueChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda val, w=w: spinbox_setval(w, val, self.not_measured_text)
                 w.getVal = lambda w=w: spinbox_getval(w, self.not_measured_text)
