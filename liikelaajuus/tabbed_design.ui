@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -12287,16 +12287,12 @@
   <tabstop>lnAntropPaino</tabstop>
   <tabstop>cmtAntrop</tabstop>
   <tabstop>spLonkkaFleksioOik</tabstop>
-  <tabstop>spLonkkaFleksioVas</tabstop>
-  <tabstop>cbLonkkaFleksioModAOik</tabstop>
-  <tabstop>cbLonkkaFleksioModAVas</tabstop>
   <tabstop>spLonkkaEkstensioVapOik</tabstop>
-  <tabstop>spLonkkaEkstensioVapVas</tabstop>
-  <tabstop>cbLonkkaEkstensioModAOik</tabstop>
-  <tabstop>cbLonkkaEkstensioModAVas</tabstop>
   <tabstop>spLonkkaEkstensioAvOik</tabstop>
-  <tabstop>spLonkkaEkstensioAvVas</tabstop>
   <tabstop>spLonkkaEkstensioPolvi90Oik</tabstop>
+  <tabstop>spLonkkaFleksioVas</tabstop>
+  <tabstop>spLonkkaEkstensioVapVas</tabstop>
+  <tabstop>spLonkkaEkstensioAvVas</tabstop>
   <tabstop>spLonkkaEkstensioPolvi90Vas</tabstop>
   <tabstop>spLonkkaExtLagOik</tabstop>
   <tabstop>spLonkkaExtLagVas</tabstop>
@@ -12304,8 +12300,6 @@
   <tabstop>spLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
   <tabstop>spLonkkaAdduktoritCatchOik</tabstop>
   <tabstop>spLonkkaAdduktoritCatchVas</tabstop>
-  <tabstop>cbLonkkaAdduktoritModAOik</tabstop>
-  <tabstop>cbLonkkaAdduktoritModAVas</tabstop>
   <tabstop>spLonkkaAbduktioLonkka0Oik</tabstop>
   <tabstop>spLonkkaAbduktioLonkka0Vas</tabstop>
   <tabstop>spLonkkaAbduktioLonkkaFleksOik</tabstop>
@@ -12316,16 +12310,22 @@
   <tabstop>spLonkkaOberVas</tabstop>
   <tabstop>spLonkkaRectusCatchOik</tabstop>
   <tabstop>spLonkkaRectusCatchVas</tabstop>
-  <tabstop>cbLonkkaRectusModAOik</tabstop>
-  <tabstop>cbLonkkaRectusModAVas</tabstop>
   <tabstop>spLonkkaPolviFleksioVatsamakuuOik</tabstop>
   <tabstop>spLonkkaPolviFleksioVatsamakuuVas</tabstop>
   <tabstop>spLonkkaSisakiertoOik</tabstop>
   <tabstop>spLonkkaSisakiertoVas</tabstop>
-  <tabstop>cbLonkkaSisakiertoModAOik</tabstop>
-  <tabstop>cbLonkkaSisakiertoModAVas</tabstop>
   <tabstop>spLonkkaUlkokiertoOik</tabstop>
   <tabstop>spLonkkaUlkokiertoVas</tabstop>
+  <tabstop>cbLonkkaFleksioModAOik</tabstop>
+  <tabstop>cbLonkkaFleksioModAVas</tabstop>
+  <tabstop>cbLonkkaEkstensioModAOik</tabstop>
+  <tabstop>cbLonkkaEkstensioModAVas</tabstop>
+  <tabstop>cbLonkkaAdduktoritModAOik</tabstop>
+  <tabstop>cbLonkkaAdduktoritModAVas</tabstop>
+  <tabstop>cbLonkkaRectusModAOik</tabstop>
+  <tabstop>cbLonkkaRectusModAVas</tabstop>
+  <tabstop>cbLonkkaSisakiertoModAOik</tabstop>
+  <tabstop>cbLonkkaSisakiertoModAVas</tabstop>
   <tabstop>cbLonkkaUlkokiertoModAOik</tabstop>
   <tabstop>cbLonkkaUlkokiertoModAVas</tabstop>
   <tabstop>cbLonkkaFleksioVoimaOik</tabstop>
