@@ -270,7 +270,8 @@ class gaitplotter():
         # TODO: put into config file
         PLAYER_CMD = self.cfg.getval('videoplayer_path')
         PLAYER_OPTS = self.cfg.getval('videoplayer_opts')
-        subprocess.Popen([PLAYER_CMD,PLAYER_OPTS,vidfile])
+        # command needs to be constructed in a very particular way, see subprocess.list2cmdline for troubleshooting
+        subprocess.Popen([PLAYER_CMD]+PLAYER_OPTS.split()+[vidfile])
         
     def read_trial(self, vars):
         """ Read requested trial variables and directives.
