@@ -45,7 +45,7 @@ class gaitplotter():
         # set paths
         pathprefix = 'c:/users/' + getpass.getuser()
         self.desktop = pathprefix + '/Desktop'
-        self.appdir = self.desktop + '/GaitPlotter'
+        self.appdir = self.desktop + '/Gaitplotter'
         
         # read .ini file if available
         self.cfg = config.Config(self.appdir)

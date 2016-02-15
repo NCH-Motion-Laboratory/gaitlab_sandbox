@@ -38,10 +38,10 @@ class Config():
         self.config['emg_yscale'] = '0.5'
         self.config['pig_normaldata_path'] = appdir + '/Data/normal.gcd'
         self.config['videoplayer_path'] = 'C:/Program Files/VideoLAN/VLC/vlc.exe'
-        self.config['videoplayer_opts'] = '--input-repeat=-1'
+        self.config['videoplayer_opts'] = '--input-repeat=-1 --rate=.2'
         self.config['emg_auto_off'] = 'True'
         self.config['emg_apply_filter'] = 'True'
-        self.configfile = appdir + '/Config/GaitPlotter.ini'
+        self.configfile = appdir + '/Config/Gaitplotter.ini'
         self.appdir = appdir        
         
         # get EMG electrode names and write enable/disable values
@@ -126,7 +126,7 @@ class Config():
             if self.is_emg_enabled_key(key):
                 section = 'EMG_enable'
             else:
-                section = 'NexusPlotter'
+                section = 'Gaitplotter'
             try:
                 self.config[key] = parser.get(section, key)
             except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
@@ -140,13 +140,13 @@ class Config():
             error_exit('Cannot open config file for writing: ', self.configfile)
         parser = SafeConfigParser()
         parser.optionxform = str  # make it case sensitive
-        parser.add_section('NexusPlotter')
+        parser.add_section('Gaitplotter')
         parser.add_section('EMG_enable')  
         for key in self.config.keys():
             if self.is_emg_enabled_key(key):
                 section = 'EMG_enable'
             else:
-                section = 'NexusPlotter'
+                section = 'Gaitplotter'
             parser.set(section, key, self.config[key])
         parser.write(inifile)
         inifile.close()
