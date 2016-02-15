@@ -10,8 +10,6 @@ spinboxit -> tekstibokseiksi ?
  
 tab order (lonkka) -> oik. puoli eka ext. lag asti
 
-lisää 4- voimalaatikkoihin
-
 rm widget type from saved items? useful if need to change widget types...
 
 add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
