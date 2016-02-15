@@ -51,6 +51,8 @@ class EntryApp(QtGui.QMainWindow):
         self.save_to_tmp = True
         # whether data was saved into a patient-specific file
         self.saved_to_file = False
+        # whether to update internal dict of variables
+        self.update_dict = True
         # load tmp file if it exists
         if os.path.isfile(self.tmpfile):
             self.message_dialog(ll_msgs.temp_found)            
@@ -113,40 +115,38 @@ class EntryApp(QtGui.QMainWindow):
             else:
                 raise Exception('Unexpected checkbox entry value')
 
-	# TODO: pass w to values_changed and read only the changed
-	# widget value into self.data
-            
+        """ Create getter/setter methods that convert the data immediately to
+        desired form. On value change, call self.values_changed which updates
+        the self.data dict at the correspoding widget. """
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = str(w.objectName())
-            #print(wname,'\t\t\t', w.__class__)
             wsave = True
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox)
-                w.valueChanged.connect(self.values_changed)
-                # lambdas need default arguments because of late binding
+                # -lambdas need default arguments because of late binding
+                # -lambda expression needs to consume unused 'new value' argument,
+                # therefore two parameters
+                w.valueChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda val, w=w: spinbox_setval(w, val, self.not_measured_text)
                 w.getVal = lambda w=w: spinbox_getval(w, self.not_measured_text)
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
-                w.textChanged.connect(self.values_changed)
+                w.textChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = w.setText
-                # Getter methods convert the data instantly to unicode.
-                # This is to avoid performing conversions on reporting, saving etc.
-                # Qt setter methods can take unicode without type conversions.
                 w.getVal = lambda w=w: unicode(w.text()).strip()
             elif wname[:2] == 'cb':
                 assert(w.__class__ == QtGui.QComboBox)
-                w.currentIndexChanged.connect(self.values_changed)
+                w.currentIndexChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda str, w=w: w.setCurrentIndex(w.findText(str))
                 w.getVal = lambda w=w: unicode(w.currentText())
             elif wname[:3] == 'cmt':
                 assert(w.__class__ == QtGui.QTextEdit)
-                w.textChanged.connect(self.values_changed)
+                w.textChanged.connect(lambda w=w: self.values_changed(w))
                 w.setVal = w.setPlainText
                 w.getVal = lambda w=w: unicode(w.toPlainText()).strip()
             elif wname[:2] == 'xb':
                 assert(w.__class__ == QtGui.QCheckBox)
-                w.stateChanged.connect(self.values_changed)
+                w.stateChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda val, w=w: checkbox_setval(w, val, self.checkbox_yestext, self.checkbox_notext)
                 w.getVal = lambda w=w: checkbox_getval(w, self.checkbox_yestext, self.checkbox_notext)
             else:
@@ -231,15 +231,18 @@ class EntryApp(QtGui.QMainWindow):
             
     def make_report(self):
         """ Make report using the input data. """
-        self.read_forms()
         report = ll_reporter.report(self.data)
         report_txt = report.make_text_list()
+        print(report_txt)
         fname = 'report_koe.txt'
         with io.open(fname,'w',encoding='utf-8') as f:
             f.write(report_txt)
         self.statusbar.showMessage(ll_msgs.wrote_report.format(filename=fname))
         
-    def values_changed(self):
+    def values_changed(self, w):
+        if self.update_dict:
+            print('updating dict for:', w.objectName())
+            self.data[self.widget_to_var[w.objectName()]] = w.getVal()
         self.saved_to_file = False
         if self.save_to_tmp:
             self.save_temp()
@@ -271,7 +274,6 @@ class EntryApp(QtGui.QMainWindow):
 
     def save_file(self, fname):
         """ Save data into given file in utf-8 encoding. """
-        self.read_forms()
         with io.open(fname, 'w', encoding='utf-8') as f:
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
 
@@ -340,15 +342,17 @@ class EntryApp(QtGui.QMainWindow):
             self.statusbar.showMessage(ll_msgs.status_cleared)
     
     def restore_forms(self):
-        """ Restore widget input values from self.data """
-        # don't make backup saves while widgets are being restored
+        """ Restore widget input values from self.data. Need to disable widget callbacks
+        and automatic data saving while programmatic updating of widgets is taking place. """
         self.save_to_tmp = False
+        self.update_dict = False
         for wname in self.input_widgets:
             self.input_widgets[wname].setVal(self.data[self.widget_to_var[wname]])
         self.save_to_tmp = True
+        self.update_dict = True
             
     def read_forms(self):
-        """ Read self.data from widget inputs """
+        """ Read self.data from widget inputs. """
         for wname in self.input_widgets:
             self.data[self.widget_to_var[wname]] = self.input_widgets[wname].getVal()
 
