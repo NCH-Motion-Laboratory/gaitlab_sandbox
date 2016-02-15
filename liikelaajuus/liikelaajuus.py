@@ -81,8 +81,6 @@ class EntryApp(QtGui.QMainWindow):
         convenience methods etc. """
         self.input_widgets = {}
 
-        """ Spinbox minimum value is used to indicate "not measured".
-        Therefore special getter and setter methods are required. """
         def spinbox_getval(w, mintext):
             val = int(w.value())
             if val == w.minimum():
@@ -151,7 +149,7 @@ class EntryApp(QtGui.QMainWindow):
                 wsave = False
             if wsave:
                 self.input_widgets[wname] = w
-                # specified whether input value is 'mandatory' or not
+                # TODO: specify whether input value is 'mandatory' or not
                 w.important = False
         # link buttons
         self.btnSave.clicked.connect(self.save_dialog)
@@ -159,7 +157,7 @@ class EntryApp(QtGui.QMainWindow):
         self.btnClear.clicked.connect(self.clear_forms_dialog)
         self.btnReport.clicked.connect(self.make_report)
         self.btnQuit.clicked.connect(self.close)
-        # save into temp file on tab change
+        # method call on tab change
         self.maintab.currentChanged.connect(self.page_change)
         # set validators for line input widgets that only take a number
         dblPosValidator = QtGui.QDoubleValidator()  # positive double
