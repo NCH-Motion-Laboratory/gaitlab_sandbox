@@ -3,8 +3,9 @@
 
 Gaitplotter: plot gait data using matplotlib.
 
+
 TODO:
-variable title handling if multiple vars on single subplot (L/R mess)
+support multiple forceplates
 
 
 Rules:
@@ -32,22 +33,19 @@ import config
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
-import getpass
 import glob
 import subprocess
 import pylab
+import site_defs
 
 
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
     def __init__(self):
-        # set paths
-        pathprefix = 'c:/users/' + getpass.getuser()
-        self.desktop = pathprefix + '/Desktop'
-        self.appdir = self.desktop + '/Gaitplotter'
-        
+
         # read .ini file if available
+        self.appdir = site_defs.appdir        
         self.cfg = config.Config(self.appdir)
         config_ok, msg = self.cfg.check()
         if not config_ok:
@@ -269,8 +267,11 @@ class gaitplotter():
         vidfile is given as the last argument to the command. """
         # TODO: put into config file
         PLAYER_CMD = self.cfg.getval('videoplayer_path')
+        if not (os.path.isfile(PLAYER_CMD) and os.access(PLAYER_CMD, os.X_OK)):
+            error_exit('Invalid video player executable: '+PLAYER_CMD)
         PLAYER_OPTS = self.cfg.getval('videoplayer_opts')
         # command needs to be constructed in a very particular way, see subprocess.list2cmdline for troubleshooting
+        debug_print('running external video player:',[PLAYER_CMD]+PLAYER_OPTS.split()+[vidfile])        
         subprocess.Popen([PLAYER_CMD]+PLAYER_OPTS.split()+[vidfile])
         
     def read_trial(self, vars):
@@ -316,7 +317,7 @@ class gaitplotter():
                             self.trial.model.read_model(model)
                             model.was_read = True
                         else:
-                            debug_print('read_trial: model already read:', model.desc)
+                            debug_print('read_trial: variables already read from:', model.desc)
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
@@ -327,16 +328,17 @@ class gaitplotter():
             plt.suptitle(title, fontsize=12, fontweight="bold")
 
     def plot_trial(self, cycle=1, side=None, plotheightratios=None, maintitle=None, maintitleprefix='',
-                 onesided=False, model_linestyle='-', emg_tracecolor='black'):
+                 onesided=False, model_linestyle='-', model_tracecolor=None, emg_tracecolor='black'):
         """ Plot active trial (must call open_xxx_trial first). If a plot is already 
         active, the new trial will be overlaid on the previous one.
         Parameters:
         cycle: which gait cycle to use from the trial (default=first)
         side: which side kinetics/kinematics to plot (default=determine from trial).
-        Note that non-kinetics vars are two-sided by default (unless onesided=True)
+        Note that non-kinetics vars are plotted two-sided by default (unless onesided=True)
         maintitle: plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         model_linestyle: plotting style for model variables (PiG etc.)
+        model_tracecolor: line color for model variables
         emg_tracecolor: color for EMG traces
         """        
         if not self.trial:
@@ -395,6 +397,8 @@ class gaitplotter():
                         tracecolor = self.tracecolor_r
                         cyc = rcyc
                     data_gc = cyc.normalize(self.trial.model.modeldata[varname])
+                    if model_tracecolor:  # override default color
+                        tracecolor = model_tracecolor
                     plt.plot(tn, data_gc, tracecolor, linestyle=model_linestyle, label=self.trial.trialname)
                 # plot normal data, if available
                 ndata = self.trial.model.get_normaldata(varname)
@@ -525,11 +529,11 @@ class gaitplotter():
         if self.model_legendpos or self.emg_legendpos:
             self.legendnames.append(self.trial.trialname+4*' '+self.trial.eclipse_description+4*' '+self.trial.eclipse_notes)
         if self.model_legendpos:
-            self.modelartists.append(plt.Line2D((0,1),(0,0), color=self.tracecolor_r, linestyle=model_linestyle))
+            self.modelartists.append(plt.Line2D((0,1),(0,0), color=tracecolor, linestyle=model_linestyle))
             ax = plt.subplot(self.gs[self.model_legendpos])
             plt.axis('off')
             nothing = [plt.Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)]
-            legtitle = ['Kinematics/kinetics traces:']
+            legtitle = ['Model traces:']
             ax.legend(nothing+self.modelartists, legtitle+self.legendnames, prop={'size':self.fsize_labels}, loc='upper center')
         if self.emg_legendpos:
             self.emgartists.append(plt.Line2D((0,1),(0,0), color=emg_tracecolor))

@@ -10,6 +10,7 @@ Kinetics-EMG plot from Nexus.
  
 from gp.plot import gaitplotter
 import gp.layouts
+from gp.misc import error_exit
 
 plotheightratios = [3,2,2,3,2,2,2,3]
 pdf_prefix = 'Kinetics_EMG_'
@@ -19,6 +20,10 @@ gplotter = gaitplotter()
 # need to open trial before detecting side
 gplotter.open_nexus_trial()
 side = gplotter.trial.kinetics_side
+if not side:
+    error_exit('Forceplate strike not detected, no kinetics available. Check that the subject weight '+
+                'is correctly entered and there is a clean forceplate strike.')
+    
 plotvars = gp.layouts.kinetics_emg(side)
 
 # choose EMG variables according to side

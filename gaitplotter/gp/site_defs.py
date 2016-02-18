@@ -2,16 +2,24 @@
 """
 Created on Wed Jun 03 15:41:41 2015
 
-Gait lab -specific stuff (electrode names etc.)
+Lab -specific stuff (electrode names etc.)
 
 @author: Jussi
 """
+
+import getpass
+
+
+# App dir contains the config file and normal data.
+pathprefix = 'c:/users/' + getpass.getuser()
+desktop = pathprefix + '/Desktop'
+appdir = desktop + '/GaitPlotter'
 
 # EMG device name
 emg_devname = 'Myon'
 
 
-# dict for electrode names and descriptions
+# EMG electrode names and descriptions
 emg_labels = {'RHam': 'Medial hamstrings (R)',
            'RRec': 'Rectus femoris (R)',
            'RGas': 'Gastrognemius (R)',

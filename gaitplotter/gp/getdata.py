@@ -5,10 +5,6 @@ Created on Tue Mar 17 14:41:31 2015
 Gaitplotter utility classes for reading gait data.
 
 
-NEXT:
-
-
-
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)
 create and raise custom exception (GaitDataError). Caller may catch those
@@ -27,7 +23,7 @@ For Vicon Nexus data, x axis is the whole trial.
 
 from __future__ import division, print_function
 
-import defs
+import site_defs
 import sys
 import copy
 # these needed for Nexus 2.1
@@ -36,9 +32,7 @@ if not "C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python" in sys.path:
     # needed at least when running outside Nexus
     sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Win32")
 import numpy as np
-import ctypes
 from scipy import signal
-import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus
@@ -295,17 +289,18 @@ class trial:
         self.eclipse_notes = get_eclipse_key(trialpath, 'NOTES')        
         self.source = source
         self.fp = forceplate(source)
-        # TODO: read from config / put as init params?
-        # will be read by read_vars
-        # TODO: emg params
+        # init emg
         self.emg = emg(source, emg_auto_off=emg_auto_off, emg_mapping=emg_mapping)
         self.model = model_outputs(self.source)
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
+        # figure out gait cycles
         self.scan_cycles()
+        # video files associated with trial
         self.video_files = get_video_filenames(self.sessionpath+self.trialname)
+        
         
     def kinetics_available(self):
         """ See whether this trial has ground reaction forces for left/right side
@@ -470,9 +465,9 @@ class emg:
         
     def define_emg_names(self):
         """ Defines the electrode mapping. """
-        self.ch_normals = defs.emg_normals
-        self.ch_names = defs.emg_names
-        self.ch_labels = defs.emg_labels
+        self.ch_normals = site_defs.emg_normals
+        self.ch_names = site_defs.emg_names
+        self.ch_labels = site_defs.emg_labels
       
     def is_logical_channel(self, chname):
         return chname in self.ch_names
@@ -522,7 +517,7 @@ class emg:
             vicon = self.source
             framerate = vicon.GetFrameRate()
             framecount = vicon.GetFrameCount()
-            emg_devname = defs.emg_devname
+            emg_devname = site_defs.emg_devname
             devnames = vicon.GetDeviceNames()
             if emg_devname in devnames:
                 emg_id = vicon.GetDeviceIDFromName(emg_devname)

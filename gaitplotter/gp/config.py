@@ -12,7 +12,7 @@ where appdir is the root directory (e.g. user's home)
 
 
 from Tkinter import *
-import defs
+import site_defs
 import sys
 # these needed for Nexus 2.1
 sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python")
@@ -45,7 +45,7 @@ class Config():
         self.appdir = appdir        
         
         # get EMG electrode names and write enable/disable values
-        self.emg_names = defs.emg_names
+        self.emg_names = site_defs.emg_names
         self.emg_names.sort()
         for chname in self.emg_names:
             self.config[self.emg_enabled_key(chname)] = 'True'
