@@ -25,6 +25,7 @@ def any_substr(str, substrs):
 
 MAX_TRIALS = 12
 
+
 if not nexus_pid():
     error_exit('Vicon Nexus not running')
     
@@ -49,10 +50,12 @@ plotvars = gp.layouts.overlay_kinall
 gplotter = gaitplotter()
 maintitle = 'Kinematics/kinetics consistency plot'
 
+linecolors = ['b','g','r','c','m','y','k']
+
 for i,trialpath in enumerate(marked_trials):
     gplotter.open_c3d_trial(trialpath)
     gplotter.read_trial(plotvars)
-    gplotter.plot_trial(maintitle=maintitle)
+    gplotter.plot_trial(maintitle=maintitle, model_tracecolor=linecolors[i])
     
 gplotter.show()
 gplotter.create_pdf('kin_consistency.pdf')
