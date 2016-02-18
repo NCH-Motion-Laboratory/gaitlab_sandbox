@@ -32,9 +32,7 @@ if not "C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Python" in sys.path:
     # needed at least when running outside Nexus
     sys.path.append("C:\Program Files (x86)\Vicon\Nexus2.2\SDK\Win32")
 import numpy as np
-import ctypes
 from scipy import signal
-import psutil
 import os
 import btk  # biomechanical toolkit for c3d reading
 import ViconNexus

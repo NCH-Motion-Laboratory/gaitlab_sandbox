@@ -268,8 +268,11 @@ class gaitplotter():
         vidfile is given as the last argument to the command. """
         # TODO: put into config file
         PLAYER_CMD = self.cfg.getval('videoplayer_path')
+        if not (os.path.isfile(PLAYER_CMD) and os.access(PLAYER_CMD, os.X_OK)):
+            error_exit('Invalid video player executable: '+PLAYER_CMD)
         PLAYER_OPTS = self.cfg.getval('videoplayer_opts')
         # command needs to be constructed in a very particular way, see subprocess.list2cmdline for troubleshooting
+        debug_print('running external video player:',[PLAYER_CMD]+PLAYER_OPTS.split()+[vidfile])        
         subprocess.Popen([PLAYER_CMD]+PLAYER_OPTS.split()+[vidfile])
         
     def read_trial(self, vars):
