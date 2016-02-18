@@ -7,6 +7,15 @@ Gait lab -specific stuff (electrode names etc.)
 @author: Jussi
 """
 
+import getpass
+
+
+# set paths
+pathprefix = 'c:/users/' + getpass.getuser()
+desktop = pathprefix + '/Desktop'
+appdir = desktop + '/GaitPlotter'
+
+
 # EMG device name
 emg_devname = 'Myon'
 

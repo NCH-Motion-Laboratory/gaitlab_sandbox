@@ -3,6 +3,7 @@
 
 Gaitplotter: plot gait data using matplotlib.
 
+
 TODO:
 variable title handling if multiple vars on single subplot (L/R mess)
 
@@ -32,20 +33,18 @@ import config
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.gridspec as gridspec
 import os
-import getpass
 import glob
 import subprocess
 import pylab
+import site_defs
 
 
 class gaitplotter():
     """ Create a plot of Nexus variables. Can overlay data from several trials. """
 
     def __init__(self):
-        # set paths
-        pathprefix = 'c:/users/' + getpass.getuser()
-        self.desktop = pathprefix + '/Desktop'
-        self.appdir = self.desktop + '/GaitPlotter'
+
+        self.appdir = site_defs.appdir        
         
         # read .ini file if available
         self.cfg = config.Config(self.appdir)

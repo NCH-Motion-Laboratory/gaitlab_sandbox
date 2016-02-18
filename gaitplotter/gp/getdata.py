@@ -5,10 +5,6 @@ Created on Tue Mar 17 14:41:31 2015
 Gaitplotter utility classes for reading gait data.
 
 
-NEXT:
-
-
-
 Exceptions policy:
 -for commonly encountered errors (e.g. device not found, channel not found)
 create and raise custom exception (GaitDataError). Caller may catch those
@@ -27,7 +23,7 @@ For Vicon Nexus data, x axis is the whole trial.
 
 from __future__ import division, print_function
 
-import defs
+import site_defs
 import sys
 import copy
 # these needed for Nexus 2.1
@@ -470,9 +466,9 @@ class emg:
         
     def define_emg_names(self):
         """ Defines the electrode mapping. """
-        self.ch_normals = defs.emg_normals
-        self.ch_names = defs.emg_names
-        self.ch_labels = defs.emg_labels
+        self.ch_normals = site_defs.emg_normals
+        self.ch_names = site_defs.emg_names
+        self.ch_labels = site_defs.emg_labels
       
     def is_logical_channel(self, chname):
         return chname in self.ch_names
@@ -522,7 +518,7 @@ class emg:
             vicon = self.source
             framerate = vicon.GetFrameRate()
             framecount = vicon.GetFrameCount()
-            emg_devname = defs.emg_devname
+            emg_devname = site_defs.emg_devname
             devnames = vicon.GetDeviceNames()
             if emg_devname in devnames:
                 emg_id = vicon.GetDeviceIDFromName(emg_devname)

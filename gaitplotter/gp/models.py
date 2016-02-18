@@ -10,14 +10,10 @@ models_all.
 """
 
 import config
-import getpass
+import site_defs
 
-# needed to get normal data dirs from config
-# TODO: hardcoded dirs, also in plot.py
-pathprefix = 'c:/users/' + getpass.getuser()
-desktop = pathprefix + '/Desktop'
-appdir = desktop + '/GaitPlotter'
-cfg = config.Config(appdir)
+# needed for normal data paths
+cfg = config.Config(site_defs.appdir)
 cfg.read()
 
 models_all = []

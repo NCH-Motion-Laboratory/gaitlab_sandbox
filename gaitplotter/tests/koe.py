@@ -6,12 +6,9 @@ Created on Mon Apr 20 09:16:10 2015
 @author: vicon123
 """
 
-
-
-def listchanger(arglist):
-    arglist = ['jee']
-    
-list1 = []
-listchanger(list1)
-print(list1)
-
+def allints(n):
+    for i in range(n):
+        yield i
+        
+        
+a = allints(100)
