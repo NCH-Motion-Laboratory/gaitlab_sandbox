@@ -5,8 +5,10 @@ Gaitplotter: plot gait data using matplotlib.
 
 
 TODO:
+plot forceplate data
 support multiple forceplates
 ask whether to overwrite pdf (Qt dialog?)
+legends may overrun bottom of plot (for 6+ items)
 
 
 Rules:
