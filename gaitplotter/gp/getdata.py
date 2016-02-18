@@ -289,17 +289,18 @@ class trial:
         self.eclipse_notes = get_eclipse_key(trialpath, 'NOTES')        
         self.source = source
         self.fp = forceplate(source)
-        # TODO: read from config / put as init params?
-        # will be read by read_vars
-        # TODO: emg params
+        # init emg
         self.emg = emg(source, emg_auto_off=emg_auto_off, emg_mapping=emg_mapping)
         self.model = model_outputs(self.source)
         self.kinetics_side = self.kinetics_available()
         # normalized x-axis of 0,1,2..100%
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
+        # figure out gait cycles
         self.scan_cycles()
+        # video files associated with trial
         self.video_files = get_video_filenames(self.sessionpath+self.trialname)
+        
         
     def kinetics_available(self):
         """ See whether this trial has ground reaction forces for left/right side

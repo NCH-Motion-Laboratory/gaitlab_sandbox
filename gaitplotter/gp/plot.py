@@ -5,7 +5,7 @@ Gaitplotter: plot gait data using matplotlib.
 
 
 TODO:
-variable title handling if multiple vars on single subplot (L/R mess)
+support multiple forceplates
 
 
 Rules:
@@ -44,9 +44,8 @@ class gaitplotter():
 
     def __init__(self):
 
-        self.appdir = site_defs.appdir        
-        
         # read .ini file if available
+        self.appdir = site_defs.appdir        
         self.cfg = config.Config(self.appdir)
         config_ok, msg = self.cfg.check()
         if not config_ok:
@@ -318,7 +317,7 @@ class gaitplotter():
                             self.trial.model.read_model(model)
                             model.was_read = True
                         else:
-                            debug_print('read_trial: model already read:', model.desc)
+                            debug_print('read_trial: variables already read from:', model.desc)
         except getdata.GaitDataError as e:
             msg = 'Error while reading from trial ' + self.trial.trialname + ':\n' + e.msg
             error_exit(msg)
@@ -335,10 +334,11 @@ class gaitplotter():
         Parameters:
         cycle: which gait cycle to use from the trial (default=first)
         side: which side kinetics/kinematics to plot (default=determine from trial).
-        Note that non-kinetics vars are two-sided by default (unless onesided=True)
+        Note that non-kinetics vars are plotted two-sided by default (unless onesided=True)
         maintitle: plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         model_linestyle: plotting style for model variables (PiG etc.)
+        model_tracecolor: line color for model variables
         emg_tracecolor: color for EMG traces
         """        
         if not self.trial:
