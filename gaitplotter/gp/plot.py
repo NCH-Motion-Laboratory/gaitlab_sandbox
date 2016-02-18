@@ -6,6 +6,7 @@ Gaitplotter: plot gait data using matplotlib.
 
 TODO:
 support multiple forceplates
+ask whether to overwrite pdf (Qt dialog?)
 
 
 Rules:
