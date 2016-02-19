@@ -5,6 +5,7 @@ Gaitplotter: plot gait data using matplotlib.
 
 
 TODO:
+multiple kinematics / EMG cycles from one trial?
 plot forceplate data
 support multiple forceplates
 ask whether to overwrite pdf (Qt dialog?)
