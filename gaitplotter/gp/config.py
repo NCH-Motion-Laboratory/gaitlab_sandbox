@@ -62,6 +62,9 @@ class Config():
         
         if os.path.isfile(self.configfile):
             self.read()
+        else:
+            messagebox("No configuration file, reverting to default config")
+            
         
     def isfloat(self, str):
         """ Check if str can be interpreted as floating point number. """
