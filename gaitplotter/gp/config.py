@@ -3,9 +3,6 @@
 Created on Fri Jul 03 12:20:36 2015
 
 Handles configuration for Gaitplotter.
-To initialize the configuration file with default values, create an instance
-of cfg = Config(appdir) and call cfg.write()
-where appdir is the root directory (e.g. user's home)
 
 @author: Jussi
 """
