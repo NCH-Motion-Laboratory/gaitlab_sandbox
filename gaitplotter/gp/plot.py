@@ -13,7 +13,6 @@ legends may overrun bottom of plot (for 6+ items)
 config defaults to site_defs.py
 
 
-
 Rules:
 -channel type is autodetected by looking into the known names
 -can specify channel as 'None' to leave corresponding subplot empty

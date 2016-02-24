@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Tabbed form for input of liikelaajuus (movement range) data.
+Tabbed form for input of movement range data.
 Tested with PyQt 4.8 and Python 2.7.
+
+
+
+
+design:
+-separate ui file with all the widgets is made with Qt Designer and loaded 
+ using uic
+-widget naming: first 2-3 chars indicate widget type, next word indicates 
+ page (tab) where the widget resides, the rest indicates corresponding variable 
+ name (e.g. lnTiedotNimi)
+-widget inputs are updated into internal dict immediately when any value
+ changes
+-for saving, dict data is turned into json unicode and written out in utf-8
+-data is saved into temp directory whenever any values are changed by user
 
 
 TODO:
@@ -302,7 +316,8 @@ class EntryApp(QtGui.QMainWindow):
         return len([x for x in self.data if self.data[x] != self.data_empty[x]])
             
     def page_change(self):
-        """ Method called whenever page (tab) changes """
+        """ Method called whenever page (tab) changes. Currently only does
+        focus / selectall on the first widget of page. """
         newpage = self.maintab.currentWidget()
         # focus / selectAll on 1st widget of new tab
         if newpage in self.firstwidget:
