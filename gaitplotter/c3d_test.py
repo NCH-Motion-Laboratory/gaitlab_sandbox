@@ -9,10 +9,11 @@ single emg plot from c3d
 
 from gp.plot import gaitplotter
 import gp.layouts
+from gp.site_defs import desktop
 
 plotvars = gp.layouts.std_emg
 
-trialpath = "C:/Users/HUS20664877/Desktop/projects/llinna/gaitplotter/testdata/gait-pig.c3d"
+trialpath = desktop + "/projects/llinna/gaitplotter/testdata/gait-pig.c3d"
 
 gplotter = gaitplotter()
 gplotter.open_c3d_trial(trialpath)

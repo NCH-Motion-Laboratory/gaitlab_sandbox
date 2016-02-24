@@ -7,13 +7,8 @@ Create a new config file for Gaitplotter.
 @author: Jussi
 """
 
-import getpass
 from gp.config import Config
-
-pathprefix = 'c:/users/' + getpass.getuser()
-desktop = pathprefix + '/Desktop'
-appdir = desktop + '/GaitPlotter'
-
+from gp.site_defs import appdir
 
 cfg = Config(appdir)
 cfg.write()
