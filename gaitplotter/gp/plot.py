@@ -573,13 +573,16 @@ class gaitplotter():
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
                 pdf_name = self.trial.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
-            try:
-                debug_print('trying to create: '+pdf_name)
-                with PdfPages(pdf_name) as pdf:
-                    pdf.savefig(self.fig)
-            except IOError:
-                messagebox('Error writing PDF file, check that file is not already open.')
-                #messagebox('Successfully wrote PDF file: '+pdf_name)
+                if os.path.isfile(pdf_name):
+                    yes = yesno_box(pdf_name+' exists, overwrite?')
+            if yes:
+                try:
+                    debug_print('trying to create: '+pdf_name)
+                    with PdfPages(pdf_name) as pdf:
+                        pdf.savefig(self.fig)
+                except IOError:
+                    messagebox('Error writing PDF file, check that file is not already open.')
+                    #messagebox('Successfully wrote PDF file: '+pdf_name)
         else:
             raise Exception('No figure to save!')
     

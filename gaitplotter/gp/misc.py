@@ -34,4 +34,8 @@ def messagebox(message):
     # graphical message dialog - Windows specific
     ctypes.windll.user32.MessageBoxA(0, message, "Message from Nexus Python script", 0)
 
+def yesno_box(message):
+    """ Yes/no dialog with message """
+    return ctypes.windll.user32.MessageBoxA(0, message, "Question", 1) == 1
+    
 
