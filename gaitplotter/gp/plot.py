@@ -31,7 +31,7 @@ import tkFileDialog
 import matplotlib.pyplot as plt
 import numpy as np
 import getdata
-from misc import error_exit, messagebox, nexus_pid
+from misc import error_exit, messagebox, yesno_box, nexus_pid
 from getdata import debug_print
 import config
 from matplotlib.backends.backend_pdf import PdfPages
@@ -572,8 +572,10 @@ class gaitplotter():
                 if not pdf_prefix:
                     pdf_prefix = 'Nexus_plot_'
                 pdf_name = self.trial.sessionpath + pdf_prefix + self.trial.trialname + '.pdf'
-                if os.path.isfile(pdf_name):
-                    yes = yesno_box(pdf_name+' exists, overwrite?')
+            if os.path.isfile(pdf_name):
+                yes = yesno_box(pdf_name+' exists, overwrite?')
+            else:
+                yes = True
             if yes:
                 try:
                     debug_print('trying to create: '+pdf_name)
