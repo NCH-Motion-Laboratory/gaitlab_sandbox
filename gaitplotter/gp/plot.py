@@ -112,7 +112,7 @@ class gaitplotter():
         self.vicon = None
         
     def configwindow(self):
-        """ Open a window for configuring NexusPlotter """
+        """ Open a configuration window. """
         self.cfg.window()
         
     def get_emg_filter_description(self):
