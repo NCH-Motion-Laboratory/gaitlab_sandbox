@@ -276,6 +276,7 @@ class trial:
         else:
             raise GaitDataError('Invalid data source specified')
         debug_print('Foot strikes right:', self.rfstrikes, 'left:', self.lfstrikes)
+        debug_print('Toeoffs right:', self.rtoeoffs, 'left:', self.ltoeoffs)
         if len(self.lfstrikes) < 2 or len(self.rfstrikes) <2:
             raise GaitDataError('Too few foot strike events detected, check that data has been processed')
         # sort events (may be in wrong temporal order, at least in c3d files)
