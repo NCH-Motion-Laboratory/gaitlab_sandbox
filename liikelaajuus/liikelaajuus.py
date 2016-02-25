@@ -20,10 +20,9 @@ design:
 
 TODO:
 
-spinboxit -> tekstibokseiksi ?
- 
-add 'ok' option for catch (and degs?) (not measured/no catch/catch in degrees)
--or degs to free text fields
+lonkka: hyp eka fleksiot (oik, vas) sit vasta alaspäin
+lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
+-optio
 
 make main window smaller (comment box?)
 
@@ -129,7 +128,7 @@ class EntryApp(QtGui.QMainWindow):
         desired form. On value change, call self.values_changed which updates
         the self.data dict at the correspoding widget. """
         for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
-            wname = str(w.objectName())
+            wname = unicode(w.objectName())
             wsave = True
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox)
@@ -252,7 +251,8 @@ class EntryApp(QtGui.QMainWindow):
     def values_changed(self, w):
         if self.update_dict:
             print('updating dict for:', w.objectName())
-            self.data[self.widget_to_var[w.objectName()]] = w.getVal()
+            wname = unicode(w.objectName())
+            self.data[self.widget_to_var[wname]] = w.getVal()
         self.saved_to_file = False
         if self.save_to_tmp:
             self.save_temp()
