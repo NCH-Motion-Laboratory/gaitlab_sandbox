@@ -20,8 +20,14 @@ design:
 
 TODO:
 
+tab order
+
+dbl spinbox & locale (pilkku vs. piste)
+
 lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
 -optio
+
+
 
 
 @author: Jussi (jnu@iki.fi)
