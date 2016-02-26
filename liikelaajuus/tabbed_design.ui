@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>8</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -320,6 +320,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -378,6 +384,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -402,6 +414,12 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
@@ -441,6 +459,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -471,6 +495,12 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
@@ -504,6 +534,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -529,6 +565,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -553,6 +595,12 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
@@ -619,6 +667,12 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
@@ -12074,13 +12128,6 @@
             </property>
            </spacer>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_309">
-            <property name="text">
-             <string>Tasapaino</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="2">
            <widget class="QLabel" name="label_306">
             <property name="font">
@@ -12109,11 +12156,11 @@
           </item>
           <item row="3" column="2">
            <widget class="QSpinBox" name="spTasapOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
@@ -12123,13 +12170,20 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_309">
+            <property name="text">
+             <string>Tasapaino</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="3">
            <widget class="QSpinBox" name="spTasapVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
