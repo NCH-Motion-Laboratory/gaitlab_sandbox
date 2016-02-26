@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -12371,7 +12371,15 @@
   <tabstop>lnTiedotHetu</tabstop>
   <tabstop>lnTiedotMittaajat</tabstop>
   <tabstop>cmtTiedot</tabstop>
-  <tabstop>cmtAntrop</tabstop>
+  <tabstop>spAntropAlaraajaOik</tabstop>
+  <tabstop>spAntropAlaraajaVas</tabstop>
+  <tabstop>spAntropPolviOik</tabstop>
+  <tabstop>spAntropPolviVas</tabstop>
+  <tabstop>spAntropNilkkaOik</tabstop>
+  <tabstop>spAntropNilkkaVas</tabstop>
+  <tabstop>spAntropSIAS</tabstop>
+  <tabstop>spAntropPituus</tabstop>
+  <tabstop>spAntropPaino</tabstop>
   <tabstop>spLonkkaFleksioOik</tabstop>
   <tabstop>spLonkkaFleksioVas</tabstop>
   <tabstop>cbLonkkaFleksioModAOik</tabstop>
@@ -12448,14 +12456,6 @@
   <tabstop>cbLonkkaUlkokiertoVoimaVas</tabstop>
   <tabstop>cbLonkkaUlkokiertoSelOik</tabstop>
   <tabstop>cbLonkkaUlkokiertoSelVas</tabstop>
-  <tabstop>cmtLonkka</tabstop>
-  <tabstop>spPolviEkstensioVapOik</tabstop>
-  <tabstop>spPolviEkstensioVapVas</tabstop>
-  <tabstop>spPolviEkstensioAvOik</tabstop>
-  <tabstop>spPolviEkstensioAvVas</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
-  <tabstop>spPolviHamstringCatchOik</tabstop>
   <tabstop>spPolviHamstringCatchVas</tabstop>
   <tabstop>cbPolviHamstringModAOik</tabstop>
   <tabstop>cbPolviHamstringModAVas</tabstop>
@@ -12579,6 +12579,17 @@
   <tabstop>btnLoad</tabstop>
   <tabstop>btnClear</tabstop>
   <tabstop>maintab</tabstop>
+  <tabstop>spTasapVas</tabstop>
+  <tabstop>spTasapOik</tabstop>
+  <tabstop>cmtAntrop</tabstop>
+  <tabstop>spPolviEkstensioAvVas</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
+  <tabstop>spPolviHamstringCatchOik</tabstop>
+  <tabstop>cmtLonkka</tabstop>
+  <tabstop>spPolviEkstensioVapOik</tabstop>
+  <tabstop>spPolviEkstensioVapVas</tabstop>
+  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
+  <tabstop>spPolviEkstensioAvOik</tabstop>
  </tabstops>
  <resources/>
  <connections/>
