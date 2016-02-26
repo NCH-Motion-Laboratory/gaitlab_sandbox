@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -303,9 +303,66 @@
        <attribute name="title">
         <string>Antrop. mitat</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_13">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
          <layout class="QGridLayout" name="gridLayout_15">
+          <item row="6" column="3">
+           <widget class="QSpinBox" name="spAntropNilkkaVas">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QSpinBox" name="spAntropPolviVas">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QSpinBox" name="spAntropAlaraajaOik">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="3">
            <widget class="QLabel" name="label_263">
             <property name="font">
@@ -400,72 +457,123 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lnAntropAlaraajaOik">
-            <property name="inputMask">
-             <string/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="cursorPosition">
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="3">
-           <widget class="QLineEdit" name="lnAntropAlaraajaVas">
-            <property name="inputMask">
-             <string/>
+           <widget class="QSpinBox" name="spAntropAlaraajaVas">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="lnAntropPolviOik">
-            <property name="inputMask">
-             <string/>
+            <property name="suffix">
+             <string> mm</string>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QLineEdit" name="lnAntropPolviVas">
-            <property name="inputMask">
-             <string/>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
             </property>
            </widget>
           </item>
           <item row="6" column="2">
-           <widget class="QLineEdit" name="lnAntropNilkkaOik">
-            <property name="inputMask">
-             <string/>
+           <widget class="QSpinBox" name="spAntropNilkkaOik">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QSpinBox" name="spAntropPolviOik">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
             </property>
            </widget>
           </item>
           <item row="7" column="2">
-           <widget class="QLineEdit" name="lnAntropSIAS">
-            <property name="inputMask">
-             <string/>
+           <widget class="QSpinBox" name="spAntropSIAS">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
             </property>
            </widget>
           </item>
           <item row="8" column="2">
-           <widget class="QLineEdit" name="lnAntropPituus">
-            <property name="inputMask">
-             <string/>
+           <widget class="QSpinBox" name="spAntropPituus">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>2500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
             </property>
            </widget>
           </item>
           <item row="9" column="2">
-           <widget class="QLineEdit" name="lnAntropPaino">
-            <property name="inputMask">
-             <string/>
+           <widget class="QDoubleSpinBox" name="spAntropPaino">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
             </property>
-           </widget>
-          </item>
-          <item row="6" column="3">
-           <widget class="QLineEdit" name="lnAntropNilkkaVas">
-            <property name="inputMask">
-             <string/>
+            <property name="suffix">
+             <string> kg</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-0.100000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>150.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>-0.100000000000000</double>
             </property>
            </widget>
           </item>
@@ -12086,15 +12194,6 @@
   <tabstop>lnTiedotHetu</tabstop>
   <tabstop>lnTiedotMittaajat</tabstop>
   <tabstop>cmtTiedot</tabstop>
-  <tabstop>lnAntropAlaraajaOik</tabstop>
-  <tabstop>lnAntropAlaraajaVas</tabstop>
-  <tabstop>lnAntropPolviOik</tabstop>
-  <tabstop>lnAntropPolviVas</tabstop>
-  <tabstop>lnAntropNilkkaOik</tabstop>
-  <tabstop>lnAntropNilkkaVas</tabstop>
-  <tabstop>lnAntropSIAS</tabstop>
-  <tabstop>lnAntropPituus</tabstop>
-  <tabstop>lnAntropPaino</tabstop>
   <tabstop>cmtAntrop</tabstop>
   <tabstop>spLonkkaFleksioOik</tabstop>
   <tabstop>spLonkkaFleksioVas</tabstop>
