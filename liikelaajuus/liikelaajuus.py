@@ -22,8 +22,6 @@ TODO:
 
 lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
 -optio
-make main window smaller (comment box?)
-line inputs that take a number -> spinboxes?
 
 
 @author: Jussi (jnu@iki.fi)
@@ -124,11 +122,11 @@ class EntryApp(QtGui.QMainWindow):
         """ Create getter/setter methods that convert the data immediately to
         desired form. On value change, call self.values_changed which updates
         the self.data dict at the correspoding widget. """
-        for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
+        for w in self.findChildren((QtGui.QSpinBox,QtGui.QDoubleSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = unicode(w.objectName())
             wsave = True
             if wname[:2] == 'sp':
-                assert(w.__class__ == QtGui.QSpinBox)
+                assert(w.__class__ == QtGui.QSpinBox or w.__class__ == QtGui.QDoubleSpinBox)
                 # -lambdas need default arguments because of late binding
                 # -lambda expression needs to consume unused 'new value' argument,
                 # therefore two parameters (except for QTextEdit...)
@@ -175,9 +173,7 @@ class EntryApp(QtGui.QMainWindow):
         dblPosValidator.setDecimals(1)
         dblPosValidator.setBottom(0)
         dblPosValidator.setNotation(dblPosValidator.StandardNotation)
-        for wname in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
-                  'lnAntropPolviVas','lnAntropNilkkaOik','lnAntropNilkkaVas',
-                  'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
+        for wname in ['lnTasapOik','lnTasapVas']:
             self.input_widgets[wname].setValidator(dblPosValidator)
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
         on page change so that data can be entered immediately. Only needed for 
@@ -185,7 +181,7 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget = {}
         # TODO: check/fix
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
-        self.firstwidget[self.tabAntrop] = self.lnAntropAlaraajaOik
+        self.firstwidget[self.tabAntrop] = self.spAntropAlaraajaOik
         self.firstwidget[self.tabLonkka] = self.spLonkkaFleksioOik
         self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
         self.firstwidget[self.tabPolvi] = self.spPolviEkstensioVapOik
