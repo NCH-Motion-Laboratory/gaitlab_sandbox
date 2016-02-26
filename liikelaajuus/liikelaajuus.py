@@ -167,14 +167,6 @@ class EntryApp(QtGui.QMainWindow):
         self.btnQuit.clicked.connect(self.close)
         # method call on tab change
         self.maintab.currentChanged.connect(self.page_change)
-        # set validators for line input widgets that only take a number
-        dblPosValidator = QtGui.QDoubleValidator()  # positive double
-        # 1 decimals, positive value, no scientific notation
-        dblPosValidator.setDecimals(1)
-        dblPosValidator.setBottom(0)
-        dblPosValidator.setNotation(dblPosValidator.StandardNotation)
-        for wname in ['lnTasapOik','lnTasapVas']:
-            self.input_widgets[wname].setValidator(dblPosValidator)
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
         on page change so that data can be entered immediately. Only needed for 
         spinbox / lineedit widgets. """
@@ -186,7 +178,7 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
         self.firstwidget[self.tabPolvi] = self.spPolviEkstensioVapOik
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
-        self.firstwidget[self.tabTasap] = self.lnTasapOik
+        self.firstwidget[self.tabTasap] = self.spTasapOik
         self.total_widgets = len(self.input_widgets)
         self.statusbar.showMessage(ll_msgs.ready.format(n=self.total_widgets))
         # TODO: set 'important' widgets (mandatory values) .important = True
