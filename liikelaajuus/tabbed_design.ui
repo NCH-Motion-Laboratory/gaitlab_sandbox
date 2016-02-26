@@ -352,6 +352,12 @@
           </item>
           <item row="3" column="2">
            <widget class="QSpinBox" name="spAntropAlaraajaOik">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -11978,7 +11984,7 @@
        <attribute name="title">
         <string>Tasapaino</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_17">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <spacer name="verticalSpacer_21">
           <property name="orientation">
@@ -12007,23 +12013,6 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lnTasapOik">
-            <property name="inputMask">
-             <string/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QLineEdit" name="lnTasapVas">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="4">
            <spacer name="horizontalSpacer_72">
             <property name="orientation">
@@ -12040,7 +12029,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_309">
             <property name="text">
-             <string>Tasapaino (s)</string>
+             <string>Tasapaino</string>
             </property>
            </widget>
           </item>
@@ -12069,6 +12058,26 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="3" column="2">
+           <widget class="QSpinBox" name="spTasapOik">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="spTasapVas">
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> s</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -12450,8 +12459,6 @@
   <tabstop>cbRyhtiVoimaVatsaVinotVas</tabstop>
   <tabstop>cbRyhtiVoimaSelkaOik</tabstop>
   <tabstop>cmtRyhti</tabstop>
-  <tabstop>lnTasapOik</tabstop>
-  <tabstop>lnTasapVas</tabstop>
   <tabstop>cmtTasap</tabstop>
   <tabstop>btnReport</tabstop>
   <tabstop>btnQuit</tabstop>
