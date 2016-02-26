@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>8</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -12109,6 +12109,12 @@
           </item>
           <item row="3" column="2">
            <widget class="QSpinBox" name="spTasapOik">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
@@ -12119,6 +12125,12 @@
           </item>
           <item row="3" column="3">
            <widget class="QSpinBox" name="spTasapVas">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="specialValueText">
              <string>Ei mitattu</string>
             </property>
