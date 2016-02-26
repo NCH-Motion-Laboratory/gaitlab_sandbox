@@ -20,12 +20,9 @@ design:
 
 TODO:
 
-lonkka: hyp eka fleksiot (oik, vas) sit vasta alaspäin
 lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
 -optio
-
 make main window smaller (comment box?)
-
 line inputs that take a number -> spinboxes?
 
 
