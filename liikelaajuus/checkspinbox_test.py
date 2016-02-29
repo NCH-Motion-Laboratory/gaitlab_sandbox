@@ -6,20 +6,9 @@ Created on Wed Feb  3 18:56:52 2016
 """
 
 import sys
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 from PyQt4 import QtGui, QtCore
 
-class MyQSpinBox(QSpinBox):
 
-    def __init__(self):
-        super(self.__class__, self).__init__()
-        print('jee!')
-    
-    def Enter(self, event):
-        print('enter')
-        self.clear()
-        QSpinBox.Enter(self, event)
 
 
 class CheckDegSpinBox(QtGui.QWidget):
@@ -32,6 +21,9 @@ class CheckDegSpinBox(QtGui.QWidget):
     # note that currently the value is not returned by the signal
     # (unlike in the Qt spinbox)
     valueChanged = QtCore.pyqtSignal()  
+    
+    # for Qt designer
+    __pyqtSignals__ = ('valueChanged')
     
     def __init__(self):
       
@@ -88,14 +80,14 @@ class CheckDegSpinBox(QtGui.QWidget):
     #    return QSize(150,20)
         
 
-class spindemo(QWidget):
+class spindemo(QtGui.QWidget):
    def __init__(self, parent = None):
       super(spindemo, self).__init__(parent)
       
-      layout = QVBoxLayout()
+      layout = QtGui.QVBoxLayout()
       self.sp1 = CheckDegSpinBox()
       self.sp2 = CheckDegSpinBox()
-      self.btn = QPushButton()
+      self.btn = QtGui.QPushButton()
       layout.addWidget(self.sp1)
       layout.addWidget(self.sp2)
       layout.addWidget(self.btn)
@@ -114,7 +106,7 @@ class spindemo(QWidget):
 
 
 def main():
-   app = QApplication(sys.argv)
+   app =QtGui.QApplication(sys.argv)
    ex = spindemo()
    ex.show()
    sys.exit(app.exec_())

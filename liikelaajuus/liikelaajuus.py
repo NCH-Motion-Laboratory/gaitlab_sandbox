@@ -45,6 +45,75 @@ import ll_reporter
 import ll_msgs
 
 
+class CheckDegSpinBox(QtGui.QWidget):
+    """ Custom widget: Spinbox (degrees) with checkbox signaling "normal value".
+    If checkbox is checked, disable spinbox -> value() returns 'NR'
+    If not, value() returns spinbox value. 
+    setValue() takes either NR, the 'special value' (not measured) or integer.
+    """
+    # signal has to be defined here for unclear reasons
+    # note that currently the value is not returned by the signal
+    # (unlike in the Qt spinbox)
+    valueChanged = QtCore.pyqtSignal()  
+    
+    # for Qt designer
+    __pyqtSignals__ = ('valueChanged')
+    
+    def __init__(self):
+      
+        super(self.__class__, self).__init__()
+            
+        normalLabel = QtGui.QLabel(u'NR')
+        self.normalCheckBox = QtGui.QCheckBox()
+        self.normalval = u'NR'
+        self.normalCheckBox.stateChanged.connect(lambda st: self.toggleSpinBox(st))
+        
+        self.degSpinBox = QtGui.QSpinBox()
+        self.degSpinBox.setRange(-1, 180.0)
+        self.degSpinBox.setValue(-1)
+        self.degSpinBox.setSuffix(u'°')
+        self.specialtext = u'Ei mitattu'
+        self.degSpinBox.setSpecialValueText(self.specialtext)
+        self.degSpinBox.valueChanged.connect(self.valueChanged.emit)
+        self.degSpinBox.setMinimumSize(100,0)
+        # default text
+         
+        layout = QtGui.QGridLayout(self)
+        layout.addWidget(normalLabel, 0, 0)
+        layout.addWidget(self.normalCheckBox, 0, 1)
+        layout.addWidget(self.degSpinBox, 0, 2)
+
+    def value(self):
+        if self.normalCheckBox.checkState() == 0:
+            val = self.degSpinBox.value()
+            if val == self.degSpinBox.minimum():
+                return self.specialtext
+            else:
+                return val
+        elif self.normalCheckBox.checkState() == 2:
+            return self.normalval
+
+    def setValue(self, val):
+        if val == self.normalval:
+            self.degSpinBox.setEnabled(False)
+            self.normalCheckBox.setCheckState(2)
+        else:
+            self.normalCheckBox.setCheckState(0)
+            if val == self.specialtext:
+                self.degSpinBox.setValue(self.degSpinBox.minimum())
+            else:
+                self.degSpinBox.setValue(val)
+    
+    def toggleSpinBox(self, st):
+        """ Enables or disables spinbox input according to st. Also emit
+        valueChanged signal """
+        self.degSpinBox.setEnabled(not st)
+        self.valueChanged.emit()
+        
+    #def sizeHint(self):
+    #    return QSize(150,20)
+
+
 
 class EntryApp(QtGui.QMainWindow):
     """ Main window of application. """
@@ -128,7 +197,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Create getter/setter methods that convert the data immediately to
         desired form. On value change, call self.values_changed which updates
         the self.data dict at the correspoding widget. """
-        for w in self.findChildren((QtGui.QSpinBox,QtGui.QDoubleSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
+        for w in self.findChildren((CheckDegSpinBox,QtGui.QSpinBox,QtGui.QDoubleSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
             wname = unicode(w.objectName())
             wsave = True
             if wname[:2] == 'sp':
@@ -159,6 +228,9 @@ class EntryApp(QtGui.QMainWindow):
                 w.stateChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda val, w=w: checkbox_setval(w, val, self.checkbox_yestext, self.checkbox_notext)
                 w.getVal = lambda w=w: checkbox_getval(w, self.checkbox_yestext, self.checkbox_notext)
+            elif wname[:3] == 'csb':
+                assert(w.__class__ == CheckDegSpinBox)
+                w.valueChanged.connect(lambda x, w=w: self.values_changed(w))
             else:
                 wsave = False
             if wsave:
