@@ -9,6 +9,8 @@ Tested with PyQt 4.8 and Python 2.7.
 design:
 -separate ui file with all the widgets is made with Qt Designer and loaded 
  using uic
+-custom widget (check+spinbox), plugin file should be made available to Qt
+designer (checkspinbox_plugin.py)
 -widget naming: first 2-3 chars indicate widget type, next word indicates 
  page (tab) where the widget resides, the rest indicates corresponding variable 
  name (e.g. lnTiedotNimi)
@@ -21,13 +23,7 @@ design:
 TODO:
 
 tab order
-
 dbl spinbox & locale (pilkku vs. piste)
-
-lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
--optio
-+nilkka/plantarflex
-
 
 
 @author: Jussi (jnu@iki.fi)
