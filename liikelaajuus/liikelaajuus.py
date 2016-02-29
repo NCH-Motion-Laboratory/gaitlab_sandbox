@@ -106,6 +106,12 @@ class CheckDegSpinBox(QtGui.QWidget):
                 self.degSpinBox.setValue(self.degSpinBox.minimum())
             else:
                 self.degSpinBox.setValue(val)
+                
+    def selectAll(self):
+        self.degSpinBox.selectAll()
+        
+    def setFocus(self):
+        self.degSpinBox.setFocus()
     
     def toggleSpinBox(self, st):
         """ Enables or disables spinbox input according to st. Also emit
@@ -237,6 +243,7 @@ class EntryApp(QtGui.QMainWindow):
                 assert(w.__class__ == liikelaajuus.CheckDegSpinBox)
                 w.valueChanged.connect(lambda w=w: self.values_changed(w))
                 w.getVal = w.value
+                w.setVal = w.setValue
             else:
                 wsave = False
             if wsave:
@@ -258,9 +265,9 @@ class EntryApp(QtGui.QMainWindow):
         # TODO: check/fix
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
         self.firstwidget[self.tabAntrop] = self.spAntropAlaraajaOik
-        self.firstwidget[self.tabLonkka] = self.spLonkkaFleksioOik
+        self.firstwidget[self.tabLonkka] = self.csbLonkkaFleksioOik
         self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
-        self.firstwidget[self.tabPolvi] = self.spPolviEkstensioVapOik
+        self.firstwidget[self.tabPolvi] = self.csbPolviEkstensioVapOik
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
         self.firstwidget[self.tabTasap] = self.spTasapOik
         self.total_widgets = len(self.input_widgets)
