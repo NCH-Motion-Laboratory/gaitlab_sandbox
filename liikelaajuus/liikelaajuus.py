@@ -26,7 +26,7 @@ dbl spinbox & locale (pilkku vs. piste)
 
 lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
 -optio
-
++nilkka/plantarflex
 
 
 
@@ -75,12 +75,16 @@ class CheckDegSpinBox(QtGui.QWidget):
         self.degSpinBox.setSpecialValueText(self.specialtext)
         self.degSpinBox.valueChanged.connect(self.valueChanged.emit)
         self.degSpinBox.setMinimumSize(100,0)
+
         # default text
-         
-        layout = QtGui.QGridLayout(self)
+        layout = QtGui.QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
         #layout.addWidget(normalLabel, 0, 0)
-        layout.addWidget(self.normalCheckBox, 0, 0)
-        layout.addWidget(self.degSpinBox, 0, 1)
+        layout.addWidget(self.normalCheckBox)
+        layout.addWidget(self.degSpinBox)
+        
+        # needed for tab order
+        self.setFocusPolicy(QtCore.Qt.TabFocus)
 
     def value(self):
         if self.normalCheckBox.checkState() == 0:
