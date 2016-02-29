@@ -269,6 +269,8 @@ class EntryApp(QtGui.QMainWindow):
         for wname in self.input_widgets:
             if wname[:3] == 'cmt':
                 varname = wname
+            elif wname[:3] == 'csb':  # custom widget
+                varname = wname[3:]
             else:
                 varname = wname[2:]
             self.widget_to_var[wname] = varname
