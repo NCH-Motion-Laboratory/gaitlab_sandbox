@@ -59,9 +59,9 @@ class CheckDegSpinBox(QtGui.QWidget):
     # for Qt designer
     __pyqtSignals__ = ('valueChanged')
     
-    def __init__(self):
+    def __init__(self, parent):
       
-        super(self.__class__, self).__init__()
+        super(self.__class__, self).__init__(parent)
             
         normalLabel = QtGui.QLabel(u'NR')
         self.normalCheckBox = QtGui.QCheckBox()
