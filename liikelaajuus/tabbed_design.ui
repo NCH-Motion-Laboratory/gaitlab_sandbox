@@ -5071,6 +5071,9 @@
             </item>
            </widget>
           </item>
+          <item row="4" column="2">
+           <widget class="CheckDegSpinBox" name="csbKokeilu"/>
+          </item>
          </layout>
         </item>
         <item>
@@ -12363,6 +12366,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CheckDegSpinBox</class>
+   <extends>QWidget</extends>
+   <header>liikelaajuus</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>lnTiedotNimi</tabstop>
   <tabstop>lnTiedotPvm</tabstop>

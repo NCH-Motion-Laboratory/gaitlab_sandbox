@@ -43,13 +43,13 @@ import os
 import json
 import ll_reporter
 import ll_msgs
-
+import liikelaajuus
 
 class CheckDegSpinBox(QtGui.QWidget):
     """ Custom widget: Spinbox (degrees) with checkbox signaling "normal value".
     If checkbox is checked, disable spinbox -> value() returns 'NR'
     If not, value() returns spinbox value. 
-    setValue() takes either NR, the 'special value' (not measured) or integer.
+    setValue() takes either 'NR', the 'special value' (not measured) or integer.
     """
     # signal has to be defined here for unclear reasons
     # note that currently the value is not returned by the signal
@@ -63,14 +63,13 @@ class CheckDegSpinBox(QtGui.QWidget):
       
         super(self.__class__, self).__init__(parent)
             
-        normalLabel = QtGui.QLabel(u'NR')
-        self.normalCheckBox = QtGui.QCheckBox()
+        self.normalCheckBox = QtGui.QCheckBox(u'NR')
         self.normalval = u'NR'
         self.normalCheckBox.stateChanged.connect(lambda st: self.toggleSpinBox(st))
         
         self.degSpinBox = QtGui.QSpinBox()
-        self.degSpinBox.setRange(-1, 180.0)
-        self.degSpinBox.setValue(-1)
+        self.degSpinBox.setRange(-181, 180.0)
+        self.degSpinBox.setValue(-181)
         self.degSpinBox.setSuffix(u'°')
         self.specialtext = u'Ei mitattu'
         self.degSpinBox.setSpecialValueText(self.specialtext)
@@ -79,9 +78,9 @@ class CheckDegSpinBox(QtGui.QWidget):
         # default text
          
         layout = QtGui.QGridLayout(self)
-        layout.addWidget(normalLabel, 0, 0)
-        layout.addWidget(self.normalCheckBox, 0, 1)
-        layout.addWidget(self.degSpinBox, 0, 2)
+        #layout.addWidget(normalLabel, 0, 0)
+        layout.addWidget(self.normalCheckBox, 0, 0)
+        layout.addWidget(self.degSpinBox, 0, 1)
 
     def value(self):
         if self.normalCheckBox.checkState() == 0:
@@ -197,7 +196,8 @@ class EntryApp(QtGui.QMainWindow):
         """ Create getter/setter methods that convert the data immediately to
         desired form. On value change, call self.values_changed which updates
         the self.data dict at the correspoding widget. """
-        for w in self.findChildren((CheckDegSpinBox,QtGui.QSpinBox,QtGui.QDoubleSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
+        #for w in self.findChildren((CheckDegSpinBox,QtGui.QSpinBox,QtGui.QDoubleSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
+        for w in self.findChildren(QtGui.QWidget):            
             wname = unicode(w.objectName())
             wsave = True
             if wname[:2] == 'sp':
@@ -229,8 +229,10 @@ class EntryApp(QtGui.QMainWindow):
                 w.setVal = lambda val, w=w: checkbox_setval(w, val, self.checkbox_yestext, self.checkbox_notext)
                 w.getVal = lambda w=w: checkbox_getval(w, self.checkbox_yestext, self.checkbox_notext)
             elif wname[:3] == 'csb':
-                assert(w.__class__ == CheckDegSpinBox)
-                w.valueChanged.connect(lambda x, w=w: self.values_changed(w))
+                print(w.__class__)
+                assert(w.__class__ == liikelaajuus.CheckDegSpinBox)
+                w.valueChanged.connect(lambda w=w: self.values_changed(w))
+                w.getVal = w.value
             else:
                 wsave = False
             if wsave:
