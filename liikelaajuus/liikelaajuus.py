@@ -5,7 +5,6 @@ Tested with PyQt 4.8 and Python 2.7.
 
 
 
-
 design:
 -separate ui file with all the widgets is made with Qt Designer and loaded 
  using uic
@@ -18,7 +17,6 @@ designer (checkspinbox_plugin.py)
  changes
 -for saving, dict data is turned into json unicode and written out in utf-8
 -data is saved into temp directory whenever any values are changed by user
-
 
 TODO:
 
@@ -315,7 +313,7 @@ class EntryApp(QtGui.QMainWindow):
     def make_report(self):
         """ Make report using the input data. """
         report = ll_reporter.report(self.data)
-        report_txt = report.make_text_list()
+        report_txt = report.make_text_report()
         print(report_txt)
         fname = 'report_koe.txt'
         with io.open(fname,'w',encoding='utf-8') as f:

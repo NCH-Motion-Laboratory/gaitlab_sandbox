@@ -10,15 +10,13 @@ Create liikelaajuus report.
 #from pandas import DataFrame
 
 import html_templates
-#import text_templates
-
-
+import report_template_text
         
 
 class report():
     
-    """ Make an html report. """
-
+    """ Make reports in various formats. """
+    
     def __init__(self, data):
         self.data = data
         
@@ -55,6 +53,9 @@ class report():
     def make_html(self):
         # TODO: for key in html_templates.sections...
         return html_templates.header + self.sec_tiedot() + html_templates.footer
+
+    def make_text_report(self):
+        return report_template_text.report.format(**self.data)
 
     def make_text_list(self):
         li = []
