@@ -9,39 +9,41 @@ from __future__ import print_function
 import string
 import sys
 
-di = {'a': 1, 'b': 2, 'c': 3, 'x': 4, 'y': None}
+di = {'a': 1, 'b': 2, 'c': 3, 'x': 4, 'y': 'Ei'}
 
-tli = ['JOTAIN', 'a: {a} b: {b}', 'x: {x}', 'b: {b}', 'c: {c}', 'y: {y}']
+tli = ['JOTAIN\n', 'a: {a} b: {b} ', 'x: {x} ', 'b: {b} ', 'c: {c} ', 'y: {y} ']
 
-s = tli[1]
+
+rep = u"""
+RAPORTIN TESTAUSTA
+
+NUMEROITA: #a: {a}# b: {b}#
+
+X ja Y: #x: {x}# y: {y}#
+"""
 
 
 def get_field(s):
+    """ Return all fields in a format string. """
     fi = string.Formatter()
-    pit = fi.parse(s)  # parser iterator
+    pit = fi.parse(s)  # returns parser generator
     for items in pit:
-        yield items[1]
+        if items[1]:
+            yield items[1]  # = the field
     
-def format_item(s, di):
+def cond_format(s, di, empty=None):
+    """ Conditionally format string s using dict di: if all field values
+    equal the 'empty' value, return empty string. """
     flds = list(get_field(s))
-    if not any(flds):
-        return s
+    if not flds or any([di[fld] != empty for fld in flds]):
+        return s.format(**di)
     else:
-        if any([di[fld] for fld in flds]):
-            return s.format(**di)            
+        return ''
 
-def noval():
-    pass
+outs = ''.join([cond_format(s, di, 'Ei') for s in rep.split('#')])
 
-for fld in get_field(s):
-    print(fld)
-    
-sys.exit()
-    
-for s,i in enumerate(tli):
-    print(i)
-    for fi in get_field(s):
-        print(fi)
+print(outs)
+
 
 sys.exit()
 

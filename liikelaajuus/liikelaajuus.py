@@ -312,8 +312,8 @@ class EntryApp(QtGui.QMainWindow):
             
     def make_report(self):
         """ Make report using the input data. """
-        report = ll_reporter.report(self.data)
-        report_txt = report.make_text_report()
+        report = ll_reporter.text(self.data)
+        report_txt = report.make_text_list()
         print(report_txt)
         fname = 'report_koe.txt'
         with io.open(fname,'w',encoding='utf-8') as f:

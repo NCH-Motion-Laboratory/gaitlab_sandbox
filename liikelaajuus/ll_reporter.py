@@ -11,15 +11,59 @@ Create liikelaajuus report.
 
 import html_templates
 import report_template_text
+import string        
         
 
-class report():
-    
-    """ Make reports in various formats. """
+class text():
     
     def __init__(self, data):
         self.data = data
+        self.not_measured = u'Ei mitattu'
+        self.delimiter = '&'  # report field delimiter
+
+    def get_field(self, s):
+        """ Return all fields in a format string. """
+        fi = string.Formatter()
+        pit = fi.parse(s)  # returns parser generator
+        for items in pit:
+            if items[1]:
+                yield items[1]  # = the field
         
+    def cond_format(self, s, di, empty=None):
+        """ Conditionally format string s using dict di: if all field values
+        equal the 'empty' value, return empty string. """
+        flds = list(self.get_field(s))
+        if not flds or any([di[fld] != empty for fld in flds]):
+            return s.format(**di)
+        else:
+            return ''
+        
+    def make_text_report(self):
+        """ Generates the main text report. """
+        report = report_template_text.report
+        repl = report.split(self.delimiter)  # split report into 'chunks'
+        # format fields and join. cond_format skips chunks with no data
+        return ''.join([self.cond_format(s, self.data, self.not_measured) for s in repl])
+
+    def make_text_list(self):
+        """ Make a simple list of all variables + values. """
+        li = []
+        for key in sorted(self.data):
+            li.append(key+':'+unicode(self.data[key])+'\n')
+        return u''.join(li)
+
+    def excel(self, fn):
+        """ Export report to Excel (filename fn) TODO"""
+        # example (two columns:)
+        # df = DataFrame( {'Item': list_items, 'Value': list_values} )
+        # df.to_excel('test.xlsx', sheet_name='sheet1', index=False)
+        
+
+class html():
+    
+    def __init__(self, data):
+        self.data = data
+
     def multiline_to_html(self, str):
         """ Convert multiline string to html """
         html_output = []
@@ -54,21 +98,6 @@ class report():
         # TODO: for key in html_templates.sections...
         return html_templates.header + self.sec_tiedot() + html_templates.footer
 
-    def make_text_report(self):
-        return report_template_text.report.format(**self.data)
-
-    def make_text_list(self):
-        li = []
-        for key in sorted(self.data):
-            li.append(key+':'+unicode(self.data[key])+'\n')
-        return u''.join(li)
-
-    def excel(self, fn):
-        """ Export report to Excel (filename fn) TODO"""
-        # example (two columns:)
-        # df = DataFrame( {'Item': list_items, 'Value': list_values} )
-        # df.to_excel('test.xlsx', sheet_name='sheet1', index=False)
-        
         
         
            
