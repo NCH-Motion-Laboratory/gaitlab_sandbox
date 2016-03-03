@@ -369,10 +369,12 @@ class gaitplotter():
 
         # create/switch to figure and set title        
         if self.fig:
-            plt.figure(self.fig.number) 
+            plt.figure(self.fig.number)
+            superpose = True
         else:
             self.fig = plt.figure(figsize=self.totalfigsize)
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
+            superpose = False
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")
 
         # get info on left and right gait cycles
@@ -416,6 +418,10 @@ class gaitplotter():
                     title = self.trial.model.varlabels[varname] + ' ('+side+')'
                 else:
                     title = self.trial.model.varlabels[varname] + ' (LR)'
+                # drop side info if superposing trials. easy way out
+                if superpose:
+                    title = self.trial.model.varlabels[varname]
+
                 ylabel = self.trial.model.ylabels[varname]
                 plt.title(title, fontsize=self.fsize_titles)
                 plt.xlabel(self.xlabel,fontsize=self.fsize_labels)
