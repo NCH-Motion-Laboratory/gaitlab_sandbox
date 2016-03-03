@@ -281,6 +281,7 @@ class gaitplotter():
     def read_trial(self, vars):
         """ Read requested trial variables and directives.
         vars is a list of lists: rows to be plotted. """
+        debug_print('got variables:', vars)
         self.gridv = len(vars)
         self.gridh = len(vars[0])
         self.vars = []
@@ -338,7 +339,7 @@ class gaitplotter():
         Parameters:
         cycle: which gait cycle to use from the trial (default=first)
         side: which side kinetics/kinematics to plot (default=determine from trial).
-        Note that non-kinetics vars are plotted two-sided by default (unless onesided=True)
+        Note that non-kinetics model vars are plotted two-sided by default (unless onesided=True)
         maintitle: plot title; leave unspecified for automatic title (can also then
         supply maintitleprefix)
         model_linestyle: plotting style for model variables (PiG etc.)
@@ -373,6 +374,7 @@ class gaitplotter():
             superpose = True
         else:
             self.fig = plt.figure(figsize=self.totalfigsize)
+            debug_print('creating grid of {} x {} items'.format(self.gridv, self.gridh))
             self.gs = gridspec.GridSpec(self.gridv, self.gridh, height_ratios=plotheightratios)
             superpose = False
         plt.suptitle(maintitle, fontsize=12, fontweight="bold")

@@ -382,6 +382,7 @@ class trial:
             return None
         else:
             return cycles[ncycle-1]
+
     
 class forceplate:
     """ Read and process forceplate data. source may be a c3d file or a
