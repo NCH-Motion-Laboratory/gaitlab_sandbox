@@ -4,11 +4,11 @@ Tabbed form for input of movement range data.
 Tested with PyQt 4.8 and Python 2.7.
 
 
-
-
 design:
 -separate ui file with all the widgets is made with Qt Designer and loaded 
  using uic
+-custom widget (check+spinbox), plugin file should be made available to Qt
+designer (checkspinbox_plugin.py)
 -widget naming: first 2-3 chars indicate widget type, next word indicates 
  page (tab) where the widget resides, the rest indicates corresponding variable 
  name (e.g. lnTiedotNimi)
@@ -17,16 +17,10 @@ design:
 -for saving, dict data is turned into json unicode and written out in utf-8
 -data is saved into temp directory whenever any values are changed by user
 
-
 TODO:
 
-lonkka: hyp eka fleksiot (oik, vas) sit vasta alaspäin
-lonkka, polvi spinboksit (liikelaaj + catchit): lisää "normaalin rajoissa"
--optio
-
-make main window smaller (comment box?)
-
-line inputs that take a number -> spinboxes?
+tab order
+dbl spinbox & locale (pilkku vs. piste)
 
 
 @author: Jussi (jnu@iki.fi)
@@ -42,6 +36,84 @@ import os
 import json
 import ll_reporter
 import ll_msgs
+import liikelaajuus
+
+class CheckDegSpinBox(QtGui.QWidget):
+    """ Custom widget: Spinbox (degrees) with checkbox signaling "normal value".
+    If checkbox is checked, disable spinbox -> value() returns 'NR'
+    If not, value() returns spinbox value. 
+    setValue() takes either 'NR', the 'special value' (not measured) or integer.
+    """
+    # signal has to be defined here for unclear reasons
+    # note that currently the value is not returned by the signal
+    # (unlike in the Qt spinbox)
+    valueChanged = QtCore.pyqtSignal()  
+    
+    # for Qt designer
+    __pyqtSignals__ = ('valueChanged')
+    
+    def __init__(self, parent):
+      
+        super(self.__class__, self).__init__(parent)
+            
+        self.normalCheckBox = QtGui.QCheckBox(u'NR')
+        self.normalval = u'NR'
+        self.normalCheckBox.stateChanged.connect(lambda st: self.toggleSpinBox(st))
+        
+        self.degSpinBox = QtGui.QSpinBox()
+        self.degSpinBox.setRange(-181, 180.0)
+        self.degSpinBox.setValue(-181)
+        self.degSpinBox.setSuffix(u'°')
+        self.specialtext = u'Ei mitattu'
+        self.degSpinBox.setSpecialValueText(self.specialtext)
+        self.degSpinBox.valueChanged.connect(self.valueChanged.emit)
+        self.degSpinBox.setMinimumSize(100,0)
+
+        # default text
+        layout = QtGui.QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        #layout.addWidget(normalLabel, 0, 0)
+        layout.addWidget(self.normalCheckBox)
+        layout.addWidget(self.degSpinBox)
+        
+        # needed for tab order
+        self.setFocusPolicy(QtCore.Qt.TabFocus)
+
+    def value(self):
+        if self.normalCheckBox.checkState() == 0:
+            val = self.degSpinBox.value()
+            if val == self.degSpinBox.minimum():
+                return self.specialtext
+            else:
+                return val
+        elif self.normalCheckBox.checkState() == 2:
+            return self.normalval
+
+    def setValue(self, val):
+        if val == self.normalval:
+            self.degSpinBox.setEnabled(False)
+            self.normalCheckBox.setCheckState(2)
+        else:
+            self.normalCheckBox.setCheckState(0)
+            if val == self.specialtext:
+                self.degSpinBox.setValue(self.degSpinBox.minimum())
+            else:
+                self.degSpinBox.setValue(val)
+                
+    def selectAll(self):
+        self.degSpinBox.selectAll()
+        
+    def setFocus(self):
+        self.degSpinBox.setFocus()
+    
+    def toggleSpinBox(self, st):
+        """ Enables or disables spinbox input according to st. Also emit
+        valueChanged signal """
+        self.degSpinBox.setEnabled(not st)
+        self.valueChanged.emit()
+        
+    #def sizeHint(self):
+    #    return QSize(150,20)
 
 
 
@@ -127,11 +199,12 @@ class EntryApp(QtGui.QMainWindow):
         """ Create getter/setter methods that convert the data immediately to
         desired form. On value change, call self.values_changed which updates
         the self.data dict at the correspoding widget. """
-        for w in self.findChildren((QtGui.QSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
+        #for w in self.findChildren((CheckDegSpinBox,QtGui.QSpinBox,QtGui.QDoubleSpinBox,QtGui.QLineEdit,QtGui.QComboBox,QtGui.QCheckBox,QtGui.QTextEdit)):
+        for w in self.findChildren(QtGui.QWidget):            
             wname = unicode(w.objectName())
             wsave = True
             if wname[:2] == 'sp':
-                assert(w.__class__ == QtGui.QSpinBox)
+                assert(w.__class__ == QtGui.QSpinBox or w.__class__ == QtGui.QDoubleSpinBox)
                 # -lambdas need default arguments because of late binding
                 # -lambda expression needs to consume unused 'new value' argument,
                 # therefore two parameters (except for QTextEdit...)
@@ -158,6 +231,12 @@ class EntryApp(QtGui.QMainWindow):
                 w.stateChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda val, w=w: checkbox_setval(w, val, self.checkbox_yestext, self.checkbox_notext)
                 w.getVal = lambda w=w: checkbox_getval(w, self.checkbox_yestext, self.checkbox_notext)
+            elif wname[:3] == 'csb':
+                print(w.__class__)
+                assert(w.__class__ == liikelaajuus.CheckDegSpinBox)
+                w.valueChanged.connect(lambda w=w: self.values_changed(w))
+                w.getVal = w.value
+                w.setVal = w.setValue
             else:
                 wsave = False
             if wsave:
@@ -172,28 +251,18 @@ class EntryApp(QtGui.QMainWindow):
         self.btnQuit.clicked.connect(self.close)
         # method call on tab change
         self.maintab.currentChanged.connect(self.page_change)
-        # set validators for line input widgets that only take a number
-        dblPosValidator = QtGui.QDoubleValidator()  # positive double
-        # 1 decimals, positive value, no scientific notation
-        dblPosValidator.setDecimals(1)
-        dblPosValidator.setBottom(0)
-        dblPosValidator.setNotation(dblPosValidator.StandardNotation)
-        for wname in ['lnAntropAlaraajaOik','lnAntropAlaraajaVas','lnAntropPolviOik',
-                  'lnAntropPolviVas','lnAntropNilkkaOik','lnAntropNilkkaVas',
-                  'lnAntropSIAS','lnAntropPituus','lnAntropPaino','lnTasapOik','lnTasapVas']:
-            self.input_widgets[wname].setValidator(dblPosValidator)
         """ First widget of each page. This is used to do focus/selectall on the 1st widget
         on page change so that data can be entered immediately. Only needed for 
         spinbox / lineedit widgets. """
         self.firstwidget = {}
         # TODO: check/fix
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
-        self.firstwidget[self.tabAntrop] = self.lnAntropAlaraajaOik
-        self.firstwidget[self.tabLonkka] = self.spLonkkaFleksioOik
+        self.firstwidget[self.tabAntrop] = self.spAntropAlaraajaOik
+        self.firstwidget[self.tabLonkka] = self.csbLonkkaFleksioOik
         self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
-        self.firstwidget[self.tabPolvi] = self.spPolviEkstensioVapOik
+        self.firstwidget[self.tabPolvi] = self.csbPolviEkstensioVapOik
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
-        self.firstwidget[self.tabTasap] = self.lnTasapOik
+        self.firstwidget[self.tabTasap] = self.spTasapOik
         self.total_widgets = len(self.input_widgets)
         self.statusbar.showMessage(ll_msgs.ready.format(n=self.total_widgets))
         # TODO: set 'important' widgets (mandatory values) .important = True
@@ -204,6 +273,8 @@ class EntryApp(QtGui.QMainWindow):
         for wname in self.input_widgets:
             if wname[:3] == 'cmt':
                 varname = wname
+            elif wname[:3] == 'csb':  # custom widget
+                varname = wname[3:]
             else:
                 varname = wname[2:]
             self.widget_to_var[wname] = varname
@@ -240,7 +311,7 @@ class EntryApp(QtGui.QMainWindow):
             
     def make_report(self):
         """ Make report using the input data. """
-        report = ll_reporter.report(self.data)
+        report = ll_reporter.text(self.data)
         report_txt = report.make_text_list()
         print(report_txt)
         fname = 'report_koe.txt'

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1189</width>
-    <height>987</height>
+    <width>1273</width>
+    <height>902</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <widget class="QTabWidget" name="maintab">
       <property name="minimumSize">
        <size>
-        <width>100</width>
-        <height>0</height>
+        <width>400</width>
+        <height>400</height>
        </size>
       </property>
       <property name="currentIndex">
@@ -277,7 +277,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -303,34 +309,39 @@
        <attribute name="title">
         <string>Antrop. mitat</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_13">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
          <layout class="QGridLayout" name="gridLayout_15">
-          <item row="1" column="3">
-           <widget class="QLabel" name="label_263">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
+          <item row="6" column="2">
+           <widget class="QSpinBox" name="spAntropNilkkaOik">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="text">
-             <string>Vasen</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <spacer name="horizontalSpacer_62">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+            <property name="minimumSize">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>100</width>
+              <height>0</height>
              </size>
             </property>
-           </spacer>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
           </item>
           <item row="9" column="1">
            <widget class="QLabel" name="label_264">
@@ -351,6 +362,282 @@
              <string>Oikea</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="4">
+           <spacer name="horizontalSpacer_62">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="8" column="2">
+           <widget class="QSpinBox" name="spAntropPituus">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>2500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QSpinBox" name="spAntropAlaraajaOik">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="label_263">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Vasen</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="2">
+           <widget class="QDoubleSpinBox" name="spAntropPaino">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> kg</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-0.100000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>150.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>-0.100000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="3">
+           <widget class="QSpinBox" name="spAntropNilkkaVas">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_268">
+            <property name="text">
+             <string>Alaraajojen pituudet (mm)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="spAntropAlaraajaVas">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QSpinBox" name="spAntropSIAS">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>1500</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QSpinBox" name="spAntropPolviVas">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-1</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>-1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="label_262">
+            <property name="text">
+             <string>Nilkan leveys (mm)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <spacer name="horizontalSpacer_61">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="7" column="1">
            <widget class="QLabel" name="label_265">
@@ -373,99 +660,34 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_268">
-            <property name="text">
-             <string>Alaraajojen pituudet (mm)</string>
+          <item row="4" column="2">
+           <widget class="QSpinBox" name="spAntropPolviOik">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <spacer name="horizontalSpacer_61">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+            <property name="minimumSize">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>100</width>
+              <height>0</height>
              </size>
             </property>
-           </spacer>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_262">
-            <property name="text">
-             <string>Nilkan leveys (mm)</string>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lnAntropAlaraajaOik">
-            <property name="inputMask">
-             <string/>
+            <property name="suffix">
+             <string> mm</string>
             </property>
-            <property name="text">
-             <string/>
+            <property name="minimum">
+             <number>-1</number>
             </property>
-            <property name="cursorPosition">
-             <number>0</number>
+            <property name="maximum">
+             <number>100</number>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QLineEdit" name="lnAntropAlaraajaVas">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="lnAntropPolviOik">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QLineEdit" name="lnAntropPolviVas">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QLineEdit" name="lnAntropNilkkaOik">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="2">
-           <widget class="QLineEdit" name="lnAntropSIAS">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="2">
-           <widget class="QLineEdit" name="lnAntropPituus">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="2">
-           <widget class="QLineEdit" name="lnAntropPaino">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3">
-           <widget class="QLineEdit" name="lnAntropNilkkaVas">
-            <property name="inputMask">
-             <string/>
+            <property name="value">
+             <number>-1</number>
             </property>
            </widget>
           </item>
@@ -530,7 +752,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -559,40 +787,6 @@
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="21" column="3">
-           <widget class="QSpinBox" name="spLonkkaUlkokiertoVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="4">
            <widget class="QLabel" name="label_89">
             <property name="font">
@@ -616,40 +810,6 @@
             </property>
             <property name="text">
              <string>Vasen</string>
-            </property>
-           </widget>
-          </item>
-          <item row="16" column="2">
-           <widget class="QSpinBox" name="spLonkkaOberOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
             </property>
            </widget>
           </item>
@@ -729,11 +889,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -754,40 +909,6 @@
             </item>
            </widget>
           </item>
-          <item row="10" column="2">
-           <widget class="QSpinBox" name="spLonkkaAbduktioLonkka0Polvi90Oik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="1">
            <widget class="QLabel" name="label_9">
             <property name="font">
@@ -797,176 +918,6 @@
             </property>
             <property name="text">
              <string>-vapaasti, polvi 0°</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="3">
-           <widget class="QSpinBox" name="spLonkkaEkstensioPolvi90Vas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QSpinBox" name="spLonkkaEkstensioAvOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QSpinBox" name="spLonkkaFleksioVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3">
-           <widget class="QSpinBox" name="spLonkkaEkstensioAvVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="2">
-           <widget class="QSpinBox" name="spLonkkaAbduktioLonkka0Oik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
             </property>
            </widget>
           </item>
@@ -1042,11 +993,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -1245,40 +1191,6 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="2">
-           <widget class="QSpinBox" name="spLonkkaEkstensioPolvi90Oik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="12" column="6">
            <widget class="QComboBox" name="cbLonkkaAbduktioLonkka0VoimaOik">
             <property name="sizePolicy">
@@ -1355,11 +1267,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -1414,108 +1321,6 @@
               <string>2</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="20" column="3">
-           <widget class="QSpinBox" name="spLonkkaSisakiertoVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="20" column="2">
-           <widget class="QSpinBox" name="spLonkkaSisakiertoOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="16" column="3">
-           <widget class="QSpinBox" name="spLonkkaOberVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="8" column="7">
@@ -1594,11 +1399,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -1617,176 +1417,6 @@
               <string>5</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="15" column="3">
-           <widget class="QSpinBox" name="spLonkkaAdduktioVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="15" column="2">
-           <widget class="QSpinBox" name="spLonkkaAdduktioOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QSpinBox" name="spLonkkaEkstensioVapVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="3">
-           <widget class="QSpinBox" name="spLonkkaAbduktioLonkka0Vas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QSpinBox" name="spLonkkaEkstensioVapOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="14" column="6">
@@ -1861,11 +1491,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -1966,11 +1591,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -1989,40 +1609,6 @@
               <string>5</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="21" column="2">
-           <widget class="QSpinBox" name="spLonkkaUlkokiertoOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="15" column="7">
@@ -2097,11 +1683,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -2202,11 +1783,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -2299,11 +1875,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -2404,11 +1975,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -2427,108 +1993,6 @@
               <string>5</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QSpinBox" name="spLonkkaFleksioOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="2">
-           <widget class="QSpinBox" name="spLonkkaAbduktioLonkkaFleksOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="3">
-           <widget class="QSpinBox" name="spLonkkaAbduktioLonkkaFleksVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="20" column="6">
@@ -2603,11 +2067,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -2708,11 +2167,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -2805,11 +2259,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -2910,11 +2359,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -3007,11 +2451,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -3112,11 +2551,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -3149,112 +2583,10 @@
             </property>
            </widget>
           </item>
-          <item row="10" column="3">
-           <widget class="QSpinBox" name="spLonkkaAbduktioLonkka0Polvi90Vas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="11" column="2">
-           <widget class="QSpinBox" name="spLonkkaAdduktoritCatchOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="11" column="1">
            <widget class="QLabel" name="label_12">
             <property name="text">
              <string>Adduktorit, catch</string>
-            </property>
-           </widget>
-          </item>
-          <item row="11" column="3">
-           <widget class="QSpinBox" name="spLonkkaAdduktoritCatchVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
             </property>
            </widget>
           </item>
@@ -3320,40 +2652,6 @@
               <string>4</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="9" column="3">
-           <widget class="QSpinBox" name="spLonkkaExtLagVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="5" column="4">
@@ -3761,74 +3059,6 @@
             </property>
            </widget>
           </item>
-          <item row="9" column="2">
-           <widget class="QSpinBox" name="spLonkkaExtLagOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="17" column="3">
-           <widget class="QSpinBox" name="spLonkkaRectusCatchVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="5">
            <widget class="QComboBox" name="cbLonkkaEkstensioModAVas">
             <property name="sizePolicy">
@@ -4067,40 +3297,6 @@
               <string>4</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="17" column="2">
-           <widget class="QSpinBox" name="spLonkkaRectusCatchOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="5" column="8">
@@ -4591,74 +3787,6 @@
             </property>
            </widget>
           </item>
-          <item row="19" column="2">
-           <widget class="QSpinBox" name="spLonkkaPolviFleksioVatsamakuuOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="3">
-           <widget class="QSpinBox" name="spLonkkaPolviFleksioVatsamakuuVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="19" column="6">
            <widget class="QComboBox" name="cbLonkkaPolviFleksioVoimaOik">
             <property name="sizePolicy">
@@ -4731,11 +3859,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -4836,11 +3959,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -4933,6 +4051,96 @@
             </item>
            </widget>
           </item>
+          <item row="3" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaFleksioOik"/>
+          </item>
+          <item row="3" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaFleksioVas"/>
+          </item>
+          <item row="5" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaEkstensioVapOik"/>
+          </item>
+          <item row="5" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaEkstensioVapVas"/>
+          </item>
+          <item row="6" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaEkstensioAvOik"/>
+          </item>
+          <item row="6" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaEkstensioAvVas"/>
+          </item>
+          <item row="8" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaEkstensioPolvi90Oik"/>
+          </item>
+          <item row="8" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaEkstensioPolvi90Vas"/>
+          </item>
+          <item row="9" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaExtLagOik"/>
+          </item>
+          <item row="9" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaExtLagVas"/>
+          </item>
+          <item row="10" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkka0Polvi90Oik"/>
+          </item>
+          <item row="10" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkka0Polvi90Vas"/>
+          </item>
+          <item row="11" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAdduktoritCatchOik"/>
+          </item>
+          <item row="11" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAdduktoritCatchVas"/>
+          </item>
+          <item row="12" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkka0Oik"/>
+          </item>
+          <item row="12" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkka0Vas"/>
+          </item>
+          <item row="14" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkkaFleksOik"/>
+          </item>
+          <item row="14" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkkaFleksVas"/>
+          </item>
+          <item row="15" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAdduktioOik"/>
+          </item>
+          <item row="15" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaAdduktioVas"/>
+          </item>
+          <item row="16" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaOberOik"/>
+          </item>
+          <item row="16" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaOberVas"/>
+          </item>
+          <item row="17" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaRectusCatchOik"/>
+          </item>
+          <item row="17" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaRectusCatchVas"/>
+          </item>
+          <item row="19" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaPolviFleksioVatsamakuuOik"/>
+          </item>
+          <item row="19" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaPolviFleksioVatsamakuuVas"/>
+          </item>
+          <item row="20" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaSisakiertoOik"/>
+          </item>
+          <item row="20" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaSisakiertoVas"/>
+          </item>
+          <item row="21" column="2">
+           <widget class="CheckDegSpinBox" name="csbLonkkaUlkokiertoOik"/>
+          </item>
+          <item row="21" column="3">
+           <widget class="CheckDegSpinBox" name="csbLonkkaUlkokiertoVas"/>
+          </item>
          </layout>
         </item>
         <item>
@@ -4994,7 +4202,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -5100,40 +4314,6 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QSpinBox" name="spPolviEkstensioVapOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="10">
            <spacer name="horizontalSpacer_28">
             <property name="orientation">
@@ -5157,74 +4337,6 @@
             </property>
             <property name="text">
              <string>Oikea</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QSpinBox" name="spPolviEkstensioAvOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QSpinBox" name="spPolviEkstensioAvVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
             </property>
            </widget>
           </item>
@@ -5252,210 +4364,6 @@
             </property>
            </widget>
           </item>
-          <item row="13" column="3">
-           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka90Vas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="3">
-           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka0Vas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="13" column="2">
-           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka90Oik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="2">
-           <widget class="QSpinBox" name="spPolviPopliteaVastakkLonkka0Oik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QSpinBox" name="spPolviEkstensioVapVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="2">
-           <widget class="QSpinBox" name="spPolviFleksioSelinmakuuOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="8" column="1">
            <widget class="QLabel" name="label_19">
             <property name="font">
@@ -5478,40 +4386,6 @@
             </property>
             <property name="text">
              <string>Vasen</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="3">
-           <widget class="QSpinBox" name="spPolviFleksioSelinmakuuVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
             </property>
            </widget>
           </item>
@@ -5655,11 +4529,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -5756,11 +4625,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -5850,40 +4714,6 @@
             </property>
            </widget>
           </item>
-          <item row="9" column="3">
-           <widget class="QSpinBox" name="spPolviHamstringCatchVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="4">
            <widget class="QLabel" name="label_95">
             <property name="font">
@@ -5946,40 +4776,6 @@
               <string>4</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item row="9" column="2">
-           <widget class="QSpinBox" name="spPolviHamstringCatchOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
            </widget>
           </item>
           <item row="2" column="5">
@@ -6091,6 +4887,42 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="2">
+           <widget class="CheckDegSpinBox" name="csbPolviEkstensioVapOik"/>
+          </item>
+          <item row="4" column="3">
+           <widget class="CheckDegSpinBox" name="csbPolviEkstensioVapVas"/>
+          </item>
+          <item row="5" column="2">
+           <widget class="CheckDegSpinBox" name="csbPolviEkstensioAvOik"/>
+          </item>
+          <item row="5" column="3">
+           <widget class="CheckDegSpinBox" name="csbPolviEkstensioAvVas"/>
+          </item>
+          <item row="8" column="2">
+           <widget class="CheckDegSpinBox" name="csbPolviFleksioSelinmakuuOik"/>
+          </item>
+          <item row="8" column="3">
+           <widget class="CheckDegSpinBox" name="csbPolviFleksioSelinmakuuVas"/>
+          </item>
+          <item row="9" column="2">
+           <widget class="CheckDegSpinBox" name="csbPolviHamstringCatchOik"/>
+          </item>
+          <item row="9" column="3">
+           <widget class="CheckDegSpinBox" name="csbPolviHamstringCatchVas"/>
+          </item>
+          <item row="12" column="2">
+           <widget class="CheckDegSpinBox" name="csbPolviPopliteaVastakkLonkka0Oik"/>
+          </item>
+          <item row="12" column="3">
+           <widget class="CheckDegSpinBox" name="csbPolviPopliteaVastakkLonkka0Vas"/>
+          </item>
+          <item row="13" column="2">
+           <widget class="CheckDegSpinBox" name="csbPolviPopliteaVastakkLonkka90Oik"/>
+          </item>
+          <item row="13" column="3">
+           <widget class="CheckDegSpinBox" name="csbPolviPopliteaVastakkLonkka90Vas"/>
+          </item>
          </layout>
         </item>
         <item>
@@ -6152,7 +4984,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -6269,11 +5107,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -6370,11 +5203,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -6397,40 +5225,6 @@
           </item>
           <item row="10" column="2">
            <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0PROMOik">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
-          <item row="13" column="2">
-           <widget class="QSpinBox" name="spNilkkaPlantaarifleksioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -6648,40 +5442,6 @@
             </property>
            </widget>
           </item>
-          <item row="13" column="3">
-           <widget class="QSpinBox" name="spNilkkaPlantaarifleksioVas">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="specialValueText">
-             <string extracomment="Ei mitattu">Ei mitattu</string>
-            </property>
-            <property name="suffix">
-             <string>°</string>
-            </property>
-            <property name="prefix">
-             <string/>
-            </property>
-            <property name="minimum">
-             <number>-181</number>
-            </property>
-            <property name="maximum">
-             <number>180</number>
-            </property>
-            <property name="value">
-             <number>-181</number>
-            </property>
-           </widget>
-          </item>
           <item row="7" column="2">
            <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90PROMOik">
             <property name="sizePolicy">
@@ -6792,11 +5552,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -6889,11 +5644,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -6994,11 +5744,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -7091,11 +5836,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -7230,11 +5970,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -7327,11 +6062,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -7432,11 +6162,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -7529,11 +6254,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -8632,11 +7352,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -8729,11 +7444,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -8906,11 +7616,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -9007,11 +7712,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -9104,6 +7804,12 @@
             </item>
            </widget>
           </item>
+          <item row="13" column="2">
+           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioOik"/>
+          </item>
+          <item row="13" column="3">
+           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioVas"/>
+          </item>
          </layout>
         </item>
         <item>
@@ -9165,7 +7871,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -10810,7 +9522,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -11406,6 +10124,12 @@
               <height>0</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
@@ -11504,11 +10228,6 @@
             <item>
              <property name="text">
               <string>3+</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4-</string>
              </property>
             </item>
             <item>
@@ -11678,11 +10397,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -11799,11 +10513,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -11900,11 +10609,6 @@
             </item>
             <item>
              <property name="text">
-              <string>4-</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>4</string>
              </property>
             </item>
@@ -11986,7 +10690,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -12012,7 +10722,7 @@
        <attribute name="title">
         <string>Tasapaino</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_17">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <spacer name="verticalSpacer_21">
           <property name="orientation">
@@ -12041,23 +10751,6 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="lnTasapOik">
-            <property name="inputMask">
-             <string/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QLineEdit" name="lnTasapVas">
-            <property name="inputMask">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="4">
            <spacer name="horizontalSpacer_72">
             <property name="orientation">
@@ -12070,13 +10763,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_309">
-            <property name="text">
-             <string>Tasapaino (s)</string>
-            </property>
-           </widget>
           </item>
           <item row="1" column="2">
            <widget class="QLabel" name="label_306">
@@ -12103,6 +10789,45 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="3" column="2">
+           <widget class="QSpinBox" name="spTasapOik">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> s</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_309">
+            <property name="text">
+             <string>Tasapaino</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="spTasapVas">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="specialValueText">
+             <string>Ei mitattu</string>
+            </property>
+            <property name="suffix">
+             <string> s</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -12165,7 +10890,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>0</height>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>100</height>
              </size>
             </property>
            </widget>
@@ -12261,13 +10992,20 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1189</width>
+     <width>1273</width>
      <height>25</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CheckDegSpinBox</class>
+   <extends>QWidget</extends>
+   <header>liikelaajuus</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>lnTiedotNimi</tabstop>
   <tabstop>lnTiedotPvm</tabstop>
@@ -12276,50 +11014,19 @@
   <tabstop>lnTiedotHetu</tabstop>
   <tabstop>lnTiedotMittaajat</tabstop>
   <tabstop>cmtTiedot</tabstop>
-  <tabstop>lnAntropAlaraajaOik</tabstop>
-  <tabstop>lnAntropAlaraajaVas</tabstop>
-  <tabstop>lnAntropPolviOik</tabstop>
-  <tabstop>lnAntropPolviVas</tabstop>
-  <tabstop>lnAntropNilkkaOik</tabstop>
-  <tabstop>lnAntropNilkkaVas</tabstop>
-  <tabstop>lnAntropSIAS</tabstop>
-  <tabstop>lnAntropPituus</tabstop>
-  <tabstop>lnAntropPaino</tabstop>
-  <tabstop>cmtAntrop</tabstop>
-  <tabstop>spLonkkaFleksioOik</tabstop>
-  <tabstop>spLonkkaEkstensioVapOik</tabstop>
-  <tabstop>spLonkkaEkstensioAvOik</tabstop>
-  <tabstop>spLonkkaEkstensioPolvi90Oik</tabstop>
-  <tabstop>spLonkkaFleksioVas</tabstop>
-  <tabstop>spLonkkaEkstensioVapVas</tabstop>
-  <tabstop>spLonkkaEkstensioAvVas</tabstop>
-  <tabstop>spLonkkaEkstensioPolvi90Vas</tabstop>
-  <tabstop>spLonkkaExtLagOik</tabstop>
-  <tabstop>spLonkkaExtLagVas</tabstop>
-  <tabstop>spLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
-  <tabstop>spLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
-  <tabstop>spLonkkaAdduktoritCatchOik</tabstop>
-  <tabstop>spLonkkaAdduktoritCatchVas</tabstop>
-  <tabstop>spLonkkaAbduktioLonkka0Oik</tabstop>
-  <tabstop>spLonkkaAbduktioLonkka0Vas</tabstop>
-  <tabstop>spLonkkaAbduktioLonkkaFleksOik</tabstop>
-  <tabstop>spLonkkaAbduktioLonkkaFleksVas</tabstop>
-  <tabstop>spLonkkaAdduktioOik</tabstop>
-  <tabstop>spLonkkaAdduktioVas</tabstop>
-  <tabstop>spLonkkaOberOik</tabstop>
-  <tabstop>spLonkkaOberVas</tabstop>
-  <tabstop>spLonkkaRectusCatchOik</tabstop>
-  <tabstop>spLonkkaRectusCatchVas</tabstop>
-  <tabstop>spLonkkaPolviFleksioVatsamakuuOik</tabstop>
-  <tabstop>spLonkkaPolviFleksioVatsamakuuVas</tabstop>
-  <tabstop>spLonkkaSisakiertoOik</tabstop>
-  <tabstop>spLonkkaSisakiertoVas</tabstop>
-  <tabstop>spLonkkaUlkokiertoOik</tabstop>
-  <tabstop>spLonkkaUlkokiertoVas</tabstop>
-  <tabstop>cbLonkkaFleksioModAOik</tabstop>
-  <tabstop>cbLonkkaFleksioModAVas</tabstop>
-  <tabstop>cbLonkkaEkstensioModAOik</tabstop>
-  <tabstop>cbLonkkaEkstensioModAVas</tabstop>
+  <tabstop>spAntropAlaraajaOik</tabstop>
+  <tabstop>spAntropAlaraajaVas</tabstop>
+  <tabstop>spAntropPolviOik</tabstop>
+  <tabstop>spAntropPolviVas</tabstop>
+  <tabstop>spAntropNilkkaOik</tabstop>
+  <tabstop>spAntropNilkkaVas</tabstop>
+  <tabstop>spAntropSIAS</tabstop>
+  <tabstop>spAntropPituus</tabstop>
+  <tabstop>spAntropPaino</tabstop>
+  <tabstop>csbLonkkaFleksioOik</tabstop>
+  <tabstop>csbLonkkaFleksioVas</tabstop>
+  <tabstop>csbLonkkaEkstensioVapOik</tabstop>
+  <tabstop>csbLonkkaEkstensioVapVas</tabstop>
   <tabstop>cbLonkkaAdduktoritModAOik</tabstop>
   <tabstop>cbLonkkaAdduktoritModAVas</tabstop>
   <tabstop>cbLonkkaRectusModAOik</tabstop>
@@ -12362,21 +11069,8 @@
   <tabstop>cbLonkkaUlkokiertoVoimaVas</tabstop>
   <tabstop>cbLonkkaUlkokiertoSelOik</tabstop>
   <tabstop>cbLonkkaUlkokiertoSelVas</tabstop>
-  <tabstop>cmtLonkka</tabstop>
-  <tabstop>spPolviEkstensioVapOik</tabstop>
-  <tabstop>spPolviEkstensioVapVas</tabstop>
-  <tabstop>spPolviEkstensioAvOik</tabstop>
-  <tabstop>spPolviEkstensioAvVas</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuOik</tabstop>
-  <tabstop>spPolviFleksioSelinmakuuVas</tabstop>
-  <tabstop>spPolviHamstringCatchOik</tabstop>
-  <tabstop>spPolviHamstringCatchVas</tabstop>
   <tabstop>cbPolviHamstringModAOik</tabstop>
   <tabstop>cbPolviHamstringModAVas</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka0Oik</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka0Vas</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka90Oik</tabstop>
-  <tabstop>spPolviPopliteaVastakkLonkka90Vas</tabstop>
   <tabstop>cbPolviEkstensioVapVoimaOik</tabstop>
   <tabstop>cbPolviEkstensioVapVoimaVas</tabstop>
   <tabstop>cbPolviEkstensioVapSelOik</tabstop>
@@ -12400,8 +11094,6 @@
   <tabstop>spNilkkaDorsifleksioPolvi0PROMVas</tabstop>
   <tabstop>spNilkkaDorsifleksioPolvi0AROMOik</tabstop>
   <tabstop>spNilkkaDorsifleksioPolvi0AROMVas</tabstop>
-  <tabstop>spNilkkaPlantaarifleksioOik</tabstop>
-  <tabstop>spNilkkaPlantaarifleksioVas</tabstop>
   <tabstop>lnNilkkaConfusionOik</tabstop>
   <tabstop>lnNilkkaConfusionVas</tabstop>
   <tabstop>cbNilkkaSoleusVoimaOik</tabstop>
@@ -12487,14 +11179,60 @@
   <tabstop>cbRyhtiVoimaVatsaVinotVas</tabstop>
   <tabstop>cbRyhtiVoimaSelkaOik</tabstop>
   <tabstop>cmtRyhti</tabstop>
-  <tabstop>lnTasapOik</tabstop>
-  <tabstop>lnTasapVas</tabstop>
   <tabstop>cmtTasap</tabstop>
   <tabstop>btnReport</tabstop>
   <tabstop>btnQuit</tabstop>
   <tabstop>btnLoad</tabstop>
   <tabstop>btnClear</tabstop>
   <tabstop>maintab</tabstop>
+  <tabstop>spTasapVas</tabstop>
+  <tabstop>spTasapOik</tabstop>
+  <tabstop>cmtAntrop</tabstop>
+  <tabstop>cmtLonkka</tabstop>
+  <tabstop>cbLonkkaFleksioModAOik</tabstop>
+  <tabstop>cbLonkkaFleksioModAVas</tabstop>
+  <tabstop>cbLonkkaEkstensioModAOik</tabstop>
+  <tabstop>cbLonkkaEkstensioModAVas</tabstop>
+  <tabstop>csbLonkkaEkstensioAvOik</tabstop>
+  <tabstop>csbLonkkaEkstensioAvVas</tabstop>
+  <tabstop>csbLonkkaEkstensioPolvi90Oik</tabstop>
+  <tabstop>csbLonkkaEkstensioPolvi90Vas</tabstop>
+  <tabstop>csbLonkkaExtLagOik</tabstop>
+  <tabstop>csbLonkkaExtLagVas</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
+  <tabstop>csbLonkkaAdduktoritCatchOik</tabstop>
+  <tabstop>csbLonkkaAdduktoritCatchVas</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Oik</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Vas</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>csbLonkkaAdduktioOik</tabstop>
+  <tabstop>csbLonkkaAdduktioVas</tabstop>
+  <tabstop>csbLonkkaOberOik</tabstop>
+  <tabstop>csbLonkkaOberVas</tabstop>
+  <tabstop>csbLonkkaRectusCatchOik</tabstop>
+  <tabstop>csbLonkkaRectusCatchVas</tabstop>
+  <tabstop>csbLonkkaPolviFleksioVatsamakuuOik</tabstop>
+  <tabstop>csbLonkkaPolviFleksioVatsamakuuVas</tabstop>
+  <tabstop>csbLonkkaSisakiertoOik</tabstop>
+  <tabstop>csbLonkkaSisakiertoVas</tabstop>
+  <tabstop>csbLonkkaUlkokiertoOik</tabstop>
+  <tabstop>csbLonkkaUlkokiertoVas</tabstop>
+  <tabstop>csbPolviEkstensioVapOik</tabstop>
+  <tabstop>csbPolviEkstensioVapVas</tabstop>
+  <tabstop>csbPolviEkstensioAvOik</tabstop>
+  <tabstop>csbPolviEkstensioAvVas</tabstop>
+  <tabstop>csbPolviFleksioSelinmakuuOik</tabstop>
+  <tabstop>csbPolviFleksioSelinmakuuVas</tabstop>
+  <tabstop>csbPolviHamstringCatchOik</tabstop>
+  <tabstop>csbPolviHamstringCatchVas</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka0Oik</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka0Vas</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka90Oik</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka90Vas</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioOik</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioVas</tabstop>
  </tabstops>
  <resources/>
  <connections/>
