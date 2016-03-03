@@ -19,6 +19,24 @@ designer (checkspinbox_plugin.py)
 
 TODO:
 
+voima + selekt. omalle välilehdelle  (ryhti/vartalo pois)
+lisää 4- voimalaatikkoon
+catchit: 'ei' 'NR' sijaan
+polven fleksio / vatsamakuu siir. polvisivulle (teksti jää muistoksi lonkkasivulle)
+-> ennen selinmakuu -kohtaa.
+gastro, soleus catch: lisää 'ei'; voima pois labelista
+klonus sekä oik. että vas.
+jalkat. sivulle:
+subtalar neutraali: lisää 'kyllä, tiukka'
+uusi kohta ennen colemania: feissin linja: +-1/3, +-2/3, +-3/3
+uusi kohta ennen takaosan asentoa: takaosan kierto: NEU, KOROST. SR, KOROST. UR
+
+
+
+
+
+
+
 tab order
 dbl spinbox & locale (pilkku vs. piste)
 
