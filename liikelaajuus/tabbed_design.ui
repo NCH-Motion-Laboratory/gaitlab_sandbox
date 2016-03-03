@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1273</width>
-    <height>902</height>
+    <width>1246</width>
+    <height>924</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -346,7 +346,7 @@
           <item row="9" column="1">
            <widget class="QLabel" name="label_264">
             <property name="text">
-             <string>Paino (kg)</string>
+             <string>Paino</string>
             </property>
            </widget>
           </item>
@@ -522,7 +522,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_268">
             <property name="text">
-             <string>Alaraajojen pituudet (mm)</string>
+             <string>Alaraajojen pituudet</string>
             </property>
            </widget>
           </item>
@@ -622,7 +622,7 @@
           <item row="6" column="1">
            <widget class="QLabel" name="label_262">
             <property name="text">
-             <string>Nilkan leveys (mm)</string>
+             <string>Nilkan leveys</string>
             </property>
            </widget>
           </item>
@@ -642,21 +642,21 @@
           <item row="7" column="1">
            <widget class="QLabel" name="label_265">
             <property name="text">
-             <string>SIAS (mm)</string>
+             <string>SIAS</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="label_267">
             <property name="text">
-             <string>Polven leveys (mm)</string>
+             <string>Polven leveys</string>
             </property>
            </widget>
           </item>
           <item row="8" column="1">
            <widget class="QLabel" name="label_85">
             <property name="text">
-             <string>Pituus (mm)</string>
+             <string>Pituus</string>
             </property>
            </widget>
           </item>
@@ -7013,7 +7013,7 @@
            </widget>
           </item>
           <item row="19" column="11">
-           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusSelVas_2">
+           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusSelVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -7049,7 +7049,7 @@
            </widget>
           </item>
           <item row="19" column="10">
-           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusSelVas">
+           <widget class="QComboBox" name="cbNilkkaFlexHallucisLongusSelOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10992,7 +10992,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1273</width>
+     <width>1246</width>
      <height>25</height>
     </rect>
    </property>
@@ -11123,8 +11123,8 @@
   <tabstop>cbNilkkaExtHallucisLongusSelVas</tabstop>
   <tabstop>cbNilkkaFlexHallucisLongusVoimaOik</tabstop>
   <tabstop>cbNilkkaFlexHallucisLongusVoimaVas</tabstop>
+  <tabstop>cbNilkkaFlexHallucisLongusSelOik</tabstop>
   <tabstop>cbNilkkaFlexHallucisLongusSelVas</tabstop>
-  <tabstop>cbNilkkaFlexHallucisLongusSelVas_2</tabstop>
   <tabstop>cmtNilkka</tabstop>
   <tabstop>cbJalkatSubtalarOik</tabstop>
   <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
