@@ -4,7 +4,6 @@ Tabbed form for input of movement range data.
 Tested with PyQt 4.8 and Python 2.7.
 
 
-
 design:
 -separate ui file with all the widgets is made with Qt Designer and loaded 
  using uic
