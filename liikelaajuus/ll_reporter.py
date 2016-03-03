@@ -10,7 +10,7 @@ Create liikelaajuus report.
 #from pandas import DataFrame
 
 import html_templates
-import report_template_text
+import text_templates
 import string        
         
 
@@ -19,7 +19,7 @@ class text():
     def __init__(self, data):
         self.data = data
         self.not_measured = u'Ei mitattu'
-        self.delimiter = '&'  # report field delimiter
+        self.delimiter = '#'  # report 'chunk' delimiter
 
     def get_field(self, s):
         """ Return all fields in a format string. """
@@ -40,10 +40,9 @@ class text():
         
     def make_text_report(self):
         """ Generates the main text report. """
-        report = report_template_text.report
-        repl = report.split(self.delimiter)  # split report into 'chunks'
+        report = text_templates.report
         # format fields and join. cond_format skips chunks with no data
-        return ''.join([self.cond_format(s, self.data, self.not_measured) for s in repl])
+        return ''.join([self.cond_format(s, self.data, self.not_measured) for s in report])
 
     def make_text_list(self):
         """ Make a simple list of all variables + values. """
