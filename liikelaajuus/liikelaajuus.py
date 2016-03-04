@@ -19,17 +19,8 @@ designer (checkspinbox_plugin.py)
 
 TODO:
 
-voima + selekt. omalle välilehdelle  (ryhti/vartalo pois)
+voimasivun muuttujien nimeäminen
 lisää 4- voimalaatikkoon
-polven fleksio / vatsamakuu siir. polvisivulle (teksti jää muistoksi lonkkasivulle)
--> ennen selinmakuu -kohtaa.
-
-
-
-
-
-
-
 tab order
 dbl spinbox & locale (pilkku vs. piste)
 
