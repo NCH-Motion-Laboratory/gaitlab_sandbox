@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -10149,9 +10149,9 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabRyhti">
+      <widget class="QWidget" name="tabVoima">
        <attribute name="title">
-        <string>Ryhti/vartalo</string>
+        <string>Voima</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_14">
         <item>
