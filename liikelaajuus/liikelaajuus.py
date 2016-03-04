@@ -56,11 +56,16 @@ import ll_reporter
 import ll_msgs
 import liikelaajuus
 
+
+
+
 class CheckDegSpinBox(QtGui.QWidget):
-    """ Custom widget: Spinbox (degrees) with checkbox signaling "normal value".
-    If checkbox is checked, disable spinbox -> value() returns 'NR'
-    If not, value() returns spinbox value. 
-    setValue() takes either 'NR', the 'special value' (not measured) or integer.
+    """ Custom widget: Spinbox (degrees) with checkbox signaling "default value".
+    If checkbox is checked, disable spinbox -> value() returns the default value
+    shown next to checkbox (defaultText property)
+    Otherwise value() returns spinbox value. 
+    setValue() takes either the default value, the 'special value' (not measured) or 
+    integer.
     """
     # signal has to be defined here for unclear reasons
     # note that currently the value is not returned by the signal
@@ -70,19 +75,22 @@ class CheckDegSpinBox(QtGui.QWidget):
     # for Qt designer
     __pyqtSignals__ = ('valueChanged')
     
-    def __init__(self, parent):
+    def __init__(self, parent=None):
       
         super(self.__class__, self).__init__(parent)
-            
-        self.normalCheckBox = QtGui.QCheckBox(u'NR')
-        self.normalval = u'NR'
+
+        #self.normalText = u'NR'            
+        self.normalCheckBox = QtGui.QCheckBox()
         self.normalCheckBox.stateChanged.connect(lambda st: self.toggleSpinBox(st))
         
         self.degSpinBox = QtGui.QSpinBox()
+        # these should be implemented as qt properties w/ getter and setter methods,
+        # so they could be e.g. changed within Qt Designer
         self.degSpinBox.setRange(-181, 180.0)
         self.degSpinBox.setValue(-181)
         self.degSpinBox.setSuffix(u'°')
         self.specialtext = u'Ei mitattu'
+
         self.degSpinBox.setSpecialValueText(self.specialtext)
         self.degSpinBox.valueChanged.connect(self.valueChanged.emit)
         self.degSpinBox.setMinimumSize(100,0)
@@ -96,6 +104,15 @@ class CheckDegSpinBox(QtGui.QWidget):
         
         # needed for tab order
         self.setFocusPolicy(QtCore.Qt.TabFocus)
+        
+    def setDefaultText(self, text):
+        self.normalCheckBox.setText(text)
+        
+    def getDefaultText(self):
+        return self.normalCheckBox.text()
+
+    # set property
+    defaultText = QtCore.pyqtProperty('QString', getDefaultText, setDefaultText)
 
     def value(self):
         if self.normalCheckBox.checkState() == 0:
@@ -105,10 +122,10 @@ class CheckDegSpinBox(QtGui.QWidget):
             else:
                 return val
         elif self.normalCheckBox.checkState() == 2:
-            return self.normalval
+            return self.getDefaultText()
 
     def setValue(self, val):
-        if val == self.normalval:
+        if val == self.getDefaultText():
             self.degSpinBox.setEnabled(False)
             self.normalCheckBox.setCheckState(2)
         else:
@@ -132,6 +149,9 @@ class CheckDegSpinBox(QtGui.QWidget):
         
     #def sizeHint(self):
     #    return QSize(150,20)
+
+
+
 
 
 
