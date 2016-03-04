@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1246</width>
+    <width>1224</width>
     <height>924</height>
    </rect>
   </property>
@@ -1217,7 +1217,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>Ekstensio (Thomas)</string>
+             <string>Ekstensio (Thomas):</string>
             </property>
            </widget>
           </item>
@@ -4292,7 +4292,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_24">
             <property name="text">
-             <string>Ekstensio</string>
+             <string>Ekstensio:</string>
             </property>
            </widget>
           </item>
@@ -4403,14 +4403,14 @@
           <item row="11" column="1">
            <widget class="QLabel" name="label_216">
             <property name="text">
-             <string>Popliteakulma</string>
+             <string>Popliteakulma:</string>
             </property>
            </widget>
           </item>
           <item row="7" column="1">
            <widget class="QLabel" name="label_28">
             <property name="text">
-             <string>Fleksio</string>
+             <string>Fleksio:</string>
             </property>
            </widget>
           </item>
@@ -10312,6 +10312,11 @@
           </item>
           <item row="9" column="1">
            <widget class="QLabel" name="label_301">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
             <property name="text">
              <string>-lonkka fleksiossa</string>
             </property>
@@ -10320,7 +10325,7 @@
           <item row="24" column="1">
            <widget class="QLabel" name="label_319">
             <property name="text">
-             <string>2.-5. varpaan ojennus</string>
+             <string>2.-5. varpaiden ojennus</string>
             </property>
            </widget>
           </item>
@@ -10741,7 +10746,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_294">
             <property name="text">
-             <string>Lonkan ekstensio</string>
+             <string>Lonkan ekstensio:</string>
             </property>
            </widget>
           </item>
@@ -10858,7 +10863,7 @@
           <item row="7" column="1">
            <widget class="QLabel" name="label_298">
             <property name="text">
-             <string>Lonkan abduktio</string>
+             <string>Lonkan abduktio:</string>
             </property>
            </widget>
           </item>
@@ -10878,6 +10883,11 @@
           </item>
           <item row="8" column="1">
            <widget class="QLabel" name="label_299">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
             <property name="text">
              <string>-lonkka 0</string>
             </property>
@@ -10892,6 +10902,11 @@
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="label_295">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
             <property name="text">
              <string>-polvi 0</string>
             </property>
@@ -10928,33 +10943,48 @@
           <item row="26" column="1">
            <widget class="QLabel" name="label_321">
             <property name="text">
-             <string>Nilkan ojennus</string>
+             <string>Nilkan ojennus:</string>
             </property>
            </widget>
           </item>
           <item row="25" column="1">
            <widget class="QLabel" name="label_320">
             <property name="text">
-             <string>2.-5. varpaan koukistus</string>
+             <string>2.-5. varpaiden koukistus</string>
             </property>
            </widget>
           </item>
           <item row="27" column="1">
            <widget class="QLabel" name="label_322">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
             <property name="text">
-             <string>Gastrognemius</string>
+             <string>-gastrognemius</string>
             </property>
            </widget>
           </item>
           <item row="28" column="1">
            <widget class="QLabel" name="label_323">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
             <property name="text">
-             <string>Soleus</string>
+             <string>-soleus</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
            <widget class="QLabel" name="label_296">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
             <property name="text">
              <string>-polvi 90</string>
             </property>
@@ -11330,7 +11360,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1246</width>
+     <width>1224</width>
      <height>25</height>
     </rect>
    </property>
