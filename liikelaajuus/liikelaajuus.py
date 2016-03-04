@@ -105,6 +105,8 @@ class CheckDegSpinBox(QtGui.QWidget):
         # needed for tab order
         self.setFocusPolicy(QtCore.Qt.TabFocus)
         
+        self.setDefaultText(u'NR')
+        
     def setDefaultText(self, text):
         self.normalCheckBox.setText(text)
         
