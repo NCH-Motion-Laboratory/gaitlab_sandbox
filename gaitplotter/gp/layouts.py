@@ -70,6 +70,8 @@ def kinematics_emg(side):
             [side+'Rec',side+'Ham',side+'Gas'],
             [None,side+'Glut',side+'Sol'],
             [None,side+'Gas',None]]
+
             
+
 
 
