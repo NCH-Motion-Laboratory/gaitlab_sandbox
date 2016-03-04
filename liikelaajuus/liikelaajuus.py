@@ -92,8 +92,9 @@ class CheckDegSpinBox(QtGui.QWidget):
         layout = QtGui.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         #layout.addWidget(normalLabel, 0, 0)
-        layout.addWidget(self.normalCheckBox)
         layout.addWidget(self.degSpinBox)
+        layout.addWidget(self.normalCheckBox)
+
         
         # needed for tab order
         self.setFocusPolicy(QtCore.Qt.TabFocus)
