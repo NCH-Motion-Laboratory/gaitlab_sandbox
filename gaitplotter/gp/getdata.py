@@ -298,7 +298,8 @@ class trial:
         self.tn = np.linspace(0, 100, 101)
         self.smp_per_frame = self.analograte/self.framerate
         # figure out gait cycles
-        self.scan_cycles()
+        self.cycles = list(self.scan_cycles())
+        self.ncycles = len(self.cycles)
         # video files associated with trial
         self.video_files = get_video_filenames(self.sessionpath+self.trialname)
         
@@ -353,7 +354,6 @@ class trial:
 
     def scan_cycles(self):
         """ Scan for foot strike events and create gait cycle objects. """
-        self.cycles = []
         for strikes in [self.lfstrikes, self.rfstrikes]:
             len_s = len(strikes)
             if len_s < 2:
@@ -371,9 +371,7 @@ class trial:
                 toeoff = [x for x in toeoffs if x > start and x < end]
                 if len(toeoff) != 1:
                     raise GaitDataError('Expected a single toe-off event during gait cycle')
-                cycle = gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
-                self.cycles.append(cycle)
-        self.ncycles = len(self.cycles)
+                yield gaitcycle(start, end, self.offset, toeoff[0], context, self.smp_per_frame)
                  
     def get_cycle(self, context, ncycle):
         """ e.g. ncycle=2 and context='L' returns 2nd left gait cycle. """
