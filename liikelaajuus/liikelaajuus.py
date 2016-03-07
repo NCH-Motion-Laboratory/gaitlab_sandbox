@@ -284,7 +284,7 @@ class EntryApp(QtGui.QMainWindow):
         self.firstwidget[self.tabTiedot] = self.lnTiedotNimi
         self.firstwidget[self.tabAntrop] = self.spAntropAlaraajaOik
         self.firstwidget[self.tabLonkka] = self.csbLonkkaFleksioOik
-        self.firstwidget[self.tabNilkka] = self.spNilkkaSoleusCatchOik
+        self.firstwidget[self.tabNilkka] = self.csbNilkkaSoleusCatchOik
         self.firstwidget[self.tabPolvi] = self.csbPolviEkstensioVapOik
         self.firstwidget[self.tabVirheas] = self.spVirheasAnteversioOik
         self.firstwidget[self.tabTasap] = self.spTasapOik
