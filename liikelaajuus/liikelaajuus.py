@@ -10,19 +10,53 @@ design:
 -custom widget (check+spinbox), plugin file should be made available to Qt
 designer (checkspinbox_plugin.py)
 -widget naming: first 2-3 chars indicate widget type, next word indicates 
- page (tab) where the widget resides, the rest indicates corresponding variable 
- name (e.g. lnTiedotNimi)
+ variable category or page where widget resides, the rest indicates the 
+ variable (e.g. lnTiedotNimi)
 -widget inputs are updated into internal dict immediately when any value
  changes
+-dict keys are taken automatically from widget names by removing first 2-3
+chars (widget type)
 -for saving, dict data is turned into json unicode and written out in utf-8
 -data is saved into temp directory whenever any values are changed by user
 
+
 TODO:
 
+
+
+voimasivu:
+lisää astemerkit labeleihin
+3 ekaa + viiva
+3 seur. + viiva
+3 seur. + viiva
+lonkan sisäk. jälk + viiva
+voima/sel erottelu horis. suunnassa
+2-5 varp. koukistus jälk+viiva
+poist. extensor lag
+
+
+jalkat. sivulle viiva ennen holvikaari-kohtaa
++viiva keskiosan liike -kohdan jälkeen
++keskiosan asento -jälkeen
+feissin linja, vaihtoehdot uusiksi:
+ei mitattu
+korkea
+normaali
+1/3
+2/3
+romahtanut
+lis. 'painelevy' (mitattu/ei mitattu)
+
+gastrocnemius (typo) nilkkasivulla
+nilkka: dorsifleksiot kursiivilla, ja lisää 'NR'
+rectus femoris, catch -> polvisivulle, -> vatsamakuun jälk.
+erottele oik/vas sarake paremmin
 voimasivun muuttujien nimeäminen
 lisää 4- voimalaatikkoon
 tab order
 dbl spinbox & locale (pilkku vs. piste)
+
+
 
 
 @author: Jussi (jnu@iki.fi)
