@@ -34,21 +34,21 @@ Kävelyanalyysin pohjalta kävelyn ongelmia/johtopäätökset ovat:
 
 NIVELTEN PASSIIVISET LIIKELAAJUUDET (oikea/vasen):
 
-LONKKA: #Thomasin testi (vapaasti) {LonkkaEkstensioVapOik}°/{LonkkaEkstensioVapVas}°,# Thomasin testi (avustettuna) {LonkkaEkstensioAvOik}°/{LonkkaEkstensioAvVas}°#, Thomasin testi (polvi 90°) {LonkkaEkstensioPolvi90Oik}°/{LonkkaEkstensioPolvi90Vas}°. 
-Koukistus {LonkkaFleksioOik}°/{LonkkaFleksioVas}°. Loitonnus (lonkka 0°, polvi 90°) {LonkkaAbduktioLonkka0Polvi90Oik}°/{LonkkaAbduktioLonkka0Polvi90Vas}°, loitonnus (lonkka 0°, polvi 0°) {LonkkaAbduktioLonkka0Oik}°/{LonkkaAbduktioLonkka0Vas}°,
-loitonnus (lonkka 90°) {LonkkaAbduktioLonkkaFleksOik}°/{LonkkaAbduktioLonkkaFleksVas}°. Lähennys {LonkkaAdduktioOik}°/{LonkkaAdduktioVas}°. Sisäkierto {LonkkaSisakiertoOik}°/{LonkkaSisakiertoVas}°. Ulkokierto {LonkkaUlkokiertoOik}°/{LonkkaUlkokiertoVas}°.
-Kommentit: {cmtLonkka}
+LONKKA: #Thomasin testi (vapaasti) {LonkkaEkstensioVapOik}°/{LonkkaEkstensioVapVas}°,#Thomasin testi (avustettuna) {LonkkaEkstensioAvOik}°/{LonkkaEkstensioAvVas}°,#Thomasin testi (polvi 90°) {LonkkaEkstensioPolvi90Oik}°/{LonkkaEkstensioPolvi90Vas}°#
+#Koukistus {LonkkaFleksioOik}°/{LonkkaFleksioVas}°.#Loitonnus (lonkka 0°, polvi 90°) {LonkkaAbduktioLonkka0Polvi90Oik}°/{LonkkaAbduktioLonkka0Polvi90Vas}°, loitonnus (lonkka 0°, polvi 0°) {LonkkaAbduktioLonkka0Oik}°/{LonkkaAbduktioLonkka0Vas}°,#NilkkaDorsifPolvi90AROMOikNilkkaDorsifPolvi90AROMOik
+loitonnus (lonkka 90°) {LonkkaAbduktioLonkkaFleksOik}°/{LonkkaAbduktioLonkkaFleksVas}°.#Lähennys {LonkkaAdduktioOik}°/{LonkkaAdduktioVas}°.#Sisäkierto {LonkkaSisakiertoOik}°/{LonkkaSisakiertoVas}°.#Ulkokierto {LonkkaUlkokiertoOik}°/{LonkkaUlkokiertoVas}°.#
+#Kommentit: {cmtLonkka}#
 
-['POLVI: Ojennus (vapaasti) {PolviEkstensioVapOik}°/{PolviEkstensioVapVas}°], ojennus (avustettuna) {PolviEkstensioAvOik}°/{PolviEkstensioAvVas}°. Koukistus (vatsamakuu) {LonkkaPolviFleksioVatsamakuuOik}°/{LonkkaPolviFleksioVatsamakuuOik}°, 
-koukistus (selinmakuu) {PolviFleksioSelinmakuuOik}°/{PolviFleksioSelinmakuuVas}°. Popliteakulma {PolviPopliteaVastakkLonkka0Oik}°/{PolviPopliteaVastakkLonkka0Vas}°, popliteakulma (true) {csbPolviPopliteaVastakkLonkka90Oik}°/{csbPolviPopliteaVastakkLonkka90Vas}°. 
-Kommentit: {cmtPolvi}
+POLVI: #Ojennus (vapaasti) {PolviEkstensioVapOik}°/{PolviEkstensioVapVas}°.#Ojennus (avustettuna) {PolviEkstensioAvOik}°/{PolviEkstensioAvVas}°.#Koukistus (vatsamakuu) {PolviFleksioVatsamakuuOik}°/{PolviFleksioVatsamakuuVas}°,
+koukistus (selinmakuu) {PolviFleksioSelinmakuuOik}°/{PolviFleksioSelinmakuuVas}°.#Popliteakulma {PolviPopliteaVastakkLonkka0Oik}°/{PolviPopliteaVastakkLonkka0Vas}°, popliteakulma (true) {PolviPopliteaVastakkLonkka90Oik}°/{csbPolviPopliteaVastakkLonkka90Vas}°.# 
+#Kommentit: {cmtPolvi}#
 
-NILKKA: Koukistus (polvi 90°) x°/x°, koukistus (polvi 0°) x°/x°. Ojennus x°/x°. 
-Kommentit: {cmtNilkka}
+NILKKA: #Koukistus (polvi 90°) NilkkaDorsifPolvi90PROMOik°/NilkkaDorsifPolvi90PROMVas°.#Koukistus (polvi 0°) NilkkaDorsifPolvi0PROMOik°/NilkkaDorsifPolvi0PROMVas°.#Ojennus NilkkaPlantaarifleksioOik°/NilkkaPlantaarifleksioVas°.#
+#Kommentit: {cmtNilkka}#
 
 AKTIIVISET LIIKELAAJUUDET: 
 
-NILKKA: Koukistus (polvi 90°) x°/x°, koukistus (polvi 0°) x°/x°. Nilkan ojennus x°/x°.
+NILKKA: Koukistus (polvi 90°) NilkkaDorsifPolvi90AROMOik°/NilkkaDorsifPolvi90AROMVas°, koukistus (polvi 0°) NilkkaDorsifPolvi0AROMOik°/NilkkaDorsifPolvi0AROMVas°. Ojennus x/x
 Kommentit:
 
 LUISET VIRHEASENNOT: 

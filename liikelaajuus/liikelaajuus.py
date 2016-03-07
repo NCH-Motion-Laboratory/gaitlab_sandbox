@@ -22,6 +22,7 @@ chars (widget type)
 
 TODO:
 
+lisää nilkka/plantaarifleksio PROM,AROM
 splittaa jalkaterä + voimasivut kahteen sarakkeeseen (2x grid layout)
 tab order
 dbl spinbox & locale (pilkku vs. piste)
@@ -173,6 +174,7 @@ class EntryApp(QtGui.QMainWindow):
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
         # special text written out for non-measured variables
+        print('\n'.join(sorted(self.data.keys())))
 
     def set_constants(self):
         self.not_measured_text = u'Ei mitattu'
@@ -314,6 +316,7 @@ class EntryApp(QtGui.QMainWindow):
         #self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
         self.setStyleSheet('QWidget { font-size: %dpt;}'%self.global_fontsize)
         
+        
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
         dlg = QtGui.QMessageBox()
@@ -347,7 +350,7 @@ class EntryApp(QtGui.QMainWindow):
     def make_report(self):
         """ Make report using the input data. """
         report = ll_reporter.text(self.data)
-        report_txt = report.make_text_list()
+        report_txt = report.make_text_report()
         print(report_txt)
         fname = 'report_koe.txt'
         with io.open(fname,'w',encoding='utf-8') as f:
