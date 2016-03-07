@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -1753,13 +1753,13 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>100</height>
+              <height>70</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>400</width>
-              <height>100</height>
+              <height>70</height>
              </size>
             </property>
            </widget>
@@ -2169,7 +2169,7 @@
           <item row="10" column="1">
            <widget class="QLabel" name="label_234">
             <property name="text">
-             <string>Recturs femoris, catch</string>
+             <string>Rectus femoris, catch</string>
             </property>
            </widget>
           </item>
@@ -3042,7 +3042,7 @@
        <attribute name="title">
         <string>Jalkaterä</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_15">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <layout class="QGridLayout" name="gridLayout_18">
           <item row="23" column="1" colspan="4">
@@ -4822,29 +4822,16 @@
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_18">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>2</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <spacer name="horizontalSpacer_43">
+           <spacer name="verticalSpacer_5">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
@@ -4855,19 +4842,6 @@
              <string>Kommentit:</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_44">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item>
            <widget class="QTextEdit" name="cmtJalkat">
@@ -4892,14 +4866,14 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_45">
+           <spacer name="verticalSpacer_6">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
@@ -4907,13 +4881,12 @@
          </layout>
         </item>
        </layout>
-       <zorder>verticalSpacer_18</zorder>
       </widget>
       <widget class="QWidget" name="tabVoima">
        <attribute name="title">
         <string>Voima</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="25" column="8">
@@ -10834,52 +10807,26 @@
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
-           <spacer name="horizontalSpacer_63">
+           <spacer name="verticalSpacer_4">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="label_261">
+           <widget class="QLabel" name="label_26">
             <property name="text">
              <string>Kommentit:</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_64">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item>
            <widget class="QTextEdit" name="cmtRyhti">
@@ -10904,14 +10851,14 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_65">
+           <spacer name="verticalSpacer_7">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>40</width>
-              <height>20</height>
+              <width>20</width>
+              <height>40</height>
              </size>
             </property>
            </spacer>
@@ -10919,6 +10866,8 @@
          </layout>
         </item>
        </layout>
+       <zorder>verticalLayoutWidget_2</zorder>
+       <zorder>cmtRyhti</zorder>
       </widget>
       <widget class="QWidget" name="tabVirheas">
        <attribute name="title">
@@ -11928,7 +11877,6 @@
   <tabstop>cmtVirheas</tabstop>
   <tabstop>cbVoimaVatsaVinotOik</tabstop>
   <tabstop>cbVoimaVatsaVinotVas</tabstop>
-  <tabstop>cmtRyhti</tabstop>
   <tabstop>cmtTasap</tabstop>
   <tabstop>btnReport</tabstop>
   <tabstop>btnQuit</tabstop>
