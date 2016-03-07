@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -2777,7 +2777,7 @@
            </widget>
           </item>
           <item row="9" column="10">
-           <widget class="QComboBox" name="cbNilkkaSoleusModAVas_3">
+           <widget class="QComboBox" name="cbNilkkaGastroModAVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -10840,8 +10840,6 @@
          </layout>
         </item>
        </layout>
-       <zorder>verticalLayoutWidget_2</zorder>
-       <zorder>cmtRyhti</zorder>
       </widget>
       <widget class="QWidget" name="tabVirheas">
        <attribute name="title">
@@ -11796,7 +11794,7 @@
   <tabstop>cbNilkkaSoleusModAVas</tabstop>
   <tabstop>xbNilkkaGastroClonusVas</tabstop>
   <tabstop>cbNilkkaGastroModAOik</tabstop>
-  <tabstop>cbNilkkaSoleusModAVas_3</tabstop>
+  <tabstop>cbNilkkaGastroModAVas</tabstop>
   <tabstop>lnNilkkaConfusionOik</tabstop>
   <tabstop>lnNilkkaConfusionVas</tabstop>
   <tabstop>btnSave</tabstop>
