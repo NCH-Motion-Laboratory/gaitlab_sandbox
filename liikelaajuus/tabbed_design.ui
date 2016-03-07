@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -2174,7 +2174,7 @@
            </widget>
           </item>
           <item row="10" column="6">
-           <widget class="QComboBox" name="csbPolviRectusModAOik">
+           <widget class="QComboBox" name="cbPolviRectusModAOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -2225,7 +2225,7 @@
            </widget>
           </item>
           <item row="10" column="8">
-           <widget class="QComboBox" name="csbPolviRectusModAVas">
+           <widget class="QComboBox" name="cbPolviRectusModAVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
