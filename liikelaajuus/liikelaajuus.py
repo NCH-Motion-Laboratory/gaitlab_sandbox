@@ -24,33 +24,7 @@ TODO:
 
 
 
-voimasivu:
-lisää astemerkit labeleihin
-3 ekaa + viiva
-3 seur. + viiva
-3 seur. + viiva
-lonkan sisäk. jälk + viiva
-voima/sel erottelu horis. suunnassa
-2-5 varp. koukistus jälk+viiva
-poist. extensor lag
 
-
-jalkat. sivulle viiva ennen holvikaari-kohtaa
-+viiva keskiosan liike -kohdan jälkeen
-+keskiosan asento -jälkeen
-feissin linja, vaihtoehdot uusiksi:
-ei mitattu
-korkea
-normaali
-1/3
-2/3
-romahtanut
-lis. 'painelevy' (mitattu/ei mitattu)
-
-gastrocnemius (typo) nilkkasivulla
-nilkka: dorsifleksiot kursiivilla, ja lisää 'NR'
-rectus femoris, catch -> polvisivulle, -> vatsamakuun jälk.
-erottele oik/vas sarake paremmin
 voimasivun muuttujien nimeäminen
 lisää 4- voimalaatikkoon
 tab order
