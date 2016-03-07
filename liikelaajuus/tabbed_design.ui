@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -2482,9 +2482,6 @@
             </property>
            </widget>
           </item>
-          <item row="14" column="2">
-           <widget class="QLineEdit" name="lnNilkkaConfusionOik"/>
-          </item>
           <item row="7" column="2">
            <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi90PROMOik">
             <property name="sizePolicy">
@@ -2957,9 +2954,6 @@
             </property>
            </widget>
           </item>
-          <item row="14" column="4">
-           <widget class="QLineEdit" name="lnNilkkaConfusionVas"/>
-          </item>
           <item row="11" column="4">
            <widget class="QSpinBox" name="spNilkkaDorsifleksioPolvi0AROMVas">
             <property name="sizePolicy">
@@ -3036,6 +3030,12 @@
              <string>Soleus, catch</string>
             </property>
            </widget>
+          </item>
+          <item row="14" column="2" colspan="2">
+           <widget class="QLineEdit" name="lnNilkkaConfusionOik"/>
+          </item>
+          <item row="14" column="4" colspan="2">
+           <widget class="QLineEdit" name="lnNilkkaConfusionVas"/>
           </item>
          </layout>
         </item>
