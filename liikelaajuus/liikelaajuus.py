@@ -303,6 +303,10 @@ class EntryApp(QtGui.QMainWindow):
             else:
                 varname = wname[2:]
             self.widget_to_var[wname] = varname
+        
+        # try to increase font size
+        self.maintab.setStyleSheet('QTabBar { font-size: 14pt;}')
+        self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
      
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
