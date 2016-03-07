@@ -22,11 +22,6 @@ chars (widget type)
 
 TODO:
 
-
-
-
-voimasivun muuttujien nimeäminen
-lisää 4- voimalaatikkoon
 tab order
 dbl spinbox & locale (pilkku vs. piste)
 
