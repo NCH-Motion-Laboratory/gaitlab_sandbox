@@ -22,6 +22,7 @@ chars (widget type)
 
 TODO:
 
+splittaa jalkaterä + voimasivut kahteen sarakkeeseen (2x grid layout)
 tab order
 dbl spinbox & locale (pilkku vs. piste)
 
