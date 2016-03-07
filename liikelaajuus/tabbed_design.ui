@@ -3777,7 +3777,7 @@
            </widget>
           </item>
           <item row="18" column="4">
-           <widget class="QLineEdit" name="lnKovettumatVas"/>
+           <widget class="QLineEdit" name="lnJalkatKovettumatVas"/>
           </item>
           <item row="17" column="1">
            <widget class="QLabel" name="label_285">
@@ -4602,7 +4602,7 @@
            </widget>
           </item>
           <item row="18" column="2">
-           <widget class="QLineEdit" name="lnKovettumatOik"/>
+           <widget class="QLineEdit" name="lnJalkatKovettumatOik"/>
           </item>
           <item row="24" column="2">
            <widget class="QComboBox" name="cbJalkatEtuosanAsento1KuormOik">
@@ -11823,7 +11823,7 @@
   <tabstop>cbJalkat1sadeOik</tabstop>
   <tabstop>spJalkat1MTPojennusOik</tabstop>
   <tabstop>cbJalkatVaivaisenluuOik</tabstop>
-  <tabstop>lnKovettumatOik</tabstop>
+  <tabstop>lnJalkatKovettumatOik</tabstop>
   <tabstop>cbJalkatSubtalarVas</tabstop>
   <tabstop>cbJalkatTakaosanAsentoVas</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioVas</tabstop>
@@ -11835,7 +11835,7 @@
   <tabstop>cbJalkat1sadeVas</tabstop>
   <tabstop>spJalkat1MTPojennusVas</tabstop>
   <tabstop>cbJalkatVaivaisenluuVas</tabstop>
-  <tabstop>lnKovettumatVas</tabstop>
+  <tabstop>lnJalkatKovettumatVas</tabstop>
   <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
   <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
   <tabstop>cbJalkatEtuosanAsento1KuormOik</tabstop>
