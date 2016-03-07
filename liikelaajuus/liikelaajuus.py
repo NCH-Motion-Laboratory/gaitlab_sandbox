@@ -174,7 +174,9 @@ class EntryApp(QtGui.QMainWindow):
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
         # special text written out for non-measured variables
-        print('\n'.join(sorted(self.data.keys())))
+        for key in sorted(self.data.keys()):
+            print('{%s}'%key)
+        
 
     def set_constants(self):
         self.not_measured_text = u'Ei mitattu'
