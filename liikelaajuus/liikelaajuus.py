@@ -188,6 +188,7 @@ class EntryApp(QtGui.QMainWindow):
         # exceptions that might be generated when parsing json file
         self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
         self.json_filter = u'JSON files (*.json)'
+        self.global_fontsize = 13
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -308,9 +309,10 @@ class EntryApp(QtGui.QMainWindow):
             self.widget_to_var[wname] = varname
         
         # try to increase font size
-        self.maintab.setStyleSheet('QTabBar { font-size: 14pt;}')
-        self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
-     
+        #self.maintab.setStyleSheet('QTabBar { font-size: 14pt;}')
+        #self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
+        self.setStyleSheet('QWidget { font-size: %dpt;}'%self.global_fontsize)
+        
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
         dlg = QtGui.QMessageBox()
