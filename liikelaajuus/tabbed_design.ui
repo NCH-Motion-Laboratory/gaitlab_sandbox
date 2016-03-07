@@ -2419,10 +2419,10 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout_11">
-          <item row="14" column="5" colspan="2">
+          <item row="15" column="5" colspan="2">
            <widget class="QLineEdit" name="lnNilkkaConfusionVas"/>
           </item>
-          <item row="14" column="2" colspan="2">
+          <item row="15" column="2" colspan="2">
            <widget class="QLineEdit" name="lnNilkkaConfusionOik"/>
           </item>
           <item row="7" column="1">
@@ -2528,7 +2528,7 @@
           <item row="13" column="1">
            <widget class="QLabel" name="label_229">
             <property name="text">
-             <string>Plantaarifleksio</string>
+             <string>Plantaarifleksio, passiivinen</string>
             </property>
            </widget>
           </item>
@@ -2634,6 +2634,19 @@
             </item>
            </widget>
           </item>
+          <item row="15" column="12">
+           <spacer name="horizontalSpacer_30">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="4" column="5">
            <widget class="CheckDegSpinBox" name="csbNilkkaSoleusCatchVas">
             <property name="defaultText">
@@ -2667,10 +2680,10 @@
            </widget>
           </item>
           <item row="13" column="5">
-           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioVas"/>
+           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioPROMVas"/>
           </item>
           <item row="13" column="2">
-           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioOik"/>
+           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioPROMOik"/>
           </item>
           <item row="2" column="10">
            <widget class="QLabel" name="label_253">
@@ -2850,25 +2863,12 @@
             </property>
            </widget>
           </item>
-          <item row="14" column="1">
+          <item row="15" column="1">
            <widget class="QLabel" name="label_224">
             <property name="text">
              <string>Confusion -testi</string>
             </property>
            </widget>
-          </item>
-          <item row="14" column="12">
-           <spacer name="horizontalSpacer_30">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="label_247">
@@ -2948,6 +2948,19 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="14" column="1">
+           <widget class="QLabel" name="label_230">
+            <property name="text">
+             <string>Plantaarifleksio, aktiivinen</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="2">
+           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioAROMOik"/>
+          </item>
+          <item row="14" column="5">
+           <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioAROMVas"/>
           </item>
          </layout>
         </item>
@@ -11897,8 +11910,8 @@
   <tabstop>csbPolviPopliteaVastakkLonkka0Vas</tabstop>
   <tabstop>csbPolviPopliteaVastakkLonkka90Oik</tabstop>
   <tabstop>csbPolviPopliteaVastakkLonkka90Vas</tabstop>
-  <tabstop>csbNilkkaPlantaarifleksioOik</tabstop>
-  <tabstop>csbNilkkaPlantaarifleksioVas</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioPROMOik</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioPROMVas</tabstop>
  </tabstops>
  <resources/>
  <connections/>
