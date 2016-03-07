@@ -41,6 +41,16 @@ class text():
     def make_text_report(self):
         """ Generates the main text report. """
         report = text_templates.report
+
+        # debug: check which fields are (not) present in report
+        flds_report = set(self.get_field(''.join(report)))
+        flds_data = set(self.data.keys())
+        flds_cmn = flds_data.intersection(flds_report)
+        extra_in_rep = flds_report - flds_cmn
+        not_in_rep = flds_data - flds_cmn
+        print('Keys in report but not in data:', extra_in_rep)
+        print('Keys in data but not in report:', not_in_rep)
+        
         # format fields and join. cond_format skips chunks with no data
         return ''.join([self.cond_format(s, self.data, self.not_measured) for s in report])
 
@@ -57,6 +67,10 @@ class text():
         # df = DataFrame( {'Item': list_items, 'Value': list_values} )
         # df.to_excel('test.xlsx', sheet_name='sheet1', index=False)
         
+
+
+
+
 
 class html():
     
