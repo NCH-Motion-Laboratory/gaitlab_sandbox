@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -3138,7 +3138,7 @@
            </widget>
           </item>
           <item row="16" column="2">
-           <widget class="QSpinBox" name="sbJalkat1MTPojennusOik">
+           <widget class="QSpinBox" name="spJalkat1MTPojennusOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -4680,7 +4680,7 @@
            <widget class="QLineEdit" name="lnJalkatColemanOik"/>
           </item>
           <item row="16" column="4">
-           <widget class="QSpinBox" name="sbJalkat1MTPojennusVas">
+           <widget class="QSpinBox" name="spJalkat1MTPojennusVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -11821,7 +11821,7 @@
   <tabstop>cbJalkatEtuosanAsento1Oik</tabstop>
   <tabstop>cbJalkatEtuosanAsento2Oik</tabstop>
   <tabstop>cbJalkat1sadeOik</tabstop>
-  <tabstop>sbJalkat1MTPojennusOik</tabstop>
+  <tabstop>spJalkat1MTPojennusOik</tabstop>
   <tabstop>cbJalkatVaivaisenluuOik</tabstop>
   <tabstop>lnKovettumatOik</tabstop>
   <tabstop>cbJalkatSubtalarVas</tabstop>
@@ -11833,7 +11833,7 @@
   <tabstop>cbJalkatEtuosanAsento1Vas</tabstop>
   <tabstop>cbJalkatEtuosanAsento2Vas</tabstop>
   <tabstop>cbJalkat1sadeVas</tabstop>
-  <tabstop>sbJalkat1MTPojennusVas</tabstop>
+  <tabstop>spJalkat1MTPojennusVas</tabstop>
   <tabstop>cbJalkatVaivaisenluuVas</tabstop>
   <tabstop>lnKovettumatVas</tabstop>
   <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
