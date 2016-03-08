@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -2962,6 +2962,34 @@
           <item row="14" column="5">
            <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioAROMVas"/>
           </item>
+          <item row="11" column="3">
+           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi0AROMEversioOik">
+            <property name="text">
+             <string>Eversio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="3">
+           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi90AROMEversioOik">
+            <property name="text">
+             <string>Eversio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="6">
+           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi0AROMEversioVas">
+            <property name="text">
+             <string>Eversio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="6">
+           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi90AROMEversioVas">
+            <property name="text">
+             <string>Eversio</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -3099,12 +3127,12 @@
             </item>
             <item>
              <property name="text">
-              <string>MOB</string>
+              <string>Mobiili</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>RIG</string>
+              <string>Rigidi</string>
              </property>
             </item>
            </widget>
@@ -3206,12 +3234,12 @@
             </item>
             <item>
              <property name="text">
-              <string>MOB</string>
+              <string>Mobiili</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>RIG</string>
+              <string>Rigidi</string>
              </property>
             </item>
            </widget>
@@ -3242,7 +3270,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Kyllä, tiukka</string>
+              <string>Kyllä -tiukka</string>
              </property>
             </item>
             <item>
@@ -3283,7 +3311,7 @@
             </item>
             <item>
              <property name="text">
-              <string>HYPERMOB</string>
+              <string>Hypermobiili</string>
              </property>
             </item>
            </widget>
@@ -3680,7 +3708,7 @@
             </item>
             <item>
              <property name="text">
-              <string>HYPERMOB</string>
+              <string>Hypermobiili</string>
              </property>
             </item>
            </widget>
@@ -3817,7 +3845,7 @@
             </item>
             <item>
              <property name="text">
-              <string>HYPERMOB</string>
+              <string>Hypermobiili</string>
              </property>
             </item>
            </widget>
@@ -4008,7 +4036,7 @@
             </item>
             <item>
              <property name="text">
-              <string>HYPERMOB</string>
+              <string>Hypermobiili</string>
              </property>
             </item>
            </widget>
@@ -4044,7 +4072,7 @@
             </item>
             <item>
              <property name="text">
-              <string>HYPERMOB</string>
+              <string>Hypermobiili</string>
              </property>
             </item>
            </widget>
@@ -4080,7 +4108,7 @@
             </item>
             <item>
              <property name="text">
-              <string>HYPERMOB</string>
+              <string>Hypermobiili</string>
              </property>
             </item>
            </widget>
@@ -4111,7 +4139,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Kyllä, tiukka</string>
+              <string>Kyllä -tiukka</string>
              </property>
             </item>
             <item>
@@ -9822,7 +9850,7 @@
            </widget>
           </item>
           <item row="25" column="2">
-           <widget class="QComboBox" name="cbVoima25KoukistusOik">
+           <widget class="QComboBox" name="cbVoima25koukistusOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
