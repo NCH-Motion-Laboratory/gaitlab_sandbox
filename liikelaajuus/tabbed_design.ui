@@ -2963,28 +2963,28 @@
            <widget class="CheckDegSpinBox" name="csbNilkkaPlantaarifleksioAROMVas"/>
           </item>
           <item row="11" column="3">
-           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi0AROMEversioOik">
+           <widget class="QCheckBox" name="xbNilkkaDorsifPolvi0AROMEversioOik">
             <property name="text">
              <string>Eversio</string>
             </property>
            </widget>
           </item>
           <item row="8" column="3">
-           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi90AROMEversioOik">
+           <widget class="QCheckBox" name="xbNilkkaDorsifPolvi90AROMEversioOik">
             <property name="text">
              <string>Eversio</string>
             </property>
            </widget>
           </item>
           <item row="11" column="6">
-           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi0AROMEversioVas">
+           <widget class="QCheckBox" name="xbNilkkaDorsifPolvi0AROMEversioVas">
             <property name="text">
              <string>Eversio</string>
             </property>
            </widget>
           </item>
           <item row="8" column="6">
-           <widget class="QCheckBox" name="cbNilkkaDorsifPolvi90AROMEversioVas">
+           <widget class="QCheckBox" name="xbNilkkaDorsifPolvi90AROMEversioVas">
             <property name="text">
              <string>Eversio</string>
             </property>
