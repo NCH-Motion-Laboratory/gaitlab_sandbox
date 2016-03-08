@@ -283,7 +283,7 @@ class EntryApp(QtGui.QMainWindow):
                 w.valueChanged.connect(lambda w=w: self.values_changed(w))
                 w.getVal = w.value
                 w.setVal = w.setValue
-                w.unit = w.suffix()
+                w.unit = w.getSuffix()  # this works differently from the Qt spinbox
             else:
                 wsave = False
             if wsave:

@@ -32,7 +32,8 @@ class spindemo(QtGui.QWidget):
       print("current value:"+str(self.sp1.value()))
 
    def settest(self):
-       print(self.sp1.suffix())
+       print(self.sp1.defaultText())
+       print(self.sp1.getSuffix())
        
 
 
