@@ -8054,7 +8054,7 @@
            </widget>
           </item>
           <item row="19" column="2">
-           <widget class="QComboBox" name="cbVoimaTibialiasAnteriorOik">
+           <widget class="QComboBox" name="cbVoimaTibialisAnteriorOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
