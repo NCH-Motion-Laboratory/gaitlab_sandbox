@@ -11,6 +11,7 @@ Create liikelaajuus report.
 
 import html_templates
 import text_templates
+import liikelaajuus
 import string        
         
 
@@ -18,7 +19,8 @@ class text():
     
     def __init__(self, data):
         self.data = data
-        self.not_measured = u'Ei mitattu'
+        # if value is in not_measured_vals, it's counted as not measured and ignored
+        self.not_measured_vals = [u'Ei mitattu', u'', u'Ei']
         self.delimiter = '#'  # report 'chunk' delimiter
 
     def get_field(self, s):
@@ -29,11 +31,11 @@ class text():
             if items[1]:
                 yield items[1]  # = the field
         
-    def cond_format(self, s, di, empty=None):
+    def cond_format(self, s, di, emptyvals=[None]):
         """ Conditionally format string s using dict di: if all field values
-        equal the 'empty' value, return empty string. """
+        are in emptyvals list, return empty string. """
         flds = list(self.get_field(s))
-        if not flds or any([di[fld] != empty for fld in flds]):
+        if not flds or any([di[fld] not in emptyvals for fld in flds]):
             return s.format(**di)
         else:
             return ''
@@ -51,7 +53,7 @@ class text():
             print(fld)
         
         # format fields and join. cond_format skips chunks with no data
-        return ''.join([self.cond_format(s, self.data, self.not_measured) for s in report])
+        return ''.join([self.cond_format(s, self.data, self.not_measured_vals) for s in report])
 
     def make_text_list(self):
         """ Make a simple list of all variables + values. """

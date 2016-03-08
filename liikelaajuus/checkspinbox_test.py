@@ -23,7 +23,8 @@ class spindemo(QtGui.QWidget):
       layout.addWidget(self.sp1)
       layout.addWidget(self.btn)
       self.btn.clicked.connect(self.settest)
-      self.sp1.valueChanged.connect(self.printval)      
+      self.sp1.valueChanged.connect(self.printval)
+      self.sp1.setSuffix(u'mm')
       self.setLayout(layout)
       self.setWindowTitle("SpinBox demo")
 		
@@ -31,7 +32,7 @@ class spindemo(QtGui.QWidget):
       print("current value:"+str(self.sp1.value()))
 
    def settest(self):
-       self.sp1.setValue(u'Ei mitattu')
+       print(self.sp1.suffix())
        
 
 

@@ -22,7 +22,8 @@ chars (widget type)
 
 TODO:
 
-lisää nilkka/plantaarifleksio PROM,AROM
+poista astemerkit raportista, lisää "unit" -kenttä jokaiseen widgettiin
+(tämän saa esim. getSuffix-metodilla)
 splittaa jalkaterä + voimasivut kahteen sarakkeeseen (2x grid layout)
 tab order
 dbl spinbox & locale (pilkku vs. piste)
@@ -77,7 +78,7 @@ class CheckDegSpinBox(QtGui.QWidget):
         # so they could be e.g. changed within Qt Designer
         self.degSpinBox.setRange(-181, 180.0)
         self.degSpinBox.setValue(-181)
-        self.degSpinBox.setSuffix(u'°')
+        #self.degSpinBox.setSuffix(u'°')
         self.specialtext = u'Ei mitattu'
 
         self.degSpinBox.setSpecialValueText(self.specialtext)
@@ -91,20 +92,27 @@ class CheckDegSpinBox(QtGui.QWidget):
         layout.addWidget(self.degSpinBox)
         layout.addWidget(self.normalCheckBox)
 
-        
         # needed for tab order
         self.setFocusPolicy(QtCore.Qt.TabFocus)
         
         self.setDefaultText(u'NR')
+        self.setSuffix(u'°')
         
     def setDefaultText(self, text):
         self.normalCheckBox.setText(text)
         
     def getDefaultText(self):
         return self.normalCheckBox.text()
+        
+    def setSuffix(self, text):
+        self.degSpinBox.setSuffix(text)
+        
+    def getSuffix(self):
+        return self.degSpinBox.suffix
 
-    # set property
+    # set properties
     defaultText = QtCore.pyqtProperty('QString', getDefaultText, setDefaultText)
+    suffix = QtCore.pyqtProperty('QString', getSuffix, setSuffix)
 
     def value(self):
         if self.normalCheckBox.checkState() == 0:
@@ -176,6 +184,7 @@ class EntryApp(QtGui.QMainWindow):
         # special text written out for non-measured variables
         for key in sorted(self.data.keys()):
             print('{%s}'%key)
+        print(self.units)
         
 
     def set_constants(self):
@@ -193,6 +202,7 @@ class EntryApp(QtGui.QMainWindow):
         # exceptions that might be generated when parsing json file
         self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
         self.json_filter = u'JSON files (*.json)'
+        self.text_filter = u'Text files (*.txt)'
         self.global_fontsize = 13
         
     def init_widgets(self):
@@ -237,6 +247,7 @@ class EntryApp(QtGui.QMainWindow):
         for w in self.findChildren(QtGui.QWidget):            
             wname = unicode(w.objectName())
             wsave = True
+            w.unit = ''  # if a widget input has units, set it below
             if wname[:2] == 'sp':
                 assert(w.__class__ == QtGui.QSpinBox or w.__class__ == QtGui.QDoubleSpinBox)
                 # -lambdas need default arguments because of late binding
@@ -245,6 +256,7 @@ class EntryApp(QtGui.QMainWindow):
                 w.valueChanged.connect(lambda x, w=w: self.values_changed(w))
                 w.setVal = lambda val, w=w: spinbox_setval(w, val, self.not_measured_text)
                 w.getVal = lambda w=w: spinbox_getval(w, self.not_measured_text)
+                w.unit = w.suffix()
             elif wname[:2] == 'ln':
                 assert(w.__class__ == QtGui.QLineEdit)
                 w.textChanged.connect(lambda x, w=w: self.values_changed(w))
@@ -271,6 +283,7 @@ class EntryApp(QtGui.QMainWindow):
                 w.valueChanged.connect(lambda w=w: self.values_changed(w))
                 w.getVal = w.value
                 w.setVal = w.setValue
+                w.unit = w.suffix()
             else:
                 wsave = False
             if wsave:
@@ -281,7 +294,7 @@ class EntryApp(QtGui.QMainWindow):
         self.btnSave.clicked.connect(self.save_dialog)
         self.btnLoad.clicked.connect(self.load_dialog)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
-        self.btnReport.clicked.connect(self.make_report)
+        self.btnReport.clicked.connect(self.save_report_dialog)
         self.btnQuit.clicked.connect(self.close)
         # method call on tab change
         self.maintab.currentChanged.connect(self.page_change)
@@ -312,12 +325,16 @@ class EntryApp(QtGui.QMainWindow):
             else:
                 varname = wname[2:]
             self.widget_to_var[wname] = varname
-        
+        # collect variable units into a dict
+        self.units = {}
+        for wname in self.input_widgets:
+            self.units[wname] = self.input_widgets[wname].unit
         # try to increase font size
         #self.maintab.setStyleSheet('QTabBar { font-size: 14pt;}')
         #self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
         self.setStyleSheet('QWidget { font-size: %dpt;}'%self.global_fontsize)
-        
+       
+       
         
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
@@ -411,8 +428,8 @@ class EntryApp(QtGui.QMainWindow):
 
     def save_dialog(self):
         """ Bring up save dialog and save data. """
-        fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr,
-                                                  self.json_filter)
+        fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_report_title, self.data_root_fldr,
+                                                  self.text_filter)
         if fname:
             fname = unicode(fname)
             try:
@@ -421,6 +438,23 @@ class EntryApp(QtGui.QMainWindow):
                 self.statusbar.showMessage(ll_msgs.status_saved+fname)
             except (IOError):
                 self.message_dialog(ll_msgs.cannot_save+fname)
+
+    def save_report_dialog(self):
+        """ Bring up save dialog and save report. """
+        fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_title, self.data_root_fldr,
+                                                  self.text_filter)
+        if fname:
+            fname = unicode(fname)
+            try:
+                report = ll_reporter.text(self.data, self.units)
+                report_txt = report.make_text_report()
+                with io.open(fname, 'w', encoding='utf-8') as f:
+                    f.write(report_txt)
+                self.statusbar.showMessage(ll_msgs.status_report_saved+fname)
+            except (IOError):
+                self.message_dialog(ll_msgs.cannot_save+fname)
+
+
                 
     def n_modified(self):
         """ Count modified values. """

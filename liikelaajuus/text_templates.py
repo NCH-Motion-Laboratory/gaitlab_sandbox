@@ -31,8 +31,8 @@ Pituus {AntropPituus}
 SIAS {AntropSIAS}
 #Kommentit: {cmtAntrop}#
 
-MITTAAJAT:
-{TiedotMittaajat}
+#MITTAAJAT:
+{TiedotMittaajat}#
 
 [Tulosyy]
 Tehtiin kävelyanalyysi-tutkimus 3D liikeanalyysilaitteistolla sekä liikerata- ja manuaaliset lihasvoimamittaukset 
@@ -61,7 +61,8 @@ NILKKA: #Koukistus (polvi 90°) {NilkkaDorsifPolvi90PROMOik}°/{NilkkaDorsifPolv
 
 AKTIIVISET LIIKELAAJUUDET: 
 
-NILKKA: #Koukistus (polvi 90°) {NilkkaDorsifPolvi90AROMOik}°/{NilkkaDorsifPolvi90AROMVas}° (eversio {NilkkaDorsifPolvi90AROMEversioOik}/{NilkkaDorsifPolvi90AROMEversioVas}. #Koukistus (polvi 0°) {NilkkaDorsifPolvi0AROMOik}°/{NilkkaDorsifPolvi0AROMVas}° (eversio {NilkkaDorsifPolvi0AROMEversioOik}/{NilkkaDorsifPolvi0AROMEversioVas}). #Ojennus {NilkkaPlantaarifleksioAROMOik}°/{NilkkaPlantaarifleksioAROMVas}°. #
+NILKKA: 
+#Koukistus (polvi 90°) {NilkkaDorsifPolvi90AROMOik}°/{NilkkaDorsifPolvi90AROMVas}° (eversio {NilkkaDorsifPolvi90AROMEversioOik}/{NilkkaDorsifPolvi90AROMEversioVas}. #Koukistus (polvi 0°) {NilkkaDorsifPolvi0AROMOik}°/{NilkkaDorsifPolvi0AROMVas}° (eversio {NilkkaDorsifPolvi0AROMEversioOik}/{NilkkaDorsifPolvi0AROMEversioVas}). #Ojennus {NilkkaPlantaarifleksioAROMOik}°/{NilkkaPlantaarifleksioAROMVas}°. #
 #Kommentit: {cmtNilkka}#
 
 LUISET VIRHEASENNOT: 
@@ -71,7 +72,7 @@ LUISET VIRHEASENNOT:
 
 MUITA MITTAUKSIA:
 #Extensor lag {LonkkaExtLagOik}°/{LonkkaExtLagVas}°. #Confusion test {NilkkaConfusionOik}/{NilkkaConfusionVas}. #Ober test {LonkkaOberOik}°/{LonkkaOberVas}°. #Tasapaino: yhdellä jalalla seisominen {TasapOik} s/{TasapVas} s. #
-#Kommentit (tasapaino): cmtTasap#
+#Kommentit (tasapaino): {cmtTasap}#
 
 JALKATERÄ KUORMITTAMATTOMANA (+ = lievä, ++ = kohtalainen, +++ = voimakas): 
 #Subtalar neutraali -asento {JalkatSubtalarOik}/{JalkatSubtalarVas}. #Takaosan asento {JalkatTakaosanAsentoOik}/{JalkatTakaosanAsentoVas}. #Takaosan liike eversioon {JalkatTakaosanLiikeEversioOik}/{JalkatTakaosanLiikeEversioVas}. #
