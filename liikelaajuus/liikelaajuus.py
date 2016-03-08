@@ -108,7 +108,7 @@ class CheckDegSpinBox(QtGui.QWidget):
         self.degSpinBox.setSuffix(text)
         
     def getSuffix(self):
-        return self.degSpinBox.suffix
+        return self.degSpinBox.suffix()
 
     # set properties
     defaultText = QtCore.pyqtProperty('QString', getDefaultText, setDefaultText)
