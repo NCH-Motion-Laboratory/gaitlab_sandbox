@@ -22,10 +22,12 @@ chars (widget type)
 
 TODO:
 
+vanhojen dataversioiden lataus?
+-file has unknown variables -> warn and discard
+-code has new variables not found in data -> warn and set to default
 splittaa jalkaterä + voimasivut kahteen sarakkeeseen (2x grid layout)
 tab order
-dbl spinbox & locale (pilkku vs. piste)
-
+click+enter? (spinboxes)
 
 
 

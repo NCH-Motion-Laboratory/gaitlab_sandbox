@@ -2,6 +2,8 @@
 """
 Created on Tue Mar 01 12:37:26 2016
 
+Template for liikelaajuus report.
+
 Report text is delimited into sections. If a section has fields (variables), 
 at least one of them must have corresponding data, otherwise the section 
 will not be printed. Sections without variables are always printed.
@@ -9,11 +11,14 @@ will not be printed. Sections without variables are always printed.
 @author: jussi (jnu@iki.fi)
 """
 
+
 # section delimiter
 delimiter = '#' 
 
 # raw report text
 report_ = u"""
+
+LIIKELAAJUUDET JA VOIMAT
 
 Patient code: {TiedotID}
 Patient name: {TiedotNimi}
@@ -122,6 +127,7 @@ Kotiin 2kpl, joista toinen kuntouttavalle fysioterapeutille.
 .LL14
 
 """
+
 
 
 report = report_.split(delimiter)
