@@ -17,11 +17,16 @@ import string
 
 class text():
     
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, data, units):
+        # add units as suffixes to data values
+        self.data = {}
         # if value is in not_measured_vals, it's counted as not measured and ignored
         self.not_measured_vals = [u'Ei mitattu', u'', u'Ei']
-        self.delimiter = '#'  # report 'chunk' delimiter
+        for fld in data:
+            if data[fld] not in self.not_measured_vals:
+                self.data[fld] = unicode(data[fld])+units[fld]
+            else:
+                self.data[fld] = unicode(data[fld])
 
     def get_field(self, s):
         """ Return all fields in a format string. """

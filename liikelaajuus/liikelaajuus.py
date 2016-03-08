@@ -328,7 +328,7 @@ class EntryApp(QtGui.QMainWindow):
         # collect variable units into a dict
         self.units = {}
         for wname in self.input_widgets:
-            self.units[wname] = self.input_widgets[wname].unit
+            self.units[self.widget_to_var[wname]] = self.input_widgets[wname].unit
         # try to increase font size
         #self.maintab.setStyleSheet('QTabBar { font-size: 14pt;}')
         #self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
