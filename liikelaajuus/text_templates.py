@@ -47,37 +47,37 @@ Kävelyanalyysin pohjalta kävelyn ongelmia/johtopäätökset ovat:
 
 NIVELTEN PASSIIVISET LIIKELAAJUUDET (oikea/vasen):
 
-LONKKA: #Thomasin testi (vapaasti) {LonkkaEkstensioVapOik}°/{LonkkaEkstensioVapVas}°. #Thomasin testi (avustettuna) {LonkkaEkstensioAvOik}°/{LonkkaEkstensioAvVas}°. #Thomasin testi (polvi 90°) {LonkkaEkstensioPolvi90Oik}°/{LonkkaEkstensioPolvi90Vas}°.#
-#Koukistus {LonkkaFleksioOik}°/{LonkkaFleksioVas}°. #Loitonnus (lonkka 0°, polvi 90°) {LonkkaAbduktioLonkka0Polvi90Oik}°/{LonkkaAbduktioLonkka0Polvi90Vas}°, loitonnus (lonkka 0°, polvi 0°) {LonkkaAbduktioLonkka0Oik}°/{LonkkaAbduktioLonkka0Vas}°. #
-#Loitonnus (lonkka 90°) {LonkkaAbduktioLonkkaFleksOik}°/{LonkkaAbduktioLonkkaFleksVas}°. #Lähennys {LonkkaAdduktioOik}°/{LonkkaAdduktioVas}°. #Sisäkierto {LonkkaSisakiertoOik}°/{LonkkaSisakiertoVas}°. #Ulkokierto {LonkkaUlkokiertoOik}°/{LonkkaUlkokiertoVas}°. # 
+LONKKA: #Thomasin testi (vapaasti) {LonkkaEkstensioVapOik}/{LonkkaEkstensioVapVas}. #Thomasin testi (avustettuna) {LonkkaEkstensioAvOik}/{LonkkaEkstensioAvVas}. #Thomasin testi (polvi 90°) {LonkkaEkstensioPolvi90Oik}/{LonkkaEkstensioPolvi90Vas}.#
+#Koukistus {LonkkaFleksioOik}/{LonkkaFleksioVas}. #Loitonnus (lonkka 0°, polvi 90°) {LonkkaAbduktioLonkka0Polvi90Oik}/{LonkkaAbduktioLonkka0Polvi90Vas}, loitonnus (lonkka 0°, polvi 0°) {LonkkaAbduktioLonkka0Oik}/{LonkkaAbduktioLonkka0Vas}. #
+#Loitonnus (lonkka 90°) {LonkkaAbduktioLonkkaFleksOik}/{LonkkaAbduktioLonkkaFleksVas}. #Lähennys {LonkkaAdduktioOik}/{LonkkaAdduktioVas}. #Sisäkierto {LonkkaSisakiertoOik}/{LonkkaSisakiertoVas}. #Ulkokierto {LonkkaUlkokiertoOik}/{LonkkaUlkokiertoVas}. # 
 #Kommentit: {cmtLonkka}#
 
-POLVI: #Ojennus (vapaasti) {PolviEkstensioVapOik}°/{PolviEkstensioVapVas}°. #Ojennus (avustettuna) {PolviEkstensioAvOik}°/{PolviEkstensioAvVas}°. #Koukistus (vatsamakuu) {PolviFleksioVatsamakuuOik}°/{PolviFleksioVatsamakuuVas}°,
-koukistus (selinmakuu) {PolviFleksioSelinmakuuOik}°/{PolviFleksioSelinmakuuVas}°. #Popliteakulma {PolviPopliteaVastakkLonkka0Oik}°/{PolviPopliteaVastakkLonkka0Vas}°, popliteakulma (true) {PolviPopliteaVastakkLonkka90Oik}°/{PolviPopliteaVastakkLonkka90Vas}°. # 
+POLVI: #Ojennus (vapaasti) {PolviEkstensioVapOik}/{PolviEkstensioVapVas}. #Ojennus (avustettuna) {PolviEkstensioAvOik}/{PolviEkstensioAvVas}. #Koukistus (vatsamakuu) {PolviFleksioVatsamakuuOik}/{PolviFleksioVatsamakuuVas},
+koukistus (selinmakuu) {PolviFleksioSelinmakuuOik}/{PolviFleksioSelinmakuuVas}. #Popliteakulma {PolviPopliteaVastakkLonkka0Oik}/{PolviPopliteaVastakkLonkka0Vas}, popliteakulma (true) {PolviPopliteaVastakkLonkka90Oik}/{PolviPopliteaVastakkLonkka90Vas}. # 
 #Kommentit: {cmtPolvi}#
 
-NILKKA: #Koukistus (polvi 90°) {NilkkaDorsifPolvi90PROMOik}°/{NilkkaDorsifPolvi90PROMVas}°. #Koukistus (polvi 0°) {NilkkaDorsifPolvi0PROMOik}°/{NilkkaDorsifPolvi0PROMVas}°. #Ojennus {NilkkaPlantaarifleksioPROMOik}°/{NilkkaPlantaarifleksioPROMVas}°. #
+NILKKA: #Koukistus (polvi 90°) {NilkkaDorsifPolvi90PROMOik}/{NilkkaDorsifPolvi90PROMVas}. #Koukistus (polvi 0°) {NilkkaDorsifPolvi0PROMOik}/{NilkkaDorsifPolvi0PROMVas}. #Ojennus {NilkkaPlantaarifleksioPROMOik}/{NilkkaPlantaarifleksioPROMVas}. #
 #Kommentit: {cmtNilkka}#
 
 AKTIIVISET LIIKELAAJUUDET: 
 
 NILKKA: 
-#Koukistus (polvi 90°) {NilkkaDorsifPolvi90AROMOik}°/{NilkkaDorsifPolvi90AROMVas}° (eversio {NilkkaDorsifPolvi90AROMEversioOik}/{NilkkaDorsifPolvi90AROMEversioVas}. #Koukistus (polvi 0°) {NilkkaDorsifPolvi0AROMOik}°/{NilkkaDorsifPolvi0AROMVas}° (eversio {NilkkaDorsifPolvi0AROMEversioOik}/{NilkkaDorsifPolvi0AROMEversioVas}). #Ojennus {NilkkaPlantaarifleksioAROMOik}°/{NilkkaPlantaarifleksioAROMVas}°. #
+#Koukistus (polvi 90°) {NilkkaDorsifPolvi90AROMOik}/{NilkkaDorsifPolvi90AROMVas} #(eversio {NilkkaDorsifPolvi90AROMEversioOik}/{NilkkaDorsifPolvi90AROMEversioVas})#.# Koukistus (polvi 0°) {NilkkaDorsifPolvi0AROMOik}/{NilkkaDorsifPolvi0AROMVas} #(eversio {NilkkaDorsifPolvi0AROMEversioOik}/{NilkkaDorsifPolvi0AROMEversioVas})#.# Ojennus {NilkkaPlantaarifleksioAROMOik}/{NilkkaPlantaarifleksioAROMVas}. #
 #Kommentit: {cmtNilkka}#
 
 LUISET VIRHEASENNOT: 
-#Lonkan anteversio {VirheasAnteversioOik}°/{VirheasAnteversioVas}°. #Jalkaterä-reisi -kulma {VirheasJalkaReisiOik}°/{VirheasJalkaReisiVas}°. #Jalkaterän etu- takaosan kulma {VirheasJalkateraEtuTakaOik}°/{VirheasJalkateraEtuTakaVas}°. #
-#Bimalleoli -akseli {VirheasBimalleoliOik}°/{VirheasBimalleoliVas}°. #2nd toe test {Virheas2ndtoeOik}°/{Virheas2ndtoeVas}°. #Patella alta {VirheasPatellaAltaOik} cm / {VirheasPatellaAltaVas} cm. #
+#Lonkan anteversio {VirheasAnteversioOik}/{VirheasAnteversioVas}. #Jalkaterä-reisi -kulma {VirheasJalkaReisiOik}/{VirheasJalkaReisiVas}. #Jalkaterän etu- takaosan kulma {VirheasJalkateraEtuTakaOik}/{VirheasJalkateraEtuTakaVas}. #
+#Bimalleoli -akseli {VirheasBimalleoliOik}/{VirheasBimalleoliVas}. #2nd toe test {Virheas2ndtoeOik}/{Virheas2ndtoeVas}. #Patella alta {VirheasPatellaAltaOik}/{VirheasPatellaAltaVas}. #
 #Kommentit: {cmtVirheas}#
 
 MUITA MITTAUKSIA:
-#Extensor lag {LonkkaExtLagOik}°/{LonkkaExtLagVas}°. #Confusion test {NilkkaConfusionOik}/{NilkkaConfusionVas}. #Ober test {LonkkaOberOik}°/{LonkkaOberVas}°. #Tasapaino: yhdellä jalalla seisominen {TasapOik} s/{TasapVas} s. #
+#Extensor lag {LonkkaExtLagOik}/{LonkkaExtLagVas}. #Confusion test {NilkkaConfusionOik}/{NilkkaConfusionVas}. #Ober test {LonkkaOberOik}/{LonkkaOberVas}. #Tasapaino: yhdellä jalalla seisominen {TasapOik}/{TasapVas}. #
 #Kommentit (tasapaino): {cmtTasap}#
 
 JALKATERÄ KUORMITTAMATTOMANA (+ = lievä, ++ = kohtalainen, +++ = voimakas): 
 #Subtalar neutraali -asento {JalkatSubtalarOik}/{JalkatSubtalarVas}. #Takaosan asento {JalkatTakaosanAsentoOik}/{JalkatTakaosanAsentoVas}. #Takaosan liike eversioon {JalkatTakaosanLiikeEversioOik}/{JalkatTakaosanLiikeEversioVas}. #
 #Takaosan liike inversioon {JalkatTakaosanLiikeInversioOik}/{JalkatTakaosanLiikeInversioVas}. #Med. holvikaari {JalkatHolvikaariOik}/{JalkatHolvikaariVas}. #Keskiosan liike {JalkatKeskiosanliikeOik}/{JalkatKeskiosanliikeVas}. #Etuosan asento 1 {JalkatEtuosanAsento1Oik}/{JalkatEtuosanAsento1Vas}. #  
-#Etuosan asento 2 {JalkatEtuosanAsento2Oik}/{JalkatEtuosanAsento2Vas}. #1. säde {Jalkat1sadeOik}/{Jalkat1sadeVas}. #1 MTP dorsifleksio {Jalkat1MTPojennusOik}°/{Jalkat1MTPojennusVas}°. #Vaivaisenluu {JalkatVaivaisenluuOik}/{JalkatVaivaisenluuVas}. #Kovettumat {JalkatKovettumatOik}/{JalkatKovettumatVas}. #
+#Etuosan asento 2 {JalkatEtuosanAsento2Oik}/{JalkatEtuosanAsento2Vas}. #1. säde {Jalkat1sadeOik}/{Jalkat1sadeVas}. #1 MTP dorsifleksio {Jalkat1MTPojennusOik}/{Jalkat1MTPojennusVas}. #Vaivaisenluu {JalkatVaivaisenluuOik}/{JalkatVaivaisenluuVas}. #Kovettumat {JalkatKovettumatOik}/{JalkatKovettumatVas}. #
 #Kommentit: {cmtJalkat}#
 
 JALKATERÄ KUORMITETTUNA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
@@ -87,18 +87,18 @@ JALKATERÄ KUORMITETTUNA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
 
 ALARAAJOJEN SPASTISUUS:
 
-CATCH: #Lonkan adduktorit {LonkkaAdduktoritCatchOik}°/{LonkkaAdduktoritCatchVas}°. #Hamstringit {PolviHamstringCatchOik}°/{PolviHamstringCatchVas}°. #Rectus femorikset {PolviRectusCatchOik}°/{PolviRectusCatchVas}°. #Soleukset {NilkkaSoleusCatchOik}°/{NilkkaSoleusCatchVas}° (klonus {NilkkaSoleusKlonusOik}/{NilkkaSoleusKlonusVas}). #
-#Gastrocnemiukset {NilkkaGastroCatchOik}°/{NilkkaGastroCatchVas}° (klonus {NilkkaGastroKlonusOik}/{NilkkaGastroKlonusVas}). #
+CATCH: #Lonkan adduktorit {LonkkaAdduktoritCatchOik}/{LonkkaAdduktoritCatchVas}. #Hamstringit {PolviHamstringCatchOik}/{PolviHamstringCatchVas}. #Rectus femorikset {PolviRectusCatchOik}/{PolviRectusCatchVas}. #Soleukset {NilkkaSoleusCatchOik}/{NilkkaSoleusCatchVas}# (klonus {NilkkaSoleusKlonusOik}/{NilkkaSoleusKlonusVas})#. #
+#Gastrocnemiukset {NilkkaGastroCatchOik}/{NilkkaGastroCatchVas} #(klonus {NilkkaGastroKlonusOik}/{NilkkaGastroKlonusVas})#. #
 #Kommentit: {cmtNilkka}#
 
-MODIFIED ASHWORTH: #Lonkan koukistajat {LonkkaFleksioModAOik}°/{LonkkaFleksioModAVas}°. #Lonkan ojentajat {LonkkaEkstensioModAOik}/{LonkkaEkstensioModAVas}. #Lonkan lähentäjät {LonkkaAdduktoritModAOik}°/{LonkkaAdduktoritModAVas}°. #Hamstringit {PolviHamstringModAOik}°/{PolviHamstringModAVas}°. #Rectus femoris {PolviRectusModAOik}°/{PolviRectusModAVas}°. #
-#Lonkan sisäkierto {LonkkaSisakiertoModAOik}/{LonkkaSisakiertoModAVas}. #Lonkan ulkokierto {LonkkaUlkokiertoModAOik}/{LonkkaUlkokiertoModAVas}. #Soleus {NilkkaSoleusModAOik}°/{NilkkaSoleusModAVas}°. #Gastrocnemius {NilkkaGastroModAOik}°/{NilkkaGastroModAVas}°. #
+MODIFIED ASHWORTH: #Lonkan koukistajat {LonkkaFleksioModAOik}/{LonkkaFleksioModAVas}. #Lonkan ojentajat {LonkkaEkstensioModAOik}/{LonkkaEkstensioModAVas}. #Lonkan lähentäjät {LonkkaAdduktoritModAOik}/{LonkkaAdduktoritModAVas}. #Hamstringit {PolviHamstringModAOik}/{PolviHamstringModAVas}. #Rectus femoris {PolviRectusModAOik}/{PolviRectusModAVas}. #
+#Lonkan sisäkierto {LonkkaSisakiertoModAOik}/{LonkkaSisakiertoModAVas}. #Lonkan ulkokierto {LonkkaUlkokiertoModAOik}/{LonkkaUlkokiertoModAVas}. #Soleus {NilkkaSoleusModAOik}/{NilkkaSoleusModAVas}. #Gastrocnemius {NilkkaGastroModAOik}/{NilkkaGastroModAVas}. #
 Kommentit:
 
 MANUAALISESTI MITATUT LIHASVOIMAT (oikea/vasen):
 Asteikko: 0-5, missä 5 on vahvin ja 3 voittaa painovoiman. Selektiivisyys, missä 0=kokonaisliikemalli, 1=osittain eriytynyt ja 2=eriytynyt koko liikelaajuudella:  
 
-#Lonkan ojennus (polvi 0°) {VoimaLonkkaEkstensioPolvi0Oik}({SelLonkkaEkstensioPolvi0Oik})/{VoimaLonkkaEkstensioPolvi0Vas}({SelLonkkaEkstensioPolvi0Vas}). #Lonkan ojennus (polvi 90°) {VoimaLonkkaEkstensioPolvi90Oik}({SelLonkkaEkstensioPolvi90Oik})/{VoimaLonkkaEkstensioPolvi90Vas}({SelLonkkaEkstensioPolvi90Vas}). #Lonkan koukistus {VoimaLonkkaFleksioOik}({SelLonkkaFleksioOik})/{VoimaLonkkaFleksioVas}({SelLonkkaFleksioVas}). #Loitonnus, lonkka 0 {VoimaLonkkaAbduktioLonkka0Oik}({SelLonkkaAbduktioLonkka0Oik})/{VoimaLonkkaAbduktioLonkka0Vas}({SelLonkkaAbduktioLonkka0Vas}). #
+#Lonkan ojennus (polvi 0°) {VoimaLonkkaEkstensioPolvi0Oik}({SelLonkkaEkstensioPolvi0Oik})/{VoimaLonkkaEkstensioPolvi0Vas}({SelLonkkaEkstensioPolvi0Vas}). #Lonkan ojennus (polvi 90°) {VoimaLonkkaEkstensioPolvi90Oik}({SelLonkkaEkstensioPolvi90Oik})/{VoimaLonkkaEkstensioPolvi90Vas}({SelLonkkaEkstensioPolvi90Vas}). #Lonkan koukistus {VoimaLonkkaFleksioOik}({SelLonkkaFleksioOik})/{VoimaLonkkaFleksioVas}({SelLonkkaFleksioVas}). #Loitonnus, lonkka 0° {VoimaLonkkaAbduktioLonkka0Oik}({SelLonkkaAbduktioLonkka0Oik})/{VoimaLonkkaAbduktioLonkka0Vas}({SelLonkkaAbduktioLonkka0Vas}). #
 #Loitonnus, lonkka fleksiossa {VoimaLonkkaAbduktioLonkkaFleksOik}/{VoimaLonkkaAbduktioLonkkaFleksVas}. #Lähennys {VoimaLonkkaAdduktioOik}({SelLonkkaAdduktioOik})/{VoimaLonkkaAdduktioVas}({SelLonkkaAdduktioVas}). #Lonkan ulkokierto {VoimaLonkkaUlkokiertoOik}({SelLonkkaUlkokiertoOik})/{VoimaLonkkaUlkokiertoVas}({SelLonkkaUlkokiertoVas}). #
 #Lonkan sisäkierto {VoimaLonkkaSisakiertoOik}({SelLonkkaSisakiertoOik})/{VoimaLonkkaSisakiertoVas}({SelLonkkaSisakiertoVas}). #Polven ojennus {VoimaPolviEkstensioOik}({SelPolviEkstensioOik})/{VoimaPolviEkstensioVas}({SelPolviEkstensioVas}). #Polven koukistus {VoimaPolviFleksioOik}({SelPolviFleksioOik})/{VoimaPolviFleksioVas}({SelPolviFleksioVas}). #Nilkan koukistus {VoimaTibialisAnteriorOik}({SelTibialisAnteriorOik})/{VoimaTibialisAnteriorVas}({SelTibialisAnteriorVas}). #Nilkan ojennus (gastrocnemius) {VoimaGastroOik}({SelGastroOik})/{VoimaGastroVas}({SelGastroVas}). #Nilkan ojennus (soleus) {VoimaSoleusOik}({SelSoleusOik})/{VoimaSoleusVas} ({SelSoleusVas}). #
 #Inversio {VoimaTibialisPosteriorOik}({SelTibialisPosteriorOik})/{VoimaTibialisPosteriorVas}({SelTibialisPosteriorVas}). #Eversio {VoimaPeroneusOik}({SelPeroneusOik})/{VoimaPeroneusVas}({SelPeroneusVas}). #Isovarpaan ojennus {VoimaExtHallucisLongusOik}({SelExtHallucisLongusOik})/{VoimaExtHallucisLongusVas}({SelExtHallucisLongusVas}). #Isovarpaan koukistus {VoimaFlexHallucisLongusOik}({SelFlexHallucisLongusOik})/{VoimaFlexHallucisLongusVas}({SelFlexHallucisLongusVas}). #Varpaiden (2-5) ojennus {Voima25OjennusOik}({Sel25OjennusOik})/{Voima25OjennusVas}({Sel25OjennusVas}). #

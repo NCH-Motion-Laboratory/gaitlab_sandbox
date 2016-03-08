@@ -22,8 +22,10 @@ class text():
         self.data = {}
         # if value is in not_measured_vals, it's counted as not measured and ignored
         self.not_measured_vals = [u'Ei mitattu', u'', u'Ei']
+        # special values that don't take units as suffix
+        self.special_vals = [u'NR']
         for fld in data:
-            if data[fld] not in self.not_measured_vals:
+            if data[fld] not in self.not_measured_vals+self.special_vals:
                 self.data[fld] = unicode(data[fld])+units[fld]
             else:
                 self.data[fld] = unicode(data[fld])

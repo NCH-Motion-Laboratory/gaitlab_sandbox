@@ -22,8 +22,6 @@ chars (widget type)
 
 TODO:
 
-poista astemerkit raportista, lisää "unit" -kenttä jokaiseen widgettiin
-(tämän saa esim. getSuffix-metodilla)
 splittaa jalkaterä + voimasivut kahteen sarakkeeseen (2x grid layout)
 tab order
 dbl spinbox & locale (pilkku vs. piste)
@@ -184,7 +182,7 @@ class EntryApp(QtGui.QMainWindow):
         # special text written out for non-measured variables
         for key in sorted(self.data.keys()):
             print('{%s}'%key)
-        print(self.units)
+        #print(self.units)
         
 
     def set_constants(self):
@@ -294,7 +292,8 @@ class EntryApp(QtGui.QMainWindow):
         self.btnSave.clicked.connect(self.save_dialog)
         self.btnLoad.clicked.connect(self.load_dialog)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
-        self.btnReport.clicked.connect(self.save_report_dialog)
+        self.btnReport.clicked.connect(self.make_report)
+        #self.btnReport.clicked.connect(self.save_report_dialog)
         self.btnQuit.clicked.connect(self.close)
         # method call on tab change
         self.maintab.currentChanged.connect(self.page_change)
@@ -368,7 +367,7 @@ class EntryApp(QtGui.QMainWindow):
             
     def make_report(self):
         """ Make report using the input data. """
-        report = ll_reporter.text(self.data)
+        report = ll_reporter.text(self.data, self.units)
         report_txt = report.make_text_report()
         print(report_txt)
         fname = 'report_koe.txt'
@@ -429,7 +428,7 @@ class EntryApp(QtGui.QMainWindow):
     def save_dialog(self):
         """ Bring up save dialog and save data. """
         fname = QtGui.QFileDialog.getSaveFileName(self, ll_msgs.save_report_title, self.data_root_fldr,
-                                                  self.text_filter)
+                                                  self.json_filter)
         if fname:
             fname = unicode(fname)
             try:
