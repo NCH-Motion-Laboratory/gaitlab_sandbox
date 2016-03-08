@@ -28,12 +28,12 @@ Date of gait analysis: {TiedotPvm}
 #Kommentit: {cmtTiedot}#
 
 ANTROPOMETRISET MITAT:
-Alaraaja {AntropAlaraajaOik}/{AntropAlaraajaVas}
-Nilkka {AntropNilkkaOik}/{AntropNilkkaVas}
-Polvi {AntropPolviOik} / {AntropPolviVas}
-Paino {AntropPaino}
-Pituus {AntropPituus}
-SIAS {AntropSIAS}
+Alaraajat: {AntropAlaraajaOik}/{AntropAlaraajaVas}
+Nilkat: {AntropNilkkaOik}/{AntropNilkkaVas}
+Polvet: {AntropPolviOik} / {AntropPolviVas}
+Paino: {AntropPaino}
+Pituus: {AntropPituus}
+SIAS: {AntropSIAS}
 #Kommentit: {cmtAntrop}#
 
 #MITTAAJAT:
@@ -83,7 +83,6 @@ JALKATERÄ KUORMITTAMATTOMANA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
 #Subtalar neutraali -asento {JalkatSubtalarOik}/{JalkatSubtalarVas}. #Takaosan asento {JalkatTakaosanAsentoOik}/{JalkatTakaosanAsentoVas}. #Takaosan liike eversioon {JalkatTakaosanLiikeEversioOik}/{JalkatTakaosanLiikeEversioVas}. #
 #Takaosan liike inversioon {JalkatTakaosanLiikeInversioOik}/{JalkatTakaosanLiikeInversioVas}. #Med. holvikaari {JalkatHolvikaariOik}/{JalkatHolvikaariVas}. #Keskiosan liike {JalkatKeskiosanliikeOik}/{JalkatKeskiosanliikeVas}. #Etuosan asento 1 {JalkatEtuosanAsento1Oik}/{JalkatEtuosanAsento1Vas}. #  
 #Etuosan asento 2 {JalkatEtuosanAsento2Oik}/{JalkatEtuosanAsento2Vas}. #1. säde {Jalkat1sadeOik}/{Jalkat1sadeVas}. #1 MTP dorsifleksio {Jalkat1MTPojennusOik}/{Jalkat1MTPojennusVas}. #Vaivaisenluu {JalkatVaivaisenluuOik}/{JalkatVaivaisenluuVas}. #Kovettumat {JalkatKovettumatOik}/{JalkatKovettumatVas}. #
-#Kommentit: {cmtJalkat}#
 
 JALKATERÄ KUORMITETTUNA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
 #Takaosan (kantaluun) asento {JalkatTakaosanAsentoKuormOik}/{JalkatTakaosanAsentoKuormVas}. #Keskiosan asento {JalkatKeskiosanAsentoKuormOik}/{JalkatKeskiosanAsentoKuormVas}. #Etuosan asento 1 {JalkatEtuosanAsento1KuormOik}/{JalkatEtuosanAsento1KuormVas}, etuosan asento 2 {JalkatEtuosanAsento2KuormOik}/{JalkatEtuosanAsento2KuormVas}. #
@@ -101,7 +100,8 @@ MODIFIED ASHWORTH: #Lonkan koukistajat {LonkkaFleksioModAOik}/{LonkkaFleksioModA
 Kommentit:
 
 MANUAALISESTI MITATUT LIHASVOIMAT (oikea/vasen):
-Asteikko: 0-5, missä 5 on vahvin ja 3 voittaa painovoiman. Selektiivisyys, missä 0=kokonaisliikemalli, 1=osittain eriytynyt ja 2=eriytynyt koko liikelaajuudella:  
+Asteikko: 0-5, missä 5 on vahvin ja 3 voittaa painovoiman. Selektiivisyys, missä 
+0=kokonaisliikemalli, 1=osittain eriytynyt ja 2=eriytynyt koko liikelaajuudella:  
 
 #Lonkan ojennus (polvi 0°) {VoimaLonkkaEkstensioPolvi0Oik}({SelLonkkaEkstensioPolvi0Oik})/{VoimaLonkkaEkstensioPolvi0Vas}({SelLonkkaEkstensioPolvi0Vas}). #Lonkan ojennus (polvi 90°) {VoimaLonkkaEkstensioPolvi90Oik}({SelLonkkaEkstensioPolvi90Oik})/{VoimaLonkkaEkstensioPolvi90Vas}({SelLonkkaEkstensioPolvi90Vas}). #Lonkan koukistus {VoimaLonkkaFleksioOik}({SelLonkkaFleksioOik})/{VoimaLonkkaFleksioVas}({SelLonkkaFleksioVas}). #Loitonnus, lonkka 0° {VoimaLonkkaAbduktioLonkka0Oik}({SelLonkkaAbduktioLonkka0Oik})/{VoimaLonkkaAbduktioLonkka0Vas}({SelLonkkaAbduktioLonkka0Vas}). #
 #Loitonnus, lonkka fleksiossa {VoimaLonkkaAbduktioLonkkaFleksOik}/{VoimaLonkkaAbduktioLonkkaFleksVas}. #Lähennys {VoimaLonkkaAdduktioOik}({SelLonkkaAdduktioOik})/{VoimaLonkkaAdduktioVas}({SelLonkkaAdduktioVas}). #Lonkan ulkokierto {VoimaLonkkaUlkokiertoOik}({SelLonkkaUlkokiertoOik})/{VoimaLonkkaUlkokiertoVas}({SelLonkkaUlkokiertoVas}). #
@@ -127,7 +127,6 @@ Kotiin 2kpl, joista toinen kuntouttavalle fysioterapeutille.
 .LL14
 
 """
-
 
 
 report = report_.split(delimiter)
