@@ -335,8 +335,6 @@ class EntryApp(QtGui.QMainWindow):
         #self.maintab.setStyleSheet('QWidget { font-size: 14pt;}')
         self.setStyleSheet('QWidget { font-size: %dpt;}'%self.global_fontsize)
        
-       
-        
     def confirm_dialog(self, msg):
         """ Show yes/no dialog """
         dlg = QtGui.QMessageBox()
@@ -394,10 +392,11 @@ class EntryApp(QtGui.QMainWindow):
             keys, loaded_keys = set(self.data), set(data_loaded)
             if not keys == loaded_keys:  # keys mismatch
                 self.keyerror_dialog(keys, loaded_keys)
-            else:
-                self.data = data_loaded
-                self.restore_forms()
-                self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
+            for key in data_loaded:
+                if key in self.data:
+                    self.data[key] = data_loaded[key]
+            self.restore_forms()
+            self.statusbar.showMessage(ll_msgs.status_loaded.format(filename=fname, n=self.n_modified()))
 
     def keyerror_dialog(self, origkeys, newkeys):
         """ Report missing / extra keys to user. """
