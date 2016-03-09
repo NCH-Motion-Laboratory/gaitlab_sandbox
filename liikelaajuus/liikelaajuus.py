@@ -22,6 +22,11 @@ chars (widget type)
 
 TODO:
 
+catcheja ei raportoida jos arvona 'Ei'. ok?
+-erit. soleus catch = 'Ei'+ klonus 'Kyllä' näyt. pelkän klonuksen
+kommenttimuuttujien ryhmittely raporttiin?
+
+
 exception handling
 tab order
 click+enter? (spinboxes)
