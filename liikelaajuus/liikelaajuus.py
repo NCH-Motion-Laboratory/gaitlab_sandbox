@@ -186,7 +186,6 @@ class EntryApp(QtGui.QMainWindow):
             print('{%s}'%key)
         #print(self.units)
         
-
     def set_constants(self):
         self.not_measured_text = u'Ei mitattu'
         self.checkbox_yestext = u'Kyllä'
@@ -211,7 +210,7 @@ class EntryApp(QtGui.QMainWindow):
         self.input_widgets = {}
 
         def spinbox_getval(w, mintext):
-            val = int(w.value())
+            val = w.value()
             if val == w.minimum():
                 return mintext
             else:
