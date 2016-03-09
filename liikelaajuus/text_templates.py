@@ -20,7 +20,7 @@ report_ = u"""
 
 LIIKELAAJUUDET JA VOIMAT
 
-Patient code: {TiedotID}
+#Patient code: {TiedotID}
 Patient name: {TiedotNimi}
 Social security number: {TiedotHetu}
 Diagnosis: {TiedotDiag}
@@ -28,8 +28,8 @@ Date of gait analysis: {TiedotPvm}
 #Kommentit: {cmtTiedot}#
 
 ANTROPOMETRISET MITAT:
-Alaraajat: {AntropAlaraajaOik}/{AntropAlaraajaVas}
-Nilkat: {AntropNilkkaOik}/{AntropNilkkaVas}
+Alaraajat: {AntropAlaraajaOik} / {AntropAlaraajaVas}
+Nilkat: {AntropNilkkaOik} / {AntropNilkkaVas}
 Polvet: {AntropPolviOik} / {AntropPolviVas}
 Paino: {AntropPaino}
 Pituus: {AntropPituus}
@@ -40,9 +40,9 @@ SIAS: {AntropSIAS}
 {TiedotMittaajat}#
 
 [Tulosyy]
-Tehtiin kävelyanalyysi-tutkimus 3D liikeanalyysilaitteistolla sekä liikerata- ja manuaaliset lihasvoimamittaukset 
-Tehdyt toimenpiteet..
-Apuvälineet..
+Tehtiin kävelyanalyysitutkimus 3D-liikeanalyysilaitteistolla sekä liikerata- ja manuaaliset lihasvoimamittaukset.
+Tehdyt toimenpiteet:
+Apuvälineet:
 
 [Testaus- ja arviointitulokset]
 Seisoma-asento:
@@ -115,8 +115,8 @@ Asteikko: 0-5, missä 5 on vahvin ja 3 voittaa painovoiman. Selektiivisyys, miss
 [Suunnitelma/pohdinta]
 
 (Johtopäätökset)
-Pääpulmat..
-Suositukset..
+Pääpulmat:
+Suositukset:
 
 
 , fysioterapeutti
@@ -127,7 +127,6 @@ Jakelu:
 
 Kotiin 2kpl, joista toinen kuntouttavalle fysioterapeutille.
 .LL14
-
 """
 
 
