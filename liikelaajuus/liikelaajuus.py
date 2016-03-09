@@ -367,12 +367,15 @@ class EntryApp(QtGui.QMainWindow):
         with io.open(fname,'w',encoding='utf-8') as f:
             f.write(report_txt)
         self.statusbar.showMessage(ll_msgs.wrote_report.format(filename=fname))
-        
+
     def values_changed(self, w):
         if self.update_dict:
             print('updating dict for:', w.objectName(),'new value:',w.getVal())
             wname = unicode(w.objectName())
             self.data[self.widget_to_var[wname]] = w.getVal()
+            # DEBUG: print report
+            self.make_report()
+            ###
         self.saved_to_file = False
         if self.save_to_tmp:
             self.save_temp()
