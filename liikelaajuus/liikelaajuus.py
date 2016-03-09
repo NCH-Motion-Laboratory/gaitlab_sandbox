@@ -24,6 +24,9 @@ TODO:
 
 catcheja ei raportoida jos arvona 'Ei'. ok?
 -erit. soleus catch = 'Ei'+ klonus 'Kyllä' näyt. pelkän klonuksen
+
+myös vaiv. luu ei raportoida jos arvona 'Ei'!
+
 kommenttimuuttujien ryhmittely raporttiin?
 
 
