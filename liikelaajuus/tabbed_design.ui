@@ -6786,7 +6786,8 @@
              </font>
             </property>
             <property name="text">
-             <string>Lonkan abduktio, lonkka fleksiossa</string>
+             <string>Lonkan abduktio,
+lonkka fleksiossa</string>
             </property>
            </widget>
           </item>
@@ -10293,7 +10294,7 @@
            <widget class="QLabel" name="label_314">
             <property name="text">
              <string>Nilkan koukistus
- (tibialis anterior)</string>
+(tibialis anterior)</string>
             </property>
            </widget>
           </item>
