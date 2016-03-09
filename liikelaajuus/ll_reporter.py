@@ -18,14 +18,15 @@ import string
 class text():
     
     def __init__(self, data, units):
+        # some special conversion for reporting purposes
         # add units as suffixes to data values
         self.data = {}
         # if value is in not_measured_vals, it's counted as not measured and ignored
-        self.not_measured_vals = [u'Ei mitattu', u'', u'Ei']
+        self.not_measured_vals = [u'Ei mitattu', u'', 'EI']  # 'EI' is the checkbox (QtCheckBox) 'No' value
         # special values that don't take units as suffix
-        self.special_vals = [u'NR']
+        self.nounits_vals = [u'NR', u'Ei']
         for fld in data:
-            if data[fld] not in self.not_measured_vals+self.special_vals:
+            if data[fld] not in self.not_measured_vals+self.nounits_vals:
                 self.data[fld] = unicode(data[fld])+units[fld]
             else:
                 self.data[fld] = unicode(data[fld])

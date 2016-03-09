@@ -191,7 +191,7 @@ class EntryApp(QtGui.QMainWindow):
     def set_constants(self):
         self.not_measured_text = u'Ei mitattu'
         self.checkbox_yestext = u'Kyllä'
-        self.checkbox_notext = u'Ei'
+        self.checkbox_notext = u'EI'
         # Set dirs according to platform
         if sys.platform == 'win32':
             self.tmp_fldr = '/Temp'
