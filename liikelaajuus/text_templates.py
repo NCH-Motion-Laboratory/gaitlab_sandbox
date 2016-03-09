@@ -86,7 +86,8 @@ JALKATERÄ KUORMITTAMATTOMANA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
 
 JALKATERÄ KUORMITETTUNA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
 #Takaosan (kantaluun) asento {JalkatTakaosanAsentoKuormOik}/{JalkatTakaosanAsentoKuormVas}. #Keskiosan asento {JalkatKeskiosanAsentoKuormOik}/{JalkatKeskiosanAsentoKuormVas}. #Etuosan asento 1 {JalkatEtuosanAsento1KuormOik}/{JalkatEtuosanAsento1KuormVas}, etuosan asento 2 {JalkatEtuosanAsento2KuormOik}/{JalkatEtuosanAsento2KuormVas}. #
-#Takaosan kierto {JalkatTakaosanKiertoKuormOik}/{JalkatTakaosanKiertoKuormVas}. #Coleman’s block test {JalkatColemanOik}/{JalkatColemanVas}. #Feissin linja {JalkatFeissinLinjaOik}/{JalkatFeissinLinjaVas}. #
+#Takaosan kierto {JalkatTakaosanKiertoKuormOik}/{JalkatTakaosanKiertoKuormVas}. #Coleman's block test {JalkatColemanOik}/{JalkatColemanVas}. #Feissin linja {JalkatFeissinLinjaOik}/{JalkatFeissinLinjaVas}. #
+Painelevy mitattu: {Painelevy}
 #Kommentit: {cmtJalkat}#
 
 ALARAAJOJEN SPASTISUUS:

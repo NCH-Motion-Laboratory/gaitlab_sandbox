@@ -22,10 +22,7 @@ chars (widget type)
 
 TODO:
 
-vanhojen dataversioiden lataus?
--file has unknown variables -> warn and discard
--code has new variables not found in data -> warn and set to default
-splittaa jalkaterä + voimasivut kahteen sarakkeeseen (2x grid layout)
+exception handling
 tab order
 click+enter? (spinboxes)
 
@@ -118,11 +115,11 @@ class CheckDegSpinBox(QtGui.QWidget):
         if self.normalCheckBox.checkState() == 0:
             val = self.degSpinBox.value()
             if val == self.degSpinBox.minimum():
-                return self.specialtext
+                return unicode(self.specialtext)
             else:
                 return val
         elif self.normalCheckBox.checkState() == 2:
-            return self.getDefaultText()
+            return unicode(self.getDefaultText())
 
     def setValue(self, val):
         if val == self.getDefaultText():
@@ -149,9 +146,6 @@ class CheckDegSpinBox(QtGui.QWidget):
         
     #def sizeHint(self):
     #    return QSize(150,20)
-
-
-
 
 
 
@@ -199,7 +193,7 @@ class EntryApp(QtGui.QMainWindow):
             self.data_root_fldr = '/'
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.json'
         # exceptions that might be generated when parsing json file
-        self.json_load_exceptions = (UnicodeDecodeError, EOFError, IOError)
+        self.json_exceptions = (UnicodeDecodeError, EOFError, IOError, TypeError)
         self.json_filter = u'JSON files (*.json)'
         self.text_filter = u'Text files (*.txt)'
         self.global_fontsize = 13
@@ -376,7 +370,7 @@ class EntryApp(QtGui.QMainWindow):
         
     def values_changed(self, w):
         if self.update_dict:
-            print('updating dict for:', w.objectName())
+            print('updating dict for:', w.objectName(),'new value:',w.getVal())
             wname = unicode(w.objectName())
             self.data[self.widget_to_var[wname]] = w.getVal()
         self.saved_to_file = False
@@ -413,6 +407,7 @@ class EntryApp(QtGui.QMainWindow):
         """ Save data into given file in utf-8 encoding. """
         with io.open(fname, 'w', encoding='utf-8') as f:
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
+            
 
     def load_dialog(self):
         """ Bring up load dialog and load selected file. """
@@ -422,7 +417,7 @@ class EntryApp(QtGui.QMainWindow):
             fname = unicode(fname)
             try:
                 self.load_file(fname)
-            except self.json_load_exceptions:
+            except self.json_exceptions:
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save_dialog(self):
@@ -435,7 +430,7 @@ class EntryApp(QtGui.QMainWindow):
                 self.save_file(fname)
                 self.saved_to_file = True
                 self.statusbar.showMessage(ll_msgs.status_saved+fname)
-            except (IOError):
+            except self.json_exceptions:
                 self.message_dialog(ll_msgs.cannot_save+fname)
 
     def save_report_dialog(self):
@@ -452,8 +447,6 @@ class EntryApp(QtGui.QMainWindow):
                 self.statusbar.showMessage(ll_msgs.status_report_saved+fname)
             except (IOError):
                 self.message_dialog(ll_msgs.cannot_save+fname)
-
-
                 
     def n_modified(self):
         """ Count modified values. """
@@ -470,8 +463,11 @@ class EntryApp(QtGui.QMainWindow):
         
     def save_temp(self):
         """ Save form input data into temporary backup file. """
+        #try:
         self.save_file(self.tmpfile)
         self.statusbar.showMessage(ll_msgs.status_value_change.format(n=self.n_modified(), tmpfile=self.tmpfile))
+        #except self.json_exceptions:
+            #self.message_dialog(ll_msgs.cannot_save+self.tmpfile)
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
