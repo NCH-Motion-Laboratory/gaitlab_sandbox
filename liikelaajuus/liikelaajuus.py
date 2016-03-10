@@ -22,16 +22,27 @@ chars (widget type)
 
 TODO:
 
-catcheja ei raportoida jos arvona 'Ei'. ok?
--erit. soleus catch = 'Ei'+ klonus 'Kyllä' näyt. pelkän klonuksen
+polvi, nilkka leveys max -> 500 mm
 
-myös vaiv. luu ei raportoida jos arvona 'Ei'!
+Ober test -> vapaa teksti ? Tuula ja Essi tarkistaa
 
-kommenttimuuttujien ryhmittely raporttiin?
+eril. kommenttiboksit (spastisuus, AROM, PROM) nilkka, polvi, lonkka
+(kuorm. / ei kuorm) jalkaterä
 
+kyllä -tiukka : väli pois
+
+Mobiili/Rigidi pien. alkukirjaimilla
+
+KOROST. SR / UR pien. kirjaimilla -> korost. UR
+
+Feissin linja 1/3 / 2/3
+
+2 eril. voimasivua
 
 exception handling
+
 tab order
+
 click+enter? (spinboxes)
 
 
