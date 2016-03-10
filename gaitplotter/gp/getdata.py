@@ -309,24 +309,25 @@ class trial:
         (or neither, or both). Kinetics modelling requires the GRF for the corresponding
         side, i.e. a forceplate strike. Thus look at foot strike event times and 
         determine whether (clean) forceplate contact is happening at each time.
+        For a contact to be judged as a clean:
+        -1st force rise must occur around foot strike
+        -max force must occur in a window after strike
         """
         forcetot = signal.medfilt(self.fp.forcetot) # remove spikes
         subj_weight = self.subject['Bodymass']*9.81
         F_THRESHOLD = .1 * subj_weight  # rise threshold
         FRISE_WINDOW = .05 * self.analograte  # specify in seconds -> analog frames
         FMAX_MAX_DELAY = .85 * self.analograte
+        FMAX_REL_MIN = .88  # maximum force as % of bodyweight must exceed this
         fmax = max(forcetot)
         fmaxind = np.where(forcetot == fmax)[0][0]  # first maximum
         debug_print('kinetics_available: max force:', fmax, 'at:', fmaxind, 'weight:', subj_weight)
         # allow for inaccuracy in weight
-        if max(forcetot) < .9 * subj_weight:
+        if max(forcetot) < FMAX_REL_MIN * subj_weight:
             return ''
         # first rise and last fall 
         friseind = rising_zerocross(forcetot-F_THRESHOLD)[0]
         ffallind = falling_zerocross(forcetot-F_THRESHOLD)[-1]
-        #  for a strike to be judged as a clean contact:
-        # -1st force rise must occur around foot strike
-        # -max force must occur in a window after strike
         kinetics = ''
         lfsind = (np.array(self.lfstrikes) - self.offset) * self.fp.samplesperframe
         rfsind = (np.array(self.rfstrikes) - self.offset) * self.fp.samplesperframe
@@ -334,16 +335,14 @@ class trial:
             debug_print('kinetics_available: strike', i, 'on left')
             debug_print('kinetics_available: dist to 1st force rise:', abs(friseind-ind))
             debug_print('kinetics_available: delay to force max:', fmaxind-ind)
-            if abs(friseind-ind) <= FRISE_WINDOW:
-                if fmaxind-ind  <= FMAX_MAX_DELAY:
+            if abs(friseind-ind) <= FRISE_WINDOW and fmaxind-ind  <= FMAX_MAX_DELAY:
                     debug_print('kinetics_available: judged as clean')
                     kinetics = 'L'
         for i,ind in enumerate(rfsind):
             debug_print('kinetics_available: strike', i, 'on right')
             debug_print('kinetics_available: dist to 1st force rise:', abs(friseind-ind))
             debug_print('kinetics_available: delay to force max:', fmaxind-ind)
-            if abs(friseind-ind) <= FRISE_WINDOW:
-                if fmaxind-ind  <= FMAX_MAX_DELAY:
+            if abs(friseind-ind) <= FRISE_WINDOW and fmaxind-ind  <= FMAX_MAX_DELAY:
                     if kinetics == '':
                         debug_print('kinetics_available: judged as clean')
                         kinetics = 'R'
