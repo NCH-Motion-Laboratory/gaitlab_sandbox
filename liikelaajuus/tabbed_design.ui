@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -336,7 +336,7 @@
              <number>-1</number>
             </property>
             <property name="maximum">
-             <number>1500</number>
+             <number>500</number>
             </property>
             <property name="value">
              <number>-1</number>
@@ -400,7 +400,7 @@
              <number>-1</number>
             </property>
             <property name="maximum">
-             <number>2500</number>
+             <number>3000</number>
             </property>
             <property name="value">
              <number>-1</number>
@@ -478,7 +478,7 @@
              <double>-0.100000000000000</double>
             </property>
             <property name="maximum">
-             <double>150.000000000000000</double>
+             <double>300.000000000000000</double>
             </property>
             <property name="singleStep">
              <double>0.100000000000000</double>
@@ -512,7 +512,7 @@
              <number>-1</number>
             </property>
             <property name="maximum">
-             <number>1500</number>
+             <number>500</number>
             </property>
             <property name="value">
              <number>-1</number>
@@ -581,7 +581,7 @@
              <number>-1</number>
             </property>
             <property name="maximum">
-             <number>1500</number>
+             <number>1000</number>
             </property>
             <property name="value">
              <number>-1</number>
@@ -612,7 +612,7 @@
              <number>-1</number>
             </property>
             <property name="maximum">
-             <number>100</number>
+             <number>500</number>
             </property>
             <property name="value">
              <number>-1</number>
@@ -684,7 +684,7 @@
              <number>-1</number>
             </property>
             <property name="maximum">
-             <number>100</number>
+             <number>500</number>
             </property>
             <property name="value">
              <number>-1</number>
@@ -1708,8 +1708,8 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="7">
            <spacer name="horizontalSpacer_5">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -1722,28 +1722,8 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QLabel" name="label_30">
-            <property name="text">
-             <string>Kommentit:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QTextEdit" name="cmtLonkka">
+          <item row="3" column="3">
+           <widget class="QTextEdit" name="cmtLonkkaSpast">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1764,10 +1744,91 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_30">
+            <property name="text">
+             <string>Kommentit, AROM:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="3">
+           <widget class="QTextEdit" name="cmtLonkkaPROM">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_35">
+            <property name="text">
+             <string>Kommentit, spatisuus:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_32">
+            <property name="text">
+             <string>Kommentit, PROM:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QTextEdit" name="cmtLonkkaAROM">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
            <spacer name="horizontalSpacer_6">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -2339,9 +2400,9 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <spacer name="horizontalSpacer_31">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="7">
+           <spacer name="horizontalSpacer_65">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -2353,28 +2414,8 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QLabel" name="label_237">
-            <property name="text">
-             <string>Kommentit:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_32">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QTextEdit" name="cmtPolvi">
+          <item row="3" column="3">
+           <widget class="QTextEdit" name="cmtPolviSpast">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -2384,21 +2425,102 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>100</height>
+              <height>70</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>400</width>
-              <height>100</height>
+              <height>70</height>
              </size>
             </property>
            </widget>
           </item>
-          <item>
-           <spacer name="horizontalSpacer_33">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_36">
+            <property name="text">
+             <string>Kommentit, AROM:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <spacer name="horizontalSpacer_67">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="3">
+           <widget class="QTextEdit" name="cmtPolviPROM">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_37">
+            <property name="text">
+             <string>Kommentit, spatisuus:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_38">
+            <property name="text">
+             <string>Kommentit, PROM:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QTextEdit" name="cmtPolviAROM">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_69">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -3006,9 +3128,9 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <spacer name="horizontalSpacer_37">
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="7">
+           <spacer name="horizontalSpacer_31">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -3020,28 +3142,8 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QLabel" name="label_239">
-            <property name="text">
-             <string>Kommentit:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_38">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QTextEdit" name="cmtNilkka">
+          <item row="3" column="3">
+           <widget class="QTextEdit" name="cmtNilkkaSpast">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -3051,21 +3153,102 @@
             <property name="minimumSize">
              <size>
               <width>400</width>
-              <height>100</height>
+              <height>70</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>400</width>
-              <height>100</height>
+              <height>70</height>
              </size>
             </property>
            </widget>
           </item>
-          <item>
-           <spacer name="horizontalSpacer_39">
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_39">
+            <property name="text">
+             <string>Kommentit, AROM:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <spacer name="horizontalSpacer_32">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="3">
+           <widget class="QTextEdit" name="cmtNilkkaPROM">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_40">
+            <property name="text">
+             <string>Kommentit, spatisuus:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string>Kommentit, PROM:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QTextEdit" name="cmtNilkkaAROM">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_33">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -3735,7 +3918,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Kyllä -tiukka</string>
+              <string>Kyllä-tiukka</string>
              </property>
             </item>
             <item>
@@ -3914,12 +4097,12 @@
             </item>
             <item>
              <property name="text">
-              <string>Mobiili</string>
+              <string>mobiili</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Rigidi</string>
+              <string>rigidi</string>
              </property>
             </item>
            </widget>
@@ -4091,12 +4274,12 @@
             </item>
             <item>
              <property name="text">
-              <string>Mobiili</string>
+              <string>mobiili</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Rigidi</string>
+              <string>rigidi</string>
              </property>
             </item>
            </widget>
@@ -4257,7 +4440,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Kyllä -tiukka</string>
+              <string>Kyllä-tiukka</string>
              </property>
             </item>
             <item>
@@ -4740,12 +4923,12 @@
             </item>
             <item>
              <property name="text">
-              <string>KOROST. SR</string>
+              <string>korost. SR</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>KOROST. UR</string>
+              <string>korost. UR</string>
              </property>
             </item>
            </widget>
@@ -4881,12 +5064,12 @@
             </item>
             <item>
              <property name="text">
-              <string>KOROST. SR</string>
+              <string>korost. SR</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>KOROST. UR</string>
+              <string>korost. UR</string>
              </property>
             </item>
            </widget>
@@ -4943,8 +5126,8 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="7">
            <spacer name="horizontalSpacer_24">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -4957,14 +5140,58 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QLabel" name="label_241">
-            <property name="text">
-             <string>Kommentit:</string>
+          <item row="0" column="3">
+           <widget class="QTextEdit" name="cmtJalkateraKuormittamattomana">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="3">
+           <widget class="QTextEdit" name="cmtJalkateraKuormitettuna">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>400</width>
+              <height>70</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>Kommentit, jalkaterä kuormittamattomana:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
            <spacer name="horizontalSpacer_25">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -4977,32 +5204,20 @@
             </property>
            </spacer>
           </item>
-          <item>
-           <widget class="QTextEdit" name="cmtJalkat">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>400</width>
-              <height>100</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>400</width>
-              <height>100</height>
-             </size>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_44">
+            <property name="text">
+             <string>Kommentit, jalkaterä kuormitettuna:</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="2">
            <spacer name="horizontalSpacer_26">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -11166,8 +11381,6 @@ lonkka fleksiossa</string>
          </layout>
         </item>
        </layout>
-       <zorder>label_258</zorder>
-       <zorder>horizontalLayoutWidget</zorder>
        <zorder>verticalSpacer_4</zorder>
       </widget>
       <widget class="QWidget" name="tabVirheas">
@@ -12117,7 +12330,6 @@ lonkka fleksiossa</string>
   <tabstop>cbLonkkaUlkokiertoModAVas</tabstop>
   <tabstop>cbPolviHamstringModAOik</tabstop>
   <tabstop>cbPolviHamstringModAVas</tabstop>
-  <tabstop>cmtPolvi</tabstop>
   <tabstop>xbNilkkaSoleusKlonusVas</tabstop>
   <tabstop>cbNilkkaSoleusModAOik</tabstop>
   <tabstop>cbNilkkaSoleusModAVas</tabstop>
@@ -12127,7 +12339,6 @@ lonkka fleksiossa</string>
   <tabstop>lnNilkkaConfusionOik</tabstop>
   <tabstop>lnNilkkaConfusionVas</tabstop>
   <tabstop>btnSave</tabstop>
-  <tabstop>cmtNilkka</tabstop>
   <tabstop>cbJalkatSubtalarOik</tabstop>
   <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioOik</tabstop>
@@ -12176,7 +12387,6 @@ lonkka fleksiossa</string>
   <tabstop>spTasapVas</tabstop>
   <tabstop>spTasapOik</tabstop>
   <tabstop>cmtAntrop</tabstop>
-  <tabstop>cmtLonkka</tabstop>
   <tabstop>cbLonkkaFleksioModAOik</tabstop>
   <tabstop>cbLonkkaFleksioModAVas</tabstop>
   <tabstop>cbLonkkaEkstensioModAOik</tabstop>

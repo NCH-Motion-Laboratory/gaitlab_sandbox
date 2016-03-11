@@ -22,20 +22,7 @@ chars (widget type)
 
 TODO:
 
-polvi, nilkka leveys max -> 500 mm
-
 Ober test -> vapaa teksti ? Tuula ja Essi tarkistaa
-
-eril. kommenttiboksit (spastisuus, AROM, PROM) nilkka, polvi, lonkka
-(kuorm. / ei kuorm) jalkaterä
-
-kyllä -tiukka : väli pois
-
-Mobiili/Rigidi pien. alkukirjaimilla
-
-KOROST. SR / UR pien. kirjaimilla -> korost. UR
-
-Feissin linja 1/3 / 2/3
 
 2 eril. voimasivua
 
