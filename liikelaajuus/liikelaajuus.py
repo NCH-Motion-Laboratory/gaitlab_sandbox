@@ -24,8 +24,6 @@ TODO:
 
 Ober test -> vapaa teksti ? Tuula ja Essi tarkistaa
 
-2 eril. voimasivua
-
 exception handling
 
 tab order

@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -1193,9 +1193,6 @@
             </item>
            </widget>
           </item>
-          <item row="16" column="2">
-           <widget class="CheckDegSpinBox" name="csbLonkkaOberOik"/>
-          </item>
           <item row="15" column="2">
            <widget class="CheckDegSpinBox" name="csbLonkkaAdduktioOik"/>
           </item>
@@ -1335,9 +1332,6 @@
           </item>
           <item row="19" column="4">
            <widget class="CheckDegSpinBox" name="csbLonkkaUlkokiertoVas"/>
-          </item>
-          <item row="16" column="4">
-           <widget class="CheckDegSpinBox" name="csbLonkkaOberVas"/>
           </item>
           <item row="10" column="4">
            <widget class="CheckDegSpinBox" name="csbLonkkaAbduktioLonkka0Polvi90Vas"/>
@@ -1691,6 +1685,12 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="16" column="2">
+           <widget class="QLineEdit" name="lnLonkkaOberOik"/>
+          </item>
+          <item row="16" column="4">
+           <widget class="QLineEdit" name="lnLonkkaOberVas"/>
           </item>
          </layout>
         </item>
@@ -12513,8 +12513,6 @@ lonkka fleksiossa</string>
   <tabstop>csbLonkkaAbduktioLonkkaFleksVas</tabstop>
   <tabstop>csbLonkkaAdduktioOik</tabstop>
   <tabstop>csbLonkkaAdduktioVas</tabstop>
-  <tabstop>csbLonkkaOberOik</tabstop>
-  <tabstop>csbLonkkaOberVas</tabstop>
   <tabstop>csbLonkkaSisakiertoOik</tabstop>
   <tabstop>csbLonkkaSisakiertoVas</tabstop>
   <tabstop>csbLonkkaUlkokiertoOik</tabstop>
