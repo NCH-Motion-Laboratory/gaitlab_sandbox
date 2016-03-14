@@ -24,16 +24,7 @@ chars (widget type)
 
 TODO:
 
-lonkka arom pois -> kommentit (muut)
-
-polvi arom pois
-
-nilkka, prom ennen aromia (kommenttiboksit)
-
 lis. luiden virheasennot -> polven valgus (myöhemmin)
-
-antrop. mitoille minimiarvot
-
 
 tab order
 

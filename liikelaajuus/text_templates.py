@@ -77,6 +77,7 @@ LUISET VIRHEASENNOT:
 
 MUITA MITTAUKSIA:
 #Extensor lag {LonkkaExtLagOik}/{LonkkaExtLagVas}. #Confusion test: {NilkkaConfusionOik}/{NilkkaConfusionVas}. #Ober test {LonkkaOberOik}/{LonkkaOberVas}. #Tasapaino: yhdellä jalalla seisominen {TasapOik}/{TasapVas}. #
+#Kommentit (lonkka): {cmtLonkkaMuut}
 #Kommentit (tasapaino): {cmtTasap}#
 
 JALKATERÄ KUORMITTAMATTOMANA (+ = lievä, ++ = kohtalainen, +++ = voimakas): 
@@ -113,7 +114,9 @@ Asteikko: 0-5, missä 5 on vahvin ja 3 voittaa painovoiman. Selektiivisyys, miss
 #Inversio {VoimaTibialisPosteriorOik}/{VoimaTibialisPosteriorVas}({SelTibialisPosteriorOik}/{SelTibialisPosteriorVas}). #Eversio {VoimaPeroneusOik}/{VoimaPeroneusVas}({SelPeroneusOik}/{SelPeroneusVas}). #Isovarpaan ojennus {VoimaExtHallucisLongusOik}/{VoimaExtHallucisLongusVas}({SelExtHallucisLongusOik}/{SelExtHallucisLongusVas}). #
 #Isovarpaan koukistus {VoimaFlexHallucisLongusOik}/{VoimaFlexHallucisLongusVas}({SelFlexHallucisLongusOik}/{SelFlexHallucisLongusVas}). #Varpaiden (2-5) ojennus {Voima25OjennusOik}/{Voima25OjennusVas}({Sel25OjennusOik}{Sel25OjennusVas}). #
 #Varpaiden (2-5) koukistus {Voima25KoukistusOik}/{Voima25KoukistusVas}({Sel25KoukistusOik}/{Sel25KoukistusVas}). #Suorat vatsalihakset {VoimaVatsaSuorat}. #Vinot vatsalihakset {VoimaVatsaVinotOik}/{VoimaVatsaVinotVas}. #Selkälihakset {VoimaSelka}. # 
-#Kommentit (voimat): {cmtVoima}#
+#Kommentit (voimat): {cmtVoima1}
+{cmtVoima2}#
+
 
 [Suunnitelma/pohdinta]
 
