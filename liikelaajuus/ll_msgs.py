@@ -31,4 +31,4 @@ wrote_report = u'Raportti tallennettu tiedostoon {filename}'
 keyerror_msg = u'Kaikki muuttujia ei voitu ladata. Tiedosto on ehkä tehty ohjelman vanhalla versiolla.\n'
 keys_not_found = u'Seuraavia ohjelman käyttämiä muuttujia ei löytynyt tiedostosta: {keys} \n'
 keys_extra = u'Seuraavat tiedostossa olevat muuttujat ovat tuntemattomia: {keys} \n'
-
+unhandled_exception = u'Ohjelma jouduttiin lopettamaan käsittelemättömän virheen vuoksi:\n'

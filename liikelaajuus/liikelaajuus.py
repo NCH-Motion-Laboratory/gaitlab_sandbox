@@ -22,7 +22,6 @@ chars (widget type)
 
 TODO:
 
-exception handling
 
 tab order
 
@@ -38,6 +37,7 @@ from __future__ import print_function
 
 from PyQt4 import QtGui, uic, QtCore
 import sys
+import traceback
 import io
 import os
 import json
@@ -194,11 +194,13 @@ class EntryApp(QtGui.QMainWindow):
             self.tmp_fldr = '/tmp'
             self.data_root_fldr = '/'
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.json'
-        # exceptions that might be generated when parsing json file
+        # exceptions that might be generated when parsing and loading/saving json
+        # these should all be caught
         self.json_exceptions = (UnicodeDecodeError, EOFError, IOError, TypeError)
         self.json_filter = u'JSON files (*.json)'
         self.text_filter = u'Text files (*.txt)'
         self.global_fontsize = 13
+        self.traceback_file = 'traceback.txt'
         
     def init_widgets(self):
         """ Make a dict of our input widgets and install some callbacks and 
@@ -376,7 +378,7 @@ class EntryApp(QtGui.QMainWindow):
             wname = unicode(w.objectName())
             self.data[self.widget_to_var[wname]] = w.getVal()
             # DEBUG: print report
-            self.make_report()
+            #self.make_report()
             ###
         self.saved_to_file = False
         if self.save_to_tmp:
@@ -412,7 +414,6 @@ class EntryApp(QtGui.QMainWindow):
         """ Save data into given file in utf-8 encoding. """
         with io.open(fname, 'w', encoding='utf-8') as f:
             f.write(unicode(json.dumps(self.data, ensure_ascii=False)))
-            
 
     def load_dialog(self):
         """ Bring up load dialog and load selected file. """
@@ -467,12 +468,10 @@ class EntryApp(QtGui.QMainWindow):
             self.firstwidget[newpage].setFocus()
         
     def save_temp(self):
-        """ Save form input data into temporary backup file. """
-        #try:
+        """ Save form input data into temporary backup file. Exceptions will be caught
+        by the fatal exception mechanism. """
         self.save_file(self.tmpfile)
         self.statusbar.showMessage(ll_msgs.status_value_change.format(n=self.n_modified(), tmpfile=self.tmpfile))
-        #except self.json_exceptions:
-            #self.message_dialog(ll_msgs.cannot_save+self.tmpfile)
                 
     def load_temp(self):
         """ Load form input data from temporary backup file. """
@@ -514,8 +513,25 @@ class EntryApp(QtGui.QMainWindow):
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    form = EntryApp()
-    form.show()
+    eapp = EntryApp()
+   
+    def my_excepthook(type, value, tback):
+        """ Custom exception handler for fatal (unhandled) exceptions: 
+        report to user via GUI and terminate. """
+        tb_full = u''.join(traceback.format_exception(type, value, tback))
+        eapp.message_dialog(ll_msgs.unhandled_exception+tb_full)
+        # dump traceback to file
+        try:
+            with io.open(eapp.traceback_file, 'w', encoding='utf-8') as f:
+                f.write(tb_full)
+        except IOError:
+            print('Cannot dump traceback!')
+        sys.__excepthook__(type, value, tback) 
+        app.quit()
+        
+    sys.excepthook = my_excepthook
+    
+    eapp.show()
     app.exec_()
 
 if __name__ == '__main__':

@@ -58,6 +58,8 @@ def main():
         app.quit()
         
     sys.excepthook = my_excepthook
+    
+    raise Exception
 
     ex.show()
     app.exec_()
