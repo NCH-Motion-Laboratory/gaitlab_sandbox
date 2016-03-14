@@ -1758,7 +1758,7 @@
            </spacer>
           </item>
           <item row="1" column="4">
-           <widget class="QTextEdit" name="cmtLonkkaSpast_2">
+           <widget class="QTextEdit" name="cmtLonkkaSpast">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
