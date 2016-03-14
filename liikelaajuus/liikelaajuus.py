@@ -22,8 +22,6 @@ chars (widget type)
 
 TODO:
 
-Ober test -> vapaa teksti ? Tuula ja Essi tarkistaa
-
 exception handling
 
 tab order
