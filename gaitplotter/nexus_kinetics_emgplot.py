@@ -10,11 +10,9 @@ Kinetics-EMG plot from Nexus.
  
 from gp.plot import gaitplotter
 import gp.layouts
-from gp.misc import error_exit
+from gp.misc import error_exit, messagebox
 
-plotheightratios = [3,2,2,3,2,2,2,3]
-pdf_prefix = 'Kinetics_EMG_'
-maintitleprefix='Kinetics-EMG plot for '
+
 gplotter = gaitplotter()
 
 # need to open trial before detecting side
@@ -23,15 +21,26 @@ side = gplotter.trial.kinetics_side
 if not side:
     error_exit('Forceplate strike not detected, no kinetics available. Check that the subject weight '+
                 'is correctly entered and there is a clean forceplate strike.')
-    
-plotvars = gp.layouts.kinetics_emg(side)
 
-# choose EMG variables according to side
+pdf_prefix = 'Kinetics_EMG_'
+maintitleprefix = 'Kinetics-EMG plot for '
+plotvars = gp.layouts.kinetics_emg(side)
+plotheightratios = [3,2,2,3,2,2,2,3]
 gplotter.read_trial(plotvars)
+
+# if all EMG channels are disconnected, switch to kinetics-only layout
+if all([chandata == 'EMG_DISCONNECTED' for chandata in gplotter.trial.emg.data.values()]):
+    messagebox('All EMG channels disconnected. Using non-EMG layout.')
+    plotvars = gp.layouts.std_kinall
+    pdf_prefix = 'Kinetics_kinematics_'
+    maintitleprefix = 'Kinematics/kinetics plot for '
+    plotheightratios = None
+    gplotter.read_trial(plotvars)
 
 trialname = gplotter.trial.trialname
 maintitle = maintitleprefix + trialname
-maintitle = maintitle + '\n' + gplotter.get_emg_filter_description()
+if 'EMG' in maintitle:
+    maintitle = maintitle + '\n' + gplotter.get_emg_filter_description()
 
 gplotter.plot_trial(plotheightratios=plotheightratios, maintitle=maintitle)
 gplotter.create_pdf(pdf_prefix=pdf_prefix)
