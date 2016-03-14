@@ -20,12 +20,26 @@ chars (widget type)
 -data is saved into temp directory whenever any values are changed by user
 
 
+
+
 TODO:
+
+lonkka arom pois -> kommentit (muut)
+
+polvi arom pois
+
+nilkka, prom ennen aromia (kommenttiboksit)
+
+lis. luiden virheasennot -> polven valgus (myöhemmin)
+
+antrop. mitoille minimiarvot
 
 
 tab order
 
-click+enter? (spinboxes)
+click+enter? (spinboxes) see:
+http://stackoverflow.com/questions/1891744/pyqt4-qspinbox-selectall-not-working-as-expected
+
 
 
 
