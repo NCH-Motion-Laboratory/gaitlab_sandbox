@@ -23,7 +23,7 @@ if not gplotter.trial.kinetics_side:
     do_kinetics = False
     msg = msg + 'Forceplate strike not detected. Plotting kinematics only.\n'
 
-if all([chandata == 'EMG_DISCONNECTED' for chandata in gplotter.trial.emg.data.values()]):
+if gplotter.trial.emg.no_emg:
     do_emg = False
     msg = msg + 'All EMG channels disconnected. Using non-EMG layout.'
     

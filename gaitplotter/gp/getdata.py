@@ -578,6 +578,10 @@ class emg:
             self.yscale[logch] = .5e-3
             # median scaling - beware of DC!
             #self.yscale_gc1r[elname] = yscale_medians * np.median(np.abs(self.datagc1r[elname]))
+        # set flag if none of EMG channels contain data
+        self.no_emg = all([chandata == 'EMG_DISCONNECTED' for chandata in self.data.values()])
+
+
 
     def map_data(self):
         """ Map logical channels into physical ones. For example, the logical name can be 
