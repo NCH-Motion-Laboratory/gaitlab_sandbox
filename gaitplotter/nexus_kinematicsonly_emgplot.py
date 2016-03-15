@@ -33,13 +33,13 @@ def do_plot(emg=True):
             gplotter.show()
             
     else:
-        plotvars = gp.layouts.std_kinall
+        plotvars = gp.layouts.std_kinematics
         pdf_prefix = 'Kinematics_kinetics_'
         maintitleprefix = 'Kinematics/kinetics plot for '
         maintitle = maintitleprefix + trialname
         gplotter.read_trial(plotvars)
         gplotter.plot_trial(maintitle=maintitle)
-        gplotter.create_pdf(pdf_name=pdf_prefix+trialname+'_'+side+'.pdf')
+        gplotter.create_pdf(pdf_name=pdf_prefix+trialname+'.pdf')
         gplotter.show()
 
 

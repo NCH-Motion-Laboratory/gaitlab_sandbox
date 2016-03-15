@@ -40,7 +40,7 @@ elif not do_kinetics and do_emg:  # 2-page EMG-kinematics (one side per page)
     nexus_kinematicsonly_emgplot.do_plot()
 
 elif not do_kinetics and not do_emg:  # 1-page kinematics plot
-    nexus_kinematicsonly_emgplot.do_plot(emg=True)
+    nexus_kinematicsonly_emgplot.do_plot(emg=False)
     
 
 
