@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>8</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -12504,7 +12504,6 @@ lonkka fleksiossa</string>
   <tabstop>lnTiedotID</tabstop>
   <tabstop>lnTiedotHetu</tabstop>
   <tabstop>lnTiedotMittaajat</tabstop>
-  <tabstop>cmtTiedot</tabstop>
   <tabstop>spAntropAlaraajaOik</tabstop>
   <tabstop>spAntropAlaraajaVas</tabstop>
   <tabstop>spAntropPolviOik</tabstop>
@@ -12550,9 +12549,6 @@ lonkka fleksiossa</string>
   <tabstop>csbLonkkaUlkokiertoVas</tabstop>
   <tabstop>cbLonkkaUlkokiertoModAOik</tabstop>
   <tabstop>cbLonkkaUlkokiertoModAVas</tabstop>
-  <tabstop>cmtLonkkaPROM</tabstop>
-  <tabstop>cmtLonkkaSpast</tabstop>
-  <tabstop>cmtLonkkaMuut</tabstop>
   <tabstop>csbPolviEkstensioVapOik</tabstop>
   <tabstop>csbPolviEkstensioAvOik</tabstop>
   <tabstop>csbPolviEkstensioVapVas</tabstop>
@@ -12573,8 +12569,6 @@ lonkka fleksiossa</string>
   <tabstop>csbPolviPopliteaVastakkLonkka90Vas</tabstop>
   <tabstop>cbPolviHamstringModAOik</tabstop>
   <tabstop>cbPolviHamstringModAVas</tabstop>
-  <tabstop>cmtPolviPROM</tabstop>
-  <tabstop>cmtPolviSpast</tabstop>
   <tabstop>csbNilkkaSoleusCatchOik</tabstop>
   <tabstop>xbNilkkaSoleusKlonusOik</tabstop>
   <tabstop>csbNilkkaDorsifPolvi90PROMOik</tabstop>
@@ -12605,9 +12599,6 @@ lonkka fleksiossa</string>
   <tabstop>csbNilkkaPlantaarifleksioAROMVas</tabstop>
   <tabstop>lnNilkkaConfusionOik</tabstop>
   <tabstop>lnNilkkaConfusionVas</tabstop>
-  <tabstop>cmtNilkkaPROM</tabstop>
-  <tabstop>cmtNilkkaAROM</tabstop>
-  <tabstop>cmtNilkkaSpast</tabstop>
   <tabstop>cbJalkatSubtalarOik</tabstop>
   <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioOik</tabstop>
@@ -12647,8 +12638,6 @@ lonkka fleksiossa</string>
   <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
   <tabstop>cbJalkatFeissinLinjaVas</tabstop>
   <tabstop>lnJalkatColemanVas</tabstop>
-  <tabstop>cmtJalkateraKuormittamattomana</tabstop>
-  <tabstop>cmtJalkateraKuormitettuna</tabstop>
   <tabstop>cbVoimaLonkkaEkstensioPolvi0Oik</tabstop>
   <tabstop>cbVoimaLonkkaEkstensioPolvi0Vas</tabstop>
   <tabstop>cbSelLonkkaEkstensioPolvi0Oik</tabstop>
@@ -12691,7 +12680,6 @@ lonkka fleksiossa</string>
   <tabstop>cbVoimaLonkkaSisakiertoVas</tabstop>
   <tabstop>cbSelLonkkaSisakiertoOik</tabstop>
   <tabstop>cbSelLonkkaSisakiertoVas</tabstop>
-  <tabstop>cmtVoima1</tabstop>
   <tabstop>cbVoimaTibialisAnteriorOik</tabstop>
   <tabstop>cbVoimaTibialisAnteriorVas</tabstop>
   <tabstop>cbSelTibialisAnteriorOik</tabstop>
@@ -12728,30 +12716,24 @@ lonkka fleksiossa</string>
   <tabstop>cbVoimaSoleusVas</tabstop>
   <tabstop>cbSelSoleusOik</tabstop>
   <tabstop>cbSelSoleusVas</tabstop>
-  <tabstop>cmtVoima2</tabstop>
   <tabstop>spVirheasAnteversioOik</tabstop>
   <tabstop>spVirheasAnteversioVas</tabstop>
   <tabstop>spVirheasPatellaAltaOik</tabstop>
   <tabstop>spVirheasPatellaAltaVas</tabstop>
+  <tabstop>lnPolvenValgusOik</tabstop>
+  <tabstop>lnPolvenValgusVas</tabstop>
+  <tabstop>spQkulmaOik</tabstop>
+  <tabstop>spQkulmaVas</tabstop>
   <tabstop>spVirheasJalkaReisiOik</tabstop>
-  <tabstop>spVirheasJalkateraEtuTakaOik</tabstop>
   <tabstop>spVirheasJalkaReisiVas</tabstop>
+  <tabstop>spVirheasJalkateraEtuTakaOik</tabstop>
   <tabstop>spVirheasJalkateraEtuTakaVas</tabstop>
   <tabstop>spVirheasBimalleoliOik</tabstop>
   <tabstop>spVirheasBimalleoliVas</tabstop>
   <tabstop>spVirheas2ndtoeOik</tabstop>
   <tabstop>spVirheas2ndtoeVas</tabstop>
-  <tabstop>cmtVirheas</tabstop>
   <tabstop>spTasapOik</tabstop>
   <tabstop>spTasapVas</tabstop>
-  <tabstop>cmtTasap</tabstop>
-  <tabstop>btnLoad</tabstop>
-  <tabstop>btnSave</tabstop>
-  <tabstop>cmtAntrop</tabstop>
-  <tabstop>btnReport</tabstop>
-  <tabstop>btnClear</tabstop>
-  <tabstop>maintab</tabstop>
-  <tabstop>btnQuit</tabstop>
  </tabstops>
  <resources/>
  <connections/>
