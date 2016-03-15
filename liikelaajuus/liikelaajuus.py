@@ -97,6 +97,7 @@ class CheckDegSpinBox(QtGui.QWidget):
         layout.addWidget(self.normalCheckBox)
 
         # needed for tab order
+        self.setFocusProxy(self.degSpinBox)
         self.setFocusPolicy(QtCore.Qt.TabFocus)
         
         self.setDefaultText(u'NR')

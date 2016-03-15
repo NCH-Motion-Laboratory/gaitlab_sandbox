@@ -18,11 +18,14 @@ class spindemo(QtGui.QWidget):
       super(spindemo, self).__init__(parent)
       
       layout = QtGui.QVBoxLayout()
-      #self.sp1 = CheckDegSpinBox()
+      self.sp1 = CheckDegSpinBox()
+      self.sp2 = CheckDegSpinBox()
       #self.sp1.defaultText = u'foo'
       self.btn = QtGui.QPushButton('test')
       #layout.addWidget(self.sp1)
       layout.addWidget(self.btn)
+      layout.addWidget(self.sp1)
+      layout.addWidget(self.sp2)
       self.btn.clicked.connect(self.settest)
       #self.sp1.valueChanged.connect(self.printval)
       #self.sp1.setSuffix(u'mm')
@@ -37,7 +40,8 @@ class spindemo(QtGui.QWidget):
        
    def settest(self):
        #try:
-       self.exc()
+       pass
+       #self.exc()
        #except Exception:
         #   print('caught')
        
@@ -59,8 +63,6 @@ def main():
         
     sys.excepthook = my_excepthook
     
-    raise Exception
-
     ex.show()
     app.exec_()
 	
