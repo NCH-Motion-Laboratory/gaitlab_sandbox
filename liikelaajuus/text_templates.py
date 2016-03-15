@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on Tue Mar 01 12:37:26 2016
 
@@ -72,7 +72,8 @@ NILKKA:
 
 LUISET VIRHEASENNOT: 
 #Lonkan anteversio {VirheasAnteversioOik}/{VirheasAnteversioVas}. #Jalkaterä-reisi -kulma {VirheasJalkaReisiOik}/{VirheasJalkaReisiVas}. #Jalkaterän etu- takaosan kulma {VirheasJalkateraEtuTakaOik}/{VirheasJalkateraEtuTakaVas}. #
-#Bimalleoli -akseli {VirheasBimalleoliOik}/{VirheasBimalleoliVas}. #2nd toe test {Virheas2ndtoeOik}/{Virheas2ndtoeVas}. #Patella alta {VirheasPatellaAltaOik}/{VirheasPatellaAltaVas}. #
+#Bimalleoli -akseli {VirheasBimalleoliOik}/{VirheasBimalleoliVas}. #2nd toe test {Virheas2ndtoeOik}/{Virheas2ndtoeVas}. #Patella alta {VirheasPatellaAltaOik}/{VirheasPatellaAltaVas}. #Polven valgus {PolvenValgusOik}/{PolvenValgusVas}. #Q-kulma {QkulmaOik}/{QkulmaVas}. #
+
 #Kommentit: {cmtVirheas}#
 
 MUITA MITTAUKSIA:
