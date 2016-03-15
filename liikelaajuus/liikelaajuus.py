@@ -201,7 +201,7 @@ class EntryApp(QtGui.QMainWindow):
         self.tmpfile = self.tmp_fldr + '/liikelaajuus_tmp.json'
         # exceptions that might be generated when parsing and loading/saving json
         # these should all be caught
-        self.json_exceptions = (UnicodeDecodeError, EOFError, IOError, TypeError)
+        self.json_io_exceptions = (UnicodeDecodeError, EOFError, IOError, TypeError)
         self.json_filter = u'JSON files (*.json)'
         self.text_filter = u'Text files (*.txt)'
         self.global_fontsize = 13
@@ -296,8 +296,9 @@ class EntryApp(QtGui.QMainWindow):
         self.btnSave.clicked.connect(self.save_dialog)
         self.btnLoad.clicked.connect(self.load_dialog)
         self.btnClear.clicked.connect(self.clear_forms_dialog)
-        self.btnReport.clicked.connect(self.make_report)
-        #self.btnReport.clicked.connect(self.save_report_dialog)
+        # DEBUG
+        #self.btnReport.clicked.connect(self.make_report)
+        self.btnReport.clicked.connect(self.save_report_dialog)
         self.btnQuit.clicked.connect(self.close)
         # method call on tab change
         self.maintab.currentChanged.connect(self.page_change)
@@ -428,7 +429,7 @@ class EntryApp(QtGui.QMainWindow):
             fname = unicode(fname)
             try:
                 self.load_file(fname)
-            except self.json_exceptions:
+            except self.json_io_exceptions:
                 self.message_dialog(ll_msgs.cannot_open+fname)
 
     def save_dialog(self):
@@ -441,7 +442,7 @@ class EntryApp(QtGui.QMainWindow):
                 self.save_file(fname)
                 self.saved_to_file = True
                 self.statusbar.showMessage(ll_msgs.status_saved+fname)
-            except self.json_exceptions:
+            except self.json_io_exceptions:
                 self.message_dialog(ll_msgs.cannot_save+fname)
 
     def save_report_dialog(self):
@@ -529,7 +530,9 @@ def main():
         try:
             with io.open(eapp.traceback_file, 'w', encoding='utf-8') as f:
                 f.write(tb_full)
-        except IOError:
+        # here is a danger of infinitely looping the exception hook,
+        # so try to catch any exceptions...
+        except Exception:
             print('Cannot dump traceback!')
         sys.__excepthook__(type, value, tback) 
         app.quit()
