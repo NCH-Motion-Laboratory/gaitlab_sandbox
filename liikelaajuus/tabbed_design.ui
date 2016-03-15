@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2235</width>
-    <height>981</height>
+    <width>1222</width>
+    <height>926</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTiedot">
        <attribute name="title">
@@ -4810,6 +4810,11 @@
               <string>VAR+++</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>päkiäkontakti</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="4" column="9">
@@ -4864,6 +4869,11 @@
             <item>
              <property name="text">
               <string>VAR+++</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>päkiäkontakti</string>
              </property>
             </item>
            </widget>
@@ -5209,7 +5219,7 @@
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <item>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="16" column="2">
+          <item row="15" column="2">
            <widget class="QComboBox" name="cbVoimaLonkkaUlkokiertoOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5310,7 +5320,7 @@
             </item>
            </widget>
           </item>
-          <item row="15" column="8">
+          <item row="14" column="8">
            <widget class="QComboBox" name="cbSelPolviEkstensioVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5346,7 +5356,7 @@
             </item>
            </widget>
           </item>
-          <item row="15" column="4">
+          <item row="14" column="4">
            <widget class="QComboBox" name="cbVoimaPolviEkstensioVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5564,7 +5574,7 @@
             </item>
            </widget>
           </item>
-          <item row="11" column="2">
+          <item row="10" column="2">
            <widget class="QComboBox" name="cbVoimaSelka">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5665,7 +5675,7 @@
             </item>
            </widget>
           </item>
-          <item row="13" column="2">
+          <item row="12" column="2">
            <widget class="QComboBox" name="cbVoimaVatsaVinotOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5867,7 +5877,7 @@
             </item>
            </widget>
           </item>
-          <item row="7" column="2">
+          <item row="6" column="2">
            <widget class="QComboBox" name="cbVoimaLonkkaAbduktioLonkka0Oik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5968,7 +5978,7 @@
             </item>
            </widget>
           </item>
-          <item row="9" column="6">
+          <item row="8" column="6">
            <widget class="QComboBox" name="cbSelLonkkaAdduktioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6040,7 +6050,7 @@
             </item>
            </widget>
           </item>
-          <item row="9" column="2">
+          <item row="8" column="2">
            <widget class="QComboBox" name="cbVoimaLonkkaAdduktioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6141,7 +6151,7 @@
             </item>
            </widget>
           </item>
-          <item row="8" column="2">
+          <item row="7" column="2">
            <widget class="QComboBox" name="cbVoimaLonkkaAbduktioLonkkaFleksOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6242,7 +6252,7 @@
             </item>
            </widget>
           </item>
-          <item row="9" column="1">
+          <item row="8" column="1">
            <widget class="QLabel" name="label_302">
             <property name="text">
              <string>Lonkan adduktio</string>
@@ -6262,7 +6272,7 @@
             </property>
            </widget>
           </item>
-          <item row="11" column="1">
+          <item row="10" column="1">
            <widget class="QLabel" name="label_271">
             <property name="text">
              <string>Selkälihakset</string>
@@ -6288,7 +6298,7 @@
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="7" column="1">
            <widget class="QLabel" name="label_301">
             <property name="font">
              <font>
@@ -6301,7 +6311,7 @@ lonkka fleksiossa</string>
             </property>
            </widget>
           </item>
-          <item row="9" column="8">
+          <item row="8" column="8">
            <widget class="QComboBox" name="cbSelLonkkaAdduktioVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6369,7 +6379,7 @@ lonkka fleksiossa</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
+          <item row="6" column="1">
            <widget class="QLabel" name="label_299">
             <property name="font">
              <font>
@@ -6394,14 +6404,14 @@ lonkka fleksiossa</string>
             </property>
            </widget>
           </item>
-          <item row="12" column="1">
+          <item row="11" column="1">
            <widget class="QLabel" name="label_278">
             <property name="text">
              <string>Vatsalihakset, suorat</string>
             </property>
            </widget>
           </item>
-          <item row="12" column="2">
+          <item row="11" column="2">
            <widget class="QComboBox" name="cbVoimaVatsaSuorat">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6587,7 +6597,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="7" column="6">
+          <item row="6" column="6">
            <widget class="QComboBox" name="cbSelLonkkaAbduktioLonkka0Oik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6623,7 +6633,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="13" column="4">
+          <item row="12" column="4">
            <widget class="QComboBox" name="cbVoimaVatsaVinotVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6773,7 +6783,7 @@ lonkka fleksiossa</string>
             </property>
            </widget>
           </item>
-          <item row="13" column="1">
+          <item row="12" column="1">
            <widget class="QLabel" name="label_305">
             <property name="text">
              <string>Vatsalihakset, vinot</string>
@@ -6792,7 +6802,7 @@ lonkka fleksiossa</string>
             </property>
            </widget>
           </item>
-          <item row="10" column="1" colspan="8">
+          <item row="9" column="1" colspan="8">
            <widget class="Line" name="line_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -6900,7 +6910,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="6" column="1" colspan="8">
+          <item row="5" column="1" colspan="8">
            <widget class="Line" name="line">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -6959,7 +6969,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="12" column="0">
+          <item row="11" column="0">
            <spacer name="horizontalSpacer_66">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -7291,7 +7301,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="7" column="4">
+          <item row="6" column="4">
            <widget class="QComboBox" name="cbVoimaLonkkaAbduktioLonkka0Vas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7392,7 +7402,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="8" column="4">
+          <item row="7" column="4">
            <widget class="QComboBox" name="cbVoimaLonkkaAbduktioLonkkaFleksVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7493,7 +7503,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="9" column="4">
+          <item row="8" column="4">
            <widget class="QComboBox" name="cbVoimaLonkkaAdduktioVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7630,7 +7640,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="7" column="8">
+          <item row="6" column="8">
            <widget class="QComboBox" name="cbSelLonkkaAbduktioLonkka0Vas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7666,7 +7676,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="15" column="6">
+          <item row="14" column="6">
            <widget class="QComboBox" name="cbSelPolviEkstensioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7702,14 +7712,14 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="16" column="1">
+          <item row="15" column="1">
            <widget class="QLabel" name="label_312">
             <property name="text">
              <string>Lonkan ulkokierto</string>
             </property>
            </widget>
           </item>
-          <item row="14" column="4">
+          <item row="13" column="4">
            <widget class="QComboBox" name="cbVoimaLonkkaFleksioVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7810,7 +7820,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="14" column="2">
+          <item row="13" column="2">
            <widget class="QComboBox" name="cbVoimaLonkkaFleksioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7911,7 +7921,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="16" column="8">
+          <item row="15" column="8">
            <widget class="QComboBox" name="cbSelLonkkaUlkokiertoVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -7947,7 +7957,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="16" column="4">
+          <item row="15" column="4">
            <widget class="QComboBox" name="cbVoimaLonkkaUlkokiertoVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8048,14 +8058,14 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="14" column="1">
+          <item row="13" column="1">
            <widget class="QLabel" name="label_325">
             <property name="text">
              <string>Lonkan koukistus</string>
             </property>
            </widget>
           </item>
-          <item row="14" column="8">
+          <item row="13" column="8">
            <widget class="QComboBox" name="cbSelLonkkaFleksioVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8091,14 +8101,14 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="15" column="1">
+          <item row="14" column="1">
            <widget class="QLabel" name="label_308">
             <property name="text">
              <string>Polven ojennus</string>
             </property>
            </widget>
           </item>
-          <item row="14" column="6">
+          <item row="13" column="6">
            <widget class="QComboBox" name="cbSelLonkkaFleksioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8134,14 +8144,14 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="17" column="1">
+          <item row="16" column="1">
            <widget class="QLabel" name="label_313">
             <property name="text">
              <string>Lonkan sisäkierto</string>
             </property>
            </widget>
           </item>
-          <item row="16" column="6">
+          <item row="15" column="6">
            <widget class="QComboBox" name="cbSelLonkkaUlkokiertoOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8177,7 +8187,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="15" column="2">
+          <item row="14" column="2">
            <widget class="QComboBox" name="cbVoimaPolviEkstensioOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8278,7 +8288,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="17" column="2">
+          <item row="16" column="2">
            <widget class="QComboBox" name="cbVoimaLonkkaSisakiertoOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8379,7 +8389,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="17" column="4">
+          <item row="16" column="4">
            <widget class="QComboBox" name="cbVoimaLonkkaSisakiertoVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8480,7 +8490,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="17" column="6">
+          <item row="16" column="6">
            <widget class="QComboBox" name="cbSelLonkkaSisakiertoOik">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8516,7 +8526,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="17" column="8">
+          <item row="16" column="8">
            <widget class="QComboBox" name="cbSelLonkkaSisakiertoVas">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -8552,7 +8562,7 @@ lonkka fleksiossa</string>
             </item>
            </widget>
           </item>
-          <item row="7" column="14">
+          <item row="6" column="9">
            <spacer name="horizontalSpacer_45">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -8564,13 +8574,6 @@ lonkka fleksiossa</string>
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="5" column="9" colspan="5">
-           <widget class="Line" name="line_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>
@@ -12364,7 +12367,7 @@ lonkka fleksiossa</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2235</width>
+     <width>1222</width>
      <height>25</height>
     </rect>
    </property>
@@ -12397,25 +12400,98 @@ lonkka fleksiossa</string>
   <tabstop>spAntropPaino</tabstop>
   <tabstop>csbLonkkaFleksioOik</tabstop>
   <tabstop>csbLonkkaFleksioVas</tabstop>
+  <tabstop>cbLonkkaFleksioModAOik</tabstop>
+  <tabstop>cbLonkkaFleksioModAVas</tabstop>
   <tabstop>csbLonkkaEkstensioVapOik</tabstop>
+  <tabstop>csbLonkkaEkstensioAvOik</tabstop>
+  <tabstop>csbLonkkaEkstensioPolvi90Oik</tabstop>
   <tabstop>csbLonkkaEkstensioVapVas</tabstop>
+  <tabstop>csbLonkkaEkstensioAvVas</tabstop>
+  <tabstop>csbLonkkaEkstensioPolvi90Vas</tabstop>
+  <tabstop>cbLonkkaEkstensioModAOik</tabstop>
+  <tabstop>cbLonkkaEkstensioModAVas</tabstop>
+  <tabstop>csbLonkkaExtLagOik</tabstop>
+  <tabstop>csbLonkkaExtLagVas</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
+  <tabstop>csbLonkkaAdduktoritCatchOik</tabstop>
+  <tabstop>csbLonkkaAdduktoritCatchVas</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Oik</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkka0Vas</tabstop>
   <tabstop>cbLonkkaAdduktoritModAOik</tabstop>
   <tabstop>cbLonkkaAdduktoritModAVas</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>csbLonkkaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>csbLonkkaAdduktioOik</tabstop>
+  <tabstop>csbLonkkaAdduktioVas</tabstop>
+  <tabstop>lnLonkkaOberOik</tabstop>
+  <tabstop>lnLonkkaOberVas</tabstop>
+  <tabstop>csbLonkkaSisakiertoOik</tabstop>
+  <tabstop>csbLonkkaSisakiertoVas</tabstop>
   <tabstop>cbLonkkaSisakiertoModAOik</tabstop>
   <tabstop>cbLonkkaSisakiertoModAVas</tabstop>
+  <tabstop>csbLonkkaUlkokiertoOik</tabstop>
+  <tabstop>csbLonkkaUlkokiertoVas</tabstop>
   <tabstop>cbLonkkaUlkokiertoModAOik</tabstop>
   <tabstop>cbLonkkaUlkokiertoModAVas</tabstop>
+  <tabstop>cmtLonkkaPROM</tabstop>
+  <tabstop>cmtLonkkaSpast</tabstop>
+  <tabstop>cmtLonkkaMuut</tabstop>
+  <tabstop>csbPolviEkstensioVapOik</tabstop>
+  <tabstop>csbPolviEkstensioAvOik</tabstop>
+  <tabstop>csbPolviEkstensioVapVas</tabstop>
+  <tabstop>csbPolviEkstensioAvVas</tabstop>
+  <tabstop>csbPolviFleksioSelinmakuuOik</tabstop>
+  <tabstop>csbPolviFleksioSelinmakuuVas</tabstop>
+  <tabstop>csbPolviFleksioVatsamakuuOik</tabstop>
+  <tabstop>csbPolviFleksioVatsamakuuVas</tabstop>
+  <tabstop>csbPolviRectusCatchOik</tabstop>
+  <tabstop>csbPolviRectusCatchVas</tabstop>
+  <tabstop>cbPolviRectusModAOik</tabstop>
+  <tabstop>cbPolviRectusModAVas</tabstop>
+  <tabstop>csbPolviHamstringCatchOik</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka0Oik</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka90Oik</tabstop>
+  <tabstop>csbPolviHamstringCatchVas</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka0Vas</tabstop>
+  <tabstop>csbPolviPopliteaVastakkLonkka90Vas</tabstop>
   <tabstop>cbPolviHamstringModAOik</tabstop>
   <tabstop>cbPolviHamstringModAVas</tabstop>
-  <tabstop>xbNilkkaSoleusKlonusVas</tabstop>
+  <tabstop>cmtPolviPROM</tabstop>
+  <tabstop>cmtPolviSpast</tabstop>
+  <tabstop>csbNilkkaSoleusCatchOik</tabstop>
+  <tabstop>xbNilkkaSoleusKlonusOik</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi90PROMOik</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi90AROMOik</tabstop>
+  <tabstop>xbNilkkaDorsifPolvi90AROMEversioOik</tabstop>
   <tabstop>cbNilkkaSoleusModAOik</tabstop>
-  <tabstop>cbNilkkaSoleusModAVas</tabstop>
-  <tabstop>xbNilkkaGastroKlonusVas</tabstop>
+  <tabstop>csbNilkkaGastroCatchOik</tabstop>
+  <tabstop>xbNilkkaGastroKlonusOik</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi0PROMOik</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi0AROMOik</tabstop>
+  <tabstop>xbNilkkaDorsifPolvi0AROMEversioOik</tabstop>
   <tabstop>cbNilkkaGastroModAOik</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioPROMOik</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioAROMOik</tabstop>
+  <tabstop>csbNilkkaSoleusCatchVas</tabstop>
+  <tabstop>xbNilkkaSoleusKlonusVas</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi90PROMVas</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi90AROMVas</tabstop>
+  <tabstop>xbNilkkaDorsifPolvi90AROMEversioVas</tabstop>
+  <tabstop>cbNilkkaSoleusModAVas</tabstop>
+  <tabstop>csbNilkkaGastroCatchVas</tabstop>
+  <tabstop>xbNilkkaGastroKlonusVas</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi0PROMVas</tabstop>
+  <tabstop>csbNilkkaDorsifPolvi0AROMVas</tabstop>
+  <tabstop>xbNilkkaDorsifPolvi0AROMEversioVas</tabstop>
   <tabstop>cbNilkkaGastroModAVas</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioPROMVas</tabstop>
+  <tabstop>csbNilkkaPlantaarifleksioAROMVas</tabstop>
   <tabstop>lnNilkkaConfusionOik</tabstop>
   <tabstop>lnNilkkaConfusionVas</tabstop>
-  <tabstop>btnSave</tabstop>
+  <tabstop>cmtNilkkaPROM</tabstop>
+  <tabstop>cmtNilkkaAROM</tabstop>
+  <tabstop>cmtNilkkaSpast</tabstop>
   <tabstop>cbJalkatSubtalarOik</tabstop>
   <tabstop>cbJalkatTakaosanAsentoOik</tabstop>
   <tabstop>cbJalkatTakaosanLiikeEversioOik</tabstop>
@@ -12440,68 +12516,126 @@ lonkka fleksiossa</string>
   <tabstop>spJalkat1MTPojennusVas</tabstop>
   <tabstop>cbJalkatVaivaisenluuVas</tabstop>
   <tabstop>lnJalkatKovettumatVas</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatTakaosanKiertoKuormOik</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormOik</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormOik</tabstop>
+  <tabstop>cbJalkatFeissinLinjaOik</tabstop>
+  <tabstop>lnJalkatColemanOik</tabstop>
+  <tabstop>xbPainelevy</tabstop>
+  <tabstop>cbJalkatTakaosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatTakaosanKiertoKuormVas</tabstop>
+  <tabstop>cbJalkatKeskiosanAsentoKuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento1KuormVas</tabstop>
+  <tabstop>cbJalkatEtuosanAsento2KuormVas</tabstop>
+  <tabstop>cbJalkatFeissinLinjaVas</tabstop>
+  <tabstop>lnJalkatColemanVas</tabstop>
+  <tabstop>cmtJalkateraKuormittamattomana</tabstop>
+  <tabstop>cmtJalkateraKuormitettuna</tabstop>
+  <tabstop>cbVoimaLonkkaEkstensioPolvi0Oik</tabstop>
+  <tabstop>cbVoimaLonkkaEkstensioPolvi0Vas</tabstop>
+  <tabstop>cbSelLonkkaEkstensioPolvi0Oik</tabstop>
+  <tabstop>cbSelLonkkaEkstensioPolvi0Vas</tabstop>
+  <tabstop>cbVoimaLonkkaEkstensioPolvi90Oik</tabstop>
+  <tabstop>cbVoimaLonkkaEkstensioPolvi90Vas</tabstop>
+  <tabstop>cbSelLonkkaEkstensioPolvi90Oik</tabstop>
+  <tabstop>cbSelLonkkaEkstensioPolvi90Vas</tabstop>
+  <tabstop>cbVoimaPolviFleksioOik</tabstop>
+  <tabstop>cbVoimaPolviFleksioVas</tabstop>
+  <tabstop>cbSelPolviFleksioOik</tabstop>
+  <tabstop>cbSelPolviFleksioVas</tabstop>
+  <tabstop>cbVoimaLonkkaAbduktioLonkka0Oik</tabstop>
+  <tabstop>cbVoimaLonkkaAbduktioLonkka0Vas</tabstop>
+  <tabstop>cbSelLonkkaAbduktioLonkka0Oik</tabstop>
+  <tabstop>cbSelLonkkaAbduktioLonkka0Vas</tabstop>
+  <tabstop>cbVoimaLonkkaAbduktioLonkkaFleksOik</tabstop>
+  <tabstop>cbVoimaLonkkaAbduktioLonkkaFleksVas</tabstop>
+  <tabstop>cbVoimaLonkkaAdduktioOik</tabstop>
+  <tabstop>cbVoimaLonkkaAdduktioVas</tabstop>
+  <tabstop>cbSelLonkkaAdduktioOik</tabstop>
+  <tabstop>cbSelLonkkaAdduktioVas</tabstop>
+  <tabstop>cbVoimaSelka</tabstop>
+  <tabstop>cbVoimaVatsaSuorat</tabstop>
+  <tabstop>cbVoimaVatsaVinotOik</tabstop>
+  <tabstop>cbVoimaVatsaVinotVas</tabstop>
+  <tabstop>cbVoimaLonkkaFleksioOik</tabstop>
+  <tabstop>cbVoimaLonkkaFleksioVas</tabstop>
+  <tabstop>cbSelLonkkaFleksioOik</tabstop>
+  <tabstop>cbSelLonkkaFleksioVas</tabstop>
+  <tabstop>cbVoimaPolviEkstensioOik</tabstop>
+  <tabstop>cbVoimaPolviEkstensioVas</tabstop>
+  <tabstop>cbSelPolviEkstensioOik</tabstop>
+  <tabstop>cbSelPolviEkstensioVas</tabstop>
+  <tabstop>cbVoimaLonkkaUlkokiertoOik</tabstop>
+  <tabstop>cbVoimaLonkkaUlkokiertoVas</tabstop>
+  <tabstop>cbSelLonkkaUlkokiertoOik</tabstop>
+  <tabstop>cbSelLonkkaUlkokiertoVas</tabstop>
+  <tabstop>cbVoimaLonkkaSisakiertoOik</tabstop>
+  <tabstop>cbVoimaLonkkaSisakiertoVas</tabstop>
+  <tabstop>cbSelLonkkaSisakiertoOik</tabstop>
+  <tabstop>cbSelLonkkaSisakiertoVas</tabstop>
+  <tabstop>cmtVoima1</tabstop>
+  <tabstop>cbVoimaTibialisAnteriorOik</tabstop>
+  <tabstop>cbVoimaTibialisAnteriorVas</tabstop>
+  <tabstop>cbSelTibialisAnteriorOik</tabstop>
+  <tabstop>cbSelTibialisAnteriorVas</tabstop>
+  <tabstop>cbVoimaTibialisPosteriorOik</tabstop>
+  <tabstop>cbVoimaTibialisPosteriorVas</tabstop>
+  <tabstop>cbSelTibialisPosteriorOik</tabstop>
+  <tabstop>cbSelTibialisPosteriorVas</tabstop>
+  <tabstop>cbVoimaPeroneusOik</tabstop>
+  <tabstop>cbVoimaPeroneusVas</tabstop>
+  <tabstop>cbSelPeroneusOik</tabstop>
+  <tabstop>cbSelPeroneusVas</tabstop>
+  <tabstop>cbVoimaExtHallucisLongusOik</tabstop>
+  <tabstop>cbVoimaExtHallucisLongusVas</tabstop>
+  <tabstop>cbSelExtHallucisLongusOik</tabstop>
+  <tabstop>cbSelExtHallucisLongusVas</tabstop>
+  <tabstop>cbVoimaFlexHallucisLongusOik</tabstop>
+  <tabstop>cbVoimaFlexHallucisLongusVas</tabstop>
+  <tabstop>cbSelFlexHallucisLongusOik</tabstop>
+  <tabstop>cbSelFlexHallucisLongusVas</tabstop>
+  <tabstop>cbVoima25OjennusOik</tabstop>
+  <tabstop>cbVoima25OjennusVas</tabstop>
+  <tabstop>cbSel25OjennusOik</tabstop>
+  <tabstop>cbSel25OjennusVas</tabstop>
+  <tabstop>cbVoima25KoukistusOik</tabstop>
+  <tabstop>cbVoima25KoukistusVas</tabstop>
+  <tabstop>cbSel25KoukistusOik</tabstop>
+  <tabstop>cbSel25KoukistusVas</tabstop>
+  <tabstop>cbVoimaGastroOik</tabstop>
+  <tabstop>cbVoimaGastroVas</tabstop>
+  <tabstop>cbSelGastroOik</tabstop>
+  <tabstop>cbSelGastroVas</tabstop>
+  <tabstop>cbVoimaSoleusOik</tabstop>
+  <tabstop>cbVoimaSoleusVas</tabstop>
+  <tabstop>cbSelSoleusOik</tabstop>
+  <tabstop>cbSelSoleusVas</tabstop>
+  <tabstop>cmtVoima2</tabstop>
   <tabstop>spVirheasAnteversioOik</tabstop>
   <tabstop>spVirheasAnteversioVas</tabstop>
   <tabstop>spVirheasPatellaAltaOik</tabstop>
   <tabstop>spVirheasPatellaAltaVas</tabstop>
   <tabstop>spVirheasJalkaReisiOik</tabstop>
-  <tabstop>spVirheasJalkaReisiVas</tabstop>
   <tabstop>spVirheasJalkateraEtuTakaOik</tabstop>
+  <tabstop>spVirheasJalkaReisiVas</tabstop>
   <tabstop>spVirheasJalkateraEtuTakaVas</tabstop>
   <tabstop>spVirheasBimalleoliOik</tabstop>
   <tabstop>spVirheasBimalleoliVas</tabstop>
   <tabstop>spVirheas2ndtoeOik</tabstop>
   <tabstop>spVirheas2ndtoeVas</tabstop>
   <tabstop>cmtVirheas</tabstop>
-  <tabstop>cbVoimaVatsaVinotOik</tabstop>
-  <tabstop>cbVoimaVatsaVinotVas</tabstop>
+  <tabstop>spTasapOik</tabstop>
+  <tabstop>spTasapVas</tabstop>
   <tabstop>cmtTasap</tabstop>
-  <tabstop>btnReport</tabstop>
-  <tabstop>btnQuit</tabstop>
   <tabstop>btnLoad</tabstop>
+  <tabstop>btnSave</tabstop>
+  <tabstop>cmtAntrop</tabstop>
+  <tabstop>btnReport</tabstop>
   <tabstop>btnClear</tabstop>
   <tabstop>maintab</tabstop>
-  <tabstop>spTasapVas</tabstop>
-  <tabstop>spTasapOik</tabstop>
-  <tabstop>cmtAntrop</tabstop>
-  <tabstop>cbLonkkaFleksioModAOik</tabstop>
-  <tabstop>cbLonkkaFleksioModAVas</tabstop>
-  <tabstop>cbLonkkaEkstensioModAOik</tabstop>
-  <tabstop>cbLonkkaEkstensioModAVas</tabstop>
-  <tabstop>csbLonkkaEkstensioAvOik</tabstop>
-  <tabstop>csbLonkkaEkstensioAvVas</tabstop>
-  <tabstop>csbLonkkaEkstensioPolvi90Oik</tabstop>
-  <tabstop>csbLonkkaEkstensioPolvi90Vas</tabstop>
-  <tabstop>csbLonkkaExtLagOik</tabstop>
-  <tabstop>csbLonkkaExtLagVas</tabstop>
-  <tabstop>csbLonkkaAbduktioLonkka0Polvi90Oik</tabstop>
-  <tabstop>csbLonkkaAbduktioLonkka0Polvi90Vas</tabstop>
-  <tabstop>csbLonkkaAdduktoritCatchOik</tabstop>
-  <tabstop>csbLonkkaAdduktoritCatchVas</tabstop>
-  <tabstop>csbLonkkaAbduktioLonkka0Oik</tabstop>
-  <tabstop>csbLonkkaAbduktioLonkka0Vas</tabstop>
-  <tabstop>csbLonkkaAbduktioLonkkaFleksOik</tabstop>
-  <tabstop>csbLonkkaAbduktioLonkkaFleksVas</tabstop>
-  <tabstop>csbLonkkaAdduktioOik</tabstop>
-  <tabstop>csbLonkkaAdduktioVas</tabstop>
-  <tabstop>csbLonkkaSisakiertoOik</tabstop>
-  <tabstop>csbLonkkaSisakiertoVas</tabstop>
-  <tabstop>csbLonkkaUlkokiertoOik</tabstop>
-  <tabstop>csbLonkkaUlkokiertoVas</tabstop>
-  <tabstop>csbPolviEkstensioVapOik</tabstop>
-  <tabstop>csbPolviEkstensioVapVas</tabstop>
-  <tabstop>csbPolviEkstensioAvOik</tabstop>
-  <tabstop>csbPolviEkstensioAvVas</tabstop>
-  <tabstop>csbPolviFleksioSelinmakuuOik</tabstop>
-  <tabstop>csbPolviFleksioSelinmakuuVas</tabstop>
-  <tabstop>csbPolviHamstringCatchOik</tabstop>
-  <tabstop>csbPolviHamstringCatchVas</tabstop>
-  <tabstop>csbPolviPopliteaVastakkLonkka0Oik</tabstop>
-  <tabstop>csbPolviPopliteaVastakkLonkka0Vas</tabstop>
-  <tabstop>csbPolviPopliteaVastakkLonkka90Oik</tabstop>
-  <tabstop>csbPolviPopliteaVastakkLonkka90Vas</tabstop>
-  <tabstop>csbNilkkaPlantaarifleksioPROMOik</tabstop>
-  <tabstop>csbNilkkaPlantaarifleksioPROMVas</tabstop>
+  <tabstop>btnQuit</tabstop>
  </tabstops>
  <resources/>
  <connections/>
