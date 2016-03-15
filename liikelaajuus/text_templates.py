@@ -95,9 +95,12 @@ JALKATERÄ KUORMITETTUNA (+ = lievä, ++ = kohtalainen, +++ = voimakas):
 
 ALARAAJOJEN SPASTISUUS:
 
-CATCH: #Lonkan adduktorit {LonkkaAdduktoritCatchOik}/{LonkkaAdduktoritCatchVas}. #Hamstringit {PolviHamstringCatchOik}/{PolviHamstringCatchVas}. #Rectus femorikset {PolviRectusCatchOik}/{PolviRectusCatchVas}. #Soleukset {NilkkaSoleusCatchOik}/{NilkkaSoleusCatchVas}# (klonus {NilkkaSoleusKlonusOik}/{NilkkaSoleusKlonusVas}). #
-#Gastrocnemiukset {NilkkaGastroCatchOik}/{NilkkaGastroCatchVas} #(klonus {NilkkaGastroKlonusOik}/{NilkkaGastroKlonusVas}). #
-#Kommentit: {cmtNilkkaSpast}#
+CATCH: #Lonkan adduktorit {LonkkaAdduktoritCatchOik}/{LonkkaAdduktoritCatchVas}. #Hamstringit {PolviHamstringCatchOik}/{PolviHamstringCatchVas}. #Rectus femorikset {PolviRectusCatchOik}/{PolviRectusCatchVas}. #Soleukset {NilkkaSoleusCatchOik}/{NilkkaSoleusCatchVas}.# (klonus {NilkkaSoleusKlonusOik}/{NilkkaSoleusKlonusVas}). #
+#Gastrocnemiukset {NilkkaGastroCatchOik}/{NilkkaGastroCatchVas}. #(klonus {NilkkaGastroKlonusOik}/{NilkkaGastroKlonusVas}). #
+#Kommentit (lonkka): {cmtLonkkaSpast}#
+#Kommentit (nilkka): {cmtNilkkaSpast}#
+#Kommentit (polvi): {cmtPolviSpast}#
+
 
 MODIFIED ASHWORTH: #Lonkan koukistajat {LonkkaFleksioModAOik}/{LonkkaFleksioModAVas}. #Lonkan ojentajat {LonkkaEkstensioModAOik}/{LonkkaEkstensioModAVas}. #Lonkan lähentäjät {LonkkaAdduktoritModAOik}/{LonkkaAdduktoritModAVas}. #Hamstringit {PolviHamstringModAOik}/{PolviHamstringModAVas}. #
 #Rectus femoris {PolviRectusModAOik}/{PolviRectusModAVas}. #Lonkan sisäkierto {LonkkaSisakiertoModAOik}/{LonkkaSisakiertoModAVas}. #Lonkan ulkokierto {LonkkaUlkokiertoModAOik}/{LonkkaUlkokiertoModAVas}. #Soleus {NilkkaSoleusModAOik}/{NilkkaSoleusModAVas}. #Gastrocnemius {NilkkaGastroModAOik}/{NilkkaGastroModAVas}. #

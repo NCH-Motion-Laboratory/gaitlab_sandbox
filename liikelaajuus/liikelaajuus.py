@@ -382,8 +382,8 @@ class EntryApp(QtGui.QMainWindow):
             print('updating dict for:', w.objectName(),'new value:',w.getVal())
             wname = unicode(w.objectName())
             self.data[self.widget_to_var[wname]] = w.getVal()
-            # DEBUG: print report
-            #self.make_report()
+            # DEBUG: make report on every widget update
+            self.make_report()
             ###
         self.saved_to_file = False
         if self.save_to_tmp:
