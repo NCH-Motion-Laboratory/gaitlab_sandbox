@@ -190,8 +190,9 @@ class EntryApp(QtGui.QMainWindow):
         #loc = QtCore.QLocale()
         #loc.setNumberOptions(loc.OmitGroupSeparator | loc.RejectGroupSeparator)
         # special text written out for non-measured variables
-        for key in sorted(self.data.keys()):
-            print('{%s}'%key)
+        # DEBUG: print all vars
+        #for key in sorted(self.data.keys()):
+        #    print('{%s}'%key)
         #print(self.units)
             
     def set_taborder(self):
@@ -534,7 +535,6 @@ class EntryApp(QtGui.QMainWindow):
                 w.setVal = lambda val, w=w: checkbox_setval(w, val, self.checkbox_yestext, self.checkbox_notext)
                 w.getVal = lambda w=w: checkbox_getval(w, self.checkbox_yestext, self.checkbox_notext)
             elif wname[:3] == 'csb':
-                print(w.__class__)
                 assert(w.__class__ == liikelaajuus.CheckDegSpinBox)
                 w.valueChanged.connect(lambda w=w: self.values_changed(w))
                 w.getVal = w.value
@@ -634,7 +634,8 @@ class EntryApp(QtGui.QMainWindow):
 
     def values_changed(self, w):
         if self.update_dict:
-            print('updating dict for:', w.objectName(),'new value:',w.getVal())
+            # DEBUG
+            #print('updating dict for:', w.objectName(),'new value:',w.getVal())
             wname = unicode(w.objectName())
             self.data[self.widget_to_var[wname]] = w.getVal()
             # DEBUG: make report on every widget update
