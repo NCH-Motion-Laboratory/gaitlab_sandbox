@@ -5,7 +5,7 @@ PDF file merger
 @author: Jussi (jnu@iki.fi)
 """
 
-from PyPDF2 import PdfFileMerger
+from PyPDF2 import PdfFileMerger, utils
 from PyQt5 import QtWidgets, uic
 import sys
 from pkg_resources import resource_filename
@@ -36,7 +36,8 @@ class MergeDialog(QtWidgets.QMainWindow):
 
     def _add_pdfs(self):
         pdfs = QtWidgets.QFileDialog.getOpenFileNames(None, 'Load PDF file',
-                                                      '', 'PDF files (*.pdf)')[0]
+                                                      '',
+                                                      'PDF files (*.pdf)')[0]
         for pdf in pdfs:
             if pdf not in self._files:
                 self._files.append(pdf)
@@ -57,7 +58,12 @@ class MergeDialog(QtWidgets.QMainWindow):
         merger = PdfFileMerger(strict=False)
 
         for pdf in self._files:
-            merger.append(pdf)
+            try:
+                merger.append(pdf)
+            except utils.PdfReadError:
+                message_dialog('Cannot read %s - possibly an encrypted file'
+                               % pdf)
+                return
 
         outfn = QtWidgets.QFileDialog.getSaveFileName(None, 'Save PDF file',
                                                       '',
