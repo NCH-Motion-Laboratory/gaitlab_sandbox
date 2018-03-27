@@ -27,7 +27,6 @@ class MergeDialog(QtWidgets.QMainWindow):
         super(self.__class__, self).__init__()
         # load user interface made with designer
         uifile = resource_filename(__name__, 'pdfmerger.ui')
-        #uifile = 'pdfmerger.ui'
         uic.loadUi(uifile, self)
         self.btnAddFiles.clicked.connect(self._add_pdfs)
         self.btnMerge.clicked.connect(self._merge)
@@ -55,7 +54,7 @@ class MergeDialog(QtWidgets.QMainWindow):
         if not self._files:
             return
 
-        merger = PdfFileMerger()
+        merger = PdfFileMerger(strict=False)
 
         for pdf in self._files:
             merger.append(pdf)
@@ -69,7 +68,7 @@ class MergeDialog(QtWidgets.QMainWindow):
                 message_dialog('Successfully wrote %s' % outfn)
 
             except IOError:
-                message_dialog('Cannot write %s, file may already exist'
+                message_dialog('Cannot write %s, file may already be open'
                                % outfn)
 
 
