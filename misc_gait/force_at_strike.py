@@ -58,16 +58,12 @@ def _get_comp_values(c3dfile):
     dist[mdata['RFEP_gaps']] = np.nan
     dist[mdata['RTIO_gaps']] = np.nan
 
-    strikes = np.array(tr.rstrikes)
-    plates = tr.fp_events['R_strikes_plate']
-    toeoffs = np.array(tr.rtoeoffs)
+    fp_cycles = [c for c in tr.cycles if c.on_forceplate]
 
-    for ind, (strike, plate) in enumerate(zip(strikes, plates), 1):
-        toeoff_cands = toeoffs[np.where(toeoffs > strike)]
-        if len(toeoff_cands) == 0:
-            print('No toeoff for foot strike at %d!' % strike)
-            continue
-        toeoff = toeoff_cands[0]
+    for cyc in fp_cycles:
+        strike = cyc.start
+        toeoff = cyc.toeoff
+        plate = cyc.plate_idx
         # minimum length during contact phase
         min_len = dist[strike:toeoff].min()
         # frame where min. length (max compression) occurs
@@ -75,12 +71,12 @@ def _get_comp_values(c3dfile):
         jnt_vec_at_min = jnt_vec[min_frame, :]
         jnt_vec_at_min_1 = jnt_vec_at_min / norm(jnt_vec_at_min)
         min_frame_analog = int(tr.samplesperframe * min_frame)
-        fvec_at_min = -tr.forceplate_data[plate-1]['F'][min_frame_analog, :]
+        fvec_at_min = -tr.forceplate_data[plate]['F'][min_frame_analog, :]
         # projection
         fproj = jnt_vec_at_min_1 * np.dot(jnt_vec_at_min_1, fvec_at_min)
         fx, fy, fz = fproj
         strike_len = dist[strike]
-        yield c3dfile, ind, min_frame, strike_len - min_len, plate, fx, fy, fz
+        yield c3dfile, cyc.index, min_frame, strike_len - min_len, plate, fx, fy, fz
         
 
 if __name__ == '__main__':
