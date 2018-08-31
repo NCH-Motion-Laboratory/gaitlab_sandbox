@@ -40,30 +40,50 @@ def write_workbook_rows(results, filename, first_col=1, first_row=1):
     wb.save(filename=filename)
 
 
+# Excel header row (variable titles)
+header = ['filename', 'gait cycle', 'frame of max compression',
+          'max. compression (mm)', 'forceplate id',
+          'maximum contact force (N)',
+          'force at max. compression (N)',
+          'ankle-hip projected force at max. compression (N)',
+          'ankle-hip projected Fx at max. compression (N)',
+          'ankle-hip projected Fy at max. compression (N)',
+          'ankle-hip projected Fz at max. compression (N)']
 rootdir = u'Z:/siirto/Running/'
 outfile = op.join(rootdir, 'foot_force_at_max_compression_%s.xlsx' % timestr_)
 glob_ = '*.c3d'
+context = 'R'
 files = glob.glob(op.join(rootdir + glob_))
+
+
+def _stringify(v):
+    if isinstance(v, float):
+        return '%.2f' % v
+    else:
+        return str(v)
 
 
 def _get_comp_values(c3dfile):
 
-    mdata = read_data.get_marker_data(c3dfile, ['RFEP', 'RTIO'])
+    hip_ctr = context+'FEP'
+    ank_ctr = context+'TIO'
+    mdata = read_data.get_marker_data(c3dfile, [hip_ctr, ank_ctr])
     tr = gaitutils.Trial(c3dfile)
 
     # ankle joint - hip joint distance
-    jnt_vec = mdata['RFEP_P'] - mdata['RTIO_P']
+    jnt_vec = mdata[hip_ctr+'_P'] - mdata[ank_ctr+'_P']
     dist = np.sqrt(np.sum(jnt_vec**2, 1))
+    dist[mdata[hip_ctr+'_gaps']] = np.nan  # avoid zero location at gaps
+    dist[mdata[hip_ctr+'_gaps']] = np.nan
 
-    dist[mdata['RFEP_gaps']] = np.nan
-    dist[mdata['RTIO_gaps']] = np.nan
-
-    fp_cycles = [c for c in tr.cycles if c.on_forceplate]
+    fp_cycles = [c for c in tr.cycles if c.on_forceplate and c.context ==
+                 context]
 
     for cyc in fp_cycles:
         strike = cyc.start
         toeoff = cyc.toeoff
         plate = cyc.plate_idx
+        cyc_str = context + str(cyc.index)
         # minimum length during contact phase
         min_len = dist[strike:toeoff].min()
         # frame where min. length (max compression) occurs
@@ -71,20 +91,23 @@ def _get_comp_values(c3dfile):
         jnt_vec_at_min = jnt_vec[min_frame, :]
         jnt_vec_at_min_1 = jnt_vec_at_min / norm(jnt_vec_at_min)
         min_frame_analog = int(tr.samplesperframe * min_frame)
-        fvec_at_min = -tr.forceplate_data[plate]['F'][min_frame_analog, :]
+        fvec_at_min_comp = -tr.forceplate_data[plate]['F'][min_frame_analog, :]
+        fmax = tr.forceplate_data[plate]['Ftot'].max()
         # projection
-        fproj = jnt_vec_at_min_1 * np.dot(jnt_vec_at_min_1, fvec_at_min)
+        fproj = jnt_vec_at_min_1 * np.dot(jnt_vec_at_min_1, fvec_at_min_comp)
         fx, fy, fz = fproj
         strike_len = dist[strike]
-        yield c3dfile, cyc.index, min_frame, strike_len - min_len, plate, fx, fy, fz
-        
+        comp = strike_len - min_len
+        yield (c3dfile, cyc_str, min_frame, comp, plate, fmax,
+               norm(fvec_at_min_comp), norm(fproj), fx, fy, fz)
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     results = list()
-    results.append(['filename:', 'cycle:', 'frame of max compression', 'max. compression (mm)', 'forceplate', 'Fx at max. comp. (N)', 'Fy at max. comp. (N)', 'Fz at max. comp. (N)'])
+    results.append(header)
     for c3dfile in files:
         for vals in _get_comp_values(c3dfile):
-            results.append([str(v) for v in vals])
-    
+            results.append([_stringify(v) for v in vals])
+
     write_workbook_rows(results, outfile)
