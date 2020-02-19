@@ -22,32 +22,32 @@ def autolabel(rects):
                      '%d' % int(height), ha='center', va='bottom', fontsize=9)
 
 # specify input data
-yrs = range(2012, 2019)
+yrs = range(2012, 2020)
 
 data = OrderedDict()  # bars will be plotted in the order they are given here
 data[u'Kävelyanalyysi'] = dict()
-data[u'Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101]
-data[u'Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29]
+data[u'Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101, 124]
+data[u'Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33]
 
 data[u'Kliiniset mittaukset'] = dict()
-data[u'Kliiniset mittaukset']['total'] = [46, 45, 50, 67, 93, 137, 101]
-data[u'Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29]
+data[u'Kliiniset mittaukset']['total'] = [46, 45, 50, 67, 93, 137, 101, 124]
+data[u'Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33]
 
-data[u'Isometriset lihasvoimamittaukset'] = dict()
-data[u'Isometriset lihasvoimamittaukset']['total'] = [55, 41, 47, 43, 62, 60, 34]
-data[u'Isometriset lihasvoimamittaukset']['ulko'] = [0, 0, 0, 0, 14, 20, 10]
+data[u'Laitteistetut lihasvoimamittaukset'] = dict()
+data[u'Laitteistetut lihasvoimamittaukset']['total'] = [55, 41, 47, 43, 62, 60, 34, 14]
+data[u'Laitteistetut lihasvoimamittaukset']['ulko'] = [0, 0, 0, 0, 14, 20, 10, 3]
 
 data[u'Painejakaumamittaukset'] = dict()
-data[u'Painejakaumamittaukset']['total'] = [0, 0, 0, 0, 77, 135, 105]
-data[u'Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32]
+data[u'Painejakaumamittaukset']['total'] = [0, 0, 0, 0, 77, 135, 105, 150]
+data[u'Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36]
 
 data[u'EMG-mittaukset'] = dict()
-data[u'EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93]
-data[u'EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28]
+data[u'EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93, 106]
+data[u'EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33]
 
 data[u'Kävelyanalyysin viiteaineisto'] = dict()
-data[u'Kävelyanalyysin viiteaineisto']['total'] = [0, 0, 0, 0, 0, 21, 4]
-data[u'Kävelyanalyysin viiteaineisto']['ulko'] = [0, 0, 0, 0, 0, 0, 0]
+data[u'Kävelyanalyysin viiteaineisto']['total'] = [0, 0, 0, 0, 0, 21, 4, 36]
+data[u'Kävelyanalyysin viiteaineisto']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0]
 
 assert all(len(yrs) == len(li) for di in data.values() for li in di.values())
 
