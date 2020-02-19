@@ -81,7 +81,7 @@ for k, (title, subdata) in enumerate(data.items()):
 for b in bars + bars_u:
     autolabel(b)
 
-plt.legend(bars+bars_u[:1], data.keys()+['Ulkopaikkakuntalaisia'], loc='upper left')
+plt.legend(bars+bars_u[:1], list(data.keys()) + ['Ulkopaikkakuntalaisia'], loc='upper left')
 plt.ylabel('Potilaita')
 plt.xlabel('Vuosi')
 
