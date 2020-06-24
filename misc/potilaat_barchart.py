@@ -86,7 +86,7 @@ plt.ylabel('Potilaita')
 plt.xlabel('Vuosi')
 
 fig.set_size_inches(18.5, 10.5)
-plt.savefig('tilastot_2019.png', dpi=200)
+plt.savefig('tilastot_2020.png', dpi=200)
 
 
 

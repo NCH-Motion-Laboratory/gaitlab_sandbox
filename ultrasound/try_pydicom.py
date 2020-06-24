@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+Muscle thickness detection from ultrasound images. Steps:
+
+-read .dcm ultrasound using pydicom
+-threshold to get strongest features (muscle edges)
+-apply median filter for cleanup
+-apply Hough transform to get longest lines
+-calculate distance between lines (?)
+
+@author: jnu@iki.fi
+"""
+
+
+
+
 # %% init
 import pydicom
 import cv2
