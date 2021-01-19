@@ -16,12 +16,13 @@ logging.basicConfig(level=logging.DEBUG)
 vicon = nexus.viconnexus()
 
 # subject has to match Nexus subject name
-subj = '01_egor'
+subj = '03_Vilma'
 # derive data from existing markers
-mkrdata = nexus._get_marker_data(vicon, ['RKNE', 'RANK'])
-ltib_est = (mkrdata['RKNE'] + mkrdata['RANK']) / 2.0
-x, y, z = ltib_est.T
-exists = [True] * len(x)
-# write the desired marker
-vicon.SetTrajectory(subj, 'RTIB', x, y, z, exists)
+for ctxt in 'LR':
+    mkrdata = nexus._get_marker_data(vicon, ['%sKNE' % ctxt, '%sANK' % ctxt])
+    ltib_est = (mkrdata['%sKNE' % ctxt] + mkrdata['%sANK' % ctxt]) / 2.0
+    x, y, z = ltib_est.T
+    exists = [True] * len(x)
+    # write the desired marker
+    vicon.SetTrajectory(subj, '%sTIB' % ctxt, x, y, z, exists)
 
