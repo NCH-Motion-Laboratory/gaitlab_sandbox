@@ -14,8 +14,12 @@ requires: gaitutils, numpy, scipy
 
 import numpy as np
 import scipy
+import logging
+
 from gaitutils import nexus
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # define parameters
 HPF = 5  # high pass frequency
@@ -38,9 +42,12 @@ endFrame = vicon.GetTrialRegionOfInterest()[1]
 roi_length = endFrame - startFrame + 1
 
 # apply hpf
-b_HPF, a_HPF = scipy.signal.butter(BUTTER_ORDER, HPF * 2 / emgrate, 'high', analog=False)
+b_HPF, a_HPF = scipy.signal.butter(
+    BUTTER_ORDER, HPF * 2 / emgrate, 'high', analog=False
+)
 emg_hpf = {
-    chname: scipy.signal.filtfilt(b_HPF, a_HPF, chdata) for chname, chdata in emgdata.items()
+    chname: scipy.signal.filtfilt(b_HPF, a_HPF, chdata)
+    for chname, chdata in emgdata.items()
 }
 
 # remove dc
@@ -64,36 +71,35 @@ emg_rectified_ds = {
     for emgname in emgdata
 }
 emg_linearenvelope_ds = {
-    emgname + '_LinearEnvelope': scipy.signal.resample(emg_rectified_lpf[emgname], nframes)
+    emgname
+    + '_LinearEnvelope': scipy.signal.resample(emg_rectified_lpf[emgname], nframes)
     for emgname in emgdata
 }
 
 # %% write the processed EMG as model outputs
 
 # create the new model outputs in Nexus
-fullModelOutputList = vicon.GetModelOutputNames(subject)
-newModelOutputNames = emg_rectified_ds.keys() + emg_linearenvelope_ds.keys()
+existing_outputs = vicon.GetModelOutputNames(subject)
+new_outputs = emg_rectified_ds.keys() + emg_linearenvelope_ds.keys()
 
-createModelOutput = [
+for output in set(new_outputs) - set(existing_outputs):
+    logger.debug('creating model output %s' % output)
     vicon.CreateModelOutput(
         subject,
-        emgname,
+        output,
         'EMG',
         {'EMG', 'EMG', 'EMG'},
         {'Electric Potential', 'Electric Potential', 'Electric Potential'},
     )
-    for emgname in newModelOutputNames
-    if emgname not in fullModelOutputList
-]
 
 exists = [True] * nframes
 
 for chname, data in emg_rectified_ds.items():
-    vicon.SetModelOutput(
-        subject, chname, [emg_rectified_ds[chname]], exists
-    )
+    logger.debug('writing data for %s' % chname)
+    vicon.SetModelOutput(subject, chname, [emg_rectified_ds[chname]], exists)
 
 for chname, data in emg_linearenvelope_ds.items():
+    logger.debug('writing data for %s' % chname)
     vicon.SetModelOutput(
         subject,
         chname,
