@@ -16,7 +16,7 @@ import numpy as np
 import scipy
 import logging
 
-from gaitutils import nexus, sessionutils
+from gaitutils import nexus, sessionutils, cfg
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -103,9 +103,12 @@ def _compute_emg_envelope():
 
 
 if __name__ == '__main__':
+    vicon = nexus.viconnexus()
+    # get and process all session trials
     sp = nexus.get_sessionpath()
     c3ds = sessionutils.get_c3ds(sp)
     for c3dfile in c3ds:
         logger.debug('opening %s' % c3dfile)
         nexus._open_trial(c3dfile)
         _compute_emg_envelope()
+        vicon.SaveTrial(cfg.autoproc.nexus_timeout)
