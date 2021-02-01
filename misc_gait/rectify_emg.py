@@ -16,84 +16,96 @@ import numpy as np
 import scipy
 import logging
 
-from gaitutils import nexus
+from gaitutils import nexus, sessionutils
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# define parameters
-HPF = 5  # high pass frequency
-LPF = 10  # low pass frequency
-BUTTER_ORDER = 4  # filter order
-emg_devname = 'Myon EMG'  # name of the EMG device in Nexus
 
-# read EMG data
-vicon = nexus.viconnexus()
-emgdata = nexus._get_emg_data(vicon)['data']
-meta = nexus._get_metadata(vicon)
-emgrate = meta['analograte']
-framerate = meta['framerate']
-subject = meta['name']
-nframes = meta['length']
+def _compute_emg_envelope():
+    """Compute EMG linear envelope and rectified signal for currently open Nexus trial.
 
+    Write as model outputs.
+    """
 
-# apply hpf
-b_HPF, a_HPF = scipy.signal.butter(
-    BUTTER_ORDER, HPF * 2 / emgrate, 'high', analog=False
-)
-emg_hpf = {
-    chname: scipy.signal.filtfilt(b_HPF, a_HPF, chdata)
-    for chname, chdata in emgdata.items()
-}
+    # define parameters
+    HPF = 5  # high pass frequency
+    LPF = 10  # low pass frequency
+    BUTTER_ORDER = 4  # filter order
 
-# rectify
-emg_rectified = {emgname: np.abs(emg_hpf[emgname]) for emgname in emgdata.keys()}
+    # read EMG data
+    vicon = nexus.viconnexus()
+    emgdata = nexus._get_emg_data(vicon)['data']
+    meta = nexus._get_metadata(vicon)
+    emgrate = meta['analograte']
+    subject = meta['name']
+    nframes = meta['length']
 
-# apply lpf
-b_LPF, a_LPF = scipy.signal.butter(BUTTER_ORDER, LPF * 2 / emgrate, 'low', analog=False)
-emg_rectified_lpf = {
-    emgname: scipy.signal.filtfilt(b_LPF, a_LPF, emg_rectified[emgname])
-    for emgname in emgdata.keys()
-}
-
-# downsample
-emg_rectified_ds = {
-    emgname + '_Rectified': scipy.signal.resample(emg_rectified[emgname], nframes)
-    for emgname in emgdata
-}
-emg_linearenvelope_ds = {
-    emgname
-    + '_LinearEnvelope': scipy.signal.resample(emg_rectified_lpf[emgname], nframes)
-    for emgname in emgdata
-}
-
-# %% write the processed EMG as model outputs
-
-# create the new model outputs in Nexus
-existing_outputs = vicon.GetModelOutputNames(subject)
-new_outputs = emg_rectified_ds.keys() + emg_linearenvelope_ds.keys()
-
-for output in set(new_outputs) - set(existing_outputs):
-    logger.debug('creating model output %s' % output)
-    vicon.CreateModelOutput(
-        subject,
-        output,
-        'EMG',
-        {'EMG', 'EMG', 'EMG'},
-        {'Electric Potential', 'Electric Potential', 'Electric Potential'},
+    # apply hpf
+    b_HPF, a_HPF = scipy.signal.butter(
+        BUTTER_ORDER, HPF * 2 / emgrate, 'high', analog=False
     )
+    emg_hpf = {
+        chname: scipy.signal.filtfilt(b_HPF, a_HPF, chdata)
+        for chname, chdata in emgdata.items()
+    }
 
-exists = [True] * nframes
+    # rectify
+    emg_rectified = {chname: np.abs(chdata) for chname, chdata in emg_hpf.items()}
 
-for chname, data in emg_rectified_ds.items():
-    logger.debug('writing data for %s' % chname)
-    vicon.SetModelOutput(subject, chname, [emg_rectified_ds[chname]], exists)
-
-for chname, data in emg_linearenvelope_ds.items():
-    logger.debug('writing data for %s' % chname)
-    vicon.SetModelOutput(
-        subject,
-        chname,
-        [emg_linearenvelope_ds[chname]],
-        exists,
+    # apply lpf
+    b_LPF, a_LPF = scipy.signal.butter(
+        BUTTER_ORDER, LPF * 2 / emgrate, 'low', analog=False
     )
+    emg_rectified_lpf = {
+        chname: scipy.signal.filtfilt(b_LPF, a_LPF, chdata)
+        for chname, chdata in emg_rectified.items()
+    }
+
+    # downsample
+    emg_rectified_ds = {
+        chname + '_Rectified': scipy.signal.resample(chdata, nframes)
+        for chname, chdata in emg_rectified.items()
+    }
+    emg_linearenvelope_ds = {
+        chname + '_LinearEnvelope': scipy.signal.resample(chdata, nframes)
+        for chname, chdata in emg_rectified_lpf.items()
+    }
+
+    # create the new model outputs in Nexus
+    existing_outputs = vicon.GetModelOutputNames(subject)
+    new_outputs = emg_rectified_ds.keys() + emg_linearenvelope_ds.keys()
+    for output in set(new_outputs) - set(existing_outputs):
+        logger.debug('creating model output %s' % output)
+        vicon.CreateModelOutput(
+            subject,
+            output,
+            'EMG',
+            {'EMG', 'EMG', 'EMG'},
+            {'Electric Potential', 'Electric Potential', 'Electric Potential'},
+        )
+
+    # write the processed EMG as model outputs
+    exists = [True] * nframes
+
+    for chname, chdata in emg_rectified_ds.items():
+        logger.debug('writing data for %s' % chname)
+        vicon.SetModelOutput(subject, chname, [chdata], exists)
+
+    for chname, chdata in emg_linearenvelope_ds.items():
+        logger.debug('writing data for %s' % chname)
+        vicon.SetModelOutput(
+            subject,
+            chname,
+            [chdata],
+            exists,
+        )
+
+
+if __name__ == '__main__':
+    sp = nexus.get_sessionpath()
+    c3ds = sessionutils.get_c3ds(sp)
+    for c3dfile in c3ds:
+        logger.debug('opening %s' % c3dfile)
+        nexus._open_trial(c3dfile)
+        _compute_emg_envelope()
