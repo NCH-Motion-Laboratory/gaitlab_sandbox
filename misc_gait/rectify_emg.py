@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 # define parameters
 HPF = 5  # high pass frequency
-LPF = 40  # low pass frequency
+LPF = 10  # low pass frequency
 BUTTER_ORDER = 4  # filter order
 emg_devname = 'Myon EMG'  # name of the EMG device in Nexus
 
@@ -36,10 +36,6 @@ framerate = meta['framerate']
 subject = meta['name']
 nframes = meta['length']
 
-# get roi length
-startFrame = vicon.GetTrialRegionOfInterest()[0]
-endFrame = vicon.GetTrialRegionOfInterest()[1]
-roi_length = endFrame - startFrame + 1
 
 # apply hpf
 b_HPF, a_HPF = scipy.signal.butter(
@@ -50,13 +46,8 @@ emg_hpf = {
     for chname, chdata in emgdata.items()
 }
 
-# remove dc
-emg_dc_offset = {
-    emgname: emg_hpf[emgname] - np.mean(emg_hpf[emgname]) for emgname in emgdata.keys()
-}
-
 # rectify
-emg_rectified = {emgname: np.abs(emg_dc_offset[emgname]) for emgname in emgdata.keys()}
+emg_rectified = {emgname: np.abs(emg_hpf[emgname]) for emgname in emgdata.keys()}
 
 # apply lpf
 b_LPF, a_LPF = scipy.signal.butter(BUTTER_ORDER, LPF * 2 / emgrate, 'low', analog=False)
