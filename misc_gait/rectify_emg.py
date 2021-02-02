@@ -12,11 +12,15 @@ requires: gaitutils, numpy, scipy
 
 # %% init
 
+import os.path as op
 import numpy as np
 import scipy
 import logging
+import openpyxl
+from openpyxl.styles import Font
+import matplotlib.pyplot as plt
 
-from gaitutils import nexus, sessionutils, cfg
+from gaitutils import nexus, sessionutils, cfg, trial
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -101,14 +105,99 @@ def _compute_emg_envelope():
             exists,
         )
 
+    return new_outputs
 
+
+def _get_model_output(vicon, subj, var):
+    """Read a single model output from Nexus"""
+    nums, _ = vicon.GetModelOutput(subj, var)
+    if nums:
+        data = np.squeeze(np.array(nums))
+    else:
+        logger.info('cannot read model variable %s, returning nans' % var)
+        data = None
+    return data
+
+
+def _bold_cell(ws, **cell_params):
+    """Write a bold-styled cell into worksheet ws"""
+    boldfont = Font(bold=True)
+    _cell = ws.cell(**cell_params)
+    _cell.font = boldfont
+
+
+def _guess_emg_devname(vicon):
+    """Try to guess the EMG device name"""
+    devnames = ['Myon EMG', 'Noraxon Ultium']  # the candidates
+    for devname in devnames:
+        ids = [
+            id_
+            for id_ in vicon.GetDeviceIDs()
+            if vicon.GetDeviceDetails(id_)[0].lower() == devname.lower()
+        ]
+        if ids:
+            return devname
+
+
+# %%
 if __name__ == '__main__':
+    # loop through session c3d files, compute envelopes and save into c3ds and xlsx
+    cfg.autoproc.nexus_forceplate_devnames = []  # read all forceplates
     vicon = nexus.viconnexus()
+    subj = nexus.get_subjectnames()
+    emg_devname = _guess_emg_devname(vicon)
+    if emg_devname is None:
+        raise RuntimeError('Cannot figure out EMG device name')
+    cfg.emg.devname = emg_devname
     # get and process all session trials
     sp = nexus.get_sessionpath()
-    c3ds = sessionutils.get_c3ds(sp)
-    for c3dfile in c3ds:
+    c3ds = sessionutils.get_c3ds(sp, tags=['XXX'])
+    norm_data = dict()
+    fname_xls = op.join(sp, op.split(sp)[-1] + '.xlsx')
+    wb = openpyxl.Workbook()
+    for n, c3dfile in enumerate(c3ds[:2]):
+        ncycles = dict()
         logger.debug('opening %s' % c3dfile)
         nexus._open_trial(c3dfile)
-        _compute_emg_envelope()
-        vicon.SaveTrial(cfg.autoproc.nexus_timeout)
+        # compute the envelopes into Nexus model vars; names are returned
+        modelvars = _compute_emg_envelope()
+        tr = trial.nexus_trial()
+        for ctxt in 'LR':
+            this_cycles = tr.get_cycles({ctxt: 'all'})
+            if ctxt not in ncycles:
+                ncycles[ctxt] = len(this_cycles)
+            this_vars = [var for var in modelvars if var[0] == ctxt]
+            for var in this_vars:
+                norm_data[var] = list()
+                for cyc in this_cycles:
+                    this_data = _get_model_output(vicon, subj, var)
+                    this_data_norm = cyc.normalize(this_data)[1]
+                    norm_data[var].append(this_data_norm)
+                norm_data[var] = np.array(norm_data[var])
+        avg_data = dict()
+        std_data = dict()
+        for var in modelvars:
+            avg_data[var] = norm_data[var].mean(axis=0)
+            std_data[var] = norm_data[var].std(axis=0)
+        ws = wb.active if n == 0 else wb.create_sheet()
+        ws.title = op.splitext(op.split(c3dfile)[-1])[0]
+        # write some metadata
+        _bold_cell(ws, column=1, row=2, value='Subject:')
+        _bold_cell(ws, column=1, row=3, value='Trial:')
+        _bold_cell(ws, column=1, row=4, value='Averaged cycles left:')
+        _bold_cell(ws, column=1, row=5, value='Averaged cycles right:')
+        ws.cell(column=2, row=2, value=subj)
+        ws.cell(column=2, row=3, value=op.split(c3dfile)[-1])
+        ws.cell(column=2, row=4, value=ncycles['L'])
+        ws.cell(column=2, row=5, value=ncycles['R'])
+        # write channel avg and std data
+        for col, var in enumerate(sorted(modelvars), 3):
+            _bold_cell(ws, column=2 * col, row=2, value=var + ' mean')  # col header
+            _bold_cell(
+                ws, column=2 * col + 1, row=2, value=var + ' stddev'
+            )  # col header
+            for row, x in enumerate(avg_data[var], 3):
+                ws.cell(column=2 * col, row=row, value=x)
+            for row, x in enumerate(std_data[var], 3):
+                ws.cell(column=2 * col + 1, row=row, value=x)
+    wb.save(filename=fname_xls)
