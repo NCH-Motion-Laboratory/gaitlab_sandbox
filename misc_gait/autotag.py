@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-experimental autotag
+experimental global autoprocess
 
 wip:
+-autoprocess
 -a way to supply patient info for reports
+-generate pdf and web reports
+
 
 @author: Jussi (jnu@iki.fi)
 """
 
 
+from build.lib.gaitutils.envutils import GaitDataError
 from gaitutils import sessionutils, nexus, cfg
 import gaitutils
 from gaitutils import trial
@@ -59,9 +63,11 @@ def _get_patient_dir():
 
 def _is_sessiondir(dir):
     """Check whether given dir is a Nexus session directory"""
-    enfs = sessionutils.get_enfs(dir)
-    x1ds = [sessionutils.enf_to_trialfile(fn, 'x1d') for fn in enfs]
-    return bool(x1ds)
+    try:
+        sessionutils.get_session_date(dir)
+    except GaitDataError:
+        return False
+    return True
 
 
 def _run_postprocessing(c3dfiles):
@@ -80,10 +86,18 @@ session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]  # all files un
 session_dirs = [f for f in session_all if op.isdir(f) and _is_sessiondir(f)]  # Nexus session dirs
 
 
+# autoproc
+
+# autotag
 for p in session_dirs:
     _autotag(p)
 
+# postprocessing
 for p in session_dirs:
     c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions([p], tags=cfg.eclipse.tags)
     _run_postprocessing(c3dfiles)
+
+# reports
+
+
 
