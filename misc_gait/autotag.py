@@ -23,6 +23,7 @@ import psutil
 import gaitutils
 from gaitutils import sessionutils, nexus, cfg, autoprocess, trial
 from gaitutils.report import web, pdf
+from ulstools.num import check_hetu
 
 MAX_TAGS_PER_CONTEXT = 3
 
@@ -183,5 +184,5 @@ for p in session_dirs:
     # generate reports
     info = {'fullname': patient_name, 'hetu': hetu, 'session_description': session_desc[p]}
     pdf.create_report(p, info, write_extracted=True, write_timedist=True)
-    web.dash_report(p, info)
+    web.dash_report(sessions=[p], info=info, signals=None)
 
