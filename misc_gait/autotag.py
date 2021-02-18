@@ -2,10 +2,6 @@
 """
 experimental global autoprocess
 
-wip:
--autoprocess
--a way to supply patient info for reports
--generate pdf and web reports
 
 
 @author: Jussi (jnu@iki.fi)
@@ -19,9 +15,10 @@ import numpy as np
 import subprocess
 import time
 import psutil
+import logging
 
 import gaitutils
-from gaitutils import sessionutils, nexus, cfg, autoprocess, trial
+from gaitutils import sessionutils, nexus, cfg, autoprocess, trial, videos
 from gaitutils.report import web, pdf
 from ulstools.num import check_hetu
 
@@ -121,9 +118,8 @@ def _parse_name(name):
 
 
 
-# %% experimental global autoproc
-from ulstools.num import check_hetu
-
+# %% init
+logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir for starters
 rootdir = _get_patient_dir()
 session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]  # all files under patient dir
@@ -180,9 +176,33 @@ for p in session_dirs:
 
 
 # %% generate reports
-for p in session_dirs:
+for sessiondir in session_dirs:
     # generate reports
-    info = {'fullname': patient_name, 'hetu': hetu, 'session_description': session_desc[p]}
-    pdf.create_report(p, info, write_extracted=True, write_timedist=True)
-    web.dash_report(sessions=[p], info=info, signals=None)
+    info = None
+    #info = {'fullname': patient_name, 'hetu': hetu, 'session_description': session_desc[p]}
+    #pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
+
+    vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
+    if not vidfiles:
+        raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
+
+    procs = videos.convert_videos(vidfiles=vidfiles)
+    if not procs:
+        raise RuntimeError('video converter processes could not be started')
+    completed = False
+    # wait in sleep loop until all converter processes have finished
+    _n_complete = -1
+    while not completed:
+        n_complete = len([p for p in procs if p.poll() is not None])
+        prog_txt = 'Converting videos: %d of %d files done' % (
+            n_complete,
+            len(procs),
+        )
+        if _n_complete != n_complete:
+            print(prog_txt)
+            _n_complete = n_complete
+        time.sleep(1)
+        completed = n_complete == len(procs)
+
+    web.dash_report(sessions=[sessiondir], info=info)
 
