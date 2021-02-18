@@ -11,14 +11,18 @@ wip:
 @author: Jussi (jnu@iki.fi)
 """
 
+# %% init
 
-from build.lib.gaitutils.envutils import GaitDataError
-from gaitutils import sessionutils, nexus, cfg
-import gaitutils
-from gaitutils import trial
 import os
 import os.path as op
 import numpy as np
+import subprocess
+import time
+import psutil
+
+import gaitutils
+from gaitutils import sessionutils, nexus, cfg, autoprocess, trial
+from gaitutils.report import web, pdf
 
 MAX_TAGS_PER_CONTEXT = 3
 
@@ -80,24 +84,104 @@ def _run_postprocessing(c3dfiles):
         nexus._run_pipelines(cfg.autoproc.postproc_pipelines)
 
 
+def _start_nexus():
+    """Start Vicon Nexus"""
+    exe = op.join(nexus._find_nexus_path(), 'Nexus.exe')
+    p = subprocess.Popen([exe])
+    time.sleep(12)
+    return p
+
+
+def _kill_nexus(p=None, restart=False):
+    """Kill Vicon Nexus process p"""
+    if p is None:
+        pid = nexus._nexus_pid()
+        p = psutil.Process(pid)
+    p.terminate()
+    if restart:
+        time.sleep(5)
+        _start_nexus()
+
+
+def _parse_name(name):
+    """Parse trial or session name of the standard form YYYY_MM_DD_desc1_desc2_..._descN_code"""
+    name_split = name.split('_')
+    if len(name_split) < 3:
+        raise ValueError('Could not parse name')
+    try:  # see if trial begins with valid date
+        datetxt = '-'.join(name_split[:3])
+        d = datetime.datetime.strptime(datetxt, '%Y-%m-%d')
+    except ValueError:
+        raise ValueError('Could not parse name')
+    code = name_split[-1] if len(name_split) > 3 else None
+    desc = ', '.join(name_split[3:-1]) if len(name_split) > 3 else None
+    return d, code, desc
+
+
+
+
+# %% experimental global autoproc
+from ulstools.num import check_hetu
+
 # must be in a session dir for starters
 rootdir = _get_patient_dir()
 session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]  # all files under patient dir
 session_dirs = [f for f in session_all if op.isdir(f) and _is_sessiondir(f)]  # Nexus session dirs
 
 
-# autoproc
+# %% get the session info from the user
+patient_name = raw_input('Please enter patient name:')
 
-# autotag
+prompt = 'Please enter hetu:'
+while True:
+    hetu = raw_input(prompt)
+    if check_hetu(hetu):
+       break
+    else:
+        prompt = 'Invalid hetu entered, please re-enter:'
+
+session_desc = dict()
+for d in session_dirs:
+    session_desc[d] = raw_input('Please enter description for %s' % op.split(d)[-1])
+
+
+
+# %%
+# autoproc all
+for p in session_dirs:
+    enffiles = sessionutils.get_enfs(p)
+    autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
+
+
+# %% autotag all
 for p in session_dirs:
     _autotag(p)
 
-# postprocessing
+
+# %% review the data
+for p in session_dirs:
+    fig = gaitutils.viz.plots._plot_sessions(p, backend='plotly', figtitle=op.split(p)[-1])
+    gaitutils.viz.plot_misc.show_fig(fig)
+    fig = gaitutils.viz.plots._plot_sessions(p, layout_name='lb_kinetics', backend='plotly', figtitle=op.split(p)[-1])
+    gaitutils.viz.plot_misc.show_fig(fig)
+    fig = gaitutils.viz.plots._plot_sessions(p, layout_name='std_emg', backend='plotly', figtitle=op.split(p)[-1])
+    gaitutils.viz.plot_misc.show_fig(fig)
+
+
+# %% run postproc. pipelines
+
+# restart Nexus for postproc pipelines
+_kill_nexus(restart=True)
+
 for p in session_dirs:
     c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions([p], tags=cfg.eclipse.tags)
     _run_postprocessing(c3dfiles)
 
-# reports
 
-
+# %% generate reports
+for p in session_dirs:
+    # generate reports
+    info = {'fullname': patient_name, 'hetu': hetu, 'session_description': session_desc[p]}
+    pdf.create_report(p, info, write_extracted=True, write_timedist=True)
+    web.dash_report(p, info)
 
