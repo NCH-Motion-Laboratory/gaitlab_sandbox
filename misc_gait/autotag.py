@@ -175,13 +175,10 @@ for p in session_dirs:
     _run_postprocessing(c3dfiles)
 
 
-# %% generate reports
+# %% generate web reports
 for sessiondir in session_dirs:
     # generate reports
-    info = None
     #info = {'fullname': patient_name, 'hetu': hetu, 'session_description': session_desc[p]}
-    #pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
-
     vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
     if not vidfiles:
         raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
@@ -205,4 +202,10 @@ for sessiondir in session_dirs:
         completed = n_complete == len(procs)
 
     web.dash_report(sessions=[sessiondir], info=info)
+
+
+# %% generate pdf reports
+for sessiondir in session_dirs:
+    pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
+
 
