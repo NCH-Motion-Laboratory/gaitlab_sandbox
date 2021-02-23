@@ -287,8 +287,8 @@ for n, c3dfile in enumerate(sorted(allfiles)):
     _bold_cell(ws, column=1, row=4, value='N of cycles left:')
 
     ws.cell(column=2, row=2, value=op.split(c3dfile)[-1])
-    ws.cell(column=2, row=3, value=ncycles['L'])
-    ws.cell(column=2, row=4, value=ncycles['R'])
+    ws.cell(column=2, row=3, value=ncycles['R'])
+    ws.cell(column=2, row=4, value=ncycles['L'])
 
     col_headers = [''] + ['frame %d' % k for k in range(101)]
 
