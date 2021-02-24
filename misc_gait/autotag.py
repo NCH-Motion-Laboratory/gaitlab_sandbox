@@ -24,6 +24,7 @@ from ulstools.num import check_hetu
 
 MAX_TAGS_PER_CONTEXT = 3
 
+
 def _count_fp_contacts(trial):
     """Return n of valid forceplate contacts"""
     return len(trial.fp_events['L_strikes']) + len(trial.fp_events['R_strikes'])
@@ -46,12 +47,18 @@ def _autotag(sessiondir):
     enffiles = [tr.enfpath for tr in trials]
 
     for dir in 'ET':
-        enfs_thisdir = [(k, enffile) for (k, enffile) in enumerate(enffiles) if _gait_dir(enffile) == dir]
+        enfs_thisdir = [
+            (k, enffile)
+            for (k, enffile) in enumerate(enffiles)
+            if _gait_dir(enffile) == dir
+        ]
         n_contacts = [_count_fp_contacts(trials[k]) for k, _ in enfs_thisdir]
         best_inds = np.argsort(-np.array(n_contacts))
         bestfiles = [enfs_thisdir[k][1] for k in best_inds]
         for k, enffile in enumerate(bestfiles[:MAX_TAGS_PER_CONTEXT], 1):
-            gaitutils.eclipse.set_eclipse_keys(enffile, {'NOTES': dir + str(k)}, update_existing=True)
+            gaitutils.eclipse.set_eclipse_keys(
+                enffile, {'NOTES': dir + str(k)}, update_existing=True
+            )
 
 
 def _get_patient_dir():
@@ -116,24 +123,71 @@ def _parse_name(name):
     return d, code, desc
 
 
-
-
-# %% init
+# %%
+# 1: get session dirs
 logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir for starters
 rootdir = _get_patient_dir()
-session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]  # all files under patient dir
-session_dirs = [f for f in session_all if op.isdir(f) and _is_sessiondir(f)]  # Nexus session dirs
+session_all = [
+    op.join(rootdir, p) for p in os.listdir(rootdir)
+]  # all files under patient dir
+session_dirs = [
+    f for f in session_all if op.isdir(f) and _is_sessiondir(f)
+]  # Nexus session dirs
 
 
-# %% get the session info from the user
+# %%
+# 2: autoproc all
+for p in session_dirs:
+    enffiles = sessionutils.get_enfs(p)
+    autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
+
+
+# %%
+# 3: autotag all
+for p in session_dirs:
+    _autotag(p)
+
+
+# %%
+# 4: review the data
+for p in session_dirs:
+    fig = gaitutils.viz.plots._plot_sessions(
+        p, backend='plotly', figtitle=op.split(p)[-1]
+    )
+    gaitutils.viz.plot_misc.show_fig(fig)
+    fig = gaitutils.viz.plots._plot_sessions(
+        p, layout_name='lb_kinetics', backend='plotly', figtitle=op.split(p)[-1]
+    )
+    gaitutils.viz.plot_misc.show_fig(fig)
+    fig = gaitutils.viz.plots._plot_sessions(
+        p, layout_name='std_emg', backend='plotly', figtitle=op.split(p)[-1]
+    )
+    gaitutils.viz.plot_misc.show_fig(fig)
+
+
+# %%
+# 5: run postproc. pipelines
+
+# restart Nexus for postproc pipelines
+_kill_nexus(restart=True)
+
+for p in session_dirs:
+    c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions(
+        [p], tags=cfg.eclipse.tags
+    )
+    _run_postprocessing(c3dfiles)
+
+
+# %%
+# 6: get info from user
 patient_name = raw_input('Please enter patient name:')
 
 prompt = 'Please enter hetu:'
 while True:
     hetu = raw_input(prompt)
     if check_hetu(hetu):
-       break
+        break
     else:
         prompt = 'Invalid hetu entered, please re-enter:'
 
@@ -142,43 +196,15 @@ for d in session_dirs:
     session_desc[d] = raw_input('Please enter description for %s' % op.split(d)[-1])
 
 
-
 # %%
-# autoproc all
-for p in session_dirs:
-    enffiles = sessionutils.get_enfs(p)
-    autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
-
-
-# %% autotag all
-for p in session_dirs:
-    _autotag(p)
-
-
-# %% review the data
-for p in session_dirs:
-    fig = gaitutils.viz.plots._plot_sessions(p, backend='plotly', figtitle=op.split(p)[-1])
-    gaitutils.viz.plot_misc.show_fig(fig)
-    fig = gaitutils.viz.plots._plot_sessions(p, layout_name='lb_kinetics', backend='plotly', figtitle=op.split(p)[-1])
-    gaitutils.viz.plot_misc.show_fig(fig)
-    fig = gaitutils.viz.plots._plot_sessions(p, layout_name='std_emg', backend='plotly', figtitle=op.split(p)[-1])
-    gaitutils.viz.plot_misc.show_fig(fig)
-
-
-# %% run postproc. pipelines
-
-# restart Nexus for postproc pipelines
-_kill_nexus(restart=True)
-
-for p in session_dirs:
-    c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions([p], tags=cfg.eclipse.tags)
-    _run_postprocessing(c3dfiles)
-
-
-# %% generate web reports
+# 7: generate reports
 for sessiondir in session_dirs:
-    # generate reports
-    #info = {'fullname': patient_name, 'hetu': hetu, 'session_description': session_desc[p]}
+
+    info = {
+        'fullname': patient_name,
+        'hetu': hetu,
+        'session_description': session_desc[sessiondir],
+    }
     vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
     if not vidfiles:
         raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
@@ -186,8 +212,9 @@ for sessiondir in session_dirs:
     procs = videos.convert_videos(vidfiles=vidfiles)
     if not procs:
         raise RuntimeError('video converter processes could not be started')
-    completed = False
+
     # wait in sleep loop until all converter processes have finished
+    completed = False
     _n_complete = -1
     while not completed:
         n_complete = len([p for p in procs if p.poll() is not None])
@@ -200,12 +227,6 @@ for sessiondir in session_dirs:
             _n_complete = n_complete
         time.sleep(1)
         completed = n_complete == len(procs)
-
     web.dash_report(sessions=[sessiondir], info=info)
 
-
-# %% generate pdf reports
-for sessiondir in session_dirs:
     pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
-
-
