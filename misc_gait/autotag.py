@@ -175,6 +175,7 @@ for p in session_dirs:
     )
     _run_postprocessing(c3dfiles)
 
+
 # %%
 # 7: generate reports
 for sessiondir in session_dirs:
@@ -184,6 +185,7 @@ for sessiondir in session_dirs:
         'hetu': hetu,
         'session_description': session_desc[sessiondir],
     }
+    sessionutils.save_info(sessiondir, info)
     vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
     if not vidfiles:
         raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
@@ -208,5 +210,5 @@ for sessiondir in session_dirs:
             time.sleep(1)
             completed = n_complete == len(procs)
 
-    web.dash_report(sessions=[sessiondir], info=info)
+    web.dash_report(sessions=[sessiondir], info=info, recreate_plots=True)
     pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
