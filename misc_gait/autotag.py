@@ -12,9 +12,7 @@ experimental global autoprocess
 import os
 import os.path as op
 import numpy as np
-import subprocess
 import time
-import psutil
 import logging
 
 import gaitutils
@@ -89,25 +87,6 @@ def _run_postprocessing(c3dfiles):
         nexus._run_pipelines(cfg.autoproc.postproc_pipelines)
 
 
-def _start_nexus():
-    """Start Vicon Nexus"""
-    exe = op.join(nexus._find_nexus_path(), 'Nexus.exe')
-    p = subprocess.Popen([exe])
-    time.sleep(12)
-    return p
-
-
-def _kill_nexus(p=None, restart=False):
-    """Kill Vicon Nexus process p"""
-    if p is None:
-        pid = nexus._nexus_pid()
-        p = psutil.Process(pid)
-    p.terminate()
-    if restart:
-        time.sleep(5)
-        _start_nexus()
-
-
 def _parse_name(name):
     """Parse trial or session name of the standard form YYYY_MM_DD_desc1_desc2_..._descN_code"""
     name_split = name.split('_')
@@ -123,6 +102,7 @@ def _parse_name(name):
     return d, code, desc
 
 
+*
 # %%
 # 1: get session dirs
 logging.basicConfig(level=logging.DEBUG)
@@ -130,7 +110,7 @@ logging.basicConfig(level=logging.DEBUG)
 rootdir = _get_patient_dir()
 session_all = [
     op.join(rootdir, p) for p in os.listdir(rootdir)
-]  # all files under patient dir
+]  
 session_dirs = [
     f for f in session_all if op.isdir(f) and _is_sessiondir(f)
 ]  # Nexus session dirs
@@ -166,21 +146,10 @@ for p in session_dirs:
     gaitutils.viz.plot_misc.show_fig(fig)
 
 
-# %%
-# 5: run postproc. pipelines
-
-# restart Nexus for postproc pipelines
-_kill_nexus(restart=True)
-
-for p in session_dirs:
-    c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions(
-        [p], tags=cfg.eclipse.tags
-    )
-    _run_postprocessing(c3dfiles)
 
 
 # %%
-# 6: get info from user
+# 5: get info from user
 patient_name = raw_input('Please enter patient name:')
 
 prompt = 'Please enter hetu:'
@@ -197,7 +166,19 @@ for d in session_dirs:
 
 
 # %%
+# 6: run postproc. pipelines
 # 7: generate reports
+
+# restart Nexus for postproc pipelines
+nexus._kill_nexus(restart=True)
+time.sleep(20)  # might take a while
+
+for p in session_dirs:
+    c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions(
+        [p], tags=cfg.eclipse.tags
+    )
+    _run_postprocessing(c3dfiles)
+
 for sessiondir in session_dirs:
 
     info = {
