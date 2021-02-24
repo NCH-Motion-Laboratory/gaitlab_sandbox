@@ -102,7 +102,6 @@ def _parse_name(name):
     return d, code, desc
 
 
-*
 # %%
 # 1: get session dirs
 logging.basicConfig(level=logging.DEBUG)
@@ -146,15 +145,13 @@ for p in session_dirs:
     gaitutils.viz.plot_misc.show_fig(fig)
 
 
-
-
 # %%
 # 5: get info from user
 patient_name = raw_input('Please enter patient name:')
 
 prompt = 'Please enter hetu:'
 while True:
-    hetu = raw_input(prompt)
+    hetu = raw_input(prompt).decode('utf-8')
     if check_hetu(hetu):
         break
     else:
@@ -162,12 +159,11 @@ while True:
 
 session_desc = dict()
 for d in session_dirs:
-    session_desc[d] = raw_input('Please enter description for %s' % op.split(d)[-1])
+    session_desc[d] = raw_input('Please enter description for %s' % op.split(d)[-1]).decode('utf-8')
 
 
 # %%
 # 6: run postproc. pipelines
-# 7: generate reports
 
 # restart Nexus for postproc pipelines
 nexus._kill_nexus(restart=True)
@@ -180,6 +176,7 @@ for p in session_dirs:
     _run_postprocessing(c3dfiles)
 
 # %%
+# 7: generate reports
 for sessiondir in session_dirs:
 
     info = {
