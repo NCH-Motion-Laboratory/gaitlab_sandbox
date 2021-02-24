@@ -179,6 +179,7 @@ for p in session_dirs:
     )
     _run_postprocessing(c3dfiles)
 
+# %%
 for sessiondir in session_dirs:
 
     info = {
@@ -190,24 +191,25 @@ for sessiondir in session_dirs:
     if not vidfiles:
         raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
 
-    procs = videos.convert_videos(vidfiles=vidfiles)
-    if not procs:
-        raise RuntimeError('video converter processes could not be started')
+    if not videos.convert_videos(vidfiles, check_only=True):
+        procs = videos.convert_videos(vidfiles=vidfiles)
+        if not procs:
+            raise RuntimeError('video converter processes could not be started')
 
-    # wait in sleep loop until all converter processes have finished
-    completed = False
-    _n_complete = -1
-    while not completed:
-        n_complete = len([p for p in procs if p.poll() is not None])
-        prog_txt = 'Converting videos: %d of %d files done' % (
-            n_complete,
-            len(procs),
-        )
-        if _n_complete != n_complete:
-            print(prog_txt)
-            _n_complete = n_complete
-        time.sleep(1)
-        completed = n_complete == len(procs)
+        # wait in sleep loop until all converter processes have finished
+        completed = False
+        _n_complete = -1
+        while not completed:
+            n_complete = len([p for p in procs if p.poll() is not None])
+            prog_txt = 'Converting videos: %d of %d files done' % (
+                n_complete,
+                len(procs),
+            )
+            if _n_complete != n_complete:
+                print(prog_txt)
+                _n_complete = n_complete
+            time.sleep(1)
+            completed = n_complete == len(procs)
+
     web.dash_report(sessions=[sessiondir], info=info)
-
     pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
