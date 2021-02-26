@@ -107,9 +107,7 @@ def _parse_name(name):
 logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir for starters
 rootdir = _get_patient_dir()
-session_all = [
-    op.join(rootdir, p) for p in os.listdir(rootdir)
-]  
+session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]
 session_dirs = [
     f for f in session_all if op.isdir(f) and _is_sessiondir(f)
 ]  # Nexus session dirs
@@ -159,7 +157,9 @@ while True:
 
 session_desc = dict()
 for d in session_dirs:
-    session_desc[d] = raw_input('Please enter description for %s' % op.split(d)[-1]).decode('utf-8')
+    session_desc[d] = raw_input(
+        'Please enter description for %s' % op.split(d)[-1]
+    ).decode('utf-8')
 
 
 # %%
@@ -169,9 +169,16 @@ for d in session_dirs:
 nexus._kill_nexus(restart=True)
 time.sleep(20)  # might take a while
 
-for p in session_dirs:
-    c3dfiles = sessionutils._get_tagged_dynamic_c3ds_from_sessions(
-        [p], tags=cfg.eclipse.tags
+# %%
+for sessiondir in session_dirs:
+    c3dfiles = sessionutils.get_c3ds(
+        sessiondir,
+        tags=cfg.eclipse.tags,
+        trial_type='dynamic',
+        check_if_exists=False,
+    )
+    c3dfiles += sessionutils.get_c3ds(
+        sessiondir, trial_type='static', check_if_exists=False
     )
     _run_postprocessing(c3dfiles)
 
@@ -212,3 +219,30 @@ for sessiondir in session_dirs:
 
     web.dash_report(sessions=[sessiondir], info=info, recreate_plots=True)
     pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
+
+
+# %% only convert the videos - for video-only sessions
+for sessiondir in session_dirs:
+    vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
+    if not vidfiles:
+        raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
+
+    if not videos.convert_videos(vidfiles, check_only=True):
+        procs = videos.convert_videos(vidfiles=vidfiles)
+        if not procs:
+            raise RuntimeError('video converter processes could not be started')
+
+        # wait in sleep loop until all converter processes have finished
+        completed = False
+        _n_complete = -1
+        while not completed:
+            n_complete = len([p for p in procs if p.poll() is not None])
+            prog_txt = 'Converting videos: %d of %d files done' % (
+                n_complete,
+                len(procs),
+            )
+            if _n_complete != n_complete:
+                print(prog_txt)
+                _n_complete = n_complete
+            time.sleep(1)
+            completed = n_complete == len(procs)
