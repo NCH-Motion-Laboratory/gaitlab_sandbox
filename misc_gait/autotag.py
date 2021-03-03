@@ -11,6 +11,7 @@ experimental global autoprocess
 
 import os
 import os.path as op
+import shutil
 import numpy as np
 import time
 import logging
@@ -220,6 +221,56 @@ for sessiondir in session_dirs:
 
     web.dash_report(sessions=[sessiondir], info=info, recreate_plots=True)
     pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
+
+
+# %%
+# 8: move patient to network drive
+
+DEST_ROOT = r'Y:\Userdata_Vicon_Server'
+
+patient_code = op.split(rootdir)[-1]
+
+diags_dirs = {
+    'H': '1_Hemiplegia',
+    'D': '1_Diplegia',
+    'M': '1_Meningomyelocele',
+    'E': '1_Eridiagnoosit',
+    'C': '1_Muu CP',
+}
+try:
+    diag_dir = diags_dirs[patient_code[0]]  # choose according to 1st letter of patient code
+except KeyError:
+    raise RuntimeError('Cannot interpret patient code')
+
+destdir_patient = op.join(DEST_ROOT, diag_dir, patient_code)
+
+for sessiondir in session_dirs:
+    _sessiondir = op.split(sessiondir)[-1]
+    destdir = op.join(destdir_patient, _sessiondir)
+    print(destdir)
+    shutil.copytree(sessiondir, destdir)
+
+# DANGER --- DANGER --- DANGER
+# remove from local drive, if copy was successful
+if False:
+    shutil.rmtree(rootdir)
+
+
+# %%
+if not op.isdir(destpath):
+    os.mkdir(destpath)
+
+# kill Nexus so it doesn't get confused by the move operation
+#nexus._kill_nexus()
+
+for sessiondir in session_dirs:
+    shutil.copytree(sessiondir, destpath)
+
+# shutil.copytree(rootdir, destpath) ??
+# shutil.rmtree
+
+
+
 
 
 # %% only convert the videos - for video-only sessions
