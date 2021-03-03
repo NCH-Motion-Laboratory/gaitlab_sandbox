@@ -108,6 +108,7 @@ logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir for starters
 rootdir = _get_patient_dir()
 session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]
+
 session_dirs = [
     f for f in session_all if op.isdir(f) and _is_sessiondir(f)
 ]  # Nexus session dirs
@@ -157,8 +158,9 @@ while True:
 
 session_desc = dict()
 for d in session_dirs:
+    # use .encode to work around Py2 unicode brokenness; this will remove extended chars
     session_desc[d] = raw_input(
-        'Please enter description for %s' % op.split(d)[-1]
+        'Please enter description for %s' % op.split(d)[-1].encode('ascii', 'ignore')
     ).decode('utf-8')
 
 
@@ -169,7 +171,6 @@ for d in session_dirs:
 nexus._kill_nexus(restart=True)
 time.sleep(20)  # might take a while
 
-# %%
 for sessiondir in session_dirs:
     c3dfiles = sessionutils.get_c3ds(
         sessiondir,
@@ -222,12 +223,15 @@ for sessiondir in session_dirs:
 
 
 # %% only convert the videos - for video-only sessions
+
+REDO_ALL = True  # force conversion even if target files exist
+
 for sessiondir in session_dirs:
     vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
     if not vidfiles:
         raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
 
-    if not videos.convert_videos(vidfiles, check_only=True):
+    if REDO_ALL or not videos.convert_videos(vidfiles, check_only=True):
         procs = videos.convert_videos(vidfiles=vidfiles)
         if not procs:
             raise RuntimeError('video converter processes could not be started')
