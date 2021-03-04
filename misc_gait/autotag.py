@@ -15,9 +15,10 @@ import shutil
 import numpy as np
 import time
 import logging
+import datetime
 
 import gaitutils
-from gaitutils import sessionutils, nexus, cfg, autoprocess, trial, videos
+from gaitutils import sessionutils, nexus, cfg, autoprocess, trial, videos, GaitDataError
 from gaitutils.report import web, pdf
 from ulstools.num import check_hetu
 
@@ -131,14 +132,17 @@ for p in session_dirs:
 # %%
 # 4: review the data
 for p in session_dirs:
+    # kinematics
     fig = gaitutils.viz.plots._plot_sessions(
         p, backend='plotly', figtitle=op.split(p)[-1]
     )
     gaitutils.viz.plot_misc.show_fig(fig)
+    # kinetics
     fig = gaitutils.viz.plots._plot_sessions(
         p, layout_name='lb_kinetics', backend='plotly', figtitle=op.split(p)[-1]
     )
     gaitutils.viz.plot_misc.show_fig(fig)
+    # EMG
     fig = gaitutils.viz.plots._plot_sessions(
         p, layout_name='std_emg', backend='plotly', figtitle=op.split(p)[-1]
     )
@@ -242,38 +246,29 @@ try:
 except KeyError:
     raise RuntimeError('Cannot interpret patient code')
 
+assert all(op.isdir(dir) for dir in diags_dirs.values())
+
 destdir_patient = op.join(DEST_ROOT, diag_dir, patient_code)
 
+# kill Nexus so it doesn't get confused by the move operation
+nexus._kill_nexus()
+
+copy_done = False
 for sessiondir in session_dirs:
     _sessiondir = op.split(sessiondir)[-1]
     destdir = op.join(destdir_patient, _sessiondir)
     print(destdir)
     shutil.copytree(sessiondir, destdir)
+copy_done = True
 
 # DANGER --- DANGER --- DANGER
 # remove from local drive, if copy was successful
 if False:
-    shutil.rmtree(rootdir)
+    if copy_done:
+        shutil.rmtree(rootdir)
 
 
-# %%
-if not op.isdir(destpath):
-    os.mkdir(destpath)
-
-# kill Nexus so it doesn't get confused by the move operation
-#nexus._kill_nexus()
-
-for sessiondir in session_dirs:
-    shutil.copytree(sessiondir, destpath)
-
-# shutil.copytree(rootdir, destpath) ??
-# shutil.rmtree
-
-
-
-
-
-# %% only convert the videos - for video-only sessions
+# %% ALT: only convert the videos - for video-only sessions
 
 REDO_ALL = True  # force conversion even if target files exist
 
