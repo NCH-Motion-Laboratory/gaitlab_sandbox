@@ -151,11 +151,11 @@ for p in session_dirs:
 
 # %%
 # 5: get info from user
-patient_name = raw_input('Please enter patient name:')
+patient_name = input('Please enter patient name:')
 
 prompt = 'Please enter hetu:'
 while True:
-    hetu = raw_input(prompt).decode('utf-8')
+    hetu = input(prompt)
     if check_hetu(hetu):
         break
     else:
@@ -163,10 +163,8 @@ while True:
 
 session_desc = dict()
 for d in session_dirs:
-    # use .encode to work around Py2 unicode brokenness; this will remove extended chars
-    session_desc[d] = raw_input(
-        'Please enter description for %s' % op.split(d)[-1].encode('ascii', 'ignore')
-    ).decode('utf-8')
+    session_desc[d] = input(
+        'Please enter description for %s' % op.split(d)[-1])
 
 
 # %%
@@ -208,7 +206,7 @@ for sessiondir in session_dirs:
         if not procs:
             raise RuntimeError('video converter processes could not be started')
 
-        # wait in sleep loop until all converter processes have finished
+        # wait in a sleep loop until all converter processes have finished
         completed = False
         _n_complete = -1
         while not completed:
@@ -246,9 +244,9 @@ try:
 except KeyError:
     raise RuntimeError('Cannot interpret patient code')
 
-assert all(op.isdir(dir) for dir in diags_dirs.values())
-
 destdir_patient = op.join(DEST_ROOT, diag_dir, patient_code)
+
+assert op.isdir(destdir_patient)
 
 # kill Nexus so it doesn't get confused by the move operation
 nexus._kill_nexus()
@@ -257,15 +255,16 @@ copy_done = False
 for sessiondir in session_dirs:
     _sessiondir = op.split(sessiondir)[-1]
     destdir = op.join(destdir_patient, _sessiondir)
-    print(destdir)
+    print('%s -> '%s' % (sessiondir, destdir))
     shutil.copytree(sessiondir, destdir)
 copy_done = True
 
-# DANGER --- DANGER --- DANGER
+
+# %% DANGER --- DANGER --- DANGER
 # remove from local drive, if copy was successful
-if False:
-    if copy_done:
-        shutil.rmtree(rootdir)
+# set ALLOW_DELETE manually
+if copy_done and ALLOW_DELETE:  
+    shutil.rmtree(rootdir)
 
 
 # %% ALT: only convert the videos - for video-only sessions
