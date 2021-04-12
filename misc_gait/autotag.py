@@ -115,6 +115,8 @@ session_dirs = [
     f for f in session_all if op.isdir(f) and _is_sessiondir(f)
 ]  # Nexus session dirs
 
+print(f'found session dirs: {session_dirs}')
+
 
 # %%
 # 2: autoproc all
