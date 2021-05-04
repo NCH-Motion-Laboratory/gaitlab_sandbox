@@ -125,7 +125,7 @@ for p in session_dirs:
     autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
 
 
-# %%
+# %
 # 3: autotag all
 for p in session_dirs:
     _autotag(p)
@@ -174,7 +174,7 @@ for d in session_dirs:
 
 # restart Nexus for postproc pipelines
 nexus._kill_nexus(restart=True)
-time.sleep(20)  # might take a while
+time.sleep(25)  # might take a while
 
 for sessiondir in session_dirs:
     c3dfiles = sessionutils.get_c3ds(
@@ -248,6 +248,8 @@ except KeyError:
 
 destdir_patient = op.join(DEST_ROOT, diag_dir, patient_code)
 
+if not op.isdir(destdir_patient):
+    os.mkdir(destdir_patient)  # for patients not seen before
 assert op.isdir(destdir_patient)
 
 # kill Nexus so it doesn't get confused by the move operation
@@ -257,15 +259,18 @@ copy_done = False
 for sessiondir in session_dirs:
     _sessiondir = op.split(sessiondir)[-1]
     destdir = op.join(destdir_patient, _sessiondir)
-    print('%s -> '%s' % (sessiondir, destdir))
+    print('%s -> %s' % (sessiondir, destdir))
     shutil.copytree(sessiondir, destdir)
 copy_done = True
+print('done')
+
+# FIXME: should assert that copy really worked
 
 
 # %% DANGER --- DANGER --- DANGER
 # remove from local drive, if copy was successful
 # set ALLOW_DELETE manually
-if copy_done and ALLOW_DELETE:  
+if copy_done and ALLOW_DELETE:
     shutil.rmtree(rootdir)
 
 
