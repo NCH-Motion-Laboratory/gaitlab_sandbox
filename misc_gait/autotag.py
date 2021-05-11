@@ -18,7 +18,15 @@ import logging
 import datetime
 
 import gaitutils
-from gaitutils import sessionutils, nexus, cfg, autoprocess, trial, videos, GaitDataError
+from gaitutils import (
+    sessionutils,
+    nexus,
+    cfg,
+    autoprocess,
+    trial,
+    videos,
+    GaitDataError,
+)
 from gaitutils.report import web, pdf
 from ulstools.num import check_hetu
 
@@ -134,21 +142,11 @@ for p in session_dirs:
 # %%
 # 4: review the data
 for p in session_dirs:
-    # kinematics
-    fig = gaitutils.viz.plots._plot_sessions(
-        p, backend='plotly', figtitle=op.split(p)[-1]
-    )
-    gaitutils.viz.plot_misc.show_fig(fig)
-    # kinetics
-    fig = gaitutils.viz.plots._plot_sessions(
-        p, layout_name='lb_kinetics', backend='plotly', figtitle=op.split(p)[-1]
-    )
-    gaitutils.viz.plot_misc.show_fig(fig)
-    # EMG
-    fig = gaitutils.viz.plots._plot_sessions(
-        p, layout_name='std_emg', backend='plotly', figtitle=op.split(p)[-1]
-    )
-    gaitutils.viz.plot_misc.show_fig(fig)
+    for layout_name in cfg.plot.review_layouts:
+        fig = gaitutils.viz.plots._plot_sessions(
+            p, layout_name=layout_name, backend='plotly', figtitle=op.split(p)[-1]
+        )
+        gaitutils.viz.plot_misc.show_fig(fig)
 
 
 # %%
@@ -165,8 +163,7 @@ while True:
 
 session_desc = dict()
 for d in session_dirs:
-    session_desc[d] = input(
-        'Please enter description for %s' % op.split(d)[-1])
+    session_desc[d] = input('Please enter description for %s' % op.split(d)[-1])
 
 
 # %%
@@ -242,7 +239,9 @@ diags_dirs = {
     'C': '1_Muu CP',
 }
 try:
-    diag_dir = diags_dirs[patient_code[0]]  # choose according to 1st letter of patient code
+    diag_dir = diags_dirs[
+        patient_code[0]
+    ]  # choose according to 1st letter of patient code
 except KeyError:
     raise RuntimeError('Cannot interpret patient code')
 
