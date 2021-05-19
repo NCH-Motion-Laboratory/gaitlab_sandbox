@@ -153,12 +153,8 @@ for p in session_dirs:
 patient_name = input('Please enter patient name:')
 
 prompt = 'Please enter hetu:'
-while True:
-    hetu = input(prompt)
-    if check_hetu(hetu):
-        break
-    else:
-        prompt = 'Invalid hetu entered, please re-enter:'
+while not check_hetu(hetu := input(prompt)):
+    prompt = 'Invalid hetu entered, please re-enter:'
 
 session_desc = dict()
 for d in session_dirs:
