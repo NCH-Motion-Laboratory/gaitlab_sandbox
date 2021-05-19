@@ -132,7 +132,6 @@ for p in session_dirs:
     enffiles = sessionutils.get_enfs(p)
     autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
 
-
 # %
 # 3: autotag all
 for p in session_dirs:
@@ -142,9 +141,9 @@ for p in session_dirs:
 # %%
 # 4: review the data
 for p in session_dirs:
-    for layout_name in cfg.plot.review_layouts:
+    for lout in cfg.plot.review_layouts:
         fig = gaitutils.viz.plots._plot_sessions(
-            p, layout_name=layout_name, backend='plotly', figtitle=op.split(p)[-1]
+            p, layout_name=lout, backend='plotly', figtitle=op.split(p)[-1]
         )
         gaitutils.viz.plot_misc.show_fig(fig)
 
