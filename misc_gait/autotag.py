@@ -6,11 +6,10 @@ experimental global autoprocess
 
 @author: Jussi (jnu@iki.fi)
 """
-
 # %% init
 
 import os
-import os.path as op
+from pathlib import Path
 import shutil
 import numpy as np
 import time
@@ -75,11 +74,13 @@ def _get_patient_dir():
     if not cwd:
         raise RuntimeError('cannot get cwd')
     else:
-        return op.dirname(cwd)
+        return cwd.parent
 
 
 def _is_sessiondir(dir):
     """Check whether given dir is a Nexus session directory"""
+    if not dir.is_dir():
+        return False
     try:
         sessionutils.get_session_date(dir)
     except GaitDataError:
@@ -89,11 +90,9 @@ def _is_sessiondir(dir):
 
 def _run_postprocessing(c3dfiles):
     """Helper function that will be run in a separate thread"""
-    vicon = nexus.viconnexus()
     nexus._close_trial()
     for c3dfile in c3dfiles:
-        trbase = op.splitext(c3dfile)[0]
-        vicon.OpenTrial(trbase, cfg.autoproc.nexus_timeout)
+        nexus._open_trial(c3dfile)
         nexus._run_pipelines(cfg.autoproc.postproc_pipelines)
 
 
@@ -117,10 +116,10 @@ def _parse_name(name):
 logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir for starters
 rootdir = _get_patient_dir()
-session_all = [op.join(rootdir, p) for p in os.listdir(rootdir)]
+session_all = [rootdir / p for p in os.listdir(rootdir)]
 
 session_dirs = [
-    f for f in session_all if op.isdir(f) and _is_sessiondir(f)
+    f for f in session_all if _is_sessiondir(f)
 ]  # Nexus session dirs
 
 print(f'found session dirs: {session_dirs}')
@@ -132,7 +131,7 @@ for p in session_dirs:
     enffiles = sessionutils.get_enfs(p)
     autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
 
-# %
+# %%
 # 3: autotag all
 for p in session_dirs:
     _autotag(p)
@@ -143,7 +142,7 @@ for p in session_dirs:
 for p in session_dirs:
     for lout in cfg.plot.review_layouts:
         fig = gaitutils.viz.plots._plot_sessions(
-            p, layout_name=lout, backend='plotly', figtitle=op.split(p)[-1]
+            p, layout_name=lout, backend='plotly', figtitle=p.name
         )
         gaitutils.viz.plot_misc.show_fig(fig)
 
@@ -158,17 +157,19 @@ while not check_hetu(hetu := input(prompt)):
 
 session_desc = dict()
 for d in session_dirs:
-    session_desc[d] = input('Please enter description for %s' % op.split(d)[-1])
+    session_desc[d] = input('Please enter description for %s' % d.name)
 
 
 # %%
 # 6: run postproc. pipelines
 
-# restart Nexus for postproc pipelines
-nexus._kill_nexus(restart=True)
-time.sleep(25)  # might take a while
 
 for sessiondir in session_dirs:
+
+    # restart Nexus for postproc pipelines
+    nexus._kill_nexus(restart=True)
+    time.sleep(25)  # might take a while
+
     c3dfiles = sessionutils.get_c3ds(
         sessiondir,
         tags=cfg.eclipse.tags,
@@ -205,10 +206,7 @@ for sessiondir in session_dirs:
         _n_complete = -1
         while not completed:
             n_complete = len([p for p in procs if p.poll() is not None])
-            prog_txt = 'Converting videos: %d of %d files done' % (
-                n_complete,
-                len(procs),
-            )
+            prog_txt = f'Converting videos: {n_complete} of {len(procs)} files done'
             if _n_complete != n_complete:
                 print(prog_txt)
                 _n_complete = n_complete
@@ -222,9 +220,9 @@ for sessiondir in session_dirs:
 # %%
 # 8: move patient to network drive
 
-DEST_ROOT = r'Y:\Userdata_Vicon_Server'
+DEST_ROOT = Path(r'Y:\Userdata_Vicon_Server')
 
-patient_code = op.split(rootdir)[-1]
+patient_code = rootdir.name
 
 diags_dirs = {
     'H': '1_Hemiplegia',
@@ -240,23 +238,24 @@ try:
 except KeyError:
     raise RuntimeError('Cannot interpret patient code')
 
-destdir_patient = op.join(DEST_ROOT, diag_dir, patient_code)
+destdir_patient = DEST_ROOT / diag_dir / patient_code
 
-if not op.isdir(destdir_patient):
+if not destdir_patient.is_dir():
     os.mkdir(destdir_patient)  # for patients not seen before
-assert op.isdir(destdir_patient)
+assert destdir_patient.is_dir():
 
 # kill Nexus so it doesn't get confused by the move operation
 nexus._kill_nexus()
 
 copy_done = False
 for sessiondir in session_dirs:
-    _sessiondir = op.split(sessiondir)[-1]
-    destdir = op.join(destdir_patient, _sessiondir)
-    print('%s -> %s' % (sessiondir, destdir))
+    _sessiondir = sessiondir.name
+    destdir = destdir_patient / _sessiondir
+    print(f'copying {sessiondir} -> {destdir}...')
     shutil.copytree(sessiondir, destdir)
+    print('done')
 copy_done = True
-print('done')
+print('all done')
 
 # FIXME: should assert that copy really worked
 
