@@ -114,14 +114,8 @@ def _parse_name(name):
 # %%
 # 1: get session dirs
 logging.basicConfig(level=logging.DEBUG)
-# must be in a session dir for starters
-rootdir = _get_patient_dir()
-session_all = [rootdir / p for p in os.listdir(rootdir)]
-
-session_dirs = [
-    f for f in session_all if _is_sessiondir(f)
-]  # Nexus session dirs
-
+# must be in a session dir
+session_dirs = [p for p in _get_patient_dir().iterdir() if _is_sessiondir(p)]
 print(f'found session dirs: {session_dirs}')
 
 
@@ -130,6 +124,7 @@ print(f'found session dirs: {session_dirs}')
 for p in session_dirs:
     enffiles = sessionutils.get_enfs(p)
     autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
+
 
 # %%
 # 3: autotag all
@@ -157,13 +152,11 @@ while not check_hetu(hetu := input(prompt)):
 
 session_desc = dict()
 for d in session_dirs:
-    session_desc[d] = input('Please enter description for %s' % d.name)
+    session_desc[d] = input(f'Please enter description for {d.name}')
 
 
 # %%
 # 6: run postproc. pipelines
-
-
 for sessiondir in session_dirs:
 
     # restart Nexus for postproc pipelines
@@ -194,7 +187,7 @@ for sessiondir in session_dirs:
     sessionutils.save_info(sessiondir, info)
     vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
     if not vidfiles:
-        raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
+        raise RuntimeError(f'Cannot find any video files for session {sessiondir}')
 
     if not videos.convert_videos(vidfiles, check_only=True):
         procs = videos.convert_videos(vidfiles=vidfiles)
@@ -274,22 +267,18 @@ REDO_ALL = True  # force conversion even if target files exist
 for sessiondir in session_dirs:
     vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
     if not vidfiles:
-        raise RuntimeError('Cannot find any video files for session %s' % sessiondir)
+        raise RuntimeError(f'Cannot find any video files for session {sessiondir}')
 
     if REDO_ALL or not videos.convert_videos(vidfiles, check_only=True):
         procs = videos.convert_videos(vidfiles=vidfiles)
         if not procs:
-            raise RuntimeError('video converter processes could not be started')
-
+            raise RuntimeError('Video converter processes could not be started')
         # wait in sleep loop until all converter processes have finished
         completed = False
         _n_complete = -1
         while not completed:
             n_complete = len([p for p in procs if p.poll() is not None])
-            prog_txt = 'Converting videos: %d of %d files done' % (
-                n_complete,
-                len(procs),
-            )
+            prog_txt = f'Converting videos: {n_complete} of {len(procs)} files done'
             if _n_complete != n_complete:
                 print(prog_txt)
                 _n_complete = n_complete
