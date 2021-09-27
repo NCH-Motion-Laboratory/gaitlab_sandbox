@@ -116,7 +116,7 @@ def _parse_name(name):
 logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir
 session_dirs = [p for p in _get_patient_dir().iterdir() if _is_sessiondir(p)]
-print(f'found session dirs: {session_dirs}')
+print(f'found session dirs: {[str(s) for s in session_dirs]}')
 
 
 # %%
@@ -161,7 +161,7 @@ for sessiondir in session_dirs:
 
     # restart Nexus for postproc pipelines
     nexus._kill_nexus(restart=True)
-    time.sleep(25)  # might take a while
+    time.sleep(30)  # might take a while
 
     c3dfiles = sessionutils.get_c3ds(
         sessiondir,
@@ -215,6 +215,7 @@ for sessiondir in session_dirs:
 
 DEST_ROOT = Path(r'Y:\Userdata_Vicon_Server')
 
+rootdir = _get_patient_dir()
 patient_code = rootdir.name
 
 diags_dirs = {
@@ -235,7 +236,7 @@ destdir_patient = DEST_ROOT / diag_dir / patient_code
 
 if not destdir_patient.is_dir():
     os.mkdir(destdir_patient)  # for patients not seen before
-assert destdir_patient.is_dir():
+assert destdir_patient.is_dir()
 
 # kill Nexus so it doesn't get confused by the move operation
 nexus._kill_nexus()
