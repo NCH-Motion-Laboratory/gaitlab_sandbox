@@ -185,13 +185,12 @@ for sessiondir in session_dirs:
         'session_description': session_desc[sessiondir],
     }
     sessionutils.save_info(sessiondir, info)
-    vidfiles = videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
-    if not vidfiles:
+    if not (vidfiles := videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)):
         raise RuntimeError(f'Cannot find any video files for session {sessiondir}')
 
     if not videos.convert_videos(vidfiles, check_only=True):
-        procs = videos.convert_videos(vidfiles=vidfiles)
-        if not procs:
+        # need to convert
+        if not (procs := videos.convert_videos(vidfiles=vidfiles)):
             raise RuntimeError('video converter processes could not be started')
 
         # wait in a sleep loop until all converter processes have finished
@@ -251,7 +250,7 @@ for sessiondir in session_dirs:
 copy_done = True
 print('all done')
 
-# FIXME: should assert that copy really worked
+# FIXME: should assert that copy really worked?
 
 
 # %% DANGER --- DANGER --- DANGER
