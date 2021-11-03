@@ -32,6 +32,9 @@ from ulstools.num import check_hetu
 MAX_TAGS_PER_CONTEXT = 3
 
 
+logging.basicConfig(level=logging.DEBUG)
+
+
 def _count_fp_contacts(trial):
     """Return n of valid forceplate contacts"""
     return len(trial.fp_events['L_strikes']) + len(trial.fp_events['R_strikes'])
@@ -70,8 +73,7 @@ def _autotag(sessiondir):
 
 def _get_patient_dir():
     """Get patient dir (session root). Must currently be in a session."""
-    cwd = gaitutils.nexus.get_sessionpath()
-    if not cwd:
+    if not (cwd := gaitutils.nexus.get_sessionpath()):
         raise RuntimeError('cannot get cwd')
     else:
         return cwd.parent
@@ -113,7 +115,6 @@ def _parse_name(name):
 
 # %%
 # 1: get session dirs
-logging.basicConfig(level=logging.DEBUG)
 # must be in a session dir
 session_dirs = [p for p in _get_patient_dir().iterdir() if _is_sessiondir(p)]
 print(f'found session dirs: {[str(s) for s in session_dirs]}')
@@ -174,6 +175,8 @@ for sessiondir in session_dirs:
     )
     _run_postprocessing(c3dfiles)
 
+print('*** Finished postprocessing pipelines')
+
 
 # %%
 # 7: generate reports
@@ -208,6 +211,8 @@ for sessiondir in session_dirs:
     web.dash_report(sessions=[sessiondir], info=info, recreate_plots=True)
     pdf.create_report(sessiondir, info, write_extracted=True, write_timedist=True)
 
+print('*** Finished reports')
+
 
 # %%
 # 8: move patient to network drive
@@ -235,7 +240,7 @@ destdir_patient = DEST_ROOT / diag_dir / patient_code
 
 if not destdir_patient.is_dir():
     os.mkdir(destdir_patient)  # for patients not seen before
-assert destdir_patient.is_dir()
+    assert destdir_patient.is_dir()
 
 # kill Nexus so it doesn't get confused by the move operation
 nexus._kill_nexus()
@@ -248,15 +253,16 @@ for sessiondir in session_dirs:
     shutil.copytree(sessiondir, destdir)
     print('done')
 copy_done = True
-print('all done')
 
 # FIXME: should assert that copy really worked?
+print('*** Finished copying')
 
 
 # %% DANGER --- DANGER --- DANGER
 # remove from local drive, if copy was successful
 # set ALLOW_DELETE manually
 if copy_done and ALLOW_DELETE:
+    assert rootdir.parent == Path('D:/ViconData/Clinical')
     shutil.rmtree(rootdir)
 
 
