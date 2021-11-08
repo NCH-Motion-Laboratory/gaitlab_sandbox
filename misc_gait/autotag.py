@@ -31,7 +31,6 @@ from ulstools.num import check_hetu
 
 MAX_TAGS_PER_CONTEXT = 3
 
-
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -138,26 +137,14 @@ for p in session_dirs:
 for p in session_dirs:
     for lout in cfg.plot.review_layouts:
         fig = gaitutils.viz.plots._plot_sessions(
-            p, layout_name=lout, backend='plotly', figtitle=p.name
+            p, layout_name=lout, backend='plotly', figtitle=p.name, emg_mode='envelope'
         )
         gaitutils.viz.plot_misc.show_fig(fig)
 
 
-# %%
-# 5: get info from user
-patient_name = input('Please enter patient name:')
-
-prompt = 'Please enter hetu:'
-while not check_hetu(hetu := input(prompt)):
-    prompt = 'Invalid hetu entered, please re-enter:'
-
-session_desc = dict()
-for d in session_dirs:
-    session_desc[d] = input(f'Please enter description for {d.name}')
-
 
 # %%
-# 6: run postproc. pipelines
+# 5: run postproc. pipelines
 for sessiondir in session_dirs:
 
     # restart Nexus for postproc pipelines
@@ -175,7 +162,22 @@ for sessiondir in session_dirs:
     )
     _run_postprocessing(c3dfiles)
 
+    print(f'Finished {sessiondir}')
+
 print('*** Finished postprocessing pipelines')
+
+
+# %%
+# 6: get info from user
+patient_name = input('Please enter patient name:')
+
+prompt = 'Please enter hetu:'
+while not check_hetu(hetu := input(prompt)):
+    prompt = 'Invalid hetu entered, please re-enter:'
+
+session_desc = dict()
+for d in session_dirs:
+    session_desc[d] = input(f'Please enter description for {d.name}')
 
 
 # %%
@@ -215,7 +217,7 @@ print('*** Finished reports')
 
 
 # %%
-# 8: move patient to network drive
+# 8: copy patient to network drive
 
 DEST_ROOT = Path(r'Y:\Userdata_Vicon_Server')
 
@@ -251,6 +253,7 @@ for sessiondir in session_dirs:
     destdir = destdir_patient / _sessiondir
     print(f'copying {sessiondir} -> {destdir}...')
     shutil.copytree(sessiondir, destdir)
+    assert destdir.is_dir()
     print('done')
 copy_done = True
 
