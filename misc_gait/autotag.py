@@ -29,7 +29,19 @@ from gaitutils import (
 from gaitutils.report import web, pdf
 from ulstools.num import check_hetu
 
+# how many trials to tag per context
 MAX_TAGS_PER_CONTEXT = 3
+# root dir for copy destination
+DEST_ROOT = Path(r'Y:\Userdata_Vicon_Server')
+# diag-specific subdirs
+DIAGS_DIRS = {
+    'H': '1_Hemiplegia',
+    'D': '1_Diplegia',
+    'M': '1_Meningomyelocele',
+    'E': '1_Eridiagnoosit',
+    'C': '1_Muu CP',
+}
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -116,7 +128,33 @@ def _parse_name(name):
 # 1: get session dirs
 # must be in a session dir
 session_dirs = [p for p in _get_patient_dir().iterdir() if _is_sessiondir(p)]
-print(f'found session dirs: {[str(s) for s in session_dirs]}')
+if session_dirs:
+    print(f'found session dirs: {[str(s) for s in session_dirs]}')
+else:
+    raise RuntimeError('no valid session dirs')
+
+# check if any dirs already exist on dest
+rootdir = session_dirs[0].parent
+patient_code = rootdir.name
+
+try:
+    diag_dir = DIAGS_DIRS[
+        patient_code[0]
+    ]  # choose according to 1st letter of patient code
+except KeyError:
+    raise RuntimeError('Cannot interpret patient code')
+
+destdir_patient = DEST_ROOT / diag_dir / patient_code
+
+if not destdir_patient.is_dir():
+    os.mkdir(destdir_patient)  # for patients not seen before
+    assert destdir_patient.is_dir()
+else:
+    for sessiondir in session_dirs:
+        sessiondir_dest = destdir_patient / sessiondir.name
+        if sessiondir_dest.is_dir():
+            raise RuntimeError(f'destination directory {sessiondir_dest} already exists!')
+
 
 
 # %%
@@ -137,7 +175,7 @@ for p in session_dirs:
 for p in session_dirs:
     for lout in cfg.plot.review_layouts:
         fig = gaitutils.viz.plots._plot_sessions(
-            p, layout_name=lout, backend='plotly', figtitle=p.name, emg_mode='envelope'
+            p, layout_name=lout, backend='plotly', figtitle=p.name
         )
         gaitutils.viz.plot_misc.show_fig(fig)
 
@@ -219,31 +257,6 @@ print('*** Finished reports')
 # %%
 # 8: copy patient to network drive
 
-DEST_ROOT = Path(r'Y:\Userdata_Vicon_Server')
-
-rootdir = _get_patient_dir()
-patient_code = rootdir.name
-
-diags_dirs = {
-    'H': '1_Hemiplegia',
-    'D': '1_Diplegia',
-    'M': '1_Meningomyelocele',
-    'E': '1_Eridiagnoosit',
-    'C': '1_Muu CP',
-}
-try:
-    diag_dir = diags_dirs[
-        patient_code[0]
-    ]  # choose according to 1st letter of patient code
-except KeyError:
-    raise RuntimeError('Cannot interpret patient code')
-
-destdir_patient = DEST_ROOT / diag_dir / patient_code
-
-if not destdir_patient.is_dir():
-    os.mkdir(destdir_patient)  # for patients not seen before
-    assert destdir_patient.is_dir()
-
 # kill Nexus so it doesn't get confused by the move operation
 nexus._kill_nexus()
 
@@ -267,6 +280,7 @@ print('*** Finished copying')
 if copy_done and ALLOW_DELETE:
     assert rootdir.parent == Path('D:/ViconData/Clinical')
     shutil.rmtree(rootdir)
+
 
 
 # %% ALT: only convert the videos - for video-only sessions
@@ -293,3 +307,5 @@ for sessiondir in session_dirs:
                 _n_complete = n_complete
             time.sleep(1)
             completed = n_complete == len(procs)
+            
+print('*** Finished video conversion')
