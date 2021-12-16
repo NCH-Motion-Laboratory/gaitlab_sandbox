@@ -15,6 +15,7 @@ import numpy as np
 import time
 import logging
 import datetime
+import sqlite3
 
 import gaitutils
 from gaitutils import (
@@ -51,8 +52,11 @@ def _count_fp_contacts(trial):
     return len(trial.fp_events['L_strikes']) + len(trial.fp_events['R_strikes'])
 
 
-def _gait_dir(enffile):
-    """Quick and dirty gait direction from enffile, after autoprocessing"""
+def _gait_direction(enffile):
+    """Quick and dirty gait direction from enffile, after autoprocessing.
+    
+    XXX: fragile, relies on certain description string.
+    """
     keys = gaitutils.eclipse.get_eclipse_keys(enffile, 'Description')
     thedesc = keys['DESCRIPTION']
     for dir in 'ET':
@@ -67,18 +71,18 @@ def _autotag(sessiondir):
     trials = [trial.Trial(c3dfile) for c3dfile in c3dfiles]
     enffiles = [tr.enfpath for tr in trials]
 
-    for dir in 'ET':
+    for direction in 'ET':
         enfs_thisdir = [
             (k, enffile)
             for (k, enffile) in enumerate(enffiles)
-            if _gait_dir(enffile) == dir
+            if _gait_direction(enffile) == direction
         ]
         n_contacts = [_count_fp_contacts(trials[k]) for k, _ in enfs_thisdir]
         best_inds = np.argsort(-np.array(n_contacts))
         bestfiles = [enfs_thisdir[k][1] for k in best_inds]
         for k, enffile in enumerate(bestfiles[:MAX_TAGS_PER_CONTEXT], 1):
             gaitutils.eclipse.set_eclipse_keys(
-                enffile, {'NOTES': dir + str(k)}, update_existing=True
+                enffile, {'NOTES': direction + str(k)}, update_existing=True
             )
 
 
@@ -176,7 +180,7 @@ for p in session_dirs:
 for p in session_dirs:
     for lout in cfg.plot.review_layouts:
         fig = gaitutils.viz.plots._plot_sessions(
-            p, layout_name=lout, backend='plotly', figtitle=p.name
+            p, layout=lout, backend='plotly', figtitle=p.name
         )
         gaitutils.viz.plot_misc.show_fig(fig)
 
@@ -207,12 +211,25 @@ print('*** Finished postprocessing pipelines')
 
 
 # %%
-# 6: get info from user
-patient_name = input('Please enter patient name:')
+# 6: get info from ROM database or user
 
-prompt = 'Please enter hetu:'
-while not check_hetu(hetu := input(prompt)):
-    prompt = 'Invalid hetu entered, please re-enter:'
+
+db_file = Path(r'Z:\gaitbase\patients.db')
+
+conn = sqlite3.connect(db_file)
+conn.execute('PRAGMA foreign_keys = ON;')
+p = list(conn.execute(f"SELECT * from patients WHERE patient_code='{patient_code}'"))
+conn.close()
+
+if p:
+    print(f'found patient in database: {p[0]}')
+    _, firstname, lastname, hetu, _, _ = p[0]
+    patient_name = f'{firstname} {lastname}'
+else:
+    patient_name = input('Please enter patient name:')
+    prompt = 'Please enter hetu:'
+    while not check_hetu(hetu := input(prompt)):
+        prompt = 'Invalid hetu entered, please re-enter:'
 
 session_desc = dict()
 for d in session_dirs:
@@ -220,6 +237,7 @@ for d in session_dirs:
 
 
 # %%
+
 # 7: generate reports
 for sessiondir in session_dirs:
 
