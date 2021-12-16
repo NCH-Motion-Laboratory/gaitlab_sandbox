@@ -150,10 +150,11 @@ if not destdir_patient.is_dir():
     os.mkdir(destdir_patient)  # for patients not seen before
     assert destdir_patient.is_dir()
 else:
+    print(f'patient destination dir {destdir_patient} already exists')
     for sessiondir in session_dirs:
         sessiondir_dest = destdir_patient / sessiondir.name
         if sessiondir_dest.is_dir():
-            raise RuntimeError(f'destination directory {sessiondir_dest} already exists!')
+            raise RuntimeError(f'session destination directory {sessiondir_dest} already exists!')
 
 
 
@@ -262,12 +263,10 @@ nexus._kill_nexus()
 
 copy_done = False
 for sessiondir in session_dirs:
-    _sessiondir = sessiondir.name
-    destdir = destdir_patient / _sessiondir
+    destdir = destdir_patient / sessiondir.name
     print(f'copying {sessiondir} -> {destdir}...')
     shutil.copytree(sessiondir, destdir)
     assert destdir.is_dir()
-    print('done')
 copy_done = True
 
 # FIXME: should assert that copy really worked?
@@ -307,5 +306,5 @@ for sessiondir in session_dirs:
                 _n_complete = n_complete
             time.sleep(1)
             completed = n_complete == len(procs)
-            
+
 print('*** Finished video conversion')
