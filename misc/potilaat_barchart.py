@@ -11,19 +11,22 @@ import numpy as np
 from collections import OrderedDict
 
 FONTSIZE = 15
+LEGEND_FONTSIZE = 12
+UPK_LEGEND = 'Ulkopaikkakuntalaisten osuus\n(vuoden 2021 tietoa ei Apotista saatavilla)'
 
 # set global font size
 plt.rc('font', size=FONTSIZE)
 
 
 
-def autolabel(rects):
+def autolabel(rects, label_zeros=True):
     """
     Attach a text label above each bar displaying its height
+    If label_zeros is False, don't label bars with zero height.
     """
     for rect in rects:
         height = rect.get_height()
-        if height != 0:
+        if label_zeros or height != 0:
             plt.text(
                 rect.get_x() + rect.get_width() / 2,
                 1.01 * height,
@@ -38,9 +41,9 @@ def autolabel(rects):
 # specify input data
 
 # years corresponding to data vectors
-yrs = range(2012, 2021)
+yrs = range(2012, 2022)
 # optionally, only plot data for certain years
-yrs_plot = range(2014, 2021)
+yrs_plot = range(2015, 2022)
 
 # 2020 uudet kategoriat:
 #
@@ -49,15 +52,14 @@ yrs_plot = range(2014, 2021)
 # kelkkamittaus
 # hengityskaasu
 
-
 data = OrderedDict()  # bars will be plotted in the order they are given here
 data[u'Kävelyanalyysi'] = dict()
-data[u'Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 87]
-data[u'Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25]
+data[u'Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 87, 100]
+data[u'Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 0]
 
 data[u'Kliiniset mittaukset'] = dict()
-data[u'Kliiniset mittaukset']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 94]
-data[u'Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25]
+data[u'Kliiniset mittaukset']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 94, 160]
+data[u'Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 0]
 
 data[u'Laitteistetut lihasvoimamittaukset'] = dict()
 data[u'Laitteistetut lihasvoimamittaukset']['total'] = [
@@ -70,32 +72,33 @@ data[u'Laitteistetut lihasvoimamittaukset']['total'] = [
     34,
     14,
     23,
+    24,
 ]
-data[u'Laitteistetut lihasvoimamittaukset']['ulko'] = [0, 0, 0, 0, 14, 20, 10, 3, 14]
+data[u'Laitteistetut lihasvoimamittaukset']['ulko'] = [0, 0, 0, 0, 14, 20, 10, 3, 14, 0]
 
 data[u'Painejakaumamittaukset'] = dict()
-data[u'Painejakaumamittaukset']['total'] = [0, 0, 0, 0, 77, 135, 105, 150, 162]
-data[u'Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36, 25]
+data[u'Painejakaumamittaukset']['total'] = [0, 0, 0, 0, 77, 135, 105, 150, 162, 169]
+data[u'Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36, 25, 0]
 
 data[u'EMG-mittaukset'] = dict()
-data[u'EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93, 106, 83]
-data[u'EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33, 25]
+data[u'EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93, 106, 83, 100]
+data[u'EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33, 25, 0]
 
 data[u'Kävelyanalyysin viiteaineisto'] = dict()
-data[u'Kävelyanalyysin viiteaineisto']['total'] = [0, 0, 0, 0, 0, 21, 4, 36, 0]
-data[u'Kävelyanalyysin viiteaineisto']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+data[u'Kävelyanalyysin viiteaineisto']['total'] = [0, 0, 0, 0, 0, 21, 4, 36, 0, 0]
+data[u'Kävelyanalyysin viiteaineisto']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data[u'Yläraaja'] = dict()
-data[u'Yläraaja']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7]
-data[u'Yläraaja']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+data[u'Yläraaja']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 6]
+data[u'Yläraaja']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data[u'Hengityskaasu'] = dict()
-data[u'Hengityskaasu']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7]
-data[u'Hengityskaasu']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+data[u'Hengityskaasu']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 4]
+data[u'Hengityskaasu']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data[u'Kelkkamittaukset'] = dict()
-data[u'Kelkkamittaukset']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 10]
-data[u'Kelkkamittaukset']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+data[u'Kelkkamittaukset']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 10, None]
+data[u'Kelkkamittaukset']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 # check length
 for var, di in data.items():
@@ -143,11 +146,14 @@ for k, (title, subdata) in enumerate(data.items()):
     bars.append(b)
     bars_u.append(bu)
 
-for b in bars + bars_u:
+for b in bars:
     autolabel(b)
 
+for b in bars_u:
+    autolabel(b, label_zeros=False)
+
 plt.legend(
-    bars + bars_u[:1], list(data.keys()) + ['Ulkopaikkakuntalaisia'], loc='upper left'
+    bars + bars_u[:1], list(data.keys()) + [UPK_LEGEND], loc='upper left', fontsize=LEGEND_FONTSIZE
 )
 plt.ylabel('Potilaita')
 plt.xlabel('Vuosi')
