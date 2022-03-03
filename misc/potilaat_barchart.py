@@ -11,7 +11,7 @@ import numpy as np
 
 FONTSIZE = 15
 LEGEND_FONTSIZE = 12
-UPK_LEGEND = 'Ulkopaikkakuntalaisten osuus\n(vuoden 2021 tietoa ei Apotista saatavilla)'
+UPK_LEGEND = 'Ulkopaikkakuntalaisten osuus'
 
 # set global font size
 plt.rc('font', size=FONTSIZE)
@@ -43,22 +43,17 @@ yrs = range(2012, 2022)
 # optionally, only plot data for certain years
 yrs_plot = range(2015, 2022)
 
-# 2020 uudet kategoriat:
-#
-# yläraaja
-# liikelaajuus = kliininen mittaus
-# kelkkamittaus
-# hengityskaasu
 
 data = dict()  # bars will be plotted in the order they are given here
 data['Kävelyanalyysi'] = dict()
 data['Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 87, 100]
-data['Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 0]
+data['Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 24]
 
+# liikelaajuus = kliiniset mittaulset
 data['Kliiniset mittaukset'] = dict()
 data['Kliiniset mittaukset']['total'] = [
     46, 45, 50, 67, 93, 137, 101, 124, 94, 160]
-data['Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 0]
+data['Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 24]
 
 data['Laitteistetut lihasvoimamittaukset'] = dict()
 data['Laitteistetut lihasvoimamittaukset']['total'] = [
@@ -74,16 +69,16 @@ data['Laitteistetut lihasvoimamittaukset']['total'] = [
     24,
 ]
 data['Laitteistetut lihasvoimamittaukset']['ulko'] = [
-    0, 0, 0, 0, 14, 20, 10, 3, 14, 0]
+    0, 0, 0, 0, 14, 20, 10, 3, 14, 16]
 
 data['Painejakaumamittaukset'] = dict()
 data['Painejakaumamittaukset']['total'] = [
     0, 0, 0, 0, 77, 135, 105, 150, 162, 169]
-data['Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36, 25, 0]
+data['Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36, 25, 24]
 
 data['EMG-mittaukset'] = dict()
 data['EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93, 106, 83, 100]
-data['EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33, 25, 0]
+data['EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33, 25, 24]
 
 data['Kävelyanalyysin viiteaineisto'] = dict()
 data['Kävelyanalyysin viiteaineisto']['total'] = [
@@ -99,14 +94,14 @@ data['Hengityskaasu']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 4]
 data['Hengityskaasu']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data['Kelkkamittaukset'] = dict()
-data['Kelkkamittaukset']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 10, 0]
+data['Kelkkamittaukset']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 10, 5]
 data['Kelkkamittaukset']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 # check length
 for var, di in data.items():
     for name, li in di.items():
         if len(li) != len(yrs):
-            raise RuntimeError('invalid data length for %s/%s' % (var, name))
+            raise RuntimeError(f'invalid data length for {var}/{name}')
 
 # crop data to desired years
 # assumes continuous ranges
@@ -159,7 +154,7 @@ plt.legend(
 )
 plt.ylabel('Potilaita')
 plt.xlabel('Vuosi')
-# shift the xticklabels a bit
+# shift the x tick labels a bit
 plt.xticks(yrs_plot)
 locs, labels = plt.xticks()
 locs = [x - 0.25 for x in locs]
