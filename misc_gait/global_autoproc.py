@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-experimental global autoprocess
-
+Experimental global autoprocessing. This can be used to process many sessions at
+once (for a single subject).
 
 
 @author: Jussi (jnu@iki.fi)
