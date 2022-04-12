@@ -17,6 +17,7 @@ import logging
 import datetime
 import sqlite3
 
+
 import gaitutils
 from gaitutils import (
     sessionutils,
@@ -44,7 +45,7 @@ DIAGS_DIRS = {
 }
 
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 
 def _count_fp_contacts(trial):
@@ -54,7 +55,7 @@ def _count_fp_contacts(trial):
 
 def _gait_direction(enffile):
     """Quick and dirty gait direction from enffile, after autoprocessing.
-    
+
     XXX: fragile, relies on certain description string.
     """
     keys = gaitutils.eclipse.get_eclipse_keys(enffile, 'Description')
@@ -122,15 +123,16 @@ def _parse_name(name):
         datetxt = '-'.join(name_split[:3])
         d = datetime.datetime.strptime(datetxt, '%Y-%m-%d')
     except ValueError:
-        raise ValueError('Could not parse name')
+        raise ValueError('Could not parse name') 
     code = name_split[-1] if len(name_split) > 3 else None
     desc = ', '.join(name_split[3:-1]) if len(name_split) > 3 else None
     return d, code, desc
 
 
 # %%
-# 1: get session dirs
-# must be in a session dir
+# 1: get list of all session dirs
+# one of the session dirs must be open in Nexus
+REQUIRE_DESTDIR_NOTEXIST = True  # set to False for debugging
 session_dirs = [p for p in _get_patient_dir().iterdir() if _is_sessiondir(p)]
 if session_dirs:
     print(f'found session dirs: {[str(s) for s in session_dirs]}')
@@ -157,9 +159,11 @@ else:
     print(f'patient destination dir {destdir_patient} already exists')
     for sessiondir in session_dirs:
         sessiondir_dest = destdir_patient / sessiondir.name
-        if sessiondir_dest.is_dir():
-            raise RuntimeError(f'session destination directory {sessiondir_dest} already exists!')
-
+        if REQUIRE_DESTDIR_NOTEXIST and sessiondir_dest.is_dir():
+            raise RuntimeError(
+                f'session destination directory {sessiondir_dest} already exists!'
+            )
+            
 
 
 # %%
@@ -167,23 +171,26 @@ else:
 for p in session_dirs:
     enffiles = sessionutils.get_enfs(p)
     autoprocess._do_autoproc(enffiles, pipelines_in_proc=False)
+print('*** autoproc complete')
 
 
 # %%
 # 3: autotag all
 for p in session_dirs:
     _autotag(p)
+print('*** autotag complete')
+
 
 
 # %%
 # 4: review the data
+REVIEW_BACKEND = 'plotly'
 for p in session_dirs:
     for lout in cfg.plot.review_layouts:
         fig = gaitutils.viz.plots._plot_sessions(
-            p, layout=lout, backend='plotly', figtitle=p.name
+            p, layout=lout, backend=REVIEW_BACKEND, figtitle=p.name
         )
         gaitutils.viz.plot_misc.show_fig(fig)
-
 
 
 # %%
@@ -247,7 +254,9 @@ for sessiondir in session_dirs:
         'session_description': session_desc[sessiondir],
     }
     sessionutils.save_info(sessiondir, info)
-    if not (vidfiles := videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)):
+    if not (
+        vidfiles := videos._collect_session_videos(sessiondir, tags=cfg.eclipse.tags)
+    ):
         raise RuntimeError(f'Cannot find any video files for session {sessiondir}')
 
     if not videos.convert_videos(vidfiles, check_only=True):
@@ -297,7 +306,6 @@ print('*** Finished copying')
 if copy_done and ALLOW_DELETE:
     assert rootdir.parent == Path('D:/ViconData/Clinical')
     shutil.rmtree(rootdir)
-
 
 
 # %% ALT: only convert the videos - for video-only sessions
