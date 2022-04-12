@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 
-Replace marker data with data derived from other markers.
+Example: replace marker data with data derived from other markers.
+E.g. put a tibia marker halfway between ankle and knee.
 
 @author: Jussi (jnu@iki.fi)
 """
@@ -18,12 +19,12 @@ vicon = nexus.viconnexus()
 # subject has to match Nexus subject name
 subj = nexus.get_subjectnames()
 # derive data from existing markers
-for ctxt in 'LR':
-    mkrdata = nexus._get_marker_data(vicon, ['%sKNE' % ctxt, '%sANK' % ctxt])
-    ltib_est = (mkrdata['%sKNE' % ctxt] + mkrdata['%sANK' % ctxt]) / 2.0
+for context in 'LR':
+    mkrdata = nexus._get_marker_data(vicon, ['%sKNE' % context, '%sANK' % context])
+    ltib_est = (mkrdata['%sKNE' % context] + mkrdata['%sANK' % context]) / 2.0
     x, y, z = ltib_est.T
     exists = [True] * len(x)
     # write the desired marker
-    vicon.SetTrajectory(subj, '%sTIB' % ctxt, x, y, z, exists)
+    vicon.SetTrajectory(subj, '%sTIB' % context, x, y, z, exists)
     vicon.SaveTrial(60)
 
