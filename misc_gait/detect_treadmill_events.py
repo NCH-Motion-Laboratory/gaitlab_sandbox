@@ -27,7 +27,7 @@ plt.plot(fz[:5000])
 trial = gaitutils.trial.nexus_trial(from_c3d=True)
 
 # this will read the trial via the Nexus API
-trial = gaitutils.trial.nexus_trial(from_c3d=True)
+trial = gaitutils.trial.nexus_trial(from_c3d=False)
 
 
 
