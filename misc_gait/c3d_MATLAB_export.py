@@ -21,7 +21,7 @@ from gaitutils.envutils import GaitDataError
 from gaitutils.config import cfg
 
 
-DATA_FLDR = 'Z:/Misc/0_Mika/CP-projekti/HP/HP10/2017_11_23/'
+DATA_FLDR = '/home/andrey/storage/Data/Gait_Lab/D0063_RR/2020_9_8_postOp1v_RR/'
 MODEL_VAR_NAMES = {'RAnkleAnglesX', 'LAnkleAnglesX',
                    'RFootProgressAnglesZ', 'LFootProgressAnglesZ',
                    'RKneeAnglesX', 'LKneeAnglesX',
@@ -48,6 +48,10 @@ MODEL_VAR_NAMES = {'RAnkleAnglesX', 'LAnkleAnglesX',
                    'RGracLength', 'LGracLength',
                    'RPsoaLength', 'LPsoaLength'}
 
+# Compute derivatives (w.r.t. time) for this variables. Add the derivatives to the script's output.
+MODEL_VAR_NAMES_TO_DIFF = {'RAnkleAnglesX', 'LAnkleAnglesX',
+                           'RFootProgressAnglesZ', 'LFootProgressAnglesZ'}
+
 EMG_VAR_NAMES = {'RHam', 'LHam',
                  'RRec', 'LRec',
                  'RVas', 'LVas',
@@ -57,8 +61,8 @@ EMG_VAR_NAMES = {'RHam', 'LHam',
                  'RSol', 'LSol'}
 # VALID_ECLIPSE_TAGS = {'E2', 'E3', 'E4', 'T2', 'T3', 'T4'}
 VALID_ECLIPSE_TAGS = {'T1', 'E1'}
-MODEL_OUT_FNAME = 'C:/Users/vicon123/model_exported.mat'
-EMG_OUT_FNAME = 'C:/Users/vicon123/emg_exported.mat'
+MODEL_OUT_FNAME = '/tmp/model_exported.mat'
+EMG_OUT_FNAME = '/tmp/emg_exported.mat'
 
 
 logger = logging.getLogger(__name__)
@@ -225,38 +229,56 @@ def collect_trial_data(
     return data_all, cycles_all
 
 
-model_res = {var_name : np.zeros((101,0)) for var_name in MODEL_VAR_NAMES}
-emg_res = {var_name : np.zeros((1000,0)) for var_name in EMG_VAR_NAMES}
+def main():
+    model_res = defaultdict(lambda: np.zeros((101,0)))
+    emg_res = defaultdict(lambda: np.zeros((1000,0)))
+    model_delta_t = defaultdict(lambda: [])
 
-fnames = os.listdir(DATA_FLDR)
-for fname in fnames:
-    if fname[-4:] == '.c3d':
-        print('Reading file %s ...' % fname)
-        full_name = DATA_FLDR + '/' + fname
-        try:
-            data, cycles = collect_trial_data(full_name, analog_envelope=True, collect_all_cycles=True, fp_cycles_only=False)
+    fnames = os.listdir(DATA_FLDR)
+    for fname in fnames:
+        if fname[-4:] == '.c3d':
+            print('Reading file %s ...' % fname)
+            full_name = DATA_FLDR + '/' + fname
+            try:
+                data, cycles = collect_trial_data(full_name, analog_envelope=True, collect_all_cycles=True, fp_cycles_only=False)
 
-            for var_name in MODEL_VAR_NAMES:
-                try:
-                    if cycles['model'][var_name][0].trial.eclipse_tag in VALID_ECLIPSE_TAGS:
-                        model_res[var_name] = np.hstack((model_res[var_name], data['model'][var_name].T))
-                        print('\t ... added %i cycles for variable \'%s\' (eclipse label \'%s\')' % (data['model'][var_name].shape[0], var_name, cycles['model'][var_name][0].trial.eclipse_tag))
-                    else:
-                        print('\t ... no data imported for variable \'%s\' from file %s (wrong eclipse label)' % (var_name, fname))
-                except:
-                    print('\t ... no data imported for variable \'%s\' from file %s' % (var_name, fname))
+                for var_name in MODEL_VAR_NAMES:
+                    try:
+                        if cycles['model'][var_name][0].trial.eclipse_tag in VALID_ECLIPSE_TAGS:
+                            # Append normalized trial data
+                            model_res[var_name] = np.hstack((model_res[var_name], data['model'][var_name].T))
 
-            for var_name in EMG_VAR_NAMES:
-                try:
-                    if cycles['emg'][var_name][0].trial.eclipse_tag in VALID_ECLIPSE_TAGS:
-                        emg_res[var_name] = np.hstack((emg_res[var_name], data['emg'][var_name].T))
-                        print('\t ... added %i cycles for variable \'%s\' (eclipse label \'%s\')' % (data['emg'][var_name].shape[0], var_name, cycles['emg'][var_name][0].trial.eclipse_tag))
-                    else:
-                        print('\t ... no data imported for variable \'%s\' from file %s (wrong eclipse label)' % (var_name, fname))
-                except:
-                    print('\t ... no data imported for variable \'%s\' from file %s' % (var_name, fname))
-        except:
-            print('\t ... failed!')
+                            # Compute and append the new sample duration after normalization
+                            for cyc in cycles['model'][var_name]:
+                                delta_t = ((cyc.end - cyc.start) / cyc.trial.framerate) / data['model'][var_name].shape[1]
+                                model_delta_t[var_name].append(delta_t)
 
-scipy.io.savemat(MODEL_OUT_FNAME, model_res)
-scipy.io.savemat(EMG_OUT_FNAME, emg_res)
+                            print('\t ... added %i cycles for variable \'%s\' (eclipse label \'%s\')' % (data['model'][var_name].shape[0], var_name, cycles['model'][var_name][0].trial.eclipse_tag))
+                        else:
+                            print('\t ... no data imported for variable \'%s\' from file %s (wrong eclipse label)' % (var_name, fname))
+                    except:
+                        print('\t ... no data imported for variable \'%s\' from file %s' % (var_name, fname))
+
+                for var_name in EMG_VAR_NAMES:
+                    try:
+                        if cycles['emg'][var_name][0].trial.eclipse_tag in VALID_ECLIPSE_TAGS:
+                            emg_res[var_name] = np.hstack((emg_res[var_name], data['emg'][var_name].T))
+                            print('\t ... added %i cycles for variable \'%s\' (eclipse label \'%s\')' % (data['emg'][var_name].shape[0], var_name, cycles['emg'][var_name][0].trial.eclipse_tag))
+                        else:
+                            print('\t ... no data imported for variable \'%s\' from file %s (wrong eclipse label)' % (var_name, fname))
+                    except:
+                        print('\t ... no data imported for variable \'%s\' from file %s' % (var_name, fname))
+            except:
+                print('\t ... failed!')
+
+
+    # Compute the derivatives
+    for var_name in MODEL_VAR_NAMES_TO_DIFF:
+        model_res[var_name + '_dt'] = np.diff(model_res[var_name], axis=0) / np.array(model_delta_t[var_name])
+
+    scipy.io.savemat(MODEL_OUT_FNAME, model_res)
+    scipy.io.savemat(EMG_OUT_FNAME, emg_res)
+
+
+if __name__ == '__main__':
+    main()
