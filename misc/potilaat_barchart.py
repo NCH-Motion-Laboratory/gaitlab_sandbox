@@ -39,63 +39,48 @@ def autolabel(rects, label_zeros=True):
 # specify input data
 
 # years corresponding to data vectors
-yrs = range(2012, 2022)
+yrs = range(2012, 2023)
 # optionally, only plot data for certain years
-yrs_plot = range(2015, 2022)
+yrs_plot = range(2016, 2023)
 
 
 data = dict()  # bars will be plotted in the order they are given here
 data['Kävelyanalyysi'] = dict()
-data['Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 87, 100]
-data['Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 24]
+data['Kävelyanalyysi']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 87, 100, 93]
+data['Kävelyanalyysi']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 24, 20]
 
 # liikelaajuus = kliiniset mittaulset
 data['Kliiniset mittaukset'] = dict()
-data['Kliiniset mittaukset']['total'] = [
-    46, 45, 50, 67, 93, 137, 101, 124, 94, 160]
-data['Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 24]
+data['Kliiniset mittaukset']['total'] = [46, 45, 50, 67, 93, 137, 101, 124, 94, 160, 150]
+data['Kliiniset mittaukset']['ulko'] = [0, 0, 0, 0, 12, 23, 29, 33, 25, 24, 20]
 
 data['Laitteistetut lihasvoimamittaukset'] = dict()
-data['Laitteistetut lihasvoimamittaukset']['total'] = [
-    55,
-    41,
-    47,
-    43,
-    62,
-    60,
-    34,
-    14,
-    23,
-    24,
-]
-data['Laitteistetut lihasvoimamittaukset']['ulko'] = [
-    0, 0, 0, 0, 14, 20, 10, 3, 14, 16]
+data['Laitteistetut lihasvoimamittaukset']['total'] = [55, 41, 47, 43, 62, 60, 34, 14, 23, 24, 40]
+data['Laitteistetut lihasvoimamittaukset']['ulko'] = [0, 0, 0, 0, 14, 20, 10, 3, 14, 16, 13]
 
 data['Painejakaumamittaukset'] = dict()
-data['Painejakaumamittaukset']['total'] = [
-    0, 0, 0, 0, 77, 135, 105, 150, 162, 169]
-data['Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36, 25, 24]
+data['Painejakaumamittaukset']['total'] = [0, 0, 0, 0, 77, 135, 105, 150, 162, 169, 153]
+data['Painejakaumamittaukset']['ulko'] = [0, 0, 0, 0, 10, 25, 32, 36, 25, 24, 20]
 
 data['EMG-mittaukset'] = dict()
-data['EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93, 106, 83, 100]
-data['EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33, 25, 24]
+data['EMG-mittaukset']['total'] = [0, 0, 0, 0, 0, 114, 93, 106, 83, 100, 92]
+data['EMG-mittaukset']['ulko'] = [0, 0, 0, 0, 0, 23, 28, 33, 25, 24, 20]
 
 data['Kävelyanalyysin viiteaineisto'] = dict()
-data['Kävelyanalyysin viiteaineisto']['total'] = [
-    0, 0, 0, 0, 0, 21, 4, 36, 0, 0]
-data['Kävelyanalyysin viiteaineisto']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+data['Kävelyanalyysin viiteaineisto']['total'] = [0, 0, 0, 0, 0, 21, 4, 36, 0, 0, 9]
+data['Kävelyanalyysin viiteaineisto']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data['Yläraaja'] = dict()
-data['Yläraaja']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 6]
-data['Yläraaja']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+data['Yläraaja']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 6, 0]
+data['Yläraaja']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data['Hengityskaasu'] = dict()
-data['Hengityskaasu']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 4]
-data['Hengityskaasu']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+data['Hengityskaasu']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 7, 4, 25]
+data['Hengityskaasu']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 data['Kelkkamittaukset'] = dict()
-data['Kelkkamittaukset']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 10, 5]
-data['Kelkkamittaukset']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+data['Kelkkamittaukset']['total'] = [0, 0, 0, 0, 0, 0, 0, 0, 10, 5, 6]
+data['Kelkkamittaukset']['ulko'] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
 
 # check length
 for var, di in data.items():
@@ -165,3 +150,4 @@ fn = f'tilastot_{this_year}.png'
 fig.set_size_inches(18.5, 10.5)
 plt.savefig(fn, dpi=200)
 print(f'wrote {fn}')
+plt.show()
