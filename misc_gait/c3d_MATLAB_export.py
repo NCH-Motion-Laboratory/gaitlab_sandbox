@@ -20,48 +20,58 @@ from gaitutils.envutils import GaitDataError
 from gaitutils.config import cfg
 
 
-DATA_FLDR = '/home/andrey/scratch/for_Mika/2022_08_22_seur_LL/'
+DATA_FLDR = 'Z:/Misc/0_Mika/CP-projekti/HP/H0188_AJ/2022_06_20_seur_AJ/'
 MODEL_VAR_NAMES = {'RAnkleAnglesX', 'LAnkleAnglesX',
-                   'RFootProgressAnglesZ', 'LFootProgressAnglesZ',
                    'RKneeAnglesX', 'LKneeAnglesX',
-                   'RHipAnglesX', 'LHipAnglesX',
-                   'RPelvisAnglesX', 'LPelvisAnglesX',
-                   'RNormalisedGRFX', 'RNormalisedGRFX',
-                   'RNormalisedGRFY', 'RNormalisedGRFY',
-                   'RNormalisedGRFZ', 'RNormalisedGRFZ',
+                   'RNormalisedGRFZ', 'LNormalisedGRFZ',
                    'RAnkleMomentX', 'LAnkleMomentX',
                    'RAnklePowerZ', 'LAnklePowerZ',
                    'RKneeMomentX', 'LKneeMomentX',
                    'RKneePowerZ', 'LKneePowerZ',
+                   'RSoleLength', 'LSoleLength',
+                   'RMeGaLength', 'LMeGaLength'}
+
+"""
+Other model variables which were exported earlier
+                   'RNormalisedGRFX', 'LNormalisedGRFX',
+                   'RNormalisedGRFY', 'LNormalisedGRFY',
+                   'RFootProgressAnglesZ', 'LFootProgressAnglesZ',
+                   'RHipAnglesX', 'LHipAnglesX',
+                   'RPelvisAnglesX', 'LPelvisAnglesX',
                    'RHipMomentX', 'LHipMomentX',
                    'RHipMomentY', 'LHipMomentY',
                    'RHipPowerZ', 'LHipPowerZ',
-                   'RSoleLength', 'LSoleLength',
-                   'RTiAnLength', 'LTiAnLength',
-                   'RMeGaLength', 'LMeGaLength',
+                   'RTiAnLength', 'LTiAnLength'
                    'RLaGaLength', 'LLaGaLength',
                    'RBiFLLength', 'LBiFLLength',
                    'RSeMeLength', 'LSeMeLength',
                    'RSeTeLength', 'LSeTeLength',
                    'RReFeLength', 'LReFeLength',
                    'RGracLength', 'LGracLength',
-                   'RPsoaLength', 'LPsoaLength'}
+                   'RPsoaLength', 'LPsoaLength'
+"""
 
 # Compute derivatives (w.r.t. time) for this variables. Add the derivatives to the script's output.
 MODEL_VAR_NAMES_TO_DIFF = {'RAnkleAnglesX', 'LAnkleAnglesX',
-                           'RFootProgressAnglesZ', 'LFootProgressAnglesZ'}
+                           'RSoleLength', 'LSoleLength',
+                           'RMeGaLength', 'LMeGaLength'}
 
-EMG_VAR_NAMES = {'RHam', 'LHam',
-                 'RRec', 'LRec',
-                 'RVas', 'LVas',
-                 'RTibA', 'LTibA',
-                 'RPer', 'LPer',
+EMG_VAR_NAMES = {'RTibA', 'LTibA',
                  'RGas', 'LGas',
                  'RSol', 'LSol'}
-# VALID_ECLIPSE_TAGS = {'E2', 'E3', 'E4', 'T2', 'T3', 'T4'}
-VALID_ECLIPSE_TAGS = {'T1', 'E1'}
-MODEL_OUT_FNAME = '/tmp/model_exported.mat'
-EMG_OUT_FNAME = '/tmp/emg_exported.mat'
+
+"""
+Other EMG variables which were exported earlier
+                 'RPer', 'LPer',
+                 'RHam', 'LHam',
+                 'RRec', 'LRec',
+                 'RVas', 'LVas',
+"""
+
+VALID_ECLIPSE_TAGS = {'E2', 'E3', 'E4', 'T2', 'T3', 'T4'}
+# VALID_ECLIPSE_TAGS = {'T1', 'E1'}
+MODEL_OUT_FNAME = 'C:/Users/vicon123/model_exported.mat'
+EMG_OUT_FNAME = 'C:/Users/vicon123/emg_exported.mat'
 
 
 logger = logging.getLogger(__name__)
@@ -78,7 +88,7 @@ def main():
             print('Reading file %s ...' % fname)
             full_name = DATA_FLDR + '/' + fname
             try:
-                data, cycles = collect_trial_data(full_name, analog_envelope=True, force_collect_all_cycles=True, fp_cycles_only=False)
+                data, cycles = collect_trial_data(full_name, analog_envelope=False, force_collect_all_cycles=False, fp_cycles_only=True)
 
                 for var_name in MODEL_VAR_NAMES:
                     try:

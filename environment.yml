@@ -1,0 +1,7 @@
+name: gaitlab_sandbox
+channels:
+  - conda-forge
+dependencies:
+  - pandas
+  - ipykernel
+  - openpyxl
