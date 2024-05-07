@@ -27,6 +27,7 @@ dependencies:
   - sphinx_rtd_theme
   - pandas
   - ipykernel
+  - ezc3d
   - pip:
     - pyedflib
     - https://github.com/NCH-Motion-Laboratory/gaitutils/archive/master.zip
