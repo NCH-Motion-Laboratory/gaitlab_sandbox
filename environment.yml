@@ -31,6 +31,7 @@ dependencies:
   - nbformat
   - ezc3d
   - pyedflib
+  - xarray
   - pip:
     - https://github.com/NCH-Motion-Laboratory/gaitutils/archive/master.zip
     - https://github.com/NCH-Motion-Laboratory/ulstools/archive/master.zip
